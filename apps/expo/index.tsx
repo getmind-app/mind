@@ -1,9 +1,12 @@
+import { useCallback } from "react";
 import { registerRootComponent } from "expo";
-import { ExpoRoot } from "expo-router";
+import { useFonts } from "expo-font";
+import { ExpoRoot, SplashScreen } from "expo-router";
 
-// Must be exported or Fast Refresh won't update the context
+SplashScreen.preventAutoHideAsync();
 export function App() {
   const ctx = require.context("./src/app");
+
   return <ExpoRoot context={ctx} />;
 }
 
