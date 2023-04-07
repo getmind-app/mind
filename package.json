@@ -27,7 +27,6 @@
     "expo-splash-screen": "~0.18.1",
     "prettier": "^2.8.7",
     "prettier-plugin-tailwindcss": "^0.2.6",
-    "react-native-svg": "^13.9.0",
     "turbo": "^1.8.8",
     "typescript": "^5.0.3"
   }

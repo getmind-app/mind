@@ -2,16 +2,17 @@ import React from "react";
 import {
   Button,
   Image,
+  SafeAreaView,
   ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Stack, useRouter } from "expo-router";
-import { FlashList } from "@shopify/flash-list";
+import { Link, Stack, Tabs, useRouter } from "expo-router";
+import { AntDesign } from "@expo/vector-icons";
 
+import { GradientText } from "../components/GradientText";
 import { LogoSvg } from "../components/LogoSvg";
 import { api, type RouterOutputs } from "../utils/api";
 
@@ -96,38 +97,54 @@ const CreatePost: React.FC = () => {
 function NextMeetingCard() {
   return (
     <View className="relative rounded-2xl bg-[#F8F8F8] px-3 pb-3 pt-8">
-      <View className="absolute -top-6 left-4 z-40  rounded-full bg-[#2185EE] p-2 ">
-        <Text className="text-white text-2xl font-bold">16</Text>
+      <View className="absolute -top-6 left-4 z-40 flex items-center justify-center  rounded-full bg-[#2185EE] p-2 ">
+        <Text className="text-white h-8 w-8 text-2xl font-bold">16</Text>
       </View>
       <View>
-        <Text className="text-2xl">Segunda-feira, 14:00</Text>
-        <Text className="text-gray-500 text-sm underline">
-          Av. Ermelino de Leão, 134
-        </Text>
+        <View className="ml-2">
+          <Text className="text-2xl">Segunda-feira, 14:00</Text>
+          <Text className="text-gray-500 text-sm underline">
+            Av. Ermelino de Leão, 134
+          </Text>
+        </View>
         <View className="mt-3  rounded-lg bg-[#EBEBEB] p-2">
-          <View className="overflow-hidden">
+          <View className="max-h-36 overflow-hidden">
             <Image
               source={{
                 uri: "https://t3.ftcdn.net/jpg/03/96/88/32/360_F_396883284_1APy4O6kZumSUDLE33VgJ3ADdMYt39Bv.jpg",
-                width: 480,
-                height: 240,
+                width: 360,
+                height: 120,
               }}
             />
           </View>
         </View>
         <View className="mt-3 flex flex-row justify-between rounded-lg bg-[#EBEBEB] p-4">
-          <Text className="w-4/5">
+          <Text className="w-4/5 text-xs">
             Te espero para mais um passo em busca do auto conhecimento!
           </Text>
-          <View className="flex w-1/5 items-center justify-center overflow-hidden rounded-full align-middle">
+          <View className="flex max-h-[32px] max-w-[32px] items-center justify-center overflow-hidden rounded-full align-middle">
             <Image
               source={{
                 uri: "https://images.pexels.com/photos/4098353/pexels-photo-4098353.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-                width: 48,
-                height: 48,
+                width: 32,
+                height: 32,
               }}
             />
           </View>
+        </View>
+      </View>
+    </View>
+  );
+}
+
+function LastNotesCard() {
+  return (
+    <View className="relative rounded-2xl bg-[#F8F8F8] p-3 ">
+      <View>
+        <SingleNote />
+        <SingleNote />
+        <View className="flex flex-row justify-center">
+          <Text className="text-gray-500 text-sm underline">Ver notas</Text>
         </View>
       </View>
     </View>
@@ -144,50 +161,60 @@ const Index = () => {
   });
 
   return (
-    <SafeAreaView className="bg-[#DFDFDF] p-4">
-      <Stack.Screen options={{ title: "Home" }} />
-      {/* Changes page title visible on the header */}
-      <View className="mb-4 flex flex-row items-center justify-between px-4">
-        <Text className="text-3xl">Próxima sessão</Text>
-        <LogoSvg />
-      </View>
-
-      <View>
-        <View>
-          <NextMeetingCard />
-          {/* <Text className="text-white mx-auto pb-2 text-5xl font-bold">
-            Create <Text className="text-pink-400">T3</Text> Turbo
-          </Text>
-
-          <Button
-            onPress={() => void utils.post.all.invalidate()}
-            title="Refresh posts"
-            color={"#f472b6"}
-          />
-
-          <View className="py-2">
-            <Text className="text-white font-semibold italic">
-              Press on a post
-            </Text>
+    <SafeAreaView className="bg-[#DFDFDF] px-4 pt-8">
+      <ScrollView className="min-h-max" showsVerticalScrollIndicator={false}>
+        <View className="h-full py-2">
+          <View className="mb-6 flex flex-row items-center justify-between px-4">
+            <View className="mb-2">
+              <Text className="text-2xl leading-8">Próxima sessão</Text>
+            </View>
+            <View>
+              <LogoSvg className="m-auto" />
+            </View>
           </View>
-
-          <FlashList
-            data={postQuery.data}
-            estimatedItemSize={20}
-            ItemSeparatorComponent={() => <View className="h-2" />}
-            renderItem={(p) => (
-              <PostCard
-                post={p.item}
-                onDelete={() => deletePostMutation.mutate(p.item.id)}
-              />
-            )}
-          />
-
-          <CreatePost /> */}
+          <NextMeetingCard />
+          <View className="mb-2 mt-5 px-4">
+            <Text className="text-2xl leading-8">Últimas notas</Text>
+          </View>
+          <LastNotesCard />
         </View>
-      </View>
+      </ScrollView>
+      <TabsMenu />
     </SafeAreaView>
   );
 };
+
+function SingleNote() {
+  return (
+    <View className="mb-2">
+      <View className="flex flex-row items-center justify-start text-sm ">
+        <GradientText>16</GradientText>
+        <View className="my-auto">
+          <Text>de Fevereiro de 2023</Text>
+        </View>
+      </View>
+      <View className="flex flex-row items-center justify-evenly rounded-lg bg-[#EBEBEB] px-2 py-4">
+        <Text className="text-2xl">😀</Text>
+        <Text className="mx-auto w-full max-w-[75%] text-xs">
+          Me sinto muito pressionado com todas as demandas do trabalho e da vida
+          familiar. Fico...
+        </Text>
+        <AntDesign name="right" />
+      </View>
+    </View>
+  );
+}
+
+function TabsMenu() {
+  return (
+    <View>
+      <Link href={"/home"}>Home</Link>
+      <Link href={"/search"}>Search</Link>
+      <Link href={"/calendar"}>Calendar</Link>
+      <Link href={"/chat"}>Chat</Link>
+      <Link href={"/profile"}>Profile</Link>
+    </View>
+  );
+}
 
 export default Index;
