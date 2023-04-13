@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Button,
   Image,
+  ImageBackground,
   SafeAreaView,
   ScrollView,
   Text,
@@ -9,7 +10,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { Link, Stack, Tabs, useRouter } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import { AntDesign } from "@expo/vector-icons";
 
 import { GradientText } from "../components/GradientText";
@@ -95,6 +96,8 @@ const CreatePost: React.FC = () => {
 };
 
 function NextMeetingCard() {
+  const [nextScheduledTherapist, setNextScheduledTherapist] = useState("1");
+
   return (
     <View className="relative rounded-2xl bg-[#F8F8F8] px-3 pb-3 pt-8">
       <View className="absolute -top-6 left-4 z-40 flex items-center justify-center  rounded-full bg-[#2185EE] p-2 ">
@@ -107,29 +110,34 @@ function NextMeetingCard() {
             Av. Ermelino de Leão, 134
           </Text>
         </View>
-        <View className="mt-3  rounded-lg bg-[#EBEBEB] p-2">
-          <View className="max-h-36 overflow-hidden">
-            <Image
-              source={{
-                uri: "https://t3.ftcdn.net/jpg/03/96/88/32/360_F_396883284_1APy4O6kZumSUDLE33VgJ3ADdMYt39Bv.jpg",
-                width: 360,
-                height: 120,
-              }}
-            />
-          </View>
+        <View className="mt-3 flex max-h-36 items-center justify-center overflow-hidden rounded-lg bg-[#EBEBEB] p-2">
+          <Image
+            source={{
+              uri: "https://t3.ftcdn.net/jpg/03/96/88/32/360_F_396883284_1APy4O6kZumSUDLE33VgJ3ADdMYt39Bv.jpg",
+              width: 540,
+              height: 360,
+            }}
+          />
         </View>
         <View className="mt-3 flex flex-row justify-between rounded-lg bg-[#EBEBEB] p-4">
           <Text className="w-4/5 text-xs">
             Te espero para mais um passo em busca do auto conhecimento!
           </Text>
           <View className="flex max-h-[32px] max-w-[32px] items-center justify-center overflow-hidden rounded-full align-middle">
-            <Image
+            <ImageBackground
               source={{
                 uri: "https://images.pexels.com/photos/4098353/pexels-photo-4098353.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-                width: 32,
-                height: 32,
               }}
-            />
+              resizeMode="contain"
+            >
+              <Link
+                className=" flex h-16 w-16 items-center justify-center"
+                href={{
+                  pathname: `/profile/psych`,
+                  params: { id: nextScheduledTherapist },
+                }}
+              />
+            </ImageBackground>
           </View>
         </View>
       </View>
