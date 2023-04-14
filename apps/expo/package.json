@@ -39,6 +39,7 @@
     "@acme/api": "*",
     "@acme/eslint-config": "*",
     "@acme/tailwind-config": "*",
+    "@acme/nextjs": "*",
     "@babel/core": "^7.21.4",
     "@babel/preset-env": "^7.21.4",
     "@babel/runtime": "^7.21.0",

@@ -113,6 +113,9 @@ importers:
       '@acme/eslint-config':
         specifier: '*'
         version: link:../../packages/config/eslint
+      '@acme/nextjs':
+        specifier: '*'
+        version: link:../nextjs
       '@acme/tailwind-config':
         specifier: '*'
         version: link:../../packages/config/tailwind
