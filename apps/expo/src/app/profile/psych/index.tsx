@@ -25,10 +25,10 @@ export default function TherapistProfile() {
   const { id = 42 } = params;
 
   return (
-    <SafeAreaView className="bg-[#DFDFDF] px-4 pt-8">
+    <SafeAreaView className="bg-[#FFF] px-4 pt-8">
       <ScrollView className="min-h-screen" showsVerticalScrollIndicator={false}>
         <View className="h-full py-2">
-          <View className="mb-16 flex flex-row  items-center justify-end px-4">
+          <View className="mb-8 flex flex-row  items-center justify-end px-4">
             <View>
               <LogoSvg className="m-auto mb-2" />
             </View>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Button,
   Image,
@@ -8,7 +8,6 @@ import {
   Text,
   View,
 } from "react-native";
-import DatePicker from "react-native-modern-datepicker";
 import { Link, useNavigation, useRouter, useSearchParams } from "expo-router";
 import { EvilIcons, MaterialIcons } from "@expo/vector-icons";
 
@@ -18,13 +17,17 @@ export default function TherapistSchedule() {
   const navigation = useNavigation();
   const router = useRouter();
   const params = useSearchParams();
-  const { id = 42 } = params;
+  const { psych = "John" } = params;
   /* TODO: trocar esse implementacao por um context, redux, zustand, jotai */
   const [selectedDate, setSelectedDate] = useState<number>();
+  const [selectedHour, setSelectedHour] = useState<string>();
   const [selectedMode, setSelectedMode] = useState<"person" | "online">();
+  const allPicked = useMemo(() => {
+    return selectedDate && selectedMode && selectedHour;
+  }, [selectedHour, selectedMode, selectedDate]);
 
   return (
-    <SafeAreaView className="bg-[#DFDFDF] px-4 pt-8">
+    <SafeAreaView className="bg-[#FFF] px-4 pt-8">
       <ScrollView
         className="min-h-screen"
         showsVerticalScrollIndicator={false}
@@ -46,17 +49,42 @@ export default function TherapistSchedule() {
               }}
             />
           </View>
-          <Text className="mb-2 text-2xl">John&apos;s Schedule</Text>
+          <Text className="mb-2 text-2xl">{psych}&apos;s Schedule</Text>
           <Text className="mb-2 text-sm text-[#666666]">
             Pick the date that you would like to meet
           </Text>
           <Calendar onSelect={setSelectedDate} />
         </View>
-        <HourPicker date={selectedDate ?? 0} />
+        <HourPicker
+          hour={selectedHour ?? ""}
+          onSelect={setSelectedHour}
+          date={selectedDate ?? 0}
+        />
         <ModalityPicker
           mode={selectedMode ?? ""}
           onSelect={setSelectedMode as any}
         />
+        <View className="mb-28 mt-5 flex w-min flex-row justify-center">
+          <Pressable
+            className={`rounded-lg bg-[#2185EE] px-16 py-3 ${
+              allPicked ? "" : "opacity-30"
+            }`}
+            disabled={!allPicked}
+            onPress={() => {
+              // @ts-expect-error dont know why it doesnt work
+              navigation.navigate(`psych/payment/index`, {
+                hour: selectedHour,
+                date: `04/${selectedDate}`,
+                mode: selectedMode,
+                psych,
+              });
+            }}
+          >
+            <Text className={`text-white text-center font-bold`}>
+              Confirm appointment
+            </Text>
+          </Pressable>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -68,7 +96,7 @@ const Calendar = ({ onSelect }: { onSelect: (n: number) => void }) => {
   const numbers = Array.from(Array(31).keys());
 
   return (
-    <View className="mx-auto flex  w-min flex-row flex-wrap items-center justify-start  rounded-lg bg-[#DFDFDF] p-3">
+    <View className="mx-auto flex  w-min flex-row flex-wrap items-center justify-start  rounded-lg bg-[#FFF] p-3">
       <Text className="relative left-3 w-full pb-3 text-xl">April</Text>
       {/* TODO: substituir esse magic number de 47px por algo responsivo */}
       <Text className="w-full max-w-[47px] text-center text-sm text-[#666666]">
@@ -107,8 +135,15 @@ const Calendar = ({ onSelect }: { onSelect: (n: number) => void }) => {
   );
 };
 
-function HourPicker({ date }: { date: number }) {
-  const [selectedHour, setSelectedHour] = useState<string>();
+function HourPicker({
+  date,
+  hour,
+  onSelect,
+}: {
+  date: number;
+  hour: string;
+  onSelect: (n: string) => void;
+}) {
   const [numbers, setNumbers] = useState<number[]>([]);
 
   useEffect(() => {
@@ -116,7 +151,8 @@ function HourPicker({ date }: { date: number }) {
     setNumbers(
       Array.from(Array(Math.floor(Math.random() * 6)).keys())
         .map((n) => n + 9 + Math.floor(Math.random() * 5))
-        .sort((a, b) => a - b),
+        .sort((a, b) => a - b)
+        .filter((a, b, c) => c.findLastIndex((v) => v === a) === b),
     );
   }, [date]);
 
@@ -133,12 +169,12 @@ function HourPicker({ date }: { date: number }) {
               There are no more available sessions for this date!
             </Text>
           )}
-          {numbers.map((n) => (
+          {numbers.map((n, i) => (
             <Hour
-              key={n}
+              key={i}
               number={`${n}:00`}
-              onPress={setSelectedHour}
-              isSelected={selectedHour === `${n}:00`}
+              onPress={onSelect}
+              isSelected={hour === `${n}:00`}
             />
           ))}
         </View>
@@ -189,7 +225,7 @@ function Hour({
       <Pressable
         onPress={() => onPress(number)}
         className={`mr-2 flex items-center justify-center rounded-lg px-5 py-3 ${
-          isSelected ? " bg-[#2185EE]" : "bg-[#DFDFDF]"
+          isSelected ? " bg-[#2185EE]" : "bg-[#FFF]"
         }`}
       >
         <Text className={`text-base ${isSelected ? "text-white" : ""}`}>
@@ -208,7 +244,7 @@ function ModalityPicker({
   onSelect: (x: string) => void;
 }) {
   return (
-    <View className="relative mb-28 mt-3 rounded-2xl bg-[#f8f8f8] p-3">
+    <View className="relative mt-3 rounded-2xl bg-[#f8f8f8] p-3">
       <Text className="mb-2 text-2xl">How would you like to meet</Text>
       <Text className="text-[#666666]">
         John&apos;s sessions happen at{" "}
@@ -217,7 +253,7 @@ function ModalityPicker({
       <View className="mt-3 flex flex-row justify-between">
         <Pressable
           onPress={() => onSelect("online")}
-          className={`w-[47%] rounded-lg bg-[#dfdfdf] py-3 ${
+          className={`w-[47%] rounded-lg bg-[#FFF] py-3 ${
             mode === "online" ? "bg-[#2185EE]" : ""
           }`}
         >
@@ -231,7 +267,7 @@ function ModalityPicker({
         </Pressable>
         <Pressable
           onPress={() => onSelect("person")}
-          className={`w-[47%] rounded-lg bg-[#dfdfdf] py-3 ${
+          className={`w-[47%] rounded-lg bg-[#FFF] py-3 ${
             mode === "person" ? "bg-[#2185EE]" : ""
           }`}
         >

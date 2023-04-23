@@ -169,7 +169,7 @@ const Index = () => {
   });
 
   return (
-    <SafeAreaView className="bg-[#DFDFDF] px-4 pt-8">
+    <SafeAreaView className="bg-[#FFF] px-4 pt-8">
       <ScrollView className="min-h-max" showsVerticalScrollIndicator={false}>
         <View className="h-full py-2">
           <View className="mb-6 flex flex-row items-center justify-between px-4">
