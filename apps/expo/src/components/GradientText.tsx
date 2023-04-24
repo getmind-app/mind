@@ -4,7 +4,7 @@ import { Defs, LinearGradient, Stop, Svg, Text } from "react-native-svg";
 export function GradientText({ children }: { children?: React.ReactNode }) {
   return (
     <View>
-      <Svg height="32" width="32">
+      <Svg height="32" width="36">
         <Defs>
           <LinearGradient
             id="saco"
