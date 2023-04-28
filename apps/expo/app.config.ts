@@ -2,7 +2,7 @@ import type { ExpoConfig } from "@expo/config";
 
 const defineConfig = (): ExpoConfig => ({
   name: "expo",
-  slug: "expo",
+  slug: "mind",
   scheme: "expo",
   version: "1.0.0",
   orientation: "portrait",
@@ -11,7 +11,7 @@ const defineConfig = (): ExpoConfig => ({
   splash: {
     image: "./assets/icon.png",
     resizeMode: "contain",
-    backgroundColor: "#1F104A",
+    backgroundColor: "#fff",
   },
   updates: {
     fallbackToCacheTimeout: 0,
@@ -24,12 +24,13 @@ const defineConfig = (): ExpoConfig => ({
   android: {
     adaptiveIcon: {
       foregroundImage: "./assets/icon.png",
-      backgroundColor: "#1F104A",
+      backgroundColor: "#fff",
     },
+    package: "app.getmind",
   },
   extra: {
     eas: {
-      projectId: "your-project-id",
+      projectId: "99018e7e-9e9a-4064-82d0-dc3cfa6457d5",
     },
   },
   plugins: ["./expo-plugins/with-modify-gradle.js"],

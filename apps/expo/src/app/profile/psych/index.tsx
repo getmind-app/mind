@@ -25,10 +25,10 @@ export default function TherapistProfile() {
   const { id = 42 } = params;
 
   return (
-    <SafeAreaView className="bg-[#DFDFDF] px-4 pt-8">
+    <SafeAreaView className="bg-[#FFF] px-4 pt-8">
       <ScrollView className="min-h-screen" showsVerticalScrollIndicator={false}>
         <View className="h-full py-2">
-          <View className="mb-16 flex flex-row  items-center justify-end px-4">
+          <View className="mb-8 flex flex-row  items-center justify-end px-4">
             <View>
               <LogoSvg className="m-auto mb-2" />
             </View>
@@ -44,7 +44,9 @@ export default function TherapistProfile() {
               />
             </View>
             <View className="pl-2">
-              <Text className="mb-2 text-2xl font-bold">Maria Helena Cruz</Text>
+              <Text className="mb-2 text-2xl font-bold">
+                John Michael Williams
+              </Text>
 
               <View className="mb-2 flex flex-row justify-between">
                 <View className="flex w-1/2 flex-row items-center">
@@ -139,14 +141,14 @@ export default function TherapistProfile() {
               </View>
               <View className="mt-6 flex flex-row justify-between">
                 <Link
-                  className="w-1/3 rounded-lg  bg-[#EBEBEB] p-4 text-center"
+                  className="w-1/3 rounded-lg bg-[#EBEBEB] p-3 text-center text-lg"
                   href={"/chat"}
                 >
                   <Text>Chat</Text>
                 </Link>
                 <Link
-                  className="w-3/5 rounded-lg  bg-[#2185EE] p-4 text-center"
-                  href={"/schedule"}
+                  className="text-white w-3/5 rounded-lg bg-[#2185EE] p-3 text-center text-lg"
+                  href={"/profile/psych/schedule"}
                 >
                   <Text>Schedule</Text>
                 </Link>
