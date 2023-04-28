@@ -100,7 +100,7 @@ function NextMeetingCard() {
 
   return (
     <View className="relative rounded-2xl bg-[#F8F8F8] px-3 pb-3 pt-8">
-      <View className="absolute -top-6 left-4 z-40 flex items-center justify-center  rounded-full bg-[#2185EE] p-2 ">
+      <View className="absolute -top-6 left-4 z-40 flex items-center justify-center rounded-full bg-[#2185EE] p-2 ">
         <Text className="text-white h-8 w-8 text-2xl font-bold">16</Text>
       </View>
       <View>
@@ -179,6 +179,7 @@ const Index = () => {
             <View>
               <LogoSvg className="m-auto" />
             </View>
+            <View className="absolute -top-6 left-4 z-40 flex items-center justify-center rounded-full bg-[#2185EE] p-2 "></View>
           </View>
           <NextMeetingCard />
           <View className="mb-2 mt-5 px-4">
