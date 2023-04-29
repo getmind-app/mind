@@ -12,7 +12,7 @@ import {
 import { Link, useNavigation, useRouter, useSearchParams } from "expo-router";
 import { FontAwesome5 } from "@expo/vector-icons";
 
-import { LogoSvg } from "../../../../components/LogoSvg";
+import { LogoSvg } from "../../components/LogoSvg";
 
 function handleMode(x: string) {
   if (x === "online") return "Online";

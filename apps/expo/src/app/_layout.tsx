@@ -2,6 +2,7 @@ import React from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import Constants from "expo-constants";
+import { LinearGradient } from "expo-linear-gradient";
 import { Tabs, useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { StatusBar } from "expo-status-bar";
@@ -12,7 +13,7 @@ import {
   useClerk,
   useOAuth,
 } from "@clerk/clerk-expo";
-import { AntDesign } from "@expo/vector-icons";
+import { AntDesign, FontAwesome } from "@expo/vector-icons";
 
 import { TRPCProvider } from "../utils/api";
 
@@ -32,6 +33,9 @@ const tokenCache = {
     }
   },
 };
+
+const tabBarActiveTintColor = "blue";
+const tabBarInactiveTintColor = "black";
 
 // This is the main layout of the app
 /**
@@ -71,61 +75,62 @@ function TabsRouter() {
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
-          padding: 10,
+          padding: 2,
         },
+        tabBarShowLabel: false,
+        tabBarActiveTintColor,
+        tabBarInactiveTintColor,
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
-          title: "",
-          tabBarIcon: () => <AntDesign name="home" size={24} color={"blue"} />,
+          title: "Home",
+          tabBarIcon: (props) => <AntDesign name="home" {...props} />,
         }}
       />
       <Tabs.Screen
-        name="search/index"
+        name="search"
         options={{
-          href: "/search",
-          title: "",
-          tabBarIcon: () => (
-            <AntDesign name="search1" size={24} color="black" />
-          ),
+          title: "Search",
+          tabBarIcon: (props) => <AntDesign name="search1" {...props} />,
         }}
       />
       <Tabs.Screen
-        name="calendar/index"
+        name="calendar"
         options={{
-          href: "/calendar",
-          title: "",
-          tabBarIcon: () => (
-            <AntDesign name="calendar" size={24} color="black" />
-          ),
+          title: "Calendar",
+          tabBarIcon: (props) => <AntDesign name="calendar" {...props} />,
         }}
       />
       <Tabs.Screen
-        name="chat/index"
+        name="chat"
         options={{
-          href: "/chat",
-          title: "",
-          tabBarIcon: () => <AntDesign name="wechat" size={24} color="black" />,
+          title: "Chat",
+          tabBarIcon: (props) => <AntDesign name="wechat" {...props} />,
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
-          href: "/profile",
-          title: "",
+          title: "User Profile",
           tabBarIcon: () => (
-            <View className="bg-black flex h-8 w-8 items-center justify-center overflow-hidden rounded-full p-2">
-              <Image
-                source={{
-                  uri: user?.profileImageUrl,
-                  width: 32,
-                  height: 32,
-                }}
-              />
-            </View>
+            <Image
+              className="rounded-full"
+              source={{
+                uri: user?.profileImageUrl,
+                width: 32,
+                height: 32,
+              }}
+            />
           ),
+        }}
+      />
+      <Tabs.Screen
+        name="psych"
+        options={{
+          title: "Psych Profile",
+          href: null,
         }}
       />
     </Tabs>
@@ -133,18 +138,48 @@ function TabsRouter() {
 }
 
 function SignInScreen() {
-  const router = useRouter();
-  const { startOAuthFlow } = useOAuth({ strategy: "oauth_google" });
+  const { onApplePress, onGooglePress } = useAuthProviders();
 
-  const onSignInPress = React.useCallback(async () => {
+  return (
+    <View className="flex min-h-screen w-full items-center justify-center">
+      <LinearGradient
+        // Background Linear Gradient
+        className="absolute h-full w-full"
+        colors={["#74a7dd", "#2185EE"]}
+      />
+      <View className="flex w-full gap-y-4 px-4">
+        <TouchableOpacity onPress={onGooglePress} className="w-full">
+          <View className="bg-white border-black flex w-full flex-row items-center justify-center rounded-xl border-2 px-8 py-4 font-bold">
+            <Text className="mr-2 text-xl">Sign in</Text>
+            <FontAwesome size={24} name="google" />
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={onApplePress} className="w-full">
+          <View className="bg-white border-black flex w-full flex-row items-center justify-center rounded-xl border-2 px-8 py-4 font-bold">
+            <Text className="mr-2 text-xl">Sign in</Text>
+            <FontAwesome size={24} name="apple" />
+          </View>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+}
+
+function useAuthProviders() {
+  const { startOAuthFlow: googleOAuthFlow } = useOAuth({
+    strategy: "oauth_google",
+  });
+  const { startOAuthFlow: appleOAuthFlow } = useOAuth({
+    strategy: "oauth_apple",
+  });
+
+  const onGooglePress = React.useCallback(async () => {
     try {
-      const { createdSessionId, signIn, signUp, setActive } =
-        await startOAuthFlow();
+      const { createdSessionId, setActive } = await googleOAuthFlow();
       if (createdSessionId) {
         // @ts-expect-error
         setActive({ session: createdSessionId });
       } else {
-        // Modify this code to use signIn or signUp to set this missing requirements you set in your dashboard.
         throw new Error(
           "There are unmet requirements, modifiy this else to handle them",
         );
@@ -155,17 +190,25 @@ function SignInScreen() {
     }
   }, []);
 
-  const onSignUpPress = () => router.replace("SignUp");
+  const onApplePress = React.useCallback(async () => {
+    try {
+      const { createdSessionId, setActive } = await appleOAuthFlow();
+      if (createdSessionId) {
+        // @ts-expect-error
+        setActive({ session: createdSessionId });
+      } else {
+        throw new Error(
+          "There are unmet requirements, modifiy this else to handle them",
+        );
+      }
+    } catch (err) {
+      console.log(JSON.stringify(err, null, 2));
+      console.log("error signing in", err);
+    }
+  }, []);
 
-  return (
-    <View className="p-12">
-      <TouchableOpacity onPress={onSignInPress}>
-        <Text>Sign in</Text>
-      </TouchableOpacity>
-
-      <View>
-        <Text>Have an account?</Text>
-      </View>
-    </View>
-  );
+  return {
+    onGooglePress,
+    onApplePress,
+  };
 }

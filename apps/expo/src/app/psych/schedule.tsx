@@ -11,7 +11,7 @@ import {
 import { Link, useNavigation, useRouter, useSearchParams } from "expo-router";
 import { EvilIcons, MaterialIcons } from "@expo/vector-icons";
 
-import { LogoSvg } from "../../../../components/LogoSvg";
+import { LogoSvg } from "../../components/LogoSvg";
 
 export default function TherapistSchedule() {
   const navigation = useNavigation();

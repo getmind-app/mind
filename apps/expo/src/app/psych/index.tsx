@@ -1,26 +1,10 @@
-import {
-  Button,
-  Image,
-  ImageBackground,
-  SafeAreaView,
-  ScrollView,
-  Text,
-  View,
-} from "react-native";
-import {
-  Link,
-  Tabs,
-  useNavigation,
-  useRouter,
-  useSearchParams,
-} from "expo-router";
-import { AntDesign, EvilIcons, MaterialIcons } from "@expo/vector-icons";
+import { Image, SafeAreaView, ScrollView, Text, View } from "react-native";
+import { Link, usePathname, useSearchParams } from "expo-router";
+import { EvilIcons, MaterialIcons } from "@expo/vector-icons";
 
-import { LogoSvg } from "../../../components/LogoSvg";
+import { LogoSvg } from "../../components/LogoSvg";
 
 export default function TherapistProfile() {
-  const navigation = useNavigation();
-  const router = useRouter();
   const params = useSearchParams();
   const { id = 42 } = params;
 
@@ -33,6 +17,7 @@ export default function TherapistProfile() {
               <LogoSvg className="m-auto mb-2" />
             </View>
           </View>
+
           <View className="relative mb-24 rounded-2xl bg-[#F8F8F8] p-3  pt-14">
             <View className="p-1/2 absolute  -top-[72px] left-8 flex h-28 w-28 items-center justify-center overflow-hidden rounded-full">
               <Image

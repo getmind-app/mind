@@ -135,7 +135,7 @@ function NextMeetingCard() {
               <Link
                 className=" flex h-16 w-16 items-center justify-center"
                 href={{
-                  pathname: `/profile/psych`,
+                  pathname: `/psych`,
                   params: { id: nextScheduledTherapist },
                 }}
               />
