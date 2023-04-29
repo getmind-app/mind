@@ -1,11 +1,37 @@
 import React from "react";
-import { Image, ImageBackground, Text, View } from "react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { Tabs } from "expo-router";
+import Constants from "expo-constants";
+import { Tabs, useRouter } from "expo-router";
+import * as SecureStore from "expo-secure-store";
 import { StatusBar } from "expo-status-bar";
+import {
+  ClerkProvider,
+  SignedIn,
+  SignedOut,
+  useClerk,
+  useOAuth,
+} from "@clerk/clerk-expo";
 import { AntDesign } from "@expo/vector-icons";
 
 import { TRPCProvider } from "../utils/api";
+
+const tokenCache = {
+  getToken(key: string) {
+    try {
+      return SecureStore.getItemAsync(key);
+    } catch (err) {
+      return Promise.resolve(null);
+    }
+  },
+  saveToken(key: string, value: string) {
+    try {
+      return SecureStore.setItemAsync(key, value);
+    } catch (err) {
+      return Promise.resolve();
+    }
+  },
+};
 
 // This is the main layout of the app
 /**
@@ -15,82 +41,131 @@ import { TRPCProvider } from "../utils/api";
  */
 const RootLayout = () => {
   return (
-    <TRPCProvider>
-      <SafeAreaProvider>
-        {/*
-          The Stack component displays the current page.
-          It also allows you to configure your screens 
-        */}
-        <Tabs
-          screenOptions={{
-            headerShown: false,
-            tabBarStyle: {
-              padding: 10,
-            },
-          }}
-        >
-          <Tabs.Screen
-            name="index"
-            options={{
-              title: "",
-              tabBarIcon: () => (
-                <AntDesign name="home" size={24} color={"blue"} />
-              ),
-            }}
-          />
-          <Tabs.Screen
-            name="search/index"
-            options={{
-              href: "/search",
-              title: "",
-              tabBarIcon: () => (
-                <AntDesign name="search1" size={24} color="black" />
-              ),
-            }}
-          />
-          <Tabs.Screen
-            name="calendar/index"
-            options={{
-              href: "/calendar",
-              title: "",
-              tabBarIcon: () => (
-                <AntDesign name="calendar" size={24} color="black" />
-              ),
-            }}
-          />
-          <Tabs.Screen
-            name="chat/index"
-            options={{
-              href: "/chat",
-              title: "",
-              tabBarIcon: () => (
-                <AntDesign name="wechat" size={24} color="black" />
-              ),
-            }}
-          />
-          <Tabs.Screen
-            name="profile"
-            options={{
-              href: "/profile",
-              title: "",
-              tabBarIcon: () => (
-                <View className="bg-black flex h-8 w-8 items-center justify-center overflow-hidden rounded-full p-2">
-                  <Image
-                    source={{
-                      uri: "https://instagram.fbfh4-1.fna.fbcdn.net/v/t51.2885-19/279431092_363187039100213_6227785362765906586_n.jpg?stp=dst-jpg_s150x150&_nc_ht=instagram.fbfh4-1.fna.fbcdn.net&_nc_cat=105&_nc_ohc=3tCxG1dQWeQAX-XkQ2K&edm=ACWDqb8BAAAA&ccb=7-5&oh=00_AfAlqxgZh-LcwA3GfvIRh_qWnDnQ32zG2RQ_k2oYnX5PTw&oe=643D1051&_nc_sid=1527a3",
-                      width: 32,
-                      height: 32,
-                    }}
-                  />
-                </View>
-              ),
-            }}
-          />
-        </Tabs>
-        <StatusBar />
-      </SafeAreaProvider>
-    </TRPCProvider>
+    <ClerkProvider
+      publishableKey={
+        Constants.expoConfig?.extra?.CLERK_PUBLISHABLE_KEY as string
+      }
+      tokenCache={tokenCache}
+    >
+      <TRPCProvider>
+        <SafeAreaProvider>
+          <SignedIn>
+            <TabsRouter />
+          </SignedIn>
+          <SignedOut>
+            <SignInScreen />
+          </SignedOut>
+          <StatusBar />
+        </SafeAreaProvider>
+      </TRPCProvider>
+    </ClerkProvider>
   );
 };
 
 export default RootLayout;
+function TabsRouter() {
+  const { user } = useClerk();
+
+  return (
+    <Tabs
+      screenOptions={{
+        headerShown: false,
+        tabBarStyle: {
+          padding: 10,
+        },
+      }}
+    >
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: "",
+          tabBarIcon: () => <AntDesign name="home" size={24} color={"blue"} />,
+        }}
+      />
+      <Tabs.Screen
+        name="search/index"
+        options={{
+          href: "/search",
+          title: "",
+          tabBarIcon: () => (
+            <AntDesign name="search1" size={24} color="black" />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="calendar/index"
+        options={{
+          href: "/calendar",
+          title: "",
+          tabBarIcon: () => (
+            <AntDesign name="calendar" size={24} color="black" />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="chat/index"
+        options={{
+          href: "/chat",
+          title: "",
+          tabBarIcon: () => <AntDesign name="wechat" size={24} color="black" />,
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          href: "/profile",
+          title: "",
+          tabBarIcon: () => (
+            <View className="bg-black flex h-8 w-8 items-center justify-center overflow-hidden rounded-full p-2">
+              <Image
+                source={{
+                  uri: user?.profileImageUrl,
+                  width: 32,
+                  height: 32,
+                }}
+              />
+            </View>
+          ),
+        }}
+      />
+    </Tabs>
+  );
+}
+
+function SignInScreen() {
+  const router = useRouter();
+  const { startOAuthFlow } = useOAuth({ strategy: "oauth_google" });
+
+  const onSignInPress = React.useCallback(async () => {
+    try {
+      const { createdSessionId, signIn, signUp, setActive } =
+        await startOAuthFlow();
+      if (createdSessionId) {
+        // @ts-expect-error
+        setActive({ session: createdSessionId });
+      } else {
+        // Modify this code to use signIn or signUp to set this missing requirements you set in your dashboard.
+        throw new Error(
+          "There are unmet requirements, modifiy this else to handle them",
+        );
+      }
+    } catch (err) {
+      console.log(JSON.stringify(err, null, 2));
+      console.log("error signing in", err);
+    }
+  }, []);
+
+  const onSignUpPress = () => router.replace("SignUp");
+
+  return (
+    <View className="p-12">
+      <TouchableOpacity onPress={onSignInPress}>
+        <Text>Sign in</Text>
+      </TouchableOpacity>
+
+      <View>
+        <Text>Have an account?</Text>
+      </View>
+    </View>
+  );
+}
