@@ -28,6 +28,8 @@
     "prettier": "^2.8.7",
     "prettier-plugin-tailwindcss": "^0.2.6",
     "turbo": "^1.8.8",
-    "typescript": "^5.0.3"
+    "typescript": "^5.0.3",
+    "react-native-web": "~0.18.10",
+    "@expo/webpack-config": "^18.0.1"
   }
 }

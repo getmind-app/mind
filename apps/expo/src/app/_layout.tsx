@@ -145,7 +145,7 @@ function SignInScreen() {
       <LinearGradient
         // Background Linear Gradient
         className="absolute h-full w-full"
-        colors={["#74a7dd", "#2185EE"]}
+        colors={["#2185EE", "#22275F"]}
       />
       <View className="flex w-full gap-y-4 px-4">
         <TouchableOpacity onPress={onGooglePress} className="w-full">
