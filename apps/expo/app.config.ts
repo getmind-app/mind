@@ -19,7 +19,7 @@ const defineConfig = (): ExpoConfig => ({
   updates: {
     fallbackToCacheTimeout: 0,
   },
-  assetBundlePatterns: ["**/*"],
+  assetBundlePatterns: ["**/*", "assets/*"],
   ios: {
     supportsTablet: true,
     bundleIdentifier: "your.bundle.identifier",

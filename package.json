@@ -30,6 +30,7 @@
     "turbo": "^1.8.8",
     "typescript": "^5.0.3",
     "react-native-web": "~0.18.10",
-    "@expo/webpack-config": "^18.0.1"
+    "@expo/webpack-config": "^18.0.1",
+    "expo-asset": "~8.9.1"
   }
 }

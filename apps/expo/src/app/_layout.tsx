@@ -142,22 +142,29 @@ function SignInScreen() {
 
   return (
     <View className="flex min-h-screen w-full items-center justify-center">
-      <LinearGradient
-        // Background Linear Gradient
-        className="absolute h-full w-full"
-        colors={["#2185EE", "#22275F"]}
-      />
+      <Text className="text-3xl">Seja bem-vindo!</Text>
+      <Text className="text-gray-500 mb-12 mt-2">
+        Algum outro texto cool para acolher os users
+      </Text>
       <View className="flex w-full gap-y-4 px-4">
+        <View className="flex items-center justify-center">
+          <Image
+            alt=""
+            source={require("../../assets/login_mind.png")}
+            style={{ width: 250, height: 250 }}
+            resizeMode="contain"
+          />
+        </View>
         <TouchableOpacity onPress={onGooglePress} className="w-full">
-          <View className="bg-white border-black flex w-full flex-row items-center justify-center rounded-xl border-2 px-8 py-4 font-bold">
-            <Text className="mr-2 text-xl">Sign in</Text>
+          <View className="bg-white mt-8 flex w-full flex-row items-center justify-center rounded-xl px-8 py-4 font-bold shadow-sm">
             <FontAwesome size={24} name="google" />
+            <Text className="ml-2 text-xl">Acessar com Google</Text>
           </View>
         </TouchableOpacity>
         <TouchableOpacity onPress={onApplePress} className="w-full">
-          <View className="bg-white border-black flex w-full flex-row items-center justify-center rounded-xl border-2 px-8 py-4 font-bold">
-            <Text className="mr-2 text-xl">Sign in</Text>
+          <View className="bg-white shadow- flex w-full flex-row items-center justify-center rounded-xl px-8 py-4 font-bold shadow-sm">
             <FontAwesome size={24} name="apple" />
+            <Text className="ml-2 text-xl">Acessar com Apple</Text>
           </View>
         </TouchableOpacity>
       </View>
