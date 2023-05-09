@@ -158,13 +158,13 @@ function SignInScreen() {
         <TouchableOpacity onPress={onGooglePress} className="w-full">
           <View className="bg-white mt-8 flex w-full flex-row items-center justify-center rounded-xl px-8 py-4 font-bold shadow-sm">
             <FontAwesome size={24} name="google" />
-            <Text className="ml-2 text-xl">Acessar com Google</Text>
+            <Text className="ml-4 text-xl">Acessar com Google</Text>
           </View>
         </TouchableOpacity>
         <TouchableOpacity onPress={onApplePress} className="w-full">
-          <View className="bg-white shadow- flex w-full flex-row items-center justify-center rounded-xl px-8 py-4 font-bold shadow-sm">
+          <View className="bg-white flex w-full flex-row items-center justify-center rounded-xl px-8 py-4 font-bold shadow-sm">
             <FontAwesome size={24} name="apple" />
-            <Text className="ml-2 text-xl">Acessar com Apple</Text>
+            <Text className="ml-4 text-xl">Acessar com Apple</Text>
           </View>
         </TouchableOpacity>
       </View>
