@@ -133,7 +133,7 @@ export default function TherapistProfile() {
                 </Link>
                 <Link
                   className="text-white w-3/5 rounded-lg bg-[#2185EE] p-3 text-center text-lg"
-                  href={"/profile/psych/schedule"}
+                  href={"/psych/schedule"}
                 >
                   <Text>Schedule</Text>
                 </Link>

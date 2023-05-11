@@ -13,53 +13,41 @@ export default function CalendarScreen() {
         <View className="flex min-h-screen w-full gap-y-8 px-4">
           <Text className="fon px-4 text-3xl">Você é:</Text>
           <View className="items-center">
-            <TouchableOpacity onPress={null} className="w-full">
-              <View className="bg-white flex w-full flex-row items-center rounded-xl shadow-sm">
-                <View className="gap-y-2 px-4 py-12">
-                  <Text className="ml-4 text-2xl">Paciente</Text>
-                  <Text className="text-slate-500 ml-4 text-lg font-light">
-                    Buscando ajuda ou só{"\n"}alguém para conversar
-                  </Text>
+            <TouchableOpacity className="w-full">
+              <View className="bg-white flex w-full flex-row rounded-xl shadow-sm">
+                <View className="items-center">
+                  <View className="gap-y-2 px-4 py-10">
+                    <Text className="ml-4 text-2xl">Paciente</Text>
+                    <Text className="text-slate-500 ml-4 text-lg font-light">
+                      Buscando ajuda ou só{"\n"}alguém para conversar
+                    </Text>
+                  </View>
                 </View>
-                <View>
-                  <Image
-                    alt=""
-                    source={require("../../assets/paciente.png")}
-                    style={{
-                      width: 150,
-                      height: 150,
-                      position: "absolute",
-                      left: 10,
-                      top: -54,
-                    }}
-                    resizeMode="contain"
-                  />
-                </View>
+                <Image
+                  alt=""
+                  source={require("../../assets/profissional_2.png")}
+                  className="ml-1 mt-8 h-36 w-36"
+                  resizeMode="contain"
+                />
               </View>
             </TouchableOpacity>
           </View>
           <View className="items-center">
-            <TouchableOpacity onPress={null} className="w-full">
-              <View className="bg-white flex w-full flex-row items-center rounded-xl shadow-sm">
-                <View className="gap-y-2 px-4 py-12">
-                  <Text className="ml-4 text-2xl">Profissional</Text>
-                  <Text className="text-slate-500 ml-4 text-lg font-light">
-                    Quer atender mais e{"\n"}conhecer novas pessoas
-                  </Text>
-                </View>
-                <View>
-                  <Image
-                    alt=""
-                    source={require("../../assets/profissional.png")}
-                    style={{
-                      width: 180,
-                      height: 180,
-                      position: "absolute",
-                      left: -27,
-                      top: -84,
-                    }}
-                    resizeMode="contain"
-                  />
+            <TouchableOpacity className="w-full">
+              <View className="bg-white flex w-full flex-row rounded-xl shadow-sm">
+                <Image
+                  alt=""
+                  source={require("../../assets/paciente.png")}
+                  className="ml-9 mt-8 h-36 w-36"
+                  resizeMode="contain"
+                />
+                <View className="items-center">
+                  <View className="gap-y-2 px-4 py-10">
+                    <Text className="ml-4 text-2xl">Profissional</Text>
+                    <Text className="text-slate-500 ml-4 text-lg font-light">
+                      Conheça e atenda{"\n"}novos pacientes
+                    </Text>
+                  </View>
                 </View>
               </View>
             </TouchableOpacity>

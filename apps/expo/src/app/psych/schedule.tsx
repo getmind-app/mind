@@ -28,11 +28,7 @@ export default function TherapistSchedule() {
 
   return (
     <SafeAreaView className="bg-[#FFF] px-4 pt-8">
-      <ScrollView
-        className="min-h-screen"
-        showsVerticalScrollIndicator={false}
-        overScrollMode="never"
-      >
+      <ScrollView>
         {/* TODO: remover esses margins */}
         <View className=" -mb-4 mt-2  flex flex-row items-center justify-end px-4">
           <View>
@@ -72,7 +68,7 @@ export default function TherapistSchedule() {
             disabled={!allPicked}
             onPress={() => {
               // @ts-expect-error dont know why it doesnt work
-              navigation.navigate(`psych/payment/index`, {
+              navigation.navigate(`psych/payment`, {
                 hour: selectedHour,
                 date: `04/${selectedDate}`,
                 mode: selectedMode,
