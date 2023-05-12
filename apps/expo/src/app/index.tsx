@@ -1,99 +1,17 @@
 import React, { useState } from "react";
 import {
-  Button,
   Image,
   ImageBackground,
   SafeAreaView,
   ScrollView,
   Text,
-  TextInput,
-  TouchableOpacity,
   View,
 } from "react-native";
-import { Link, useRouter } from "expo-router";
+import { Link } from "expo-router";
 import { AntDesign } from "@expo/vector-icons";
 
 import { GradientText } from "../components/GradientText";
 import { LogoSvg } from "../components/LogoSvg";
-import { api, type RouterOutputs } from "../utils/api";
-
-const PostCard: React.FC<{
-  post: RouterOutputs["post"]["all"][number];
-  onDelete: () => void;
-}> = ({ post, onDelete }) => {
-  const router = useRouter();
-
-  return (
-    <View className="bg-white/10 flex flex-row rounded-lg p-4">
-      <View className="flex-grow">
-        <TouchableOpacity onPress={() => router.push(`/post/${post.id}`)}>
-          <Text className="text-pink-400 text-xl font-semibold">
-            {post.title}
-          </Text>
-          <Text className="text-white mt-2">{post.content}</Text>
-        </TouchableOpacity>
-      </View>
-      <TouchableOpacity onPress={onDelete}>
-        <Text className="text-pink-400 font-bold uppercase">Delete</Text>
-      </TouchableOpacity>
-    </View>
-  );
-};
-
-const CreatePost: React.FC = () => {
-  const utils = api.useContext();
-
-  const [title, setTitle] = React.useState("");
-  const [content, setContent] = React.useState("");
-
-  const { mutate, error } = api.post.create.useMutation({
-    async onSuccess() {
-      setTitle("");
-      setContent("");
-      await utils.post.all.invalidate();
-    },
-  });
-
-  return (
-    <View className="mt-4">
-      <TextInput
-        className="bg-white/10 text-white mb-2 rounded p-2"
-        placeholderTextColor="rgba(255, 255, 255, 0.5)"
-        value={title}
-        onChangeText={setTitle}
-        placeholder="Title"
-      />
-      {error?.data?.zodError?.fieldErrors.title && (
-        <Text className="text-red-500 mb-2">
-          {error.data.zodError.fieldErrors.title}
-        </Text>
-      )}
-      <TextInput
-        className="bg-white/10 text-white mb-2 rounded p-2"
-        placeholderTextColor="rgba(255, 255, 255, 0.5)"
-        value={content}
-        onChangeText={setContent}
-        placeholder="Content"
-      />
-      {error?.data?.zodError?.fieldErrors.content && (
-        <Text className="text-red-500 mb-2">
-          {error.data.zodError.fieldErrors.content}
-        </Text>
-      )}
-      <TouchableOpacity
-        className="bg-pink-400 rounded p-2"
-        onPress={() => {
-          mutate({
-            title,
-            content,
-          });
-        }}
-      >
-        <Text className="text-white font-semibold">Publish post</Text>
-      </TouchableOpacity>
-    </View>
-  );
-};
 
 function NextMeetingCard() {
   const [nextScheduledTherapist, setNextScheduledTherapist] = useState("1");
@@ -161,15 +79,7 @@ function LastNotesCard() {
   );
 }
 
-const Index = () => {
-  const utils = api.useContext();
-
-  const postQuery = api.post.all.useQuery();
-
-  const deletePostMutation = api.post.delete.useMutation({
-    onSettled: () => utils.post.all.invalidate(),
-  });
-
+export default function Index() {
   return (
     <SafeAreaView className="min-h-screen bg-[#FFF] px-4 pt-8">
       <ScrollView className="min-h-max" showsVerticalScrollIndicator={false}>
@@ -191,7 +101,7 @@ const Index = () => {
       </ScrollView>
     </SafeAreaView>
   );
-};
+}
 
 function SingleNote() {
   return (
@@ -213,5 +123,3 @@ function SingleNote() {
     </View>
   );
 }
-
-export default Index;

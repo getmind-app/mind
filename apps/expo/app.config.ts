@@ -1,7 +1,7 @@
 import type { ExpoConfig } from "@expo/config";
 
 const CLERK_PUBLISHABLE_KEY =
-  "pk_test_ZW5qb3llZC1tYWtvLTM2LmNsZXJrLmFjY291bnRzLmRldiQ";
+  "pk_test_ZmFtb3VzLWh5ZW5hLTU1LmNsZXJrLmFjY291bnRzLmRldiQ";
 
 const defineConfig = (): ExpoConfig => ({
   name: "expo",
