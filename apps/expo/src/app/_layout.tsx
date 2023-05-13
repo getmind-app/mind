@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import {
   Image,
   SafeAreaView,
@@ -10,7 +10,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import Constants from "expo-constants";
 import { useFonts } from "expo-font";
 import { LinearGradient } from "expo-linear-gradient";
-import { SplashScreen, Tabs, useRouter } from "expo-router";
+import { SplashScreen, Tabs, usePathname, useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { StatusBar } from "expo-status-bar";
 import {
@@ -65,13 +65,15 @@ const RootLayout = () => {
     >
       <TRPCProvider>
         <SafeAreaProvider>
-          <SignedIn>
-            <TabsRouter />
-          </SignedIn>
-          <SignedOut>
-            <SignInScreen />
-          </SignedOut>
-          <StatusBar />
+          <>
+            <SignedIn>
+              <TabsRouter />
+            </SignedIn>
+            <SignedOut>
+              <SignInScreen />
+            </SignedOut>
+            <StatusBar />
+          </>
         </SafeAreaProvider>
       </TRPCProvider>
     </ClerkProvider>
@@ -81,6 +83,13 @@ const RootLayout = () => {
 export default RootLayout;
 function TabsRouter() {
   const { user } = useClerk();
+  const router = useRouter();
+  const path = usePathname();
+  useEffect(() => {
+    if (!user?.publicMetadata?.role) {
+      router.push("/choose-role");
+    }
+  }, [user]);
 
   return (
     <Tabs
@@ -88,6 +97,7 @@ function TabsRouter() {
         headerShown: false,
         tabBarStyle: {
           padding: 2,
+          height: path === "/choose-role" ? 0 : 56,
         },
         tabBarShowLabel: false,
         tabBarActiveTintColor,
@@ -126,22 +136,30 @@ function TabsRouter() {
         name="profile"
         options={{
           title: "User Profile",
-          tabBarIcon: () => (
-            <Image
-              className="rounded-full"
-              source={{
-                uri: user?.profileImageUrl,
-                width: 32,
-                height: 32,
-              }}
-            />
-          ),
+          tabBarIcon: () =>
+            path === "/choose-role" ? null : (
+              <Image
+                className="rounded-full"
+                source={{
+                  uri: user?.profileImageUrl,
+                  width: 32,
+                  height: 32,
+                }}
+              />
+            ),
         }}
       />
       <Tabs.Screen
         name="psych"
         options={{
           title: "Psych Profile",
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="choose-role"
+        options={{
+          title: "Choose role",
           href: null,
         }}
       />
@@ -198,7 +216,6 @@ function useAuthProviders() {
     try {
       const { createdSessionId, setActive } = await googleOAuthFlow();
       if (createdSessionId) {
-        // @ts-expect-error
         setActive({ session: createdSessionId });
       } else {
         throw new Error(
