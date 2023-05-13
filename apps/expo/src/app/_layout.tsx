@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import {
   Image,
   SafeAreaView,
@@ -8,8 +8,9 @@ import {
 } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import Constants from "expo-constants";
+import { useFonts } from "expo-font";
 import { LinearGradient } from "expo-linear-gradient";
-import { Tabs, useRouter } from "expo-router";
+import { SplashScreen, Tabs, useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { StatusBar } from "expo-status-bar";
 import {
@@ -50,6 +51,11 @@ const tabBarInactiveTintColor = "black";
  * @return {*}
  */
 const RootLayout = () => {
+  // Carrega as fontes
+  const [fontsLoaded] = useFonts({
+    "Nunito-Sans": require("../../assets/fonts/NunitoSans-Regular.ttf"),
+  });
+
   return (
     <ClerkProvider
       publishableKey={
@@ -148,7 +154,9 @@ function SignInScreen() {
 
   return (
     <View className="flex min-h-screen w-full items-center justify-center">
-      <Text className="text-3xl">Seja bem-vindo!</Text>
+      <Text className="text-3xl" style={{ fontFamily: "Nunito-Sans" }}>
+        Seja bem-vindo!
+      </Text>
       <Text className="text-gray-500 mb-12 mt-2">
         Algum outro texto cool para acolher os users
       </Text>

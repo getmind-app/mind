@@ -178,9 +178,6 @@ const Index = () => {
             <View className="mb-2">
               <Text className="text-2xl leading-8">Next session</Text>
             </View>
-            <View>
-              <LogoSvg className="m-auto" />
-            </View>
           </View>
           <NextMeetingCard />
           <View className="mb-2 mt-5 px-4">
