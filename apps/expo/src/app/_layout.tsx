@@ -51,9 +51,11 @@ const tabBarInactiveTintColor = "black";
  * @return {*}
  */
 const RootLayout = () => {
+  // TODO: Imagino que essa não seja a melhor forma de usar fontes...
   // Carrega as fontes
   const [fontsLoaded] = useFonts({
     "Nunito-Sans": require("../../assets/fonts/NunitoSans-Regular.ttf"),
+    "Nunito-Sans-Bold": require("../../assets/fonts/NunitoSans-Bold.ttf"),
   });
 
   return (
@@ -85,6 +87,8 @@ function TabsRouter() {
   const { user } = useClerk();
   const router = useRouter();
   const path = usePathname();
+
+  // Se user não escolheu role, vai para tela de escolha
   useEffect(() => {
     if (!user?.publicMetadata?.role) {
       router.push("/choose-role");
@@ -97,7 +101,7 @@ function TabsRouter() {
         headerShown: false,
         tabBarStyle: {
           padding: 2,
-          height: path === "/choose-role" ? 0 : 56,
+          height: path === "/choose-role" ? 0 : 56, // kkkkkkkkkkkkkk
         },
         tabBarShowLabel: false,
         tabBarActiveTintColor,

@@ -2,13 +2,16 @@ import React, { useState } from "react";
 import {
   Image,
   ImageBackground,
+  Linking,
   SafeAreaView,
   ScrollView,
   Text,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
   View,
 } from "react-native";
 import { Link } from "expo-router";
-import { AntDesign } from "@expo/vector-icons";
+import { AntDesign, FontAwesome } from "@expo/vector-icons";
 
 import { GradientText } from "../components/GradientText";
 import { LogoSvg } from "../components/LogoSvg";
@@ -17,32 +20,26 @@ function NextMeetingCard() {
   const [nextScheduledTherapist, setNextScheduledTherapist] = useState("1");
 
   return (
-    <View className="relative rounded-2xl bg-[#F8F8F8] px-3 pb-3 pt-8">
-      <View className="absolute -top-6 left-4 z-40 flex items-center justify-center  rounded-full bg-[#2185EE]">
-        <Text className="text-white h-12 w-12 p-2 text-center text-2xl font-bold">
-          24
+    <View className="bg-white mx-4 mt-4 rounded-xl shadow-sm">
+      <View className="px-8 pt-8">
+        <View className="flex w-full flex-row">
+          <Text className="text-xl" style={{ fontFamily: "Nunito-Sans" }}>
+            Monday, 04/16
+          </Text>
+          <Text
+            className="text-blue-500 order-last ml-auto text-xl"
+            style={{ fontFamily: "Nunito-Sans-Bold" }}
+          >
+            8:30
+          </Text>
+        </View>
+        <Text
+          className="text-slate-500 text-sm"
+          style={{ fontFamily: "Nunito-Sans" }}
+        >
+          via Google Meet
         </Text>
-      </View>
-      <View>
-        <View className="ml-2">
-          <Text className="text-2xl">Monday, 14:00</Text>
-          <Text className="text-gray-500 text-sm underline">
-            335 Pioneer Way
-          </Text>
-        </View>
-        <View className="mt-3 flex max-h-36 items-center justify-center overflow-hidden rounded-lg bg-[#EBEBEB] p-2">
-          <Image
-            source={{
-              uri: "https://t3.ftcdn.net/jpg/03/96/88/32/360_F_396883284_1APy4O6kZumSUDLE33VgJ3ADdMYt39Bv.jpg",
-              width: 540,
-              height: 360,
-            }}
-          />
-        </View>
-        <View className="mt-3 flex flex-row justify-between rounded-lg bg-[#EBEBEB] p-4">
-          <Text className="w-4/5 text-xs">
-            I await you for one more step in the search for self-knowledge!
-          </Text>
+        <View className="mt-4 flex w-full flex-row items-center align-middle">
           <View className="flex max-h-[32px] max-w-[32px] items-center justify-center overflow-hidden rounded-full align-middle">
             <ImageBackground
               source={{
@@ -59,15 +56,36 @@ function NextMeetingCard() {
               />
             </ImageBackground>
           </View>
+          <Text className="ml-2 text-xl" style={{ fontFamily: "Nunito-Sans" }}>
+            John Williams{" "}
+          </Text>
+          <FontAwesome
+            style={{ marginLeft: "auto" }}
+            size={20}
+            name="arrow-down"
+          />
         </View>
       </View>
+      <TouchableOpacity
+        onPress={() => Linking.openURL("https://meet.google.com/xcc-pqgk-gxx")}
+      >
+        <View className="bg-blue-500 mt-6 flex w-full flex-row items-center justify-center rounded-bl-xl rounded-br-xl py-3 align-middle">
+          <FontAwesome size={20} color="white" name="video-camera" />
+          <Text
+            style={{ fontFamily: "Nunito-Sans-Bold" }}
+            className="text-white ml-4 text-lg"
+          >
+            Join the meeting
+          </Text>
+        </View>
+      </TouchableOpacity>
     </View>
   );
 }
 
 function LastNotesCard() {
   return (
-    <View className="relative rounded-2xl bg-[#F8F8F8] p-3 ">
+    <View className="relative mt-4 rounded-2xl bg-[#F8F8F8] p-3">
       <View>
         <SingleNote />
         <SingleNote />
@@ -84,14 +102,22 @@ export default function Index() {
     <SafeAreaView className="min-h-screen bg-[#FFF] px-4 pt-8">
       <ScrollView className="min-h-max" showsVerticalScrollIndicator={false}>
         <View className="h-full py-2">
-          <View className="mb-6 flex flex-row items-center justify-between px-4">
-            <View className="mb-2">
-              <Text className="text-2xl leading-8">Next session</Text>
-            </View>
+          <View className="flex flex-row items-center justify-between px-4">
+            <Text
+              className="mt-12 text-4xl"
+              style={{ fontFamily: "Nunito-Sans-Bold" }}
+            >
+              Next session
+            </Text>
           </View>
           <NextMeetingCard />
-          <View className="mb-2 mt-5 px-4">
-            <Text className="text-2xl leading-8">Recent notes</Text>
+          <View className="px-4">
+            <Text
+              className="mt-8 text-4xl"
+              style={{ fontFamily: "Nunito-Sans-Bold" }}
+            >
+              Last notes
+            </Text>
           </View>
           <LastNotesCard />
         </View>
