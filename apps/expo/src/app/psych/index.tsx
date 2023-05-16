@@ -24,7 +24,7 @@ export default function TherapistProfile() {
   };
 
   return (
-    <SafeAreaView className="bg-[#FFF] pt-8">
+    <SafeAreaView className="min-h-screen bg-[#FFF] pt-8">
       <ScrollView showsVerticalScrollIndicator={false}>
         <View className="flex flex-col items-center justify-center px-4">
           <View className="flex flex-row items-center justify-center overflow-hidden rounded-full pt-8 align-middle">
@@ -129,9 +129,9 @@ function AboutMe() {
           </View>
           <Pressable onPress={toggleAboutMe}>
             {aboutMeOpen ? (
-              <MaterialIcons color="black" size={20} name="arrow-drop-up" />
+              <MaterialIcons color="black" size={28} name="arrow-drop-up" />
             ) : (
-              <MaterialIcons color="black" size={20} name="arrow-drop-down" />
+              <MaterialIcons color="black" size={28} name="arrow-drop-down" />
             )}
           </Pressable>
         </View>
@@ -174,9 +174,9 @@ function Education() {
           </View>
           <Pressable onPress={toggleEducation}>
             {educationOpen ? (
-              <MaterialIcons color="black" size={20} name="arrow-drop-up" />
+              <MaterialIcons color="black" size={28} name="arrow-drop-up" />
             ) : (
-              <MaterialIcons color="black" size={20} name="arrow-drop-down" />
+              <MaterialIcons color="black" size={28} name="arrow-drop-down" />
             )}
           </Pressable>
         </View>
@@ -220,9 +220,9 @@ function Methodologies() {
           </View>
           <Pressable onPress={toggleMethodologies}>
             {methodologiesOpen ? (
-              <MaterialIcons color="black" size={20} name="arrow-drop-up" />
+              <MaterialIcons color="black" size={28} name="arrow-drop-up" />
             ) : (
-              <MaterialIcons color="black" size={20} name="arrow-drop-down" />
+              <MaterialIcons color="black" size={28} name="arrow-drop-down" />
             )}
           </Pressable>
         </View>
