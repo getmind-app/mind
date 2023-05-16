@@ -10,7 +10,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import { AntDesign, FontAwesome, MaterialIcons } from "@expo/vector-icons";
 
 import { GradientText } from "../components/GradientText";
@@ -21,7 +21,7 @@ function NextMeetingCard() {
 
   return (
     <View className="bg-white mx-4 mt-4 rounded-xl shadow-sm">
-      <View className="px-8 pt-8">
+      <View className="px-6 pt-6">
         <View className="flex w-full flex-row">
           <Text className="text-xl" style={{ fontFamily: "Nunito-Sans" }}>
             Monday, 04/16
@@ -89,14 +89,75 @@ function NextMeetingCard() {
   );
 }
 
-function LastNotesCard() {
+function LastNotes() {
+  const router = useRouter();
+
+  const notes = () => {
+    router.push("/chat");
+  };
+
   return (
-    <View className="relative mt-4 rounded-2xl bg-[#F8F8F8] p-3">
-      <View>
-        <SingleNote />
-        <SingleNote />
-        <View className="flex flex-row justify-center">
-          <Text className="text-gray-500 text-sm underline">Ver notas</Text>
+    <View>
+      <View className="bg-white mx-4 mt-4 rounded-xl shadow-sm">
+        <View className="flex w-full flex-row items-center justify-between px-6 py-4 align-middle">
+          <View className="flex w-72 flex-col">
+            <View className="flex flex-row">
+              <Text
+                className="text-blue-500 text-xl"
+                style={{ fontFamily: "Nunito-Sans-Bold" }}
+              >
+                5
+              </Text>
+              <Text className="text-xl" style={{ fontFamily: "Nunito-Sans" }}>
+                , May
+              </Text>
+            </View>
+            <Text
+              className="mt-2 text-base"
+              style={{ fontFamily: "Nunito-Sans" }}
+            >
+              I feel very pressured with all the demands of work and family
+              life. I become...
+            </Text>
+          </View>
+          <TouchableOpacity className="mr-2" onPress={notes}>
+            <View className="bg-blue-500 rounded-full">
+              <View className="items-center">
+                <MaterialIcons size={32} name="arrow-right" color="white" />
+              </View>
+            </View>
+          </TouchableOpacity>
+        </View>
+      </View>
+      <View className="bg-white mx-4 mt-4 rounded-xl shadow-sm">
+        <View className="flex w-full flex-row items-center justify-between px-6 py-4 align-middle">
+          <View className="flex w-72 flex-col">
+            <View className="flex flex-row">
+              <Text
+                className="text-blue-500 text-xl"
+                style={{ fontFamily: "Nunito-Sans-Bold" }}
+              >
+                12
+              </Text>
+              <Text className="text-xl" style={{ fontFamily: "Nunito-Sans" }}>
+                , April
+              </Text>
+            </View>
+            <Text
+              className="mt-2 text-base"
+              style={{ fontFamily: "Nunito-Sans" }}
+            >
+              I feel very pressured with all the demands of work and family
+              life. I become...
+            </Text>
+          </View>
+          <TouchableOpacity className="mr-2" onPress={notes}>
+            <View className="bg-blue-500 rounded-full">
+              <View className="items-center">
+                <MaterialIcons size={32} name="arrow-right" color="white" />
+              </View>
+            </View>
+          </TouchableOpacity>
         </View>
       </View>
     </View>
@@ -105,7 +166,7 @@ function LastNotesCard() {
 
 export default function Index() {
   return (
-    <SafeAreaView className="min-h-screen bg-[#FFF] px-4 pt-8">
+    <SafeAreaView className="min-h-screen bg-[#FAFAFA] px-4 pt-8">
       <ScrollView className="min-h-max" showsVerticalScrollIndicator={false}>
         <View className="h-full py-2">
           <View className="flex flex-row items-center justify-between px-4">
@@ -125,30 +186,9 @@ export default function Index() {
               Last notes
             </Text>
           </View>
-          <LastNotesCard />
+          <LastNotes />
         </View>
       </ScrollView>
     </SafeAreaView>
-  );
-}
-
-function SingleNote() {
-  return (
-    <View className="mb-2">
-      <View className="flex flex-row items-center justify-start text-sm ">
-        <GradientText>16th</GradientText>
-        <View className="my-auto">
-          <Text> February 2023</Text>
-        </View>
-      </View>
-      <View className="flex flex-row items-center justify-evenly rounded-lg bg-[#EBEBEB] px-2 py-4">
-        <Text className="text-2xl">😀</Text>
-        <Text className="mx-auto w-full max-w-[75%] text-xs">
-          I feel very pressured with all the demands of work and family life. I
-          become...
-        </Text>
-        <AntDesign name="right" />
-      </View>
-    </View>
   );
 }
