@@ -7,7 +7,7 @@ export default function PsychLayout() {
         name="index"
         options={{
           title: "Psych Profile",
-          headerShown: true,
+          headerShown: false,
         }}
       />
     </Stack>

@@ -11,7 +11,7 @@ import {
   View,
 } from "react-native";
 import { Link } from "expo-router";
-import { AntDesign, FontAwesome } from "@expo/vector-icons";
+import { AntDesign, FontAwesome, MaterialIcons } from "@expo/vector-icons";
 
 import { GradientText } from "../components/GradientText";
 import { LogoSvg } from "../components/LogoSvg";
@@ -39,30 +39,36 @@ function NextMeetingCard() {
         >
           via Google Meet
         </Text>
-        <View className="mt-4 flex w-full flex-row items-center align-middle">
-          <View className="flex max-h-[32px] max-w-[32px] items-center justify-center overflow-hidden rounded-full align-middle">
-            <ImageBackground
-              source={{
-                uri: "https://images.pexels.com/photos/4098353/pexels-photo-4098353.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-              }}
-              resizeMode="contain"
-            >
-              <Link
-                className=" flex h-16 w-16 items-center justify-center"
-                href={{
-                  pathname: `/psych`,
-                  params: { id: nextScheduledTherapist },
+        <View className="mt-4 flex w-full flex-row items-center justify-between align-middle">
+          <View className="flex flex-row items-center align-middle">
+            <View className="flex max-h-[32px] max-w-[32px] items-center justify-center overflow-hidden rounded-full align-middle">
+              <ImageBackground
+                source={{
+                  uri: "https://images.pexels.com/photos/4098353/pexels-photo-4098353.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
                 }}
-              />
-            </ImageBackground>
+                resizeMode="contain"
+              >
+                <Link
+                  className=" flex h-16 w-16 items-center justify-center"
+                  href={{
+                    pathname: `/psych`,
+                    params: { id: nextScheduledTherapist },
+                  }}
+                />
+              </ImageBackground>
+            </View>
+            <Text
+              className="ml-2 text-xl"
+              style={{ fontFamily: "Nunito-Sans" }}
+            >
+              John Williams{" "}
+            </Text>
           </View>
-          <Text className="ml-2 text-xl" style={{ fontFamily: "Nunito-Sans" }}>
-            John Williams{" "}
-          </Text>
-          <FontAwesome
-            style={{ marginLeft: "auto" }}
-            size={20}
-            name="arrow-down"
+          <MaterialIcons
+            style={{ paddingRight: 8 }}
+            color="black"
+            size={24}
+            name="add"
           />
         </View>
       </View>

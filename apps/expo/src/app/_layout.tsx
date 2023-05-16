@@ -177,10 +177,13 @@ function SignInScreen() {
   return (
     <View className="flex min-h-screen w-full items-center justify-center">
       <Text className="text-3xl" style={{ fontFamily: "Nunito-Sans" }}>
-        Seja bem-vindo!
+        Welcome back!
       </Text>
-      <Text className="text-gray-500 mb-12 mt-2">
-        Algum outro texto cool para acolher os users
+      <Text
+        className="text-gray-500 mb-12 mt-2 text-base"
+        style={{ fontFamily: "Nunito-Sans" }}
+      >
+        Simply schedule and pay for your sessions.
       </Text>
       <View className="flex w-full gap-y-4 px-4">
         <View className="flex items-center justify-center">
@@ -194,13 +197,13 @@ function SignInScreen() {
         <TouchableOpacity onPress={onGooglePress} className="w-full">
           <View className="bg-white mt-8 flex w-full flex-row items-center justify-center rounded-xl px-8 py-4 font-bold shadow-sm">
             <FontAwesome size={24} name="google" />
-            <Text className="ml-4 text-xl">Acessar com Google</Text>
+            <Text className="ml-4 text-xl">Sign in with Google</Text>
           </View>
         </TouchableOpacity>
         <TouchableOpacity onPress={onApplePress} className="w-full">
           <View className="bg-white flex w-full flex-row items-center justify-center rounded-xl px-8 py-4 font-bold shadow-sm">
             <FontAwesome size={24} name="apple" />
-            <Text className="ml-4 text-xl">Acessar com Apple</Text>
+            <Text className="ml-4 text-xl">Sign in with Apple</Text>
           </View>
         </TouchableOpacity>
       </View>

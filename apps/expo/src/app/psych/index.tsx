@@ -1,147 +1,254 @@
-import { Image, SafeAreaView, ScrollView, Text, View } from "react-native";
-import { Link, usePathname, useSearchParams } from "expo-router";
-import { EvilIcons, MaterialIcons } from "@expo/vector-icons";
-
-import { LogoSvg } from "../../components/LogoSvg";
+import { useState } from "react";
+import {
+  Image,
+  LayoutAnimation,
+  Pressable,
+  SafeAreaView,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { useRouter } from "expo-router";
+import { MaterialIcons } from "@expo/vector-icons";
 
 export default function TherapistProfile() {
-  const params = useSearchParams();
-  const { id = 42 } = params;
+  const router = useRouter();
+
+  const schedule = () => {
+    router.push("/psych/schedule");
+  };
+
+  const chat = () => {
+    router.push("/chat");
+  };
 
   return (
-    <SafeAreaView className="bg-[#FFF] px-4 pt-8">
+    <SafeAreaView className="bg-[#FFF] pt-8">
       <ScrollView className="min-h-screen" showsVerticalScrollIndicator={false}>
-        <View className="h-full py-2">
-          <View className="mb-8 flex flex-row  items-center justify-end px-4">
-            <View>
-              <LogoSvg className="m-auto mb-2" />
-            </View>
+        <View className="flex flex-col items-center justify-center px-4">
+          <View className="flex flex-row items-center justify-center overflow-hidden rounded-full pt-8 align-middle">
+            <Image
+              className="rounded-full"
+              alt="John Michael Williams"
+              source={{
+                uri: "https://images.pexels.com/photos/4098353/pexels-photo-4098353.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+                width: 126,
+                height: 126,
+              }}
+            />
           </View>
-
-          <View className="relative mb-24 rounded-2xl bg-[#F8F8F8] p-3  pt-14">
-            <View className="p-1/2 absolute  -top-[72px] left-8 flex h-28 w-28 items-center justify-center overflow-hidden rounded-full">
-              <Image
-                source={{
-                  uri: "https://images.pexels.com/photos/4098353/pexels-photo-4098353.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-                  width: 126,
-                  height: 126,
-                }}
-              />
-            </View>
-            <View className="pl-2">
-              <Text className="mb-2 text-2xl font-bold">
-                John Michael Williams
-              </Text>
-
-              <View className="mb-2 flex flex-row justify-between">
-                <View className="flex w-1/2 flex-row items-center">
-                  <EvilIcons color={"#666666"} size={20} name="location" />
-                  <Text className="ml-2 text-[#666666]">
-                    Palo Alto, California
-                  </Text>
-                </View>
-                <View className="flex w-1/2 flex-row items-center">
-                  <MaterialIcons color={"#666666"} size={20} name="wifi" />
-                  <Text className="ml-2 text-[#666666]">Online</Text>
-                </View>
-              </View>
-              <View className="flex flex-row justify-between">
-                <View className="flex w-1/2 flex-row items-center">
-                  <MaterialIcons
-                    color={"#666666"}
-                    size={20}
-                    name="attach-money"
-                  />
-                  <Text className="ml-2 text-[#666666]">80,00</Text>
-                </View>
-
-                <View className="flex w-1/2 flex-row items-center">
-                  <MaterialIcons color={"#666666"} size={20} name="home" />
-                  <Text className="ml-2 text-[#666666]">In-person</Text>
-                </View>
-              </View>
-              <View className="mt-3">
-                <View>
-                  <Text className="text-2xl">About me</Text>
-                </View>
-                <View className="mt-3 flex flex-row items-center justify-evenly rounded-lg bg-[#EBEBEB] px-2 py-4">
-                  <Text className="ml-2 text-lg">🗣️</Text>
-                  <Text className="ml-4 mr-auto w-full max-w-[75%] text-xs">
-                    I really enjoy helping people find peace of mind. I believe
-                    I was born with a mission to assist everyone who seeks
-                    self-awareness and personal growth.
-                  </Text>
-                </View>
-              </View>
-              <View className="mt-3">
-                <View>
-                  <Text className="text-2xl">Education</Text>
-                </View>
-                <View className="mt-3 flex flex-row items-center justify-evenly rounded-lg bg-[#EBEBEB] px-2 py-4">
-                  <Text className="ml-2 text-lg">🎓</Text>
-                  <View className="ml-4 mr-auto w-full max-w-[75%]">
-                    <Text className="text-xs">
-                      Bachelor's Degree in Psychology - Federal University of
-                      Paraná (PR)
-                    </Text>
-                    <Text className="text-xs">
-                      Postgraduate degree in Life Therapy - University of São
-                      Paulo (SP)
-                    </Text>
-                  </View>
-                </View>
-              </View>
-              <View className="mt-5">
-                <View className="mb-3">
-                  <Text className="text-2xl">Methodologies</Text>
-                </View>
-                <View className="mt-3 flex flex-row flex-wrap items-center gap-2">
-                  <View className="flex flex-row items-center justify-between rounded-full bg-[#2185EE] px-4 py-1 pr-2">
-                    <Text className="text-white">Behaviorism</Text>
-                    <View className="bg-white ml-3 flex h-6 w-6 items-center justify-center rounded-full">
-                      <Text className="text-sm font-bold text-[#74a7dd]">
-                        ?
-                      </Text>
-                    </View>
-                  </View>
-                  <View className="flex flex-row items-center justify-between rounded-full bg-[#2185EE] px-4 py-1 pr-2">
-                    <Text className="text-white">Bioenergetic</Text>
-                    <View className="bg-white ml-3 flex h-6 w-6 items-center justify-center rounded-full">
-                      <Text className="text-sm font-bold text-[#74a7dd]">
-                        ?
-                      </Text>
-                    </View>
-                  </View>
-                  <View className="flex flex-row items-center justify-between rounded-full bg-[#2185EE] px-4 py-1 pr-2">
-                    <Text className="text-white">
-                      Cognitive Behavioral Therapy
-                    </Text>
-                    <View className="bg-white ml-3 flex h-6 w-6 items-center justify-center rounded-full">
-                      <Text className="text-sm font-bold text-[#74a7dd]">
-                        ?
-                      </Text>
-                    </View>
-                  </View>
-                </View>
-              </View>
-              <View className="mt-6 flex flex-row justify-between">
-                <Link
-                  className="w-1/3 rounded-lg bg-[#EBEBEB] p-3 text-center text-lg"
-                  href={"/chat"}
-                >
-                  <Text>Chat</Text>
-                </Link>
-                <Link
-                  className="text-white w-3/5 rounded-lg bg-[#2185EE] p-3 text-center text-lg"
-                  href={"/psych/schedule"}
-                >
-                  <Text>Schedule</Text>
-                </Link>
-              </View>
-            </View>
+          <Text
+            className="pt-4 text-2xl font-bold"
+            style={{ fontFamily: "Nunito-Sans-Bold" }}
+          >
+            John Michael Williams
+          </Text>
+          <View className="flex flex-row">
+            <Text
+              className="text-slate-500 text-base"
+              style={{ fontFamily: "Nunito-Sans" }}
+            >
+              Online and On Site
+            </Text>
+            <Text
+              className="text-slate-500 pl-1 text-base"
+              style={{ fontFamily: "Nunito-Sans" }}
+            >
+              |
+            </Text>
+            <Text
+              className="text-slate-500 pl-1 text-base underline"
+              style={{ fontFamily: "Nunito-Sans" }}
+            >
+              45723-43
+            </Text>
           </View>
+          <View className="flex flex-row gap-x-4">
+            <TouchableOpacity onPress={schedule}>
+              <View className="bg-blue-500 mt-4 rounded-xl shadow-sm">
+                <View className="items-center">
+                  <View className="px-16 py-2">
+                    <Text
+                      className="text-white text-lg"
+                      style={{ fontFamily: "Nunito-Sans-Bold" }}
+                    >
+                      Schedule
+                    </Text>
+                  </View>
+                </View>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={chat}>
+              <View className="bg-white mt-4 rounded-xl shadow-sm">
+                <View className="items-center">
+                  <View className="px-4 py-2">
+                    <Text
+                      className="text-white text-lg"
+                      style={{ fontFamily: "Nunito-Sans-Bold" }}
+                    >
+                      <MaterialIcons color="black" size={20} name="chat" />
+                    </Text>
+                  </View>
+                </View>
+              </View>
+            </TouchableOpacity>
+          </View>
+        </View>
+        <View className="mt-8 px-4">
+          <AboutMe />
+          <Education />
+          <Methodologies />
         </View>
       </ScrollView>
     </SafeAreaView>
+  );
+}
+
+function AboutMe() {
+  const [aboutMeOpen, setAboutMeOpen] = useState(true);
+
+  const toggleAboutMe = () => {
+    setAboutMeOpen(!aboutMeOpen);
+  };
+
+  LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+
+  return (
+    <View className="bg-white w-full rounded-xl shadow-sm">
+      <View className="px-8 py-4">
+        <View className="flex flex-row items-center justify-between align-middle">
+          <View className="flex flex-row items-center gap-2 align-middle">
+            <Text>👤</Text>
+            <Text
+              className=" text-lg"
+              style={{ fontFamily: "Nunito-Sans-Bold" }}
+            >
+              About me
+            </Text>
+          </View>
+          <Pressable onPress={toggleAboutMe}>
+            {aboutMeOpen ? (
+              <MaterialIcons color="black" size={20} name="arrow-drop-up" />
+            ) : (
+              <MaterialIcons color="black" size={20} name="arrow-drop-down" />
+            )}
+          </Pressable>
+        </View>
+        {aboutMeOpen ? (
+          <View className="pb-2 pt-4">
+            <Text className="text-base" style={{ fontFamily: "Nunito-Sans" }}>
+              I really enjoy helping people find peace of mind. I believe I was
+              born with a mission to assist everyone who seeks self-awareness
+              and personal growth.
+            </Text>
+          </View>
+        ) : null}
+      </View>
+    </View>
+  );
+}
+
+function Education() {
+  const [educationOpen, setEducationOpen] = useState(false);
+
+  const toggleEducation = () => {
+    setEducationOpen(!educationOpen);
+  };
+
+  LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+
+  // Esse mt-4 ta péssimo
+  return (
+    <View className="bg-white mt-4 w-full rounded-xl shadow-sm">
+      <View className="px-8 py-4">
+        <View className="flex flex-row items-center justify-between align-middle">
+          <View className="flex flex-row items-center gap-2 align-middle">
+            <Text>🎓</Text>
+            <Text
+              className=" text-lg"
+              style={{ fontFamily: "Nunito-Sans-Bold" }}
+            >
+              Education
+            </Text>
+          </View>
+          <Pressable onPress={toggleEducation}>
+            {educationOpen ? (
+              <MaterialIcons color="black" size={20} name="arrow-drop-up" />
+            ) : (
+              <MaterialIcons color="black" size={20} name="arrow-drop-down" />
+            )}
+          </Pressable>
+        </View>
+        {educationOpen ? (
+          <View className="col flex flex-col gap-y-2 pb-2 pt-4">
+            <Text className="text-base" style={{ fontFamily: "Nunito-Sans" }}>
+              Bachelor's Degree in Psychology - Federal University of Paraná
+            </Text>
+            <Text className="text-base" style={{ fontFamily: "Nunito-Sans" }}>
+              Postgraduate degree in Life Therapy - University of São Paulo
+            </Text>
+          </View>
+        ) : null}
+      </View>
+    </View>
+  );
+}
+
+function Methodologies() {
+  const [methodologiesOpen, setMethodologiesOpen] = useState(false);
+
+  const toggleMethodologies = () => {
+    setMethodologiesOpen(!methodologiesOpen);
+  };
+
+  LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+
+  // Esse mt-4 ta péssimo
+  return (
+    <View className="bg-white mt-4 w-full rounded-xl shadow-sm">
+      <View className="px-8 py-4">
+        <View className="flex flex-row items-center justify-between align-middle">
+          <View className="flex flex-row items-center gap-2 align-middle">
+            <Text>📚</Text>
+            <Text
+              className=" text-lg"
+              style={{ fontFamily: "Nunito-Sans-Bold" }}
+            >
+              Methodologies
+            </Text>
+          </View>
+          <Pressable onPress={toggleMethodologies}>
+            {methodologiesOpen ? (
+              <MaterialIcons color="black" size={20} name="arrow-drop-up" />
+            ) : (
+              <MaterialIcons color="black" size={20} name="arrow-drop-down" />
+            )}
+          </Pressable>
+        </View>
+        {methodologiesOpen ? (
+          <View className="mt-3 flex flex-row flex-wrap items-center gap-2 pb-2 pt-6">
+            <View className="flex flex-row items-center justify-between rounded-full bg-[#2185EE] px-4 py-1 pr-2">
+              <Text className="text-white">Behaviorism</Text>
+              <View className="bg-white ml-3 flex h-6 w-6 items-center justify-center rounded-full">
+                <Text className="text-sm font-bold text-[#74a7dd]">?</Text>
+              </View>
+            </View>
+            <View className="flex flex-row items-center justify-between rounded-full bg-[#2185EE] px-4 py-1 pr-2">
+              <Text className="text-white">Bioenergetic</Text>
+              <View className="bg-white ml-3 flex h-6 w-6 items-center justify-center rounded-full">
+                <Text className="text-sm font-bold text-[#74a7dd]">?</Text>
+              </View>
+            </View>
+            <View className="flex flex-row items-center justify-between rounded-full bg-[#2185EE] px-4 py-1 pr-2">
+              <Text className="text-white">Cognitive Behavioral Therapy</Text>
+              <View className="bg-white ml-3 flex h-6 w-6 items-center justify-center rounded-full">
+                <Text className="text-sm font-bold text-[#74a7dd]">?</Text>
+              </View>
+            </View>
+          </View>
+        ) : null}
+      </View>
+    </View>
   );
 }

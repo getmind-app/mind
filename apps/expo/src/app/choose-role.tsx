@@ -30,7 +30,7 @@ export default function ChooseRole() {
     <SafeAreaView>
       <View className="mt-24">
         <View className="flex min-h-screen w-full gap-y-8 px-4">
-          <Text className="fon px-4 text-3xl">Você é:</Text>
+          <Text className="fon px-4 text-3xl">Who are you?</Text>
           <View className="items-center">
             <TouchableOpacity
               onPress={patientOnClick}
@@ -39,9 +39,9 @@ export default function ChooseRole() {
               <View className="bg-white flex w-full flex-row rounded-xl shadow-sm">
                 <View className="items-center">
                   <View className="gap-y-2 px-4 py-10">
-                    <Text className="ml-4 text-2xl">Paciente</Text>
+                    <Text className="ml-4 text-2xl">Patient</Text>
                     <Text className="text-slate-500 ml-4 text-lg font-light">
-                      Buscando ajuda ou só{"\n"}alguém para conversar
+                      Looking for help or just{"\n"}want to talk
                     </Text>
                   </View>
                 </View>
@@ -68,9 +68,9 @@ export default function ChooseRole() {
                 />
                 <View className="items-center">
                   <View className="gap-y-2 px-4 py-10">
-                    <Text className="ml-4 text-2xl">Profissional</Text>
+                    <Text className="ml-4 text-2xl">Professional</Text>
                     <Text className="text-slate-500 ml-4 text-lg font-light">
-                      Conheça e atenda{"\n"}novos pacientes
+                      Meet and help{"\n"}new patients
                     </Text>
                   </View>
                 </View>
