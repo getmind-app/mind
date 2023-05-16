@@ -25,7 +25,7 @@ export default function TherapistProfile() {
 
   return (
     <SafeAreaView className="bg-[#FFF] pt-8">
-      <ScrollView className="min-h-screen" showsVerticalScrollIndicator={false}>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <View className="flex flex-col items-center justify-center px-4">
           <View className="flex flex-row items-center justify-center overflow-hidden rounded-full pt-8 align-middle">
             <Image
