@@ -1,16 +1,9 @@
-import React, { useCallback, useEffect } from "react";
-import {
-  Image,
-  SafeAreaView,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import React, { useEffect } from "react";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import Constants from "expo-constants";
 import { useFonts } from "expo-font";
-import { LinearGradient } from "expo-linear-gradient";
-import { SplashScreen, Tabs, usePathname, useRouter } from "expo-router";
+import { Tabs, usePathname, useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { StatusBar } from "expo-status-bar";
 import {
@@ -41,7 +34,7 @@ const tokenCache = {
   },
 };
 
-const tabBarActiveTintColor = "blue";
+const tabBarActiveTintColor = "#3b82f6";
 const tabBarInactiveTintColor = "black";
 
 // This is the main layout of the app
@@ -100,8 +93,8 @@ function TabsRouter() {
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
-          paddingTop: 16,
-          height: path === "/choose-role" ? 0 : 80, // kkkkkkkkkkkkkk
+          paddingTop: 10,
+          height: path === "/choose-role" || path === "/psych/finish" ? 0 : 80, // kkkkkkkkkkkkkk
         },
         tabBarShowLabel: false,
         tabBarActiveTintColor,
@@ -141,8 +134,9 @@ function TabsRouter() {
         options={{
           title: "User Profile",
           tabBarIcon: () =>
-            path === "/choose-role" ? null : (
+            path === "/choose-role" || path === "/psych/finish" ? null : (
               <Image
+                alt=""
                 className="rounded-full"
                 source={{
                   uri: user?.profileImageUrl,
@@ -196,14 +190,36 @@ function SignInScreen() {
         </View>
         <TouchableOpacity onPress={onGooglePress} className="w-full">
           <View className="bg-white mt-8 flex w-full flex-row items-center justify-center rounded-xl px-8 py-4 font-bold shadow-sm">
-            <FontAwesome size={24} name="google" />
-            <Text className="ml-4 text-xl">Sign in with Google</Text>
+            <FontAwesome size={22} name="google" />
+            <Text
+              style={{ fontFamily: "Nunito-Sans" }}
+              className="ml-4 text-xl"
+            >
+              Sign in with{" "}
+            </Text>
+            <Text
+              style={{ fontFamily: "Nunito-Sans-Bold" }}
+              className="text-xl"
+            >
+              Google
+            </Text>
           </View>
         </TouchableOpacity>
         <TouchableOpacity onPress={onApplePress} className="w-full">
           <View className="bg-white flex w-full flex-row items-center justify-center rounded-xl px-8 py-4 font-bold shadow-sm">
-            <FontAwesome size={24} name="apple" />
-            <Text className="ml-4 text-xl">Sign in with Apple</Text>
+            <FontAwesome size={22} name="apple" />
+            <Text
+              style={{ fontFamily: "Nunito-Sans" }}
+              className="ml-4 text-xl"
+            >
+              Sign in with{" "}
+            </Text>
+            <Text
+              style={{ fontFamily: "Nunito-Sans-Bold" }}
+              className="text-xl"
+            >
+              Apple
+            </Text>
           </View>
         </TouchableOpacity>
       </View>

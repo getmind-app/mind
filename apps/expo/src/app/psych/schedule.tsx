@@ -67,8 +67,10 @@ export default function TherapistSchedule() {
             }`}
             disabled={!allPicked}
             onPress={() => {
+              router.push(`/psych/payment`); // Usando essa implementação para testes (não sei se é a correta)
+
               // @ts-expect-error dont know why it doesnt work
-              navigation.navigate(`psych/payment`, {
+              navigation.navigate(`/psych/payment`, {
                 hour: selectedHour,
                 date: `04/${selectedDate}`,
                 mode: selectedMode,

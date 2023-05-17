@@ -21,6 +21,7 @@ function handleMode(x: string) {
 export default function SessionPayment() {
   const navigation = useNavigation();
   const params = useSearchParams();
+  const router = useRouter();
 
   return (
     <SafeAreaView className="bg-[#FFF] px-4 pt-8">
@@ -95,7 +96,8 @@ export default function SessionPayment() {
           </Text>
           <Pressable
             onPress={() => {
-              navigation.navigate(`psych/finish/index`, params);
+              router.push(`psych/finish`); // Usando essa implementação para testes (não sei se é a correta)
+              // navigation.navigate(`psych/finish`, params);
             }}
             className={`rounded-lg bg-[#2185EE] px-16 py-3`}
           >

@@ -10,6 +10,13 @@ export default function PsychLayout() {
           headerShown: false,
         }}
       />
+      <Stack.Screen
+        name="finish"
+        options={{
+          title: "Psych Finish",
+          headerShown: false,
+        }}
+      />
     </Stack>
   );
 }

@@ -1,20 +1,15 @@
 import React, { useState } from "react";
 import {
-  Image,
   ImageBackground,
   Linking,
   SafeAreaView,
   ScrollView,
   Text,
   TouchableOpacity,
-  TouchableWithoutFeedback,
   View,
 } from "react-native";
 import { Link, useRouter } from "expo-router";
-import { AntDesign, FontAwesome, MaterialIcons } from "@expo/vector-icons";
-
-import { GradientText } from "../components/GradientText";
-import { LogoSvg } from "../components/LogoSvg";
+import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 
 function NextMeetingCard() {
   const [nextScheduledTherapist, setNextScheduledTherapist] = useState("1");
