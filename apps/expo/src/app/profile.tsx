@@ -5,43 +5,58 @@ import { api } from "../utils/api";
 
 export default function UserProfileScreen() {
   const { user, signOut } = useClerk();
-  const { mutate } = api.users.setMetadata.useMutation({});
-
-  const patientOnClick = () => {
-    mutate({
-      metadata: { role: "patient" },
-    });
-  };
 
   return (
-    <SafeAreaView className="p-4">
-      <View className="flex flex-row justify-center ">
-        <Image
-          className="rounded-full"
-          source={{
-            uri: user?.profileImageUrl,
-            width: 100,
-            height: 100,
-          }}
-        />
-      </View>
-      <View>
-        {user?.fullName && (
-          <Text className="text-center text-2xl">{user.fullName}</Text>
-        )}
-      </View>
+    <SafeAreaView className="p-4 pb-20">
+      <View className="flex h-full justify-between">
+        <View>
+          <View className="flex flex-row justify-center">
+            <Image
+              className="rounded-full"
+              alt={`${user?.firstName}'s profile picture`}
+              source={{
+                uri: user?.profileImageUrl,
+                width: 100,
+                height: 100,
+              }}
+            />
+          </View>
+          <View>
+            {user?.fullName && (
+              <Text className="text-center text-2xl">{user.fullName}</Text>
+            )}
+          </View>
 
-      <Pressable onPress={() => patientOnClick()}>
-        <View className="border-blue-900 bg-blue-300 rounded-xl border py-2">
-          <Text className="text-center text-2xl">I'm a patient</Text>
+          <Pressable onPress={() => signOut()}>
+            <View className="border-red-900 bg-red-400 rounded-xl border py-2">
+              <Text className="text-center text-2xl">Sign Out</Text>
+            </View>
+          </Pressable>
         </View>
-      </Pressable>
 
-      <Pressable onPress={() => signOut()}>
-        <View className="border-red-900 bg-red-400 rounded-xl border py-2">
-          <Text className="text-center text-2xl">Sign Out</Text>
-        </View>
-      </Pressable>
+        {process.env.NODE_ENV === "development" ? <DevelopmentOptions /> : null}
+      </View>
     </SafeAreaView>
+  );
+}
+
+function DevelopmentOptions() {
+  const { mutateAsync } = api.users.clearMetadata.useMutation({});
+  const { user } = useClerk();
+
+  async function clearUserMetaData() {
+    await mutateAsync();
+    await user?.reload();
+  }
+
+  return (
+    <View className="bg-gray-300 rounded-lg p-2">
+      <Text className="text-center text-lg">Dev Options</Text>
+      <Pressable onPress={clearUserMetaData}>
+        <View className="bg-gray-500 flex h-12 items-center justify-center rounded p-2">
+          <Text className="text-white">Reset user metadata</Text>
+        </View>
+      </Pressable>
+    </View>
   );
 }

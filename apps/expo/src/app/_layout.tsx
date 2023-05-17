@@ -1,16 +1,17 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import {
   Image,
-  SafeAreaView,
   Text,
   TouchableOpacity,
   View,
+  type Animated,
+  type StyleProp,
+  type ViewStyle,
 } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import Constants from "expo-constants";
 import { useFonts } from "expo-font";
-import { LinearGradient } from "expo-linear-gradient";
-import { SplashScreen, Tabs, usePathname, useRouter } from "expo-router";
+import { Tabs, usePathname, useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { StatusBar } from "expo-status-bar";
 import {
@@ -23,6 +24,8 @@ import {
 import { AntDesign, FontAwesome } from "@expo/vector-icons";
 
 import { TRPCProvider } from "../utils/api";
+
+type tabBarStyle = Animated.WithAnimatedValue<StyleProp<ViewStyle>>;
 
 const tokenCache = {
   getToken(key: string) {
@@ -95,15 +98,31 @@ function TabsRouter() {
     }
   }, [user]);
 
+  const tabBarStyle: tabBarStyle = useMemo(() => {
+    if (path === "/choose-role") {
+      return {
+        height: 0,
+      };
+    }
+
+    return {
+      height: "10%",
+      maxHeight: 80,
+      margin: 8,
+      borderRadius: 12,
+      shadowColor: "#000",
+      shadowRadius: 12,
+      position: "absolute",
+    } as tabBarStyle;
+  }, [path]);
+
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarStyle: {
-          paddingTop: 16,
-          height: path === "/choose-role" ? 0 : 80, // kkkkkkkkkkkkkk
-        },
+        tabBarStyle,
         tabBarShowLabel: false,
+
         tabBarActiveTintColor,
         tabBarInactiveTintColor,
       }}
@@ -144,6 +163,7 @@ function TabsRouter() {
             path === "/choose-role" ? null : (
               <Image
                 className="rounded-full"
+                alt={`${user?.firstName} profile picture`}
                 source={{
                   uri: user?.profileImageUrl,
                   width: 30,
@@ -222,7 +242,7 @@ function useAuthProviders() {
   const onGooglePress = React.useCallback(async () => {
     try {
       const { createdSessionId, setActive } = await googleOAuthFlow();
-      if (createdSessionId) {
+      if (createdSessionId && setActive) {
         setActive({ session: createdSessionId });
       } else {
         throw new Error(
@@ -238,8 +258,7 @@ function useAuthProviders() {
   const onApplePress = React.useCallback(async () => {
     try {
       const { createdSessionId, setActive } = await appleOAuthFlow();
-      if (createdSessionId) {
-        // @ts-expect-error
+      if (createdSessionId && setActive) {
         setActive({ session: createdSessionId });
       } else {
         throw new Error(

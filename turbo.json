@@ -10,7 +10,11 @@
       "inputs": ["prisma/schema.prisma"],
       "cache": false
     },
-    "dev": {
+    "dev:ios": {
+      "persistent": true,
+      "cache": false
+    },
+    "dev:android": {
       "persistent": true,
       "cache": false
     },
