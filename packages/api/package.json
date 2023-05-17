@@ -13,6 +13,9 @@
   "dependencies": {
     "@acme/auth": "^0.1.0",
     "@acme/db": "^0.1.0",
+    "@clerk/clerk-js": "^4.38.4",
+    "@clerk/clerk-sdk-node": "^4.8.6",
+    "@clerk/nextjs": "^4.16.4",
     "@trpc/client": "^10.18.0",
     "@trpc/server": "^10.18.0",
     "superjson": "1.9.1",

@@ -11,7 +11,7 @@ import {
 import { Link, useNavigation, useRouter, useSearchParams } from "expo-router";
 import { EvilIcons, MaterialIcons } from "@expo/vector-icons";
 
-import { LogoSvg } from "../../../../components/LogoSvg";
+import { LogoSvg } from "../../components/LogoSvg";
 
 export default function TherapistSchedule() {
   const navigation = useNavigation();
@@ -28,11 +28,7 @@ export default function TherapistSchedule() {
 
   return (
     <SafeAreaView className="bg-[#FFF] px-4 pt-8">
-      <ScrollView
-        className="min-h-screen"
-        showsVerticalScrollIndicator={false}
-        overScrollMode="never"
-      >
+      <ScrollView>
         {/* TODO: remover esses margins */}
         <View className=" -mb-4 mt-2  flex flex-row items-center justify-end px-4">
           <View>
@@ -71,8 +67,10 @@ export default function TherapistSchedule() {
             }`}
             disabled={!allPicked}
             onPress={() => {
+              router.push(`/psych/payment`); // Usando essa implementação para testes (não sei se é a correta)
+
               // @ts-expect-error dont know why it doesnt work
-              navigation.navigate(`psych/payment/index`, {
+              navigation.navigate(`/psych/payment`, {
                 hour: selectedHour,
                 date: `04/${selectedDate}`,
                 mode: selectedMode,

@@ -4,7 +4,6 @@
   "main": "index.tsx",
   "scripts": {
     "clean": "git clean -xdf .expo .turbo node_modules",
-    "dev": "expo start --android",
     "dev:android": "expo start --android",
     "dev:ios": "expo start --ios",
     "lint": "eslint .",
@@ -12,24 +11,29 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@clerk/clerk-expo": "^0.16.4",
     "@expo/metro-config": "^0.7.1",
     "@expo/vector-icons": "^13.0.0",
-    "@shopify/flash-list": "1.4.2",
+    "@react-navigation/stack": "^6.3.16",
+    "@shopify/flash-list": "1.4.0",
     "@tanstack/react-query": "^4.28.0",
     "@trpc/client": "^10.18.0",
     "@trpc/react-query": "^10.18.0",
     "@trpc/server": "^10.18.0",
     "expo": "^48.0.10",
+    "expo-auth-session": "^4.0.3",
     "expo-constants": "~14.2.1",
     "expo-dev-client": "~2.2.1",
+    "expo-linear-gradient": "^12.1.2",
     "expo-linking": "~4.0.1",
     "expo-router": "^1.4.3",
-    "expo-splash-screen": "~0.18.1",
+    "expo-secure-store": "^12.1.1",
+    "expo-splash-screen": "~0.18.2",
     "expo-status-bar": "~1.4.4",
     "nativewind": "^2.0.11",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-native": "0.71.6",
+    "react-native": "0.71.8",
     "react-native-safe-area-context": "4.5.0",
     "react-native-screens": "~3.20.0",
     "react-native-svg": "^13.4.0",
@@ -51,7 +55,7 @@
     "eslint": "^8.37.0",
     "postcss": "^8.4.21",
     "tailwindcss": "^3.3.1",
-    "typescript": "^5.0.3"
+    "typescript": "^4.9.5"
   },
   "private": true
 }
