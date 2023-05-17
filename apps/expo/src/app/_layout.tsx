@@ -100,8 +100,8 @@ function TabsRouter() {
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
-          padding: 2,
-          height: path === "/choose-role" ? 0 : 56, // kkkkkkkkkkkkkk
+          paddingTop: 16,
+          height: path === "/choose-role" ? 0 : 80, // kkkkkkkkkkkkkk
         },
         tabBarShowLabel: false,
         tabBarActiveTintColor,
@@ -133,7 +133,7 @@ function TabsRouter() {
         name="chat"
         options={{
           title: "Chat",
-          tabBarIcon: (props) => <AntDesign name="wechat" {...props} />,
+          tabBarIcon: (props) => <AntDesign name="message1" {...props} />,
         }}
       />
       <Tabs.Screen
@@ -146,8 +146,8 @@ function TabsRouter() {
                 className="rounded-full"
                 source={{
                   uri: user?.profileImageUrl,
-                  width: 32,
-                  height: 32,
+                  width: 30,
+                  height: 30,
                 }}
               />
             ),
