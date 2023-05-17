@@ -11,20 +11,30 @@ export const usersRouter = createTRPCRouter({
     .input(
       z.object({
         metadata: z.object({
-          role: z.enum(["patient", "professional", "teste"]),
+          role: z.enum(["patient", "professional"]),
         }),
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      console.log("teste")  
-    console.log(input)  
-    try {
+      try {
         const user = await clerk.users.updateUserMetadata(ctx.auth.userId, {
-          publicMetadata: { role: input.metadata.role },
+          publicMetadata: input.metadata,
         });
         return user;
       } catch (e) {
         console.log(e);
       }
     }),
+  clearMetadata: protectedProcedure.mutation(async ({ ctx }) => {
+    try {
+      const user = await clerk.users.updateUserMetadata(ctx.auth.userId, {
+        publicMetadata: {
+          role: null,
+        },
+      });
+      return user;
+    } catch (e) {
+      console.log(e);
+    }
+  }),
 });
