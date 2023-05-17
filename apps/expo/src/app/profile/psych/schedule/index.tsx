@@ -135,15 +135,13 @@ const Calendar = ({ onSelect }: { onSelect: (n: number) => void }) => {
   );
 };
 
-function HourPicker({
-  date,
-  hour,
-  onSelect,
-}: {
+type HourPickerProps = {
   date: number;
   hour: string;
   onSelect: (n: string) => void;
-}) {
+};
+
+function HourPicker({ date, hour, onSelect }: HourPickerProps) {
   const [numbers, setNumbers] = useState<number[]>([]);
 
   useEffect(() => {
