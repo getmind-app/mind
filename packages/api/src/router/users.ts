@@ -23,6 +23,7 @@ export const usersRouter = createTRPCRouter({
         return user;
       } catch (e) {
         console.log(e);
+        return e;
       }
     }),
   clearMetadata: protectedProcedure.mutation(async ({ ctx }) => {
@@ -35,6 +36,7 @@ export const usersRouter = createTRPCRouter({
       return user;
     } catch (e) {
       console.log(e);
+      return e;
     }
   }),
 });

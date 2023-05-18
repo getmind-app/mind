@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo } from "react";
 import {
   Image,
+  Linking,
   SafeAreaView,
   Text,
   TouchableOpacity,
@@ -264,7 +265,9 @@ function useAuthProviders() {
 
   const onGooglePress = React.useCallback(async () => {
     try {
-      const { createdSessionId, setActive } = await googleOAuthFlow();
+      const { createdSessionId, setActive } = await googleOAuthFlow({
+        redirectUrl: (await Linking.getInitialURL()) as string,
+      });
       if (createdSessionId && setActive) {
         setActive({ session: createdSessionId });
       } else {
@@ -280,7 +283,9 @@ function useAuthProviders() {
 
   const onApplePress = React.useCallback(async () => {
     try {
-      const { createdSessionId, setActive } = await appleOAuthFlow();
+      const { createdSessionId, setActive } = await appleOAuthFlow({
+        redirectUrl: (await Linking.getInitialURL()) as string,
+      });
       if (createdSessionId && setActive) {
         setActive({ session: createdSessionId });
       } else {
