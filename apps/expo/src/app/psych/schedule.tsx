@@ -8,9 +8,10 @@ import {
   Text,
   View,
 } from "react-native";
-import { Link, useNavigation, useRouter, useSearchParams } from "expo-router";
-import { EvilIcons, MaterialIcons } from "@expo/vector-icons";
+import { useNavigation, useRouter, useSearchParams } from "expo-router";
+import { atom } from "jotai";
 
+import { AnimatedCard } from "../../components/Accordion";
 import { LogoSvg } from "../../components/LogoSvg";
 
 export default function TherapistSchedule() {
@@ -21,13 +22,13 @@ export default function TherapistSchedule() {
   /* TODO: trocar esse implementacao por um context, redux, zustand, jotai */
   const [selectedDate, setSelectedDate] = useState<number>();
   const [selectedHour, setSelectedHour] = useState<string>();
-  const [selectedMode, setSelectedMode] = useState<"person" | "online">();
+  const [selectedMode, setSelectedMode] = useState<"in-person" | "online">();
   const allPicked = useMemo(() => {
     return selectedDate && selectedMode && selectedHour;
   }, [selectedHour, selectedMode, selectedDate]);
 
   return (
-    <SafeAreaView className="bg-[#FFF] px-4 pt-8">
+    <SafeAreaView className="bg-off-white px-4 pt-8">
       <ScrollView>
         {/* TODO: remover esses margins */}
         <View className=" -mb-4 mt-2  flex flex-row items-center justify-end px-4">
@@ -35,7 +36,7 @@ export default function TherapistSchedule() {
             <LogoSvg className="m-auto" />
           </View>
         </View>
-        <View className="relative mt-8 rounded-2xl bg-[#f8f8f8] p-3 pt-8">
+        <View className="bg-white relative mt-8 rounded-2xl p-3 pt-8">
           <View className="p-1/2 absolute -top-8 left-4 flex h-16 w-16 items-center justify-center overflow-hidden rounded-full">
             <Image
               source={{
@@ -57,6 +58,7 @@ export default function TherapistSchedule() {
           date={selectedDate ?? 0}
         />
         <ModalityPicker
+          hour={selectedHour}
           mode={selectedMode ?? ""}
           onSelect={setSelectedMode as any}
         />
@@ -141,7 +143,7 @@ type HourPickerProps = {
 
 function HourPicker({ date, hour, onSelect }: HourPickerProps) {
   const [numbers, setNumbers] = useState<number[]>([]);
-
+  const [expanded, setExpanded] = useState(false);
   useEffect(() => {
     if (date === 0) return;
     setNumbers(
@@ -150,31 +152,47 @@ function HourPicker({ date, hour, onSelect }: HourPickerProps) {
         .sort((a, b) => a - b)
         .filter((a, b, c) => c.findLastIndex((v) => v === a) === b),
     );
+    onSelect("");
+    setExpanded(true);
   }, [date]);
 
   return (
-    <View className="relative mt-3 rounded-2xl bg-[#f8f8f8] p-3">
-      <Text className="mb-2 text-2xl">What hour?</Text>
-      <ScrollView horizontal={true}>
-        <View className="flex flex-row">
-          {date === 0 && (
-            <Text className="text-[#666666]">Please select a date</Text>
-          )}
-          {date !== 0 && numbers.length === 0 && (
-            <Text className="text-[#666666]">
-              There are no more available sessions for this date!
-            </Text>
-          )}
-          {numbers.map((n, i) => (
-            <Hour
-              key={i}
-              number={`${n}:00`}
-              onPress={onSelect}
-              isSelected={hour === `${n}:00`}
-            />
-          ))}
-        </View>
-      </ScrollView>
+    <View className="">
+      <AnimatedCard
+        title={
+          <View className="flex flex-row justify-between">
+            <Text className={"text-2xl"}>Hour </Text>
+            <Text className={"text-2xl"}>{hour} </Text>
+          </View>
+        }
+        expanded={expanded}
+        setExpanded={setExpanded}
+        maxHeight={60}
+      >
+        <ScrollView horizontal={true}>
+          <View className="mt-2 flex flex-row">
+            {date === 0 && (
+              <Text className="text-[#666666]">Please select a date</Text>
+            )}
+            {date !== 0 && numbers.length === 0 && (
+              <Text className="text-[#666666]">
+                There are no more available sessions for this date!
+              </Text>
+            )}
+            {numbers.map((n, i) => (
+              <Hour
+                key={i}
+                number={`${n}:00`}
+                onPress={(v) => {
+                  onSelect(v);
+                  setExpanded(false);
+                }}
+                isSelected={hour === `${n}:00`}
+              />
+            ))}
+          </View>
+        </ScrollView>
+      </AnimatedCard>
     </View>
   );
 }
@@ -235,20 +253,44 @@ function Hour({
 function ModalityPicker({
   mode,
   onSelect,
+  hour,
 }: {
   mode: string;
   onSelect: (x: string) => void;
+  hour?: string;
 }) {
+  const [expanded, setExpanded] = useState(false);
+
+  useEffect(() => {
+    if (hour && !mode) {
+      setExpanded(true);
+    } else {
+      setExpanded(false);
+    }
+  }, [hour]);
+
   return (
-    <View className="relative mt-3 rounded-2xl bg-[#f8f8f8] p-3">
-      <Text className="mb-2 text-2xl">How would you like to meet</Text>
-      <Text className="text-[#666666]">
+    <AnimatedCard
+      expanded={expanded}
+      setExpanded={setExpanded}
+      maxHeight={120}
+      title={
+        <View className="flex flex-row justify-between">
+          <Text className={"text-2xl"}>Meet</Text>
+          <Text className={"text-2xl capitalize"}>{mode} </Text>
+        </View>
+      }
+    >
+      <Text className="mt-2 text-[#666666]">
         John&apos;s sessions happen at{" "}
         <Text className="underline">335 Pioneer Way</Text>
       </Text>
       <View className="mt-3 flex flex-row justify-between">
         <Pressable
-          onPress={() => onSelect("online")}
+          onPress={() => {
+            onSelect("online");
+            setExpanded(false);
+          }}
           className={`w-[47%] rounded-lg bg-[#FFF] py-3 ${
             mode === "online" ? "bg-[#2185EE]" : ""
           }`}
@@ -262,20 +304,23 @@ function ModalityPicker({
           </Text>
         </Pressable>
         <Pressable
-          onPress={() => onSelect("person")}
+          onPress={() => {
+            onSelect("in-person");
+            setExpanded(false);
+          }}
           className={`w-[47%] rounded-lg bg-[#FFF] py-3 ${
-            mode === "person" ? "bg-[#2185EE]" : ""
+            mode === "in-person" ? "bg-[#2185EE]" : ""
           }`}
         >
           <Text
             className={`text-center text-base ${
-              mode === "person" ? "text-white" : ""
+              mode === "in-person" ? "text-white" : ""
             }`}
           >
             In-person
           </Text>
         </Pressable>
       </View>
-    </View>
+    </AnimatedCard>
   );
 }

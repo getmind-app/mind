@@ -11,6 +11,11 @@
 
 const config = {
   content: ["./src/**/*.{ts,tsx}"],
+  extends: {
+    colors: {
+      "off-white": "#f8f8f8",
+    },
+  },
 };
 
 module.exports = config;
