@@ -22,7 +22,7 @@ function NextMeetingCard() {
             Monday, 04/16
           </Text>
           <Text
-            className="text-blue-500 order-last ml-auto text-xl"
+            className="text-blue-500 order-last ml-auto text-2xl"
             style={{ fontFamily: "Nunito-Sans-Bold" }}
           >
             8:30
@@ -60,7 +60,7 @@ function NextMeetingCard() {
             </Text>
           </View>
           <MaterialIcons
-            style={{ paddingRight: 8 }}
+            style={{ paddingRight: 12 }}
             color="black"
             size={24}
             name="add"
@@ -161,7 +161,7 @@ function LastNotes() {
 
 export default function Index() {
   return (
-    <SafeAreaView className="min-h-screen bg-[#FAFAFA] px-4 pt-8">
+    <SafeAreaView className="bg-off-white min-h-screen px-4 pt-8">
       <ScrollView className="min-h-max" showsVerticalScrollIndicator={false}>
         <View className="h-full py-2">
           <View className="flex flex-row items-center justify-between px-4">

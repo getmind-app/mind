@@ -24,7 +24,7 @@ export default function TherapistProfile() {
   };
 
   return (
-    <SafeAreaView className="min-h-screen bg-[#FAFAFA] pt-8 ">
+    <SafeAreaView className="bg-off-white min-h-screen pt-8 ">
       <ScrollView showsVerticalScrollIndicator={false}>
         <View className="flex flex-col items-center justify-center px-4">
           <View className="flex flex-row items-center justify-center overflow-hidden rounded-full pt-8 align-middle">

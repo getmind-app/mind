@@ -11,6 +11,20 @@ export default function PsychLayout() {
         }}
       />
       <Stack.Screen
+        name="schedule"
+        options={{
+          title: "Schedule",
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="payment"
+        options={{
+          title: "Payment",
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
         name="finish"
         options={{
           title: "Psych Finish",

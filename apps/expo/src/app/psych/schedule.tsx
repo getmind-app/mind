@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import {
-  Button,
   Image,
   Pressable,
   SafeAreaView,
@@ -8,14 +7,11 @@ import {
   Text,
   View,
 } from "react-native";
-import { useNavigation, useRouter, useSearchParams } from "expo-router";
-import { atom } from "jotai";
+import { useRouter, useSearchParams } from "expo-router";
 
 import { AnimatedCard } from "../../components/Accordion";
-import { LogoSvg } from "../../components/LogoSvg";
 
 export default function TherapistSchedule() {
-  const navigation = useNavigation();
   const router = useRouter();
   const params = useSearchParams();
   const { psych = "John" } = params;
@@ -28,27 +24,30 @@ export default function TherapistSchedule() {
   }, [selectedHour, selectedMode, selectedDate]);
 
   return (
-    <SafeAreaView className="bg-off-white px-4 pt-8">
-      <ScrollView>
-        {/* TODO: remover esses margins */}
-        <View className=" -mb-4 mt-2  flex flex-row items-center justify-end px-4">
-          <View>
-            <LogoSvg className="m-auto" />
-          </View>
-        </View>
-        <View className="bg-white relative mt-8 rounded-2xl p-3 pt-8">
+    <SafeAreaView>
+      <ScrollView className="bg-off-white px-4 pt-8">
+        <View className="bg-white relative mt-8 rounded-2xl p-4 pt-12">
           <View className="p-1/2 absolute -top-8 left-4 flex h-16 w-16 items-center justify-center overflow-hidden rounded-full">
             <Image
+              alt="John Michael Williams"
               source={{
-                uri: "https://images.pexels.com/photos/4098353/pexels-photo-4098353.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+                uri: "https://images.pexels.com/photos/4098353/pexels-photo-4098353.jpeg?auto=compress&cs=tinysrgb&w=1260&h=751&dpr=1",
                 width: 64,
                 height: 64,
               }}
             />
           </View>
-          <Text className="mb-2 text-2xl">{psych}&apos;s Schedule</Text>
-          <Text className="mb-2 text-sm text-[#666666]">
-            Pick the date that you would like to meet
+          <Text
+            style={{ fontFamily: "Nunito-Sans-Bold" }}
+            className="mb-2 text-2xl"
+          >
+            {psych}&apos;s Schedule
+          </Text>
+          <Text
+            style={{ fontFamily: "Nunito-Sans" }}
+            className="mb-2 text-sm text-[#666666]"
+          >
+            Pick the date that you would like to meet:
           </Text>
           <Calendar onSelect={setSelectedDate} />
         </View>
@@ -69,18 +68,21 @@ export default function TherapistSchedule() {
             }`}
             disabled={!allPicked}
             onPress={() => {
-              router.push(`/psych/payment`); // Usando essa implementação para testes (não sei se é a correta)
-
-              // @ts-expect-error dont know why it doesnt work
-              navigation.navigate(`/psych/payment`, {
-                hour: selectedHour,
-                date: `04/${selectedDate}`,
-                mode: selectedMode,
-                psych,
+              router.push({
+                pathname: `/psych/payment`,
+                params: {
+                  hour: selectedHour,
+                  date: `04/${selectedDate}`,
+                  mode: selectedMode,
+                  psych,
+                },
               });
             }}
           >
-            <Text className={`text-white text-center font-bold`}>
+            <Text
+              style={{ fontFamily: "Nunito-Sans-Bold" }}
+              className={`text-white text-center font-bold`}
+            >
               Confirm appointment
             </Text>
           </Pressable>
@@ -96,28 +98,54 @@ const Calendar = ({ onSelect }: { onSelect: (n: number) => void }) => {
   const numbers = Array.from(Array(31).keys());
 
   return (
-    <View className="mx-auto flex  w-min flex-row flex-wrap items-center justify-start  rounded-lg bg-[#FFF] p-3">
-      <Text className="relative left-3 w-full pb-3 text-xl">April</Text>
-      {/* TODO: substituir esse magic number de 47px por algo responsivo */}
-      <Text className="w-full max-w-[47px] text-center text-sm text-[#666666]">
+    <View className="mx-auto flex  w-min flex-row flex-wrap items-center justify-start rounded-lg bg-[#FFF] pt-4">
+      <Text
+        style={{ fontFamily: "Nunito-Sans-Bold" }}
+        className="relative left-3 w-full pb-3 text-xl"
+      >
+        April
+      </Text>
+      {/* TODO: substituir esse magic number de 51px por algo responsivo */}
+      <Text
+        style={{ fontFamily: "Nunito-Sans" }}
+        className="w-full max-w-[51px] text-center text-sm text-[#666666]"
+      >
         M
       </Text>
-      <Text className="w-full max-w-[47px] text-center text-sm text-[#666666]">
+      <Text
+        style={{ fontFamily: "Nunito-Sans" }}
+        className="w-full max-w-[51px] text-center text-sm text-[#666666]"
+      >
         T
       </Text>
-      <Text className="w-full max-w-[47px] text-center text-sm text-[#666666]">
+      <Text
+        style={{ fontFamily: "Nunito-Sans" }}
+        className="w-full max-w-[51px] text-center text-sm text-[#666666]"
+      >
         W
       </Text>
-      <Text className="w-full max-w-[47px] text-center text-sm text-[#666666]">
+      <Text
+        style={{ fontFamily: "Nunito-Sans" }}
+        className="w-full max-w-[51px] text-center text-sm text-[#666666]"
+      >
         T
       </Text>
-      <Text className="w-full max-w-[47px] text-center text-sm text-[#666666]">
+      <Text
+        style={{ fontFamily: "Nunito-Sans" }}
+        className="w-full max-w-[51px] text-center text-sm text-[#666666]"
+      >
         F
       </Text>
-      <Text className="w-full max-w-[47px] text-center text-sm text-[#666666]">
+      <Text
+        style={{ fontFamily: "Nunito-Sans" }}
+        className="w-full max-w-[51px] text-center text-sm text-[#666666]"
+      >
         S
       </Text>
-      <Text className="w-full max-w-[47px] text-center text-sm text-[#666666]">
+      <Text
+        style={{ fontFamily: "Nunito-Sans" }}
+        className="w-full max-w-[51px] text-center text-sm text-[#666666]"
+      >
         S
       </Text>
       {numbers.map((number) => (
@@ -157,43 +185,53 @@ function HourPicker({ date, hour, onSelect }: HourPickerProps) {
   }, [date]);
 
   return (
-    <View className="">
-      <AnimatedCard
-        title={
-          <View className="flex flex-row justify-between">
-            <Text className={"text-2xl"}>Hour </Text>
-            <Text className={"text-2xl"}>{hour} </Text>
-          </View>
-        }
-        expanded={expanded}
-        setExpanded={setExpanded}
-        maxHeight={60}
-      >
-        <ScrollView horizontal={true}>
-          <View className="mt-2 flex flex-row">
-            {date === 0 && (
-              <Text className="text-[#666666]">Please select a date</Text>
-            )}
-            {date !== 0 && numbers.length === 0 && (
-              <Text className="text-[#666666]">
-                There are no more available sessions for this date!
-              </Text>
-            )}
-            {numbers.map((n, i) => (
-              <Hour
-                key={i}
-                number={`${n}:00`}
-                onPress={(v) => {
-                  onSelect(v);
-                  setExpanded(false);
-                }}
-                isSelected={hour === `${n}:00`}
-              />
-            ))}
-          </View>
-        </ScrollView>
-      </AnimatedCard>
-    </View>
+    <AnimatedCard
+      title={
+        <View className="flex flex-row justify-between">
+          <Text style={{ fontFamily: "Nunito-Sans" }} className={"text-xl"}>
+            Hour{" "}
+          </Text>
+          <Text style={{ fontFamily: "Nunito-Sans" }} className={"text-xl"}>
+            {hour}{" "}
+          </Text>
+        </View>
+      }
+      expanded={expanded}
+      setExpanded={setExpanded}
+      maxHeight={60}
+    >
+      <ScrollView horizontal={true}>
+        <View className="mt-2 flex flex-row">
+          {date === 0 && (
+            <Text
+              style={{ fontFamily: "Nunito-Sans" }}
+              className="text-[#666666]"
+            >
+              Please select a date
+            </Text>
+          )}
+          {date !== 0 && numbers.length === 0 && (
+            <Text
+              style={{ fontFamily: "Nunito-Sans" }}
+              className="text-[#666666]"
+            >
+              There are no more available sessions for this date!
+            </Text>
+          )}
+          {numbers.map((n, i) => (
+            <Hour
+              key={i}
+              number={`${n}:00`}
+              onPress={(v) => {
+                onSelect(v);
+                setExpanded(false);
+              }}
+              isSelected={hour === `${n}:00`}
+            />
+          ))}
+        </View>
+      </ScrollView>
+    </AnimatedCard>
   );
 }
 
@@ -208,13 +246,14 @@ function Day({
 }) {
   return (
     <Pressable
-      className={`flex w-full max-w-[47px] rounded-full p-2 ${
+      className={`flex w-full max-w-[51px] rounded-full p-2 ${
         isSelected ? "" : ""
       }`}
       android_disableSound={true}
       onPress={() => onPress(number)}
     >
       <Text
+        style={{ fontFamily: "Nunito-Sans" }}
         className={`p-[6px] text-center text-sm ${
           isSelected ? "text-white rounded-full bg-[#2185EE]" : ""
         }`}
@@ -242,7 +281,10 @@ function Hour({
           isSelected ? " bg-[#2185EE]" : "bg-[#FFF]"
         }`}
       >
-        <Text className={`text-base ${isSelected ? "text-white" : ""}`}>
+        <Text
+          style={{ fontFamily: "Nunito-Sans" }}
+          className={`text-base ${isSelected ? "text-white" : ""}`}
+        >
           {number}
         </Text>
       </Pressable>
@@ -276,14 +318,26 @@ function ModalityPicker({
       maxHeight={120}
       title={
         <View className="flex flex-row justify-between">
-          <Text className={"text-2xl"}>Meet</Text>
-          <Text className={"text-2xl capitalize"}>{mode} </Text>
+          <Text style={{ fontFamily: "Nunito-Sans" }} className={"text-xl"}>
+            Meet
+          </Text>
+          <Text
+            style={{ fontFamily: "Nunito-Sans" }}
+            className={"text-xl capitalize"}
+          >
+            {mode}{" "}
+          </Text>
         </View>
       }
     >
-      <Text className="mt-2 text-[#666666]">
+      <Text
+        style={{ fontFamily: "Nunito-Sans" }}
+        className="mt-2 text-[#666666]"
+      >
         John&apos;s sessions happen at{" "}
-        <Text className="underline">335 Pioneer Way</Text>
+        <Text style={{ fontFamily: "Nunito-Sans" }} className="underline">
+          335 Pioneer Way
+        </Text>
       </Text>
       <View className="mt-3 flex flex-row justify-between">
         <Pressable
@@ -291,11 +345,12 @@ function ModalityPicker({
             onSelect("online");
             setExpanded(false);
           }}
-          className={`w-[47%] rounded-lg bg-[#FFF] py-3 ${
+          className={`w-[48%] rounded-lg bg-[#FFF] py-3 ${
             mode === "online" ? "bg-[#2185EE]" : ""
           }`}
         >
           <Text
+            style={{ fontFamily: "Nunito-Sans" }}
             className={`text-center text-base ${
               mode === "online" ? "text-white" : ""
             }`}
@@ -308,11 +363,12 @@ function ModalityPicker({
             onSelect("in-person");
             setExpanded(false);
           }}
-          className={`w-[47%] rounded-lg bg-[#FFF] py-3 ${
+          className={`w-[48%] rounded-lg bg-[#FFF] py-3 ${
             mode === "in-person" ? "bg-[#2185EE]" : ""
           }`}
         >
           <Text
+            style={{ fontFamily: "Nunito-Sans" }}
             className={`text-center text-base ${
               mode === "in-person" ? "text-white" : ""
             }`}

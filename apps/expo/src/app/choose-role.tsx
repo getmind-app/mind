@@ -33,7 +33,7 @@ export default function ChooseRole() {
   return (
     <SafeAreaView className="flex-1 flex-wrap items-center justify-center">
       <View className="flex w-full gap-y-8 px-4">
-        <Text className="fon px-4 text-3xl">Who are you?</Text>
+        <Text className="px-4 text-3xl">Who are you?</Text>
         <View className="items-center">
           <Pressable
             onPress={() => setSelectedRole("patient")}
@@ -78,7 +78,7 @@ export default function ChooseRole() {
               <Image
                 alt="Psychologist reading a book"
                 source={require("../../assets/paciente.png")}
-                className="absolute bottom-0 left-4 h-36 w-36"
+                className="absolute bottom-0 left-6 h-36 w-36"
                 resizeMode="contain"
               />
               <View className="w-3/4 items-center">
@@ -97,7 +97,7 @@ export default function ChooseRole() {
             onPress={handleNext}
           >
             <View
-              className={` mt-6 flex w-full items-center  justify-center rounded-xl py-3 ${
+              className={` mt-8 flex w-full items-center  justify-center rounded-xl py-3 ${
                 selectedRole ? "bg-blue-500" : "bg-gray-300 opacity-50"
               }`}
             >

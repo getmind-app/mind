@@ -8,7 +8,7 @@ export default function UserProfileScreen() {
 
   return (
     <SafeAreaView className="p-4 pb-20">
-      <View className="flex h-full justify-between">
+      <View className="flex h-full">
         <View>
           <View className="flex flex-row justify-center">
             <Image

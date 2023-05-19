@@ -197,7 +197,7 @@ function SignInScreen() {
   const { onApplePress, onGooglePress } = useAuthProviders();
 
   return (
-    <View className="flex min-h-screen w-full items-center justify-center">
+    <View className="bg-off-white flex min-h-screen w-full items-center justify-center">
       <Text className="text-3xl" style={{ fontFamily: "Nunito-Sans" }}>
         Welcome back!
       </Text>
