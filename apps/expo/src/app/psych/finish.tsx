@@ -20,7 +20,7 @@ export default function SessionFinishAppointment() {
           <Image
             alt=""
             source={require("../../../assets/success.png")}
-            style={{ width: 250, height: 250 }}
+            style={{ width: 200, height: 200 }}
             resizeMode="contain"
           />
         </View>
@@ -33,19 +33,19 @@ export default function SessionFinishAppointment() {
         <View className="w-4/5 pt-2">
           <Text className="text-center">
             <Text
-              className="text-xl"
+              className="text-lg"
               style={{ fontFamily: "Nunito-Sans-Bold" }}
             >
               {params.psych}{" "}
             </Text>
             <Text
-              className="text-slate-500 text-xl"
+              className="text-slate-500 text-lg"
               style={{ fontFamily: "Nunito-Sans" }}
             >
               will be meeting with you on the the{" "}
             </Text>
             <Text
-              className="text-xl"
+              className="text-lg"
               style={{ fontFamily: "Nunito-Sans-Bold" }}
             >
               {
@@ -61,13 +61,13 @@ export default function SessionFinishAppointment() {
           }}
           className="w-4/5 pt-8"
         >
-          <View className="bg-blue-500 flex flex-row items-center justify-center rounded-xl px-12 py-3">
+          <View className="bg-blue-500 flex flex-row items-center justify-center rounded-xl px-6 py-2">
             <MaterialIcons size={24} name="schedule" color="white" />
             <Text
               style={{ fontFamily: "Nunito-Sans-Bold" }}
               className="text-white ml-2 text-xl"
             >
-              Create appointment
+              Create event
             </Text>
           </View>
         </TouchableOpacity>
@@ -77,7 +77,7 @@ export default function SessionFinishAppointment() {
           }}
           className="w-4/5 pt-4"
         >
-          <View className="bg-white flex flex-row items-center justify-center rounded-xl px-12 py-3 shadow-sm">
+          <View className="bg-white flex flex-row items-center justify-center rounded-xl px-12 py-2 shadow-sm">
             <Text style={{ fontFamily: "Nunito-Sans" }} className="text-xl">
               Message John
             </Text>

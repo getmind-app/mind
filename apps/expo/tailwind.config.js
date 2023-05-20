@@ -12,9 +12,9 @@
 const config = {
   content: ["./src/**/*.{ts,tsx}"],
   theme: {
-    extend: {
+    extends: {
       colors: {
-        offff: "#f8f8f8",
+        "off-white": "#f8f8f8",
       },
     },
   },

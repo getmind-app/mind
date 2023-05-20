@@ -32,8 +32,10 @@ export default function ChooseRole() {
 
   return (
     <SafeAreaView className="flex-1 flex-wrap items-center justify-center">
-      <View className="flex w-full gap-y-8 px-4">
-        <Text className="px-4 text-3xl">Who are you?</Text>
+      <View className="flex w-full gap-y-4 px-4">
+        <Text className="mb-2 px-4 font-['Nunito-Sans'] text-3xl">
+          Who are you?
+        </Text>
         <View className="items-center">
           <Pressable
             onPress={() => setSelectedRole("patient")}
@@ -48,9 +50,11 @@ export default function ChooseRole() {
             >
               <View className="items-center">
                 <View className="gap-y-2 px-4 py-10">
-                  <Text className="ml-4 text-2xl">Patient</Text>
-                  <Text className="text-slate-500 ml-4 text-lg font-light">
-                    Looking for help or just{"\n"}want to talk
+                  <Text className="ml-4 font-['Nunito-Sans'] text-2xl">
+                    Patient
+                  </Text>
+                  <Text className="text-slate-500 ml-4 font-['Nunito-Sans'] text-lg font-light">
+                    Looking for help or{"\n"}just want to talk
                   </Text>
                 </View>
               </View>
@@ -82,9 +86,11 @@ export default function ChooseRole() {
                 resizeMode="contain"
               />
               <View className="w-3/4 items-center">
-                <View className="gap-y-2 px-4 py-10">
-                  <Text className="ml-4 text-2xl">Professional</Text>
-                  <Text className="text-slate-500 ml-4 text-lg font-light">
+                <View className="ml-12 gap-y-2 px-4 py-10">
+                  <Text className=" font-['Nunito-Sans'] text-2xl">
+                    Professional
+                  </Text>
+                  <Text className="text-slate-500 font-['Nunito-Sans'] text-lg font-light">
                     Meet and help{"\n"}new patients
                   </Text>
                 </View>
@@ -97,13 +103,12 @@ export default function ChooseRole() {
             onPress={handleNext}
           >
             <View
-              className={` mt-8 flex w-full items-center  justify-center rounded-xl py-3 ${
+              className={` mt-12 flex w-full items-center  justify-center rounded-xl py-2 ${
                 selectedRole ? "bg-blue-500" : "bg-gray-300 opacity-50"
               }`}
             >
               <Text
-                style={{ fontFamily: "Nunito-Sans-Bold" }}
-                className={`text-lg ${
+                className={`font-['Nunito-Sans-Bold'] text-lg ${
                   selectedRole ? "text-white" : "text-black"
                 }`}
               >

@@ -101,7 +101,7 @@ function TabsRouter() {
   }, [user]);
 
   const tabBarStyle: tabBarStyle = useMemo(() => {
-    if (path === "/choose-role") {
+    if (path === "/choose-role" || path === "/psych/finish") {
       return {
         height: 0,
       };
@@ -109,11 +109,10 @@ function TabsRouter() {
 
     return {
       height: "10%",
+      paddingTop: 8,
       maxHeight: 80,
-      margin: 8,
       borderRadius: 12,
-      shadowColor: "#000",
-      shadowRadius: 12,
+      marginHorizontal: 8,
       position: "absolute",
     } as tabBarStyle;
   }, [path]);
@@ -207,27 +206,27 @@ function SignInScreen() {
       >
         Simply schedule and pay for your sessions.
       </Text>
-      <View className="flex w-full gap-y-4 px-4">
+      <View className="flex w-full gap-y-4 px-8">
         <View className="flex items-center justify-center">
           <Image
             alt=""
             source={require("../../assets/login_mind.png")}
-            style={{ width: 250, height: 250 }}
+            style={{ width: 200, height: 200 }}
             resizeMode="contain"
           />
         </View>
         <TouchableOpacity onPress={onGooglePress} className="w-full">
-          <View className="bg-white mt-8 flex w-full flex-row items-center justify-center rounded-xl px-8 py-4 font-bold shadow-sm">
-            <FontAwesome size={22} name="google" />
+          <View className="bg-blue-500  mt-8 flex w-full flex-row items-center justify-center rounded-xl px-8 py-4 font-bold shadow-sm">
+            <FontAwesome color="white" size={22} name="google" />
             <Text
               style={{ fontFamily: "Nunito-Sans" }}
-              className="ml-4 text-xl"
+              className="text-white ml-4 text-xl"
             >
               Sign in with{" "}
             </Text>
             <Text
               style={{ fontFamily: "Nunito-Sans-Bold" }}
-              className="text-xl"
+              className=" text-white text-xl"
             >
               Google
             </Text>

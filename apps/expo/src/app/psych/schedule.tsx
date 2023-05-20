@@ -105,46 +105,46 @@ const Calendar = ({ onSelect }: { onSelect: (n: number) => void }) => {
       >
         April
       </Text>
-      {/* TODO: substituir esse magic number de 51px por algo responsivo */}
+      {/* TODO: substituir esse magic number de 47px por algo responsivo */}
       <Text
         style={{ fontFamily: "Nunito-Sans" }}
-        className="w-full max-w-[51px] text-center text-sm text-[#666666]"
+        className="w-full max-w-[47px] text-center text-sm text-[#666666]"
       >
         M
       </Text>
       <Text
         style={{ fontFamily: "Nunito-Sans" }}
-        className="w-full max-w-[51px] text-center text-sm text-[#666666]"
+        className="w-full max-w-[47px] text-center text-sm text-[#666666]"
       >
         T
       </Text>
       <Text
         style={{ fontFamily: "Nunito-Sans" }}
-        className="w-full max-w-[51px] text-center text-sm text-[#666666]"
+        className="w-full max-w-[47px] text-center text-sm text-[#666666]"
       >
         W
       </Text>
       <Text
         style={{ fontFamily: "Nunito-Sans" }}
-        className="w-full max-w-[51px] text-center text-sm text-[#666666]"
+        className="w-full max-w-[47px] text-center text-sm text-[#666666]"
       >
         T
       </Text>
       <Text
         style={{ fontFamily: "Nunito-Sans" }}
-        className="w-full max-w-[51px] text-center text-sm text-[#666666]"
+        className="w-full max-w-[47px] text-center text-sm text-[#666666]"
       >
         F
       </Text>
       <Text
         style={{ fontFamily: "Nunito-Sans" }}
-        className="w-full max-w-[51px] text-center text-sm text-[#666666]"
+        className="w-full max-w-[47px] text-center text-sm text-[#666666]"
       >
         S
       </Text>
       <Text
         style={{ fontFamily: "Nunito-Sans" }}
-        className="w-full max-w-[51px] text-center text-sm text-[#666666]"
+        className="w-full max-w-[47px] text-center text-sm text-[#666666]"
       >
         S
       </Text>
@@ -246,8 +246,8 @@ function Day({
 }) {
   return (
     <Pressable
-      className={`flex w-full max-w-[51px] rounded-full p-2 ${
-        isSelected ? "" : ""
+      className={`flex w-full max-w-[47px] p-2 ${
+        isSelected ? "rounded-full" : ""
       }`}
       android_disableSound={true}
       onPress={() => onPress(number)}
