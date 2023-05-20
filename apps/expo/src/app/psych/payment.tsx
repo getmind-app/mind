@@ -132,9 +132,7 @@ export default function SessionPayment() {
           </Text>
           <Pressable
             onPress={() => {
-              console.log(params.date);
-              console.log({ pathname: "psych/finish", params: params });
-              router.push({ pathname: "psych/finish", params: params });
+              router.push({ pathname: "psych/finish", params: params }); // TODO: Não sei pq esses params não são passados
             }}
             className={`rounded-lg bg-[#2185EE] px-16 py-3`}
           >

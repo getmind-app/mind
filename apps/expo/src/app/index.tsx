@@ -22,7 +22,7 @@ function NextMeetingCard() {
             Monday, 04/16
           </Text>
           <Text
-            className="text-blue-500 order-last ml-auto text-2xl"
+            className="text-blue-500 order-last ml-auto text-xl"
             style={{ fontFamily: "Nunito-Sans-Bold" }}
           >
             8:30

@@ -16,14 +16,6 @@ const config = {
       "off-white": "#f8f8f8",
     },
   },
-  theme: {
-    colors: {
-      "off-white": "#f8f8f8",
-    },
-    fontFamily: {
-      nunito: "Nunito-Sans",
-    },
-  },
 };
 
 module.exports = config;
