@@ -15,7 +15,7 @@ export default function SessionFinishAppointment() {
 
   return (
     <SafeAreaView>
-      <View className="flex flex-col items-center justify-center px-4 pt-24">
+      <View className="flex flex-col items-center justify-center px-4 pt-28">
         <View className="flex items-center justify-center">
           <Image
             alt=""
