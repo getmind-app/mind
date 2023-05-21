@@ -20,7 +20,7 @@ export default function SearchScreen() {
     <SafeAreaView className="bg-off-white min-h-screen ">
       <View className="h-full py-2">
         <View className="flex flex-col px-4">
-          <Text className="pt-12 font-['Nunito-Sans-Bold'] text-4xl">
+          <Text className="pt-12 font-['Nunito-Sans-Bold'] text-3xl">
             Search
           </Text>
           <View className="flex flex-row items-center justify-between pt-4 align-middle">

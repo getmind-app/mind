@@ -18,7 +18,7 @@ export default function UserProfileScreen() {
     <SafeAreaView className="bg-off-white min-h-screen ">
       <View className="h-full py-2">
         <View className="flex flex-row items-center justify-between px-4">
-          <Text className="font-nunito-sans-bold pt-12 text-4xl">Profile</Text>
+          <Text className="font-nunito-sans-bold pt-12 text-3xl">Profile</Text>
         </View>
         <View className="flex flex-row items-center gap-x-4 px-4 pt-4 align-middle">
           <Image

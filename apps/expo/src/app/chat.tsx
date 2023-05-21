@@ -12,7 +12,7 @@ export default function ChatScreen() {
     <SafeAreaView className="bg-off-white min-h-screen ">
       <View className="h-full py-2">
         <View className="flex flex-row items-center justify-between px-4">
-          <Text className="font-nunito-sans-bold pt-12 text-4xl">Chat</Text>
+          <Text className="font-nunito-sans-bold pt-12 text-3xl">Chat</Text>
         </View>
         <View className="flex flex-row items-center gap-x-4 px-4 pt-4 align-middle"></View>
         <ScrollView
