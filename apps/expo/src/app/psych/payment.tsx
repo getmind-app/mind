@@ -117,7 +117,7 @@ export default function SessionPayment() {
             </Text>
           </View>
         </View>
-        <View className="relative mt-4 rounded-2xl bg-[#f8f8f8] p-4">
+        <View className="bg-off-white relative mt-4 rounded-2xl p-4">
           <Text
             style={{ fontFamily: "Nunito-Sans-Bold" }}
             className="mb-2 text-2xl"

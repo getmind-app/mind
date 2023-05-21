@@ -42,7 +42,7 @@ export const AnimatedCard = ({
   };
 
   return (
-    <View className={"relative mt-3 rounded-2xl bg-[#f8f8f8] p-3"}>
+    <View className={"bg-off-white relative mt-3 rounded-2xl p-3"}>
       <TouchableOpacity className={"rounded"} onPress={toggleAccordion}>
         {title}
       </TouchableOpacity>
