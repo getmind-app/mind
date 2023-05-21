@@ -12,7 +12,7 @@ export default function SearchScreen() {
   const [search, setSearch] = useState("");
 
   return (
-    <SafeAreaView className="min-h-screen bg-[#FFF] px-4 pt-8">
+    <SafeAreaView className="bg-white min-h-screen px-4 pt-8">
       <View className="h-full py-2">
         <View className="mb-6 flex flex-row items-center justify-between px-4">
           <View className="mb-2">

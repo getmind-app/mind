@@ -25,32 +25,16 @@ export default function SessionFinishAppointment() {
             resizeMode="contain"
           />
         </View>
-        <Text
-          className="pt-8 text-4xl"
-          style={{ fontFamily: "Nunito-Sans-Bold" }}
-        >
+        <Text className="font-nunito-sans-bold pt-8 text-4xl">
           You&apos;re all set!
         </Text>
         <View className="w-4/5 pt-2">
           <Text className="text-center">
-            <Text
-              className="text-lg"
-              style={{ fontFamily: "Nunito-Sans-Bold" }}
-            >
-              {psych}{" "}
-            </Text>
-            <Text
-              className="text-slate-500 text-lg"
-              style={{ fontFamily: "Nunito-Sans" }}
-            >
+            <Text className="font-nunito-sans-bold text-lg">{psych} </Text>
+            <Text className="text-slate-500 font-nunito-sans text-lg">
               will be meeting with you on the{" "}
             </Text>
-            <Text
-              className="text-lg"
-              style={{ fontFamily: "Nunito-Sans-Bold" }}
-            >
-              {date}
-            </Text>
+            <Text className="font-nunito-sans-bold text-lg">{date}</Text>
           </Text>
         </View>
         <TouchableOpacity
@@ -61,10 +45,7 @@ export default function SessionFinishAppointment() {
         >
           <View className="bg-blue-500 flex flex-row items-center justify-center rounded-xl px-6 py-2">
             <MaterialIcons size={24} name="schedule" color="white" />
-            <Text
-              style={{ fontFamily: "Nunito-Sans-Bold" }}
-              className="text-white ml-2 text-xl"
-            >
+            <Text className="text-white font-nunito-sans-bold ml-2 text-xl">
               Create event
             </Text>
           </View>
@@ -76,9 +57,7 @@ export default function SessionFinishAppointment() {
           className="w-4/5 pt-4"
         >
           <View className="bg-white flex flex-row items-center justify-center rounded-xl px-12 py-2 shadow-sm">
-            <Text style={{ fontFamily: "Nunito-Sans" }} className="text-xl">
-              Message John
-            </Text>
+            <Text className="font-nunito-sans text-xl">Message John</Text>
           </View>
         </TouchableOpacity>
       </View>

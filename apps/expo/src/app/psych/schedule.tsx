@@ -37,16 +37,10 @@ export default function TherapistSchedule() {
               }}
             />
           </View>
-          <Text
-            style={{ fontFamily: "Nunito-Sans-Bold" }}
-            className="mb-2 text-2xl"
-          >
+          <Text className="font-nunito-sans-bold mb-2 text-2xl">
             {psych}&apos;s Schedule
           </Text>
-          <Text
-            style={{ fontFamily: "Nunito-Sans" }}
-            className="mb-2 text-sm text-[#666666]"
-          >
+          <Text className="font-nunito-sans mb-2 text-sm text-[#666666]">
             Pick the date that you would like to meet:
           </Text>
           <Calendar onSelect={setSelectedDate} />
@@ -80,8 +74,7 @@ export default function TherapistSchedule() {
             }}
           >
             <Text
-              style={{ fontFamily: "Nunito-Sans-Bold" }}
-              className={`text-white text-center font-bold`}
+              className={`font-nunito-sans-bold text-white text-center font-bold`}
             >
               Confirm appointment
             </Text>
@@ -98,54 +91,30 @@ const Calendar = ({ onSelect }: { onSelect: (n: number) => void }) => {
   const numbers = Array.from(Array(31).keys());
 
   return (
-    <View className="mx-auto flex  w-min flex-row flex-wrap items-center justify-start rounded-lg bg-[#FFF] pt-4">
-      <Text
-        style={{ fontFamily: "Nunito-Sans-Bold" }}
-        className="relative left-3 w-full pb-3 text-xl"
-      >
+    <View className="bg-white mx-auto  flex w-min flex-row flex-wrap items-center justify-start rounded-lg pt-4">
+      <Text className="font-nunito-sans-bold relative left-3 w-full pb-3 text-xl">
         April
       </Text>
       {/* TODO: substituir esse magic number de 47px por algo responsivo */}
-      <Text
-        style={{ fontFamily: "Nunito-Sans" }}
-        className="w-full max-w-[47px] text-center text-sm text-[#666666]"
-      >
+      <Text className="font-nunito-sans w-full max-w-[47px] text-center text-sm text-[#666666]">
         M
       </Text>
-      <Text
-        style={{ fontFamily: "Nunito-Sans" }}
-        className="w-full max-w-[47px] text-center text-sm text-[#666666]"
-      >
+      <Text className="font-nunito-sans w-full max-w-[47px] text-center text-sm text-[#666666]">
         T
       </Text>
-      <Text
-        style={{ fontFamily: "Nunito-Sans" }}
-        className="w-full max-w-[47px] text-center text-sm text-[#666666]"
-      >
+      <Text className="font-nunito-sans w-full max-w-[47px] text-center text-sm text-[#666666]">
         W
       </Text>
-      <Text
-        style={{ fontFamily: "Nunito-Sans" }}
-        className="w-full max-w-[47px] text-center text-sm text-[#666666]"
-      >
+      <Text className="font-nunito-sans w-full max-w-[47px] text-center text-sm text-[#666666]">
         T
       </Text>
-      <Text
-        style={{ fontFamily: "Nunito-Sans" }}
-        className="w-full max-w-[47px] text-center text-sm text-[#666666]"
-      >
+      <Text className="font-nunito-sans w-full max-w-[47px] text-center text-sm text-[#666666]">
         F
       </Text>
-      <Text
-        style={{ fontFamily: "Nunito-Sans" }}
-        className="w-full max-w-[47px] text-center text-sm text-[#666666]"
-      >
+      <Text className="font-nunito-sans w-full max-w-[47px] text-center text-sm text-[#666666]">
         S
       </Text>
-      <Text
-        style={{ fontFamily: "Nunito-Sans" }}
-        className="w-full max-w-[47px] text-center text-sm text-[#666666]"
-      >
+      <Text className="font-nunito-sans w-full max-w-[47px] text-center text-sm text-[#666666]">
         S
       </Text>
       {numbers.map((number) => (
@@ -188,12 +157,8 @@ function HourPicker({ date, hour, onSelect }: HourPickerProps) {
     <AnimatedCard
       title={
         <View className="flex flex-row justify-between">
-          <Text style={{ fontFamily: "Nunito-Sans" }} className={"text-xl"}>
-            Hour{" "}
-          </Text>
-          <Text style={{ fontFamily: "Nunito-Sans" }} className={"text-xl"}>
-            {hour}{" "}
-          </Text>
+          <Text className={"font-nunito-sans text-xl"}>Hour </Text>
+          <Text className={"font-nunito-sans text-xl"}>{hour} </Text>
         </View>
       }
       expanded={expanded}
@@ -203,18 +168,12 @@ function HourPicker({ date, hour, onSelect }: HourPickerProps) {
       <ScrollView horizontal={true}>
         <View className="mt-2 flex flex-row">
           {date === 0 && (
-            <Text
-              style={{ fontFamily: "Nunito-Sans" }}
-              className="text-[#666666]"
-            >
+            <Text className="font-nunito-sans text-[#666666]">
               Please select a date
             </Text>
           )}
           {date !== 0 && numbers.length === 0 && (
-            <Text
-              style={{ fontFamily: "Nunito-Sans" }}
-              className="text-[#666666]"
-            >
+            <Text className="font-nunito-sans text-[#666666]">
               There are no more available sessions for this date!
             </Text>
           )}
@@ -253,8 +212,7 @@ function Day({
       onPress={() => onPress(number)}
     >
       <Text
-        style={{ fontFamily: "Nunito-Sans" }}
-        className={`p-[6px] text-center text-sm ${
+        className={`font-nunito-sans p-[6px] text-center text-sm ${
           isSelected ? "text-white rounded-full bg-[#2185EE]" : ""
         }`}
       >
@@ -278,12 +236,13 @@ function Hour({
       <Pressable
         onPress={() => onPress(number)}
         className={`mr-2 flex items-center justify-center rounded-lg px-5 py-3 ${
-          isSelected ? " bg-[#2185EE]" : "bg-[#FFF]"
+          isSelected ? " bg-[#2185EE]" : "bg-white"
         }`}
       >
         <Text
-          style={{ fontFamily: "Nunito-Sans" }}
-          className={`text-base ${isSelected ? "text-white" : ""}`}
+          className={`font-nunito-sans text-base ${
+            isSelected ? "text-white" : ""
+          }`}
         >
           {number}
         </Text>
@@ -318,26 +277,14 @@ function ModalityPicker({
       maxHeight={120}
       title={
         <View className="flex flex-row justify-between">
-          <Text style={{ fontFamily: "Nunito-Sans" }} className={"text-xl"}>
-            Meet
-          </Text>
-          <Text
-            style={{ fontFamily: "Nunito-Sans" }}
-            className={"text-xl capitalize"}
-          >
-            {mode}{" "}
-          </Text>
+          <Text className={"font-nunito-sans text-xl"}>Meet</Text>
+          <Text className={"font-nunito-sans text-xl capitalize"}>{mode} </Text>
         </View>
       }
     >
-      <Text
-        style={{ fontFamily: "Nunito-Sans" }}
-        className="mt-2 text-[#666666]"
-      >
+      <Text className="font-nunito-sans mt-2 text-[#666666]">
         John&apos;s sessions happen at{" "}
-        <Text style={{ fontFamily: "Nunito-Sans" }} className="underline">
-          335 Pioneer Way
-        </Text>
+        <Text className="font-nunito-sans underline">335 Pioneer Way</Text>
       </Text>
       <View className="mt-3 flex flex-row justify-between">
         <Pressable
@@ -345,13 +292,12 @@ function ModalityPicker({
             onSelect("online");
             setExpanded(false);
           }}
-          className={`w-[48%] rounded-lg bg-[#FFF] py-3 ${
+          className={`bg-white w-[48%] rounded-lg py-3 ${
             mode === "online" ? "bg-[#2185EE]" : ""
           }`}
         >
           <Text
-            style={{ fontFamily: "Nunito-Sans" }}
-            className={`text-center text-base ${
+            className={`font-nunito-sans text-center text-base ${
               mode === "online" ? "text-white" : ""
             }`}
           >
@@ -363,13 +309,12 @@ function ModalityPicker({
             onSelect("in-person");
             setExpanded(false);
           }}
-          className={`w-[48%] rounded-lg bg-[#FFF] py-3 ${
+          className={`bg-white w-[48%] rounded-lg py-3 ${
             mode === "in-person" ? "bg-[#2185EE]" : ""
           }`}
         >
           <Text
-            style={{ fontFamily: "Nunito-Sans" }}
-            className={`text-center text-base ${
+            className={`font-nunito-sans text-center text-base ${
               mode === "in-person" ? "text-white" : ""
             }`}
           >
