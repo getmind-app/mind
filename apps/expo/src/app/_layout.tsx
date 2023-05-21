@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import Constants from "expo-constants";
-import { loadAsync, useFonts } from "expo-font";
+import { loadAsync } from "expo-font";
 import { SplashScreen, Tabs, usePathname, useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { StatusBar } from "expo-status-bar";
@@ -25,6 +25,7 @@ import {
 import {
   NunitoSans_400Regular,
   NunitoSans_700Bold,
+  useFonts,
 } from "@expo-google-fonts/nunito-sans";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
@@ -73,6 +74,7 @@ const RootLayout = () => {
   const [appIsReady, setAppIsReady] = useState(false);
 
   const [fontsLoaded] = useFonts({
+    NunitoSans_400Regular,
     "Nunito-Sans": NunitoSans_400Regular,
     "Nunito-Sans-Bold": NunitoSans_700Bold,
   });
@@ -141,7 +143,7 @@ function TabsRouter() {
   }, [user]);
 
   const tabBarStyle: tabBarStyle = useMemo(() => {
-    if (path === "/choose-role" || path === "/psych/finish") {
+    if (path === "/choose-role") {
       return {
         height: 0,
       };

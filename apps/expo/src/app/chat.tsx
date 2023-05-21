@@ -2,7 +2,6 @@ import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { useClerk } from "@clerk/clerk-expo";
-import { clerk } from "@clerk/clerk-expo/dist/singleton";
 import { MaterialIcons } from "@expo/vector-icons";
 
 export default function ChatScreen() {
@@ -42,7 +41,7 @@ export default function ChatScreen() {
                     </Text>
                     <View className="bg-blue-500 ml-2 h-2 w-2 rounded-full"></View>
                   </View>
-                  <Text className="font-['Nunito-Sans']">
+                  <Text className="text-slate-500 font-['Nunito-Sans']">
                     Conteúdo da mensagem 😃
                   </Text>
                 </View>

@@ -18,7 +18,7 @@ export default function SessionPayment() {
         showsVerticalScrollIndicator={false}
         overScrollMode="never"
       >
-        <View className="relative mt-8 rounded-2xl bg-[#f8f8f8] p-4 pt-6">
+        <View className="bg-white relative mt-8 rounded-2xl p-4 pt-6 shadow-sm">
           <Text
             className="mb-4 text-2xl"
             style={{ fontFamily: "Nunito-Sans-Bold" }}

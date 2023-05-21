@@ -24,8 +24,8 @@ export default function TherapistSchedule() {
   }, [selectedHour, selectedMode, selectedDate]);
 
   return (
-    <SafeAreaView>
-      <ScrollView className="bg-off-white px-4 pt-8">
+    <SafeAreaView className="bg-off-white">
+      <ScrollView className="px-4 pt-8">
         <View className="bg-white relative mt-8 rounded-2xl p-4 pt-12">
           <View className="p-1/2 absolute -top-8 left-4 flex h-16 w-16 items-center justify-center overflow-hidden rounded-full">
             <Image
@@ -278,7 +278,7 @@ function Hour({
       <Pressable
         onPress={() => onPress(number)}
         className={`mr-2 flex items-center justify-center rounded-lg px-5 py-3 ${
-          isSelected ? " bg-[#2185EE]" : "bg-[#FFF]"
+          isSelected ? " bg-[#2185EE]" : "bg-off-white"
         }`}
       >
         <Text
@@ -345,7 +345,7 @@ function ModalityPicker({
             onSelect("online");
             setExpanded(false);
           }}
-          className={`w-[48%] rounded-lg bg-[#FFF] py-3 ${
+          className={`bg-off-white w-[48%] rounded-lg py-3 ${
             mode === "online" ? "bg-[#2185EE]" : ""
           }`}
         >
@@ -363,7 +363,7 @@ function ModalityPicker({
             onSelect("in-person");
             setExpanded(false);
           }}
-          className={`w-[48%] rounded-lg bg-[#FFF] py-3 ${
+          className={`bg-off-white w-[48%] rounded-lg py-3 ${
             mode === "in-person" ? "bg-[#2185EE]" : ""
           }`}
         >
