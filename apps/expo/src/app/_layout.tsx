@@ -1,8 +1,7 @@
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Image,
   Linking,
-  SafeAreaView,
   Text,
   TouchableOpacity,
   View,
@@ -12,8 +11,8 @@ import {
 } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import Constants from "expo-constants";
-import { useFonts } from "expo-font";
-import { Tabs, usePathname, useRouter } from "expo-router";
+import { loadAsync, useFonts } from "expo-font";
+import { SplashScreen, Tabs, usePathname, useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { StatusBar } from "expo-status-bar";
 import {
@@ -23,7 +22,13 @@ import {
   useClerk,
   useOAuth,
 } from "@clerk/clerk-expo";
-import { AntDesign, FontAwesome } from "@expo/vector-icons";
+import {
+  NunitoSans_400Regular,
+  NunitoSans_700Bold,
+} from "@expo-google-fonts/nunito-sans";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 import { TRPCProvider } from "../utils/api";
 
@@ -46,22 +51,57 @@ const tokenCache = {
   },
 };
 
-const tabBarActiveTintColor = "#3b82f6";
+const tabBarActiveTintColor = "#2563eb"; // blue 600
 const tabBarInactiveTintColor = "black";
 
-// This is the main layout of the app
-/**
- *
- *
- * @return {*}
- */
+function TabBarIconWrapper({
+  children,
+  focused,
+}: {
+  children: React.ReactNode;
+  focused: boolean;
+}) {
+  return (
+    <View className={`${focused ? "bg-blue-100" : "bg-none"} rounded-lg p-2`}>
+      {children}
+    </View>
+  );
+}
+
 const RootLayout = () => {
-  // TODO: Imagino que essa não seja a melhor forma de usar fontes...
-  // Carrega as fontes
+  // https://docs.expo.dev/archive/classic-updates/preloading-and-caching-assets/#pre-loading-and-caching-assets
+  const [appIsReady, setAppIsReady] = useState(false);
+
   const [fontsLoaded] = useFonts({
-    "Nunito-Sans": require("../../assets/fonts/NunitoSans-Regular.ttf"),
-    "Nunito-Sans-Bold": require("../../assets/fonts/NunitoSans-Bold.ttf"),
+    "Nunito-Sans": NunitoSans_400Regular,
+    "Nunito-Sans-Bold": NunitoSans_700Bold,
   });
+
+  useEffect(() => {
+    async function loadResourcesAndDataAsync() {
+      try {
+        SplashScreen.preventAutoHideAsync();
+        const iconsFont = [
+          loadAsync(AntDesign.font),
+          loadAsync(FontAwesome.font),
+          loadAsync(MaterialIcons.font),
+        ];
+
+        await Promise.all([...iconsFont]);
+      } catch (e) {
+        console.warn(e);
+      } finally {
+        setAppIsReady(true);
+        SplashScreen.hideAsync();
+      }
+    }
+
+    loadResourcesAndDataAsync();
+  }, []);
+
+  if (!fontsLoaded) {
+    return null;
+  }
 
   return (
     <ClerkProvider
@@ -109,11 +149,7 @@ function TabsRouter() {
 
     return {
       height: "10%",
-      paddingTop: 8,
       maxHeight: 80,
-      borderRadius: 12,
-      marginHorizontal: 8,
-      position: "absolute",
     } as tabBarStyle;
   }, [path]);
 
@@ -132,45 +168,63 @@ function TabsRouter() {
         name="index"
         options={{
           title: "Home",
-          tabBarIcon: (props) => <AntDesign name="home" {...props} />,
+          tabBarIcon: (props) => (
+            <TabBarIconWrapper focused={props.focused}>
+              <AntDesign name="home" {...props} />
+            </TabBarIconWrapper>
+          ),
         }}
       />
       <Tabs.Screen
         name="search"
         options={{
           title: "Search",
-          tabBarIcon: (props) => <AntDesign name="search1" {...props} />,
+          tabBarIcon: (props) => (
+            <TabBarIconWrapper focused={props.focused}>
+              <AntDesign name="search1" {...props} />
+            </TabBarIconWrapper>
+          ),
         }}
       />
       <Tabs.Screen
         name="calendar"
         options={{
           title: "Calendar",
-          tabBarIcon: (props) => <AntDesign name="calendar" {...props} />,
+          tabBarIcon: (props) => (
+            <TabBarIconWrapper focused={props.focused}>
+              <AntDesign name="calendar" {...props} />
+            </TabBarIconWrapper>
+          ),
         }}
       />
       <Tabs.Screen
         name="chat"
         options={{
           title: "Chat",
-          tabBarIcon: (props) => <AntDesign name="message1" {...props} />,
+          tabBarIcon: (props) => (
+            <TabBarIconWrapper focused={props.focused}>
+              <AntDesign name="message1" {...props} />
+            </TabBarIconWrapper>
+          ),
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
           title: "User Profile",
-          tabBarIcon: () =>
+          tabBarIcon: (props) =>
             path === "/choose-role" || path === "/psych/finish" ? null : (
-              <Image
-                className="rounded-full"
-                alt={`${user?.firstName} profile picture`}
-                source={{
-                  uri: user?.profileImageUrl,
-                  width: 30,
-                  height: 30,
-                }}
-              />
+              <TabBarIconWrapper focused={props.focused}>
+                <Image
+                  className="rounded-full"
+                  alt={`${user?.firstName} profile picture`}
+                  source={{
+                    uri: user?.profileImageUrl,
+                    width: 30,
+                    height: 30,
+                  }}
+                />
+              </TabBarIconWrapper>
             ),
         }}
       />

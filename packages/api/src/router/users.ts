@@ -23,7 +23,10 @@ export const usersRouter = createTRPCRouter({
         return user;
       } catch (e) {
         console.log(e);
-        return e;
+        return {
+          error: e,
+          message: "Failed to update user metadata",
+        };
       }
     }),
   clearMetadata: protectedProcedure.mutation(async ({ ctx }) => {
@@ -36,7 +39,10 @@ export const usersRouter = createTRPCRouter({
       return user;
     } catch (e) {
       console.log(e);
-      return e;
+      return {
+        error: e,
+        message: "Failed to clear user metadata",
+      };
     }
   }),
 });
