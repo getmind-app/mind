@@ -1,6 +1,5 @@
 import {
   Image,
-  Pressable,
   SafeAreaView,
   ScrollView,
   Text,
@@ -79,7 +78,8 @@ export default function UserProfileScreen() {
 }
 
 function DevelopmentOptions() {
-  const { mutateAsync } = api.users.clearMetadata.useMutation({});
+  // TODO: Remove type casting
+  const { mutateAsync } = (api.users as any).clearMetadata.useMutation({});
   const { user } = useClerk();
 
   async function clearUserMetaData() {
