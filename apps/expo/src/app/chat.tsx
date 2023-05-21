@@ -12,7 +12,7 @@ export default function ChatScreen() {
     <SafeAreaView className="bg-off-white min-h-screen ">
       <View className="h-full py-2">
         <View className="flex flex-row items-center justify-between px-4">
-          <Text className="pt-12 font-['Nunito-Sans-Bold'] text-4xl">Chat</Text>
+          <Text className="font-nunito-sans-bold pt-12 text-4xl">Chat</Text>
         </View>
         <View className="flex flex-row items-center gap-x-4 px-4 pt-4 align-middle"></View>
         <ScrollView
@@ -36,12 +36,12 @@ export default function ChatScreen() {
 
                 <View className="ml-4 flex flex-col justify-center align-middle">
                   <View className="flex flex-row items-center align-middle">
-                    <Text className="font-['Nunito-Sans-Bold']">
+                    <Text className="font-nunito-sans-bold">
                       {user?.fullName}
                     </Text>
                     <View className="bg-blue-500 ml-2 h-2 w-2 rounded-full"></View>
                   </View>
-                  <Text className="text-slate-500 font-['Nunito-Sans']">
+                  <Text className="text-slate-500 font-nunito-sans">
                     Conteúdo da mensagem 😃
                   </Text>
                 </View>

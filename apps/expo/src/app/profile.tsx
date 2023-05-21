@@ -18,9 +18,7 @@ export default function UserProfileScreen() {
     <SafeAreaView className="bg-off-white min-h-screen ">
       <View className="h-full py-2">
         <View className="flex flex-row items-center justify-between px-4">
-          <Text className="pt-12 font-['Nunito-Sans-Bold'] text-4xl">
-            Profile
-          </Text>
+          <Text className="font-nunito-sans-bold pt-12 text-4xl">Profile</Text>
         </View>
         <View className="flex flex-row items-center gap-x-4 px-4 pt-4 align-middle">
           <Image
@@ -40,7 +38,7 @@ export default function UserProfileScreen() {
             </View>
             <View>
               {user?.publicMetadata && (
-                <Text className="text-slate-500 font-['Nunito-Sans'] text-lg">
+                <Text className="text-slate-500 font-nunito-sans text-lg">
                   {user.publicMetadata.role == "patient"
                     ? "Patient"
                     : "Professional"}
@@ -89,13 +87,13 @@ function DevelopmentOptions() {
 
   return (
     <View className="bg-white mt-8 rounded shadow-sm">
-      <Text className="pt-4 text-center font-['Nunito-Sans-Bold'] text-2xl">
+      <Text className="font-nunito-sans-bold pt-4 text-center text-2xl">
         Dev Options
       </Text>
       <View className="rounded-lg p-2">
         <TouchableOpacity onPress={clearUserMetaData}>
           <View className="bg-gray-500 flex items-center justify-center rounded py-3">
-            <Text className="text-white font-['Nunito-Sans'] text-lg">
+            <Text className="text-white font-nunito-sans text-lg">
               Reset user metadata
             </Text>
           </View>
@@ -112,7 +110,7 @@ function Card(props: { label: string; icon: any; onPress: () => void }) {
         <View className="flex flex-row items-center justify-center">
           {props.icon}
         </View>
-        <Text className="text-center font-['Nunito-Sans'] text-2xl">
+        <Text className="font-nunito-sans text-center text-2xl">
           {props.label}
         </Text>
       </View>

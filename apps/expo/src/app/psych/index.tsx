@@ -38,29 +38,17 @@ export default function TherapistProfile() {
               }}
             />
           </View>
-          <Text
-            className="pt-4 text-2xl font-bold"
-            style={{ fontFamily: "Nunito-Sans-Bold" }}
-          >
+          <Text className="font-nunito-sans-bold pt-4 text-2xl font-bold">
             John Michael Williams
           </Text>
           <View className="flex flex-row">
-            <Text
-              className="text-slate-500 text-base"
-              style={{ fontFamily: "Nunito-Sans" }}
-            >
+            <Text className="text-slate-500 font-nunito-sans text-base">
               Online and On Site
             </Text>
-            <Text
-              className="text-slate-500 pl-1 text-base"
-              style={{ fontFamily: "Nunito-Sans" }}
-            >
+            <Text className="text-slate-500 font-nunito-sans pl-1 text-base">
               |
             </Text>
-            <Text
-              className="text-slate-500 pl-1 text-base underline"
-              style={{ fontFamily: "Nunito-Sans" }}
-            >
+            <Text className="text-slate-500 font-nunito-sans pl-1 text-base underline">
               45723-43
             </Text>
           </View>
@@ -69,10 +57,7 @@ export default function TherapistProfile() {
               <View className="bg-blue-500 mt-4 rounded-xl shadow-sm">
                 <View className="items-center">
                   <View className="px-16 py-2">
-                    <Text
-                      className="text-white text-lg"
-                      style={{ fontFamily: "Nunito-Sans-Bold" }}
-                    >
+                    <Text className="text-white font-nunito-sans-bold text-lg">
                       Schedule
                     </Text>
                   </View>
@@ -83,10 +68,7 @@ export default function TherapistProfile() {
               <View className="bg-white mt-4 rounded-xl shadow-sm">
                 <View className="items-center">
                   <View className="px-4 py-2">
-                    <Text
-                      className="text-white text-lg"
-                      style={{ fontFamily: "Nunito-Sans-Bold" }}
-                    >
+                    <Text className="text-white font-nunito-sans-bold text-lg">
                       <MaterialIcons color="black" size={20} name="chat" />
                     </Text>
                   </View>
@@ -120,12 +102,7 @@ function AboutMe() {
         <View className="flex flex-row items-center justify-between align-middle">
           <View className="flex flex-row items-center gap-2 align-middle">
             <Text>👤</Text>
-            <Text
-              className=" text-lg"
-              style={{ fontFamily: "Nunito-Sans-Bold" }}
-            >
-              About me
-            </Text>
+            <Text className=" font-nunito-sans-bold text-lg">About me</Text>
           </View>
           <Pressable onPress={toggleAboutMe}>
             {aboutMeOpen ? (
@@ -137,7 +114,7 @@ function AboutMe() {
         </View>
         {aboutMeOpen ? (
           <View className="pb-2 pt-4">
-            <Text className="text-base" style={{ fontFamily: "Nunito-Sans" }}>
+            <Text className="text-base">
               I really enjoy helping people find peace of mind. I believe I was
               born with a mission to assist everyone who seeks self-awareness
               and personal growth.
@@ -165,12 +142,7 @@ function Education() {
         <View className="flex flex-row items-center justify-between align-middle">
           <View className="flex flex-row items-center gap-2 align-middle">
             <Text>🎓</Text>
-            <Text
-              className=" text-lg"
-              style={{ fontFamily: "Nunito-Sans-Bold" }}
-            >
-              Education
-            </Text>
+            <Text className=" font-nunito-sans-bold text-lg">Education</Text>
           </View>
           <Pressable onPress={toggleEducation}>
             {educationOpen ? (
@@ -182,10 +154,10 @@ function Education() {
         </View>
         {educationOpen ? (
           <View className="col flex flex-col gap-y-2 pb-2 pt-4">
-            <Text className="text-base" style={{ fontFamily: "Nunito-Sans" }}>
+            <Text className="font-nunito-sans text-base">
               Bachelor's Degree in Psychology - Federal University of Paraná
             </Text>
-            <Text className="text-base" style={{ fontFamily: "Nunito-Sans" }}>
+            <Text className="font-nunito-sans text-base">
               Postgraduate degree in Life Therapy - University of São Paulo
             </Text>
           </View>
@@ -212,8 +184,7 @@ function Methodologies() {
           <View className="flex flex-row items-center gap-2 align-middle">
             <Text>📚</Text>
             <Text
-              className=" text-lg"
-              style={{ fontFamily: "Nunito-Sans-Bold" }}
+              className=" text-lg font-nunito-sans-bold"
             >
               Methodologies
             </Text>

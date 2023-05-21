@@ -18,20 +18,12 @@ function NextMeetingCard() {
     <View className="bg-white mx-4 mt-4 rounded-xl shadow-sm">
       <View className="px-6 pt-6">
         <View className="flex w-full flex-row">
-          <Text className="text-xl" style={{ fontFamily: "Nunito-Sans" }}>
-            Monday, 04/16
-          </Text>
-          <Text
-            className="text-blue-500 order-last ml-auto text-xl"
-            style={{ fontFamily: "Nunito-Sans-Bold" }}
-          >
+          <Text className="font-nunito-sans text-xl">Monday, 04/16</Text>
+          <Text className="text-blue-500 order-last ml-auto text-xl ">
             8:30
           </Text>
         </View>
-        <Text
-          className="text-slate-500 text-sm"
-          style={{ fontFamily: "Nunito-Sans" }}
-        >
+        <Text className="text-slate-500 font-nunito-sans text-sm">
           via Google Meet
         </Text>
         <View className="mt-4 flex w-full flex-row items-center justify-between align-middle">
@@ -52,10 +44,7 @@ function NextMeetingCard() {
                 />
               </ImageBackground>
             </View>
-            <Text
-              className="ml-2 text-xl"
-              style={{ fontFamily: "Nunito-Sans" }}
-            >
+            <Text className="font-nunito-sans ml-2 text-xl">
               John Williams{" "}
             </Text>
           </View>
@@ -72,10 +61,7 @@ function NextMeetingCard() {
       >
         <View className="bg-blue-500 mt-6 flex w-full flex-row items-center justify-center rounded-bl-xl rounded-br-xl py-3 align-middle">
           <FontAwesome size={20} color="white" name="video-camera" />
-          <Text
-            style={{ fontFamily: "Nunito-Sans-Bold" }}
-            className="text-white ml-4 text-lg"
-          >
+          <Text className="font-nunito-sans-bold text-white ml-4 text-lg">
             Join the meeting
           </Text>
         </View>
@@ -97,20 +83,12 @@ function LastNotes() {
         <View className="flex w-full flex-row items-center justify-between px-6 py-4 align-middle">
           <View className="flex w-72 flex-col">
             <View className="flex flex-row">
-              <Text
-                className="text-blue-500 text-xl"
-                style={{ fontFamily: "Nunito-Sans-Bold" }}
-              >
+              <Text className="text-blue-500 font-nunito-sans-bold text-xl">
                 5
               </Text>
-              <Text className="text-xl" style={{ fontFamily: "Nunito-Sans" }}>
-                , May
-              </Text>
+              <Text className="font-nunito-sans text-xl">, May</Text>
             </View>
-            <Text
-              className="mt-2 text-base"
-              style={{ fontFamily: "Nunito-Sans" }}
-            >
+            <Text className="font-nunito-sans mt-2 text-base">
               I feel very pressured with all the demands of work and family
               life. I become...
             </Text>
@@ -128,20 +106,12 @@ function LastNotes() {
         <View className="flex w-full flex-row items-center justify-between px-6 py-4 align-middle">
           <View className="flex w-72 flex-col">
             <View className="flex flex-row">
-              <Text
-                className="text-blue-500 text-xl"
-                style={{ fontFamily: "Nunito-Sans-Bold" }}
-              >
+              <Text className="text-blue-500 font-nunito-sans-bold text-xl">
                 12
               </Text>
-              <Text className="text-xl" style={{ fontFamily: "Nunito-Sans" }}>
-                , April
-              </Text>
+              <Text className="font-nunito-sans text-xl">, April</Text>
             </View>
-            <Text
-              className="mt-2 text-base"
-              style={{ fontFamily: "Nunito-Sans" }}
-            >
+            <Text className="font-nunito-sans mt-2 text-base">
               I feel very pressured with all the demands of work and family
               life. I become...
             </Text>
@@ -165,19 +135,13 @@ export default function Index() {
       <ScrollView className="min-h-max" showsVerticalScrollIndicator={false}>
         <View className="h-full py-2">
           <View className="flex flex-row items-center justify-between px-4">
-            <Text
-              className="mt-12 text-4xl"
-              style={{ fontFamily: "Nunito-Sans-Bold" }}
-            >
+            <Text className="font-nunito-sans-bold mt-12 text-4xl">
               Next session
             </Text>
           </View>
           <NextMeetingCard />
           <View className="px-4">
-            <Text
-              className="mt-8 text-4xl"
-              style={{ fontFamily: "Nunito-Sans-Bold" }}
-            >
+            <Text className="font-nunito-sans-bold mt-8 text-4xl">
               Last notes
             </Text>
           </View>

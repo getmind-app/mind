@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import {
   Image,
-  Linking,
   Text,
   TouchableOpacity,
   View,
@@ -148,11 +147,6 @@ function TabsRouter() {
         height: 0,
       };
     }
-
-    return {
-      height: "10%",
-      maxHeight: 80,
-    } as tabBarStyle;
   }, [path]);
 
   return (
@@ -215,7 +209,7 @@ function TabsRouter() {
         options={{
           title: "User Profile",
           tabBarIcon: (props) =>
-            path === "/choose-role" || path === "/psych/finish" ? null : (
+            path === "/choose-role" ? null : (
               <TabBarIconWrapper focused={props.focused}>
                 <Image
                   className="rounded-full"
@@ -252,14 +246,9 @@ function SignInScreen() {
   const { onApplePress, onGooglePress } = useAuthProviders();
 
   return (
-    <View className="bg-off-white flex min-h-screen w-full items-center justify-center">
-      <Text className="text-3xl" style={{ fontFamily: "Nunito-Sans" }}>
-        Welcome back!
-      </Text>
-      <Text
-        className="text-gray-500 mb-12 mt-2 text-base"
-        style={{ fontFamily: "Nunito-Sans" }}
-      >
+    <View className="bg-off-white font-nunito-sans flex min-h-screen w-full items-center justify-center">
+      <Text className="text-3xl">Welcome back!</Text>
+      <Text className="text-gray-500 font-nunito-sans mb-12 mt-2 text-base">
         Simply schedule and pay for your sessions.
       </Text>
       <View className="flex w-full gap-y-4 px-8">
@@ -274,16 +263,10 @@ function SignInScreen() {
         <TouchableOpacity onPress={onGooglePress} className="w-full">
           <View className="bg-blue-500  mt-8 flex w-full flex-row items-center justify-center rounded-xl px-8 py-4 font-bold shadow-sm">
             <FontAwesome color="white" size={22} name="google" />
-            <Text
-              style={{ fontFamily: "Nunito-Sans" }}
-              className="text-white ml-4 text-xl"
-            >
+            <Text className="font-nunito-sans text-white ml-4 text-xl">
               Sign in with{" "}
             </Text>
-            <Text
-              style={{ fontFamily: "Nunito-Sans-Bold" }}
-              className=" text-white text-xl"
-            >
+            <Text className=" text-white font-nunito-sans-bold text-xl">
               Google
             </Text>
           </View>
@@ -291,18 +274,8 @@ function SignInScreen() {
         <TouchableOpacity onPress={onApplePress} className="w-full">
           <View className="bg-white flex w-full flex-row items-center justify-center rounded-xl px-8 py-4 font-bold shadow-sm">
             <FontAwesome size={22} name="apple" />
-            <Text
-              style={{ fontFamily: "Nunito-Sans" }}
-              className="ml-4 text-xl"
-            >
-              Sign in with{" "}
-            </Text>
-            <Text
-              style={{ fontFamily: "Nunito-Sans-Bold" }}
-              className="text-xl"
-            >
-              Apple
-            </Text>
+            <Text className="font-nunito-sans ml-4 text-xl">Sign in with </Text>
+            <Text className="font-nunito-sans text-xl">Apple</Text>
           </View>
         </TouchableOpacity>
       </View>
@@ -320,9 +293,7 @@ function useAuthProviders() {
 
   const onGooglePress = React.useCallback(async () => {
     try {
-      const { createdSessionId, setActive } = await googleOAuthFlow({
-        redirectUrl: (await Linking.getInitialURL()) as string,
-      });
+      const { createdSessionId, setActive } = await googleOAuthFlow({});
       if (createdSessionId && setActive) {
         setActive({ session: createdSessionId });
       } else {
@@ -338,9 +309,7 @@ function useAuthProviders() {
 
   const onApplePress = React.useCallback(async () => {
     try {
-      const { createdSessionId, setActive } = await appleOAuthFlow({
-        redirectUrl: (await Linking.getInitialURL()) as string,
-      });
+      const { createdSessionId, setActive } = await appleOAuthFlow({});
       if (createdSessionId && setActive) {
         setActive({ session: createdSessionId });
       } else {

@@ -16,6 +16,9 @@ export const usersRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      console.log(ctx);
+      console.log(input);
+
       try {
         const user = await clerk.users.updateUserMetadata(ctx.auth.userId, {
           publicMetadata: input.metadata,

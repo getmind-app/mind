@@ -33,7 +33,7 @@ export default function ChooseRole() {
   return (
     <SafeAreaView className="flex-1 flex-wrap items-center justify-center">
       <View className="flex w-full gap-y-4 px-4">
-        <Text className="mb-2 px-4 font-['Nunito-Sans'] text-3xl">
+        <Text className="font-nunito-sans mb-2 px-4 text-3xl">
           Who are you?
         </Text>
         <View className="items-center">
@@ -50,10 +50,10 @@ export default function ChooseRole() {
             >
               <View className="items-center">
                 <View className="gap-y-2 px-4 py-10">
-                  <Text className="ml-4 font-['Nunito-Sans'] text-2xl">
+                  <Text className="font-nunito-sans ml-4 text-2xl">
                     Patient
                   </Text>
-                  <Text className="text-slate-500 ml-4 font-['Nunito-Sans'] text-lg font-light">
+                  <Text className="text-slate-500 font-nunito-sans ml-4 text-lg">
                     Looking for help or{"\n"}just want to talk
                   </Text>
                 </View>
@@ -70,7 +70,9 @@ export default function ChooseRole() {
         <View className="items-center">
           <Pressable
             onPress={() => setSelectedRole("professional")}
-            className={`relative w-full ${isLoading ? "opacity-30" : ""}`}
+            className={`w-full ${
+              isLoading ? "opacity-30" : ""
+            } relative overflow-hidden`}
           >
             <View
               className={`bg-white flex w-full flex-row justify-end rounded-xl border-2 shadow-sm ${
@@ -82,15 +84,15 @@ export default function ChooseRole() {
               <Image
                 alt="Psychologist reading a book"
                 source={require("../../assets/paciente.png")}
-                className="absolute bottom-0 left-6 h-36 w-36"
+                className="absolute -bottom-2 left-6 h-36 w-36"
                 resizeMode="contain"
               />
               <View className="w-3/4 items-center">
                 <View className="ml-12 gap-y-2 px-4 py-10">
-                  <Text className=" font-['Nunito-Sans'] text-2xl">
+                  <Text className="font-nunito-sans text-2xl">
                     Professional
                   </Text>
-                  <Text className="text-slate-500 font-['Nunito-Sans'] text-lg font-light">
+                  <Text className="text-slate-500 font-nunito-sans text-lg">
                     Meet and help{"\n"}new patients
                   </Text>
                 </View>
@@ -108,7 +110,7 @@ export default function ChooseRole() {
               }`}
             >
               <Text
-                className={`font-['Nunito-Sans-Bold'] text-lg ${
+                className={`font-nunito-sans-bold text-lg ${
                   selectedRole ? "text-white" : "text-black"
                 }`}
               >
