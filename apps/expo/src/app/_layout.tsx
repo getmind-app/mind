@@ -146,11 +146,6 @@ function TabsRouter() {
         height: 0,
       };
     }
-
-    return {
-      height: "10%",
-      maxHeight: 80,
-    } as tabBarStyle;
   }, [path]);
 
   return (
@@ -318,9 +313,7 @@ function useAuthProviders() {
 
   const onGooglePress = React.useCallback(async () => {
     try {
-      const { createdSessionId, setActive } = await googleOAuthFlow({
-        redirectUrl: (await Linking.getInitialURL()) as string,
-      });
+      const { createdSessionId, setActive } = await googleOAuthFlow({});
       if (createdSessionId && setActive) {
         setActive({ session: createdSessionId });
       } else {
@@ -336,9 +329,7 @@ function useAuthProviders() {
 
   const onApplePress = React.useCallback(async () => {
     try {
-      const { createdSessionId, setActive } = await appleOAuthFlow({
-        redirectUrl: (await Linking.getInitialURL()) as string,
-      });
+      const { createdSessionId, setActive } = await appleOAuthFlow({});
       if (createdSessionId && setActive) {
         setActive({ session: createdSessionId });
       } else {

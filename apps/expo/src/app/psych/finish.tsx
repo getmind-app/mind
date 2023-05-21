@@ -1,17 +1,18 @@
 import {
   Image,
-  ImageBackground,
   SafeAreaView,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
-import { Link, useRouter, useSearchParams } from "expo-router";
+import { useRouter, useSearchParams } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
 
 export default function SessionFinishAppointment() {
   const router = useRouter();
   const params = useSearchParams();
+
+  const { date, psych } = params;
 
   return (
     <SafeAreaView>
@@ -36,22 +37,19 @@ export default function SessionFinishAppointment() {
               className="text-lg"
               style={{ fontFamily: "Nunito-Sans-Bold" }}
             >
-              {params.psych}{" "}
+              {psych}{" "}
             </Text>
             <Text
               className="text-slate-500 text-lg"
               style={{ fontFamily: "Nunito-Sans" }}
             >
-              will be meeting with you on the the{" "}
+              will be meeting with you on the{" "}
             </Text>
             <Text
               className="text-lg"
               style={{ fontFamily: "Nunito-Sans-Bold" }}
             >
-              {
-                ""
-                //{(params.date as string).split("/")[1]}
-              }
+              {date}
             </Text>
           </Text>
         </View>

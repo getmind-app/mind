@@ -10,6 +10,7 @@ function handleMode(x: string) {
 export default function SessionPayment() {
   const params = useSearchParams();
   const router = useRouter();
+  const { psych, date, hour, mode } = params;
 
   return (
     <SafeAreaView className="bg-off-white">
@@ -18,12 +19,12 @@ export default function SessionPayment() {
         showsVerticalScrollIndicator={false}
         overScrollMode="never"
       >
-        <View className="relative mt-8 rounded-2xl bg-[#f8f8f8] p-4 pt-6">
+        <View className="bg-off-white relative mt-8 rounded-2xl p-4 pt-6">
           <Text
             className="mb-4 text-2xl"
             style={{ fontFamily: "Nunito-Sans-Bold" }}
           >
-            Appointments with {params.psych}
+            Appointments with {psych}
           </Text>
           <View className="mb-8">
             <View className="mb-2">
@@ -37,7 +38,7 @@ export default function SessionPayment() {
                 style={{ fontFamily: "Nunito-Sans" }}
                 className="mb-2 ml-3 text-[#666666]"
               >
-                Appointments with {params.psych}
+                Appointments with {psych}
               </Text>
               <View>
                 <View className="ml-6 flex flex-row justify-between">
@@ -45,9 +46,8 @@ export default function SessionPayment() {
                     style={{ fontFamily: "Nunito-Sans" }}
                     className="text-[#666666]"
                   >
-                    {params.date} - {params.hour} -{" "}
-                    {/* TODO: tirar type casting */}
-                    {handleMode(params.mode as string)}
+                    {date} - {hour} - {/* TODO: tirar type casting */}
+                    {handleMode(mode as string)}
                   </Text>
                   <Text
                     style={{ fontFamily: "Nunito-Sans" }}
@@ -132,7 +132,13 @@ export default function SessionPayment() {
           </Text>
           <Pressable
             onPress={() => {
-              router.push({ pathname: "psych/finish", params: params }); // TODO: Não sei pq esses params não são passados
+              router.push({
+                pathname: "psych/finish",
+                params: {
+                  psych,
+                  date,
+                },
+              });
             }}
             className={`rounded-lg bg-[#2185EE] px-16 py-3`}
           >
