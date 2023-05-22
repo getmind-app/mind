@@ -21,6 +21,7 @@
   "dependencies": {
     "@acme/eslint-config": "^0.1.0",
     "@acme/expo": "^0.1.0",
+    "@expo-google-fonts/league-spartan": "^0.2.3",
     "@expo-google-fonts/nunito-sans": "^0.2.3",
     "@expo/webpack-config": "^18.0.1",
     "@ianvs/prettier-plugin-sort-imports": "^3.7.2",

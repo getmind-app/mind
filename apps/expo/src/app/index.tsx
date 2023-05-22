@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import {
-  ImageBackground,
+  Image,
   Linking,
   SafeAreaView,
   ScrollView,
@@ -8,11 +8,12 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { Link, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 
 function NextMeetingCard() {
   const [nextScheduledTherapist, setNextScheduledTherapist] = useState("1");
+  const router = useRouter();
 
   return (
     <View className="bg-white mt-4 rounded-xl shadow-sm">
@@ -29,20 +30,17 @@ function NextMeetingCard() {
         <View className="mt-4 flex w-full flex-row items-center justify-between align-middle">
           <View className="flex flex-row items-center align-middle">
             <View className="flex max-h-[32px] max-w-[32px] items-center justify-center overflow-hidden rounded-full align-middle">
-              <ImageBackground
-                source={{
-                  uri: "https://images.pexels.com/photos/4098353/pexels-photo-4098353.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-                }}
-                resizeMode="contain"
-              >
-                <Link
-                  className=" flex h-16 w-16 items-center justify-center"
-                  href={{
-                    pathname: `/psych`,
-                    params: { id: nextScheduledTherapist },
+              <TouchableOpacity onPress={() => router.push("/psych")}>
+                <Image
+                  className="flex items-center justify-center rounded-full"
+                  alt="John Williams' profile picture"
+                  source={{
+                    uri: "https://images.pexels.com/photos/4098353/pexels-photo-4098353.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+                    width: 48,
+                    height: 48,
                   }}
                 />
-              </ImageBackground>
+              </TouchableOpacity>
             </View>
             <Text className="font-nunito-sans ml-2 text-xl">
               John Williams{" "}
@@ -83,9 +81,9 @@ function LastNotes() {
         <View className="flex flex-col">
           <View className="flex flex-row">
             <Text className="text-blue-500 font-nunito-sans-bold text-xl">
-              5
+              5{" "}
             </Text>
-            <Text className="font-nunito-sans text-xl">, May</Text>
+            <Text className="font-nunito-sans text-xl">May</Text>
           </View>
           <Text className="font-nunito-sans mt-2 text-base">
             I feel very pressured with all the demands of work and family life.

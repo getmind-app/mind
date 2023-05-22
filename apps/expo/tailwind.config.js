@@ -19,6 +19,7 @@ const config = {
       fontFamily: {
         "nunito-sans": ["Nunito-Sans"],
         "nunito-sans-bold": ["Nunito-Sans-Bold"],
+        "league-spartan": ["League-Spartan"],
       },
     },
   },

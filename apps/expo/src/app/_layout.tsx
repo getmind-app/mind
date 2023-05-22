@@ -21,6 +21,7 @@ import {
   useClerk,
   useOAuth,
 } from "@clerk/clerk-expo";
+import { LeagueSpartan_700Bold } from "@expo-google-fonts/league-spartan";
 import {
   NunitoSans_400Regular,
   NunitoSans_700Bold,
@@ -30,6 +31,7 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
+import { LogoSvg } from "../components/LogoSvg";
 import { TRPCProvider } from "../utils/api";
 
 type tabBarStyle = Animated.WithAnimatedValue<StyleProp<ViewStyle>>;
@@ -62,7 +64,7 @@ function TabBarIconWrapper({
   focused: boolean;
 }) {
   return (
-    <View className={`${focused ? "bg-blue-100" : "bg-none"} rounded-lg p-2`}>
+    <View className={`${focused ? "bg-blue-100" : "bg-none"} rounded-lg p-1`}>
       {children}
     </View>
   );
@@ -73,9 +75,9 @@ const RootLayout = () => {
   const [appIsReady, setAppIsReady] = useState(false);
 
   const [fontsLoaded] = useFonts({
-    NunitoSans_400Regular,
     "Nunito-Sans": NunitoSans_400Regular,
     "Nunito-Sans-Bold": NunitoSans_700Bold,
+    "League-Spartan": LeagueSpartan_700Bold,
   });
 
   useEffect(() => {
@@ -246,13 +248,16 @@ function SignInScreen() {
   const { onApplePress, onGooglePress } = useAuthProviders();
 
   return (
-    <View className="bg-off-white font-nunito-sans flex min-h-screen w-full items-center justify-center">
-      <Text className="text-3xl">Welcome back!</Text>
-      <Text className="text-gray-500 font-nunito-sans mb-12 mt-2 text-base">
-        Simply schedule and pay for your sessions.
+    <View className="bg-off-white flex min-h-screen w-full items-center justify-center">
+      <View className="relative bottom-12 right-4">
+        <LogoSvg />
+      </View>
+      <Text className="font-nunito-sans pt-4 text-3xl">Welcome</Text>
+      <Text className="text-gray-500 font-nunito-sans text-base">
+        Let us help. Focus on connecting.
       </Text>
       <View className="flex w-full gap-y-4 px-8">
-        <View className="flex items-center justify-center">
+        <View className="flex items-center justify-center pt-8">
           <Image
             alt=""
             source={require("../../assets/login_mind.png")}

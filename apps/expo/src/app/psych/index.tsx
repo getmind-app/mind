@@ -12,6 +12,8 @@ import {
 import { useRouter } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
 
+import { Header } from "../../components/Header";
+
 export default function TherapistProfile() {
   const router = useRouter();
 
@@ -24,10 +26,11 @@ export default function TherapistProfile() {
   };
 
   return (
-    <SafeAreaView className="bg-off-white min-h-screen pt-8 ">
-      <ScrollView showsVerticalScrollIndicator={false}>
+    <SafeAreaView className="bg-off-white min-h-screen">
+      <ScrollView className="pt-4" showsVerticalScrollIndicator={false}>
+        <Header title="Home" path="/" />
         <View className="flex flex-col items-center justify-center px-4">
-          <View className="flex flex-row items-center justify-center overflow-hidden rounded-full pt-8 align-middle">
+          <View className="flex flex-row items-center justify-center overflow-hidden rounded-full align-middle">
             <Image
               className="rounded-full"
               alt="John Michael Williams"
@@ -98,7 +101,7 @@ function AboutMe() {
 
   return (
     <View className="bg-white w-full rounded-xl shadow-sm">
-      <View className="px-8 py-4">
+      <View className="px-6 py-4">
         <View className="flex flex-row items-center justify-between align-middle">
           <View className="flex flex-row items-center gap-2 align-middle">
             <Text>👤</Text>
@@ -138,7 +141,7 @@ function Education() {
   // Esse mt-4 ta péssimo
   return (
     <View className="bg-white mt-4 w-full rounded-xl shadow-sm">
-      <View className="px-8 py-4">
+      <View className="px-6 py-4">
         <View className="flex flex-row items-center justify-between align-middle">
           <View className="flex flex-row items-center gap-2 align-middle">
             <Text>🎓</Text>
@@ -179,13 +182,11 @@ function Methodologies() {
   // Esse mt-4 ta péssimo
   return (
     <View className="bg-white mt-4 w-full rounded-xl shadow-sm">
-      <View className="px-8 py-4">
+      <View className="px-6 py-4">
         <View className="flex flex-row items-center justify-between align-middle">
           <View className="flex flex-row items-center gap-2 align-middle">
             <Text>📚</Text>
-            <Text
-              className=" text-lg font-nunito-sans-bold"
-            >
+            <Text className=" font-nunito-sans-bold text-lg">
               Methodologies
             </Text>
           </View>
