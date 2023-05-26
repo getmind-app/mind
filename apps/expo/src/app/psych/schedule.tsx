@@ -276,7 +276,7 @@ function ModalityPicker({
     <AnimatedCard
       expanded={expanded}
       setExpanded={setExpanded}
-      maxHeight={120}
+      maxHeight={90}
       title={
         <View className="flex flex-row justify-between">
           <Text className={"font-nunito-sans text-xl"}>Meet</Text>
