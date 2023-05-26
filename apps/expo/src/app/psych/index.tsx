@@ -10,25 +10,17 @@ import {
   View,
 } from "react-native";
 import { useRouter } from "expo-router";
-import { MaterialIcons } from "@expo/vector-icons";
+import { AntDesign, MaterialIcons } from "@expo/vector-icons";
 
 import { Header } from "../../components/Header";
 
 export default function TherapistProfile() {
   const router = useRouter();
 
-  const schedule = () => {
-    router.push("/psych/schedule");
-  };
-
-  const chat = () => {
-    router.push("/chat");
-  };
-
   return (
     <SafeAreaView className="bg-off-white min-h-screen">
+      <Header title="Home" />
       <ScrollView className="pt-4" showsVerticalScrollIndicator={false}>
-        <Header title="Home" path="/" />
         <View className="flex flex-col items-center justify-center px-4">
           <View className="flex flex-row items-center justify-center overflow-hidden rounded-full align-middle">
             <Image
@@ -44,41 +36,46 @@ export default function TherapistProfile() {
           <Text className="font-nunito-sans-bold pt-4 text-2xl font-bold">
             John Michael Williams
           </Text>
-          <View className="flex flex-row">
-            <Text className="text-slate-500 font-nunito-sans text-base">
-              Online and On Site
-            </Text>
-            <Text className="text-slate-500 font-nunito-sans pl-1 text-base">
-              |
-            </Text>
-            <Text className="text-slate-500 font-nunito-sans pl-1 text-base underline">
-              45723-43
-            </Text>
-          </View>
-          <View className="flex flex-row gap-x-4">
-            <TouchableOpacity onPress={schedule}>
-              <View className="bg-blue-500 mt-4 rounded-xl shadow-sm">
-                <View className="items-center">
-                  <View className="px-16 py-2">
-                    <Text className="text-white font-nunito-sans-bold text-lg">
-                      Schedule
-                    </Text>
-                  </View>
-                </View>
+          <View className="flex flex-row items-center gap-8 pt-4 align-middle">
+            <View className="flex flex-col">
+              <Text className="text-slate-500 font-nunito-sans-bold text-base">
+                CRP
+              </Text>
+              <Text className="font-nunito-sans-bold text-base">O3/33213</Text>
+            </View>
+            <View className="flex flex-col">
+              <Text className="text-slate-500 font-nunito-sans-bold text-base">
+                Patients
+              </Text>
+              <View className="flex flex-row">
+                <Text className="font-nunito-sans-bold text-blue-500 text-base">
+                  42{" "}
+                </Text>
+                <Text className="font-nunito-sans-bold text-base">/ week</Text>
               </View>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={chat}>
-              <View className="bg-white mt-4 rounded-xl shadow-sm">
-                <View className="items-center">
-                  <View className="px-4 py-2">
-                    <Text className="text-white font-nunito-sans-bold text-lg">
-                      <MaterialIcons color="black" size={20} name="chat" />
-                    </Text>
-                  </View>
-                </View>
+            </View>
+            <View className="flex flex-col">
+              <Text className="text-slate-500 font-nunito-sans-bold text-base">
+                Practicing for
+              </Text>
+              <View className="flex flex-row">
+                <Text className="font-nunito-sans-bold text-blue-500 text-base">
+                  4{" "}
+                </Text>
+                <Text className="font-nunito-sans-bold text-base">years</Text>
               </View>
-            </TouchableOpacity>
+            </View>
           </View>
+          <TouchableOpacity onPress={() => router.push("/chat")}>
+            <View className="bg-white mt-4 rounded-xl shadow-sm">
+              <View className="flex flex-row items-center gap-2 px-24 py-3 align-middle">
+                <AntDesign name="message1" color="black" size={18} />
+                <Text className="font-nunito-sans-bold text-base">
+                  Talk to John
+                </Text>
+              </View>
+            </View>
+          </TouchableOpacity>
         </View>
         <View className="mt-8 px-4">
           <AboutMe />
@@ -86,6 +83,28 @@ export default function TherapistProfile() {
           <Methodologies />
         </View>
       </ScrollView>
+
+      <View className="bg-blue-500 bottom-20 rounded-t-xl px-6 py-3">
+        <View className="flex flex-row items-center justify-between">
+          <View className="flex flex-col">
+            <Text className="text-white font-nunito-sans-bold text-base">
+              $ 150,00
+            </Text>
+            <Text className="text-white font-nunito-sans text-base">
+              Online and on-site
+            </Text>
+          </View>
+          <TouchableOpacity onPress={() => router.push("/psych/schedule")}>
+            <View className="bg-white rounded-xl">
+              <View className="flex flex-row items-center px-4 py-2 align-middle">
+                <Text className="font-nunito-sans-bold text-base">
+                  Schedule
+                </Text>
+              </View>
+            </View>
+          </TouchableOpacity>
+        </View>
+      </View>
     </SafeAreaView>
   );
 }

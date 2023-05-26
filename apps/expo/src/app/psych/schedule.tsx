@@ -10,6 +10,7 @@ import {
 import { useRouter, useSearchParams } from "expo-router";
 
 import { AnimatedCard } from "../../components/Accordion";
+import { Header } from "../../components/Header";
 
 export default function TherapistSchedule() {
   const router = useRouter();
@@ -25,6 +26,7 @@ export default function TherapistSchedule() {
 
   return (
     <SafeAreaView className="bg-off-white">
+      <Header title="Profile" />
       <ScrollView className="px-4 pt-8">
         <View className="bg-white relative mt-8 rounded-2xl p-4 pt-12">
           <View className="p-1/2 absolute -top-8 left-4 flex h-16 w-16 items-center justify-center overflow-hidden rounded-full">

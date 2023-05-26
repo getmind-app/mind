@@ -2,35 +2,11 @@ import { Stack } from "expo-router";
 
 export default function PsychLayout() {
   return (
-    <Stack>
-      <Stack.Screen
-        name="index"
-        options={{
-          title: "Psych Profile",
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        name="schedule"
-        options={{
-          title: "Schedule",
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        name="payment"
-        options={{
-          title: "Payment",
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        name="finish"
-        options={{
-          title: "Psych Finish",
-          headerShown: false,
-        }}
-      />
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="index" />
+      <Stack.Screen name="schedule" />
+      <Stack.Screen name="payment" />
+      <Stack.Screen name="finish" />
     </Stack>
   );
 }

@@ -118,11 +118,11 @@ const RootLayout = () => {
           <>
             <SignedIn>
               <TabsRouter />
+              <StatusBar />
             </SignedIn>
             <SignedOut>
               <SignInScreen />
             </SignedOut>
-            <StatusBar />
           </>
         </SafeAreaProvider>
       </TRPCProvider>

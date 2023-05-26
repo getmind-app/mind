@@ -2,6 +2,8 @@ import { Pressable, SafeAreaView, ScrollView, Text, View } from "react-native";
 import { useRouter, useSearchParams } from "expo-router";
 import { FontAwesome5 } from "@expo/vector-icons";
 
+import { Header } from "../../components/Header";
+
 function handleMode(x: string) {
   if (x === "online") return "Online";
   if (x === "person") return "In Person";
@@ -14,8 +16,10 @@ export default function SessionPayment() {
 
   return (
     <SafeAreaView className="bg-off-white">
+      <Header title="Schedule" />
+
       <ScrollView
-        className="min-h-screen  px-4 pt-8"
+        className="min-h-screen px-4"
         showsVerticalScrollIndicator={false}
         overScrollMode="never"
       >
