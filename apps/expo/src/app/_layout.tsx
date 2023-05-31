@@ -143,19 +143,10 @@ function TabsRouter() {
     }
   }, [user]);
 
-  const tabBarStyle: tabBarStyle = useMemo(() => {
-    if (path === "/choose-role") {
-      return {
-        height: 0,
-      };
-    }
-  }, [path]);
-
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarStyle,
         tabBarShowLabel: false,
 
         tabBarActiveTintColor,
@@ -211,7 +202,7 @@ function TabsRouter() {
         options={{
           title: "User Profile",
           tabBarIcon: (props) =>
-            path === "/choose-role" ? null : (
+            path === "/choose-role" || path === "/psych" ? null : (
               <TabBarIconWrapper focused={props.focused}>
                 <Image
                   className="rounded-full"
@@ -231,6 +222,9 @@ function TabsRouter() {
         options={{
           title: "Psych Profile",
           href: null,
+          tabBarStyle: {
+            maxHeight: 0,
+          },
         }}
       />
       <Tabs.Screen
@@ -238,6 +232,9 @@ function TabsRouter() {
         options={{
           title: "Choose role",
           href: null,
+          tabBarStyle: {
+            maxHeight: 0,
+          },
         }}
       />
     </Tabs>

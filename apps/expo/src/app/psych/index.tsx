@@ -84,8 +84,8 @@ export default function TherapistProfile() {
         </View>
       </ScrollView>
 
-      <View className="bg-blue-500 bottom-20 rounded-t-xl px-6 py-3">
-        <View className="flex flex-row items-center justify-between">
+      <View className="bg-blue-500 rounded-t-xl px-6">
+        <View className="flex flex-row items-center justify-between py-4">
           <View className="flex flex-col">
             <Text className="text-white font-nunito-sans-bold text-base">
               $ 150,00

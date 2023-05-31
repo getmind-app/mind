@@ -39,7 +39,7 @@ export default function SessionFinishAppointment() {
         </View>
         <TouchableOpacity
           onPress={() => {
-            router.push("/calendar");
+            router.push("/home/calendar");
           }}
           className="w-4/5 pt-8"
         >
@@ -52,7 +52,7 @@ export default function SessionFinishAppointment() {
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {
-            router.push("/calendar");
+            router.push("/home/calendar");
           }}
           className="w-4/5 pt-4"
         >
