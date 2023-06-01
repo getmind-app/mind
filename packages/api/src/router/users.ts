@@ -16,8 +16,7 @@ export const usersRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      console.log(ctx);
-      console.log(input);
+      console.time("updateUserMetadata");
 
       try {
         const user = await clerk.users.updateUserMetadata(ctx.auth.userId, {
@@ -30,6 +29,8 @@ export const usersRouter = createTRPCRouter({
           error: e,
           message: "Failed to update user metadata",
         };
+      } finally {
+        console.timeEnd("updateUserMetadata");
       }
     }),
   clearMetadata: protectedProcedure.mutation(async ({ ctx }) => {

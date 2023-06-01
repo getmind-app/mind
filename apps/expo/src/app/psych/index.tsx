@@ -18,7 +18,7 @@ export default function TherapistProfile() {
   const router = useRouter();
 
   return (
-    <SafeAreaView className="bg-off-white min-h-screen">
+    <SafeAreaView className="bg-off-white relative min-h-screen">
       <Header title="Home" />
       <ScrollView className="pt-4" showsVerticalScrollIndicator={false}>
         <View className="flex flex-col items-center justify-center px-4">
@@ -84,7 +84,7 @@ export default function TherapistProfile() {
         </View>
       </ScrollView>
 
-      <View className="bg-blue-500 bottom-20 rounded-t-xl px-6">
+      <View className="bg-blue-500 absolute bottom-4 w-full rounded-t-xl px-6">
         <View className="flex flex-row items-center justify-between py-3">
           <View className="flex flex-col">
             <Text className="text-white font-nunito-sans-bold text-base">
