@@ -143,6 +143,8 @@ function TabsRouter() {
     }
   }, [user]);
 
+  const shouldShowTabBar = path?.startsWith("/psych/");
+
   return (
     <Tabs
       screenOptions={{
@@ -201,20 +203,19 @@ function TabsRouter() {
         name="profile"
         options={{
           title: "User Profile",
-          tabBarIcon: (props) =>
-            path === "/choose-role" || path === "/psych" ? null : (
-              <TabBarIconWrapper focused={props.focused}>
-                <Image
-                  className="rounded-full"
-                  alt={`${user?.firstName} profile picture`}
-                  source={{
-                    uri: user?.profileImageUrl,
-                    width: 30,
-                    height: 30,
-                  }}
-                />
-              </TabBarIconWrapper>
-            ),
+          tabBarIcon: (props) => (
+            <TabBarIconWrapper focused={props.focused}>
+              <Image
+                className="rounded-full"
+                alt={`${user?.firstName} profile picture`}
+                source={{
+                  uri: user?.profileImageUrl,
+                  width: 30,
+                  height: 30,
+                }}
+              />
+            </TabBarIconWrapper>
+          ),
         }}
       />
       <Tabs.Screen
@@ -222,9 +223,6 @@ function TabsRouter() {
         options={{
           title: "Psych Profile",
           href: null,
-          tabBarStyle: {
-            maxHeight: 0,
-          },
         }}
       />
       <Tabs.Screen

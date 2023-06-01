@@ -98,27 +98,29 @@ const Calendar = ({ onSelect }: { onSelect: (n: number) => void }) => {
         April
       </Text>
       {/* TODO: substituir esse magic number de 47px por algo responsivo */}
-      <Text className="font-nunito-sans w-full max-w-[47px] text-center text-sm text-[#666666]">
-        M
-      </Text>
-      <Text className="font-nunito-sans w-full max-w-[47px] text-center text-sm text-[#666666]">
-        T
-      </Text>
-      <Text className="font-nunito-sans w-full max-w-[47px] text-center text-sm text-[#666666]">
-        W
-      </Text>
-      <Text className="font-nunito-sans w-full max-w-[47px] text-center text-sm text-[#666666]">
-        T
-      </Text>
-      <Text className="font-nunito-sans w-full max-w-[47px] text-center text-sm text-[#666666]">
-        F
-      </Text>
-      <Text className="font-nunito-sans w-full max-w-[47px] text-center text-sm text-[#666666]">
-        S
-      </Text>
-      <Text className="font-nunito-sans w-full max-w-[47px] text-center text-sm text-[#666666]">
-        S
-      </Text>
+      <View className="flex w-full flex-row justify-between px-4">
+        <Text className="font-nunito-sans text-center text-sm text-[#666666]">
+          M
+        </Text>
+        <Text className="font-nunito-sans text-center text-sm text-[#666666]">
+          T
+        </Text>
+        <Text className="font-nunito-sans text-center text-sm text-[#666666]">
+          W
+        </Text>
+        <Text className="font-nunito-sans text-center text-sm text-[#666666]">
+          T
+        </Text>
+        <Text className="font-nunito-sans text-center text-sm text-[#666666]">
+          F
+        </Text>
+        <Text className="font-nunito-sans text-center text-sm text-[#666666]">
+          S
+        </Text>
+        <Text className="font-nunito-sans text-center text-sm text-[#666666]">
+          S
+        </Text>
+      </View>
       {numbers.map((number) => (
         <Day
           number={number + 1}
@@ -207,9 +209,7 @@ function Day({
 }) {
   return (
     <Pressable
-      className={`flex w-full max-w-[47px] p-2 ${
-        isSelected ? "rounded-full" : ""
-      }`}
+      className={`flex w-[47px] p-2 ${isSelected ? "rounded-full" : ""}`}
       android_disableSound={true}
       onPress={() => onPress(number)}
     >
