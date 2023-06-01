@@ -1,5 +1,5 @@
-import { Text, TouchableOpacity, View } from "react-native";
-import { useNavigation } from "expo-router";
+import { Text, View } from "react-native";
+import { Stack, useRouter } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
 
 type HeaderProps = {
@@ -7,14 +7,26 @@ type HeaderProps = {
 };
 
 export const Header = ({ title }: HeaderProps) => {
-  const navigation = useNavigation();
+  const router = useRouter();
 
   return (
-    <TouchableOpacity onPress={() => navigation.goBack()}>
-      <View className="flex flex-row items-center pl-4 pt-2 align-middle">
-        <MaterialIcons size={32} name="chevron-left" />
-        <Text className="font-nunito-sans text-base">{title}</Text>
-      </View>
-    </TouchableOpacity>
+    <Stack.Screen
+      options={{
+        headerLeft: () => (
+          <MaterialIcons
+            size={32}
+            name="chevron-left"
+            onPress={() => router.back()}
+          />
+        ),
+        headerTitle: () => (
+          <Text className="font-nunito-sans text-base capitalize">{title}</Text>
+        ),
+        headerBackground: () => (
+          <View className="bg-off-white h-full w-full shadow-md"></View>
+        ),
+        headerBackVisible: false,
+      }}
+    />
   );
 };
