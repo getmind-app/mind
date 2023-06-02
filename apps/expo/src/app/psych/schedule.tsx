@@ -26,7 +26,7 @@ export default function TherapistSchedule() {
 
   return (
     <SafeAreaView className="bg-off-white">
-      <Header title="Profile" />
+      <Header title="Schedule" />
       <ScrollView className="px-4 pt-8">
         <View className="bg-white relative mt-8 rounded-2xl p-4 pt-12">
           <View className="p-1/2 absolute -top-8 left-4 flex h-16 w-16 items-center justify-center overflow-hidden rounded-full">

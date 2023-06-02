@@ -16,7 +16,7 @@ export default function SessionPayment() {
 
   return (
     <SafeAreaView className="bg-off-white">
-      <Header title="Schedule" />
+      <Header title="Payment" />
 
       <ScrollView
         className="min-h-screen px-4"

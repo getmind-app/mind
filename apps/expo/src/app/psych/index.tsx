@@ -18,8 +18,8 @@ export default function TherapistProfile() {
   const router = useRouter();
 
   return (
-    <SafeAreaView className="bg-off-white min-h-screen">
-      <Header title="Home" />
+    <SafeAreaView className="bg-off-white relative min-h-screen">
+      <Header title="Professional" />
       <ScrollView className="pt-4" showsVerticalScrollIndicator={false}>
         <View className="flex flex-col items-center justify-center px-4">
           <View className="flex flex-row items-center justify-center overflow-hidden rounded-full align-middle">
@@ -77,14 +77,14 @@ export default function TherapistProfile() {
             </View>
           </TouchableOpacity>
         </View>
-        <View className="mt-8 px-4">
+        <View className="mt-8 px-4 pb-56">
           <AboutMe />
           <Education />
           <Methodologies />
         </View>
       </ScrollView>
 
-      <View className="bg-blue-500 bottom-20 rounded-t-xl px-6">
+      <View className="bg-blue-500 absolute bottom-[104px] w-full rounded-t-xl px-6">
         <View className="flex flex-row items-center justify-between py-3">
           <View className="flex flex-col">
             <Text className="text-white font-nunito-sans-bold text-base">
