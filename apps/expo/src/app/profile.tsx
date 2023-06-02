@@ -81,6 +81,7 @@ function DevelopmentOptions() {
   const { user } = useClerk();
 
   async function clearUserMetaData() {
+    console.log("Clearing user metadata");
     await mutateAsync();
     await user?.reload();
   }
