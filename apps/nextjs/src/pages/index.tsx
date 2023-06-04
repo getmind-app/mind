@@ -1,10 +1,8 @@
-import { useState } from "react";
 import type { NextPage } from "next";
 import { Nunito_Sans } from "next/font/google";
 import Head from "next/head";
 import Image from "next/image";
 
-import { api, type RouterOutputs } from "~/utils/api";
 import AppIcon from "../../assets/app_icon.png";
 
 const nunitoSans = Nunito_Sans({
