@@ -3,10 +3,16 @@ import type { Config } from "tailwindcss";
 export default {
   content: [""],
   theme: {
-    colors: {
-      "light-grey": "#DFDFDF",
+    extend: {
+      colors: {
+        "off-white": "#f8f8f8",
+      },
+      fontFamily: {
+        "nunito-sans": ["Nunito-Sans"],
+        "nunito-sans-bold": ["Nunito-Sans-Bold"],
+        "league-spartan": ["League-Spartan"],
+      },
     },
-    extend: {},
   },
   plugins: [],
 } satisfies Config;
