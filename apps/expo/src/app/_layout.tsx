@@ -143,8 +143,6 @@ function TabsRouter() {
     }
   }, [user]);
 
-  const shouldShowTabBar = path?.startsWith("/psych/");
-
   return (
     <Tabs
       screenOptions={{
@@ -223,6 +221,9 @@ function TabsRouter() {
         options={{
           title: "Psych Profile",
           href: null,
+          tabBarStyle: {
+            maxHeight: 0,
+          },
         }}
       />
       <Tabs.Screen
@@ -243,12 +244,12 @@ function SignInScreen() {
   const { onApplePress, onGooglePress } = useAuthProviders();
 
   return (
-    <View className="bg-off-white flex min-h-screen w-full items-center justify-center">
+    <View className="flex min-h-screen w-full items-center justify-center bg-off-white">
       <View className="relative bottom-12 right-4">
         <LogoSvg />
       </View>
-      <Text className="font-nunito-sans pt-4 text-3xl">Welcome</Text>
-      <Text className="text-gray-500 font-nunito-sans text-base">
+      <Text className="pt-4 font-nunito-sans text-3xl">Welcome</Text>
+      <Text className="font-nunito-sans text-base text-gray-500">
         Let us help. Focus on connecting.
       </Text>
       <View className="flex w-full gap-y-4 px-8">
@@ -261,20 +262,20 @@ function SignInScreen() {
           />
         </View>
         <TouchableOpacity onPress={onGooglePress} className="w-full">
-          <View className="bg-blue-500  mt-8 flex w-full flex-row items-center justify-center rounded-xl px-8 py-4 font-bold shadow-sm">
+          <View className="mt-8  flex w-full flex-row items-center justify-center rounded-xl bg-blue-500 px-8 py-4 font-bold shadow-sm">
             <FontAwesome color="white" size={22} name="google" />
-            <Text className="font-nunito-sans text-white ml-4 text-xl">
+            <Text className="ml-4 font-nunito-sans text-xl text-white">
               Sign in with{" "}
             </Text>
-            <Text className=" text-white font-nunito-sans-bold text-xl">
+            <Text className=" font-nunito-sans-bold text-xl text-white">
               Google
             </Text>
           </View>
         </TouchableOpacity>
         <TouchableOpacity onPress={onApplePress} className="w-full">
-          <View className="bg-white flex w-full flex-row items-center justify-center rounded-xl px-8 py-4 font-bold shadow-sm">
+          <View className="flex w-full flex-row items-center justify-center rounded-xl bg-white px-8 py-4 font-bold shadow-sm">
             <FontAwesome size={22} name="apple" />
-            <Text className="font-nunito-sans ml-4 text-xl">Sign in with </Text>
+            <Text className="ml-4 font-nunito-sans text-xl">Sign in with </Text>
             <Text className="font-nunito-sans text-xl">Apple</Text>
           </View>
         </TouchableOpacity>

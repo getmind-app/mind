@@ -18,7 +18,7 @@ export default function TherapistProfile() {
   const router = useRouter();
 
   return (
-    <SafeAreaView className="bg-off-white relative min-h-screen">
+    <SafeAreaView className="bg-off-white">
       <Header title="Professional" />
       <ScrollView className="pt-4" showsVerticalScrollIndicator={false}>
         <View className="flex flex-col items-center justify-center px-4">
@@ -33,33 +33,33 @@ export default function TherapistProfile() {
               }}
             />
           </View>
-          <Text className="font-nunito-sans-bold pt-4 text-2xl font-bold">
+          <Text className="pt-4 font-nunito-sans-bold text-2xl font-bold">
             John Michael Williams
           </Text>
           <View className="flex flex-row items-center gap-8 pt-4 align-middle">
             <View className="flex flex-col">
-              <Text className="text-slate-500 font-nunito-sans-bold text-base">
+              <Text className="font-nunito-sans-bold text-base text-slate-500">
                 CRP
               </Text>
               <Text className="font-nunito-sans-bold text-base">O3/33213</Text>
             </View>
             <View className="flex flex-col">
-              <Text className="text-slate-500 font-nunito-sans-bold text-base">
+              <Text className="font-nunito-sans-bold text-base text-slate-500">
                 Patients
               </Text>
               <View className="flex flex-row">
-                <Text className="font-nunito-sans-bold text-blue-500 text-base">
+                <Text className="font-nunito-sans-bold text-base text-blue-500">
                   42{" "}
                 </Text>
                 <Text className="font-nunito-sans-bold text-base">/ week</Text>
               </View>
             </View>
             <View className="flex flex-col">
-              <Text className="text-slate-500 font-nunito-sans-bold text-base">
+              <Text className="font-nunito-sans-bold text-base text-slate-500">
                 Practicing for
               </Text>
               <View className="flex flex-row">
-                <Text className="font-nunito-sans-bold text-blue-500 text-base">
+                <Text className="font-nunito-sans-bold text-base text-blue-500">
                   4{" "}
                 </Text>
                 <Text className="font-nunito-sans-bold text-base">years</Text>
@@ -67,7 +67,7 @@ export default function TherapistProfile() {
             </View>
           </View>
           <TouchableOpacity onPress={() => router.push("/chat")}>
-            <View className="bg-white mt-4 rounded-xl shadow-sm">
+            <View className="mt-4 rounded-xl bg-white shadow-sm">
               <View className="flex flex-row items-center gap-2 px-24 py-3 align-middle">
                 <AntDesign name="message1" color="black" size={18} />
                 <Text className="font-nunito-sans-bold text-base">
@@ -77,25 +77,25 @@ export default function TherapistProfile() {
             </View>
           </TouchableOpacity>
         </View>
-        <View className="mt-8 px-4 pb-56">
+        <View className="mt-8 px-4">
           <AboutMe />
           <Education />
           <Methodologies />
         </View>
       </ScrollView>
 
-      <View className="bg-blue-500 absolute bottom-[104px] w-full rounded-t-xl px-6">
-        <View className="flex flex-row items-center justify-between py-3">
+      <View className="bottom-0 w-full rounded-t-md bg-blue-500 px-6 pb-2">
+        <View className="flex flex-row items-center justify-between ">
           <View className="flex flex-col">
-            <Text className="text-white font-nunito-sans-bold text-base">
+            <Text className="font-nunito-sans-bold text-base text-white">
               $ 150,00
             </Text>
-            <Text className="text-white font-nunito-sans text-base">
+            <Text className="font-nunito-sans text-base text-white">
               Online and on-site
             </Text>
           </View>
           <TouchableOpacity onPress={() => router.push("/psych/schedule")}>
-            <View className="bg-white rounded-xl">
+            <View className="rounded-xl bg-white">
               <View className="flex flex-row items-center px-4 py-2 align-middle">
                 <Text className="font-nunito-sans-bold text-base">
                   Schedule
@@ -119,7 +119,7 @@ function AboutMe() {
   LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 
   return (
-    <View className="bg-white w-full rounded-xl shadow-sm">
+    <View className="w-full rounded-xl bg-white shadow-sm">
       <View className="px-6 py-4">
         <View className="flex flex-row items-center justify-between align-middle">
           <View className="flex flex-row items-center gap-2 align-middle">
@@ -159,7 +159,7 @@ function Education() {
 
   // Esse mt-4 ta péssimo
   return (
-    <View className="bg-white mt-4 w-full rounded-xl shadow-sm">
+    <View className="mt-4 w-full rounded-xl bg-white shadow-sm">
       <View className="px-6 py-4">
         <View className="flex flex-row items-center justify-between align-middle">
           <View className="flex flex-row items-center gap-2 align-middle">
@@ -200,7 +200,7 @@ function Methodologies() {
 
   // Esse mt-4 ta péssimo
   return (
-    <View className="bg-white mt-4 w-full rounded-xl shadow-sm">
+    <View className="mt-4 w-full rounded-xl bg-white shadow-sm">
       <View className="px-6 py-4">
         <View className="flex flex-row items-center justify-between align-middle">
           <View className="flex flex-row items-center gap-2 align-middle">
@@ -221,19 +221,19 @@ function Methodologies() {
           <View className="mt-3 flex flex-row flex-wrap items-center gap-2 pb-2 pt-6">
             <View className="flex flex-row items-center justify-between rounded-full bg-[#2185EE] px-4 py-1 pr-2">
               <Text className="text-white">Behaviorism</Text>
-              <View className="bg-white ml-3 flex h-6 w-6 items-center justify-center rounded-full">
+              <View className="ml-3 flex h-6 w-6 items-center justify-center rounded-full bg-white">
                 <Text className="text-sm font-bold text-[#74a7dd]">?</Text>
               </View>
             </View>
             <View className="flex flex-row items-center justify-between rounded-full bg-[#2185EE] px-4 py-1 pr-2">
               <Text className="text-white">Bioenergetic</Text>
-              <View className="bg-white ml-3 flex h-6 w-6 items-center justify-center rounded-full">
+              <View className="ml-3 flex h-6 w-6 items-center justify-center rounded-full bg-white">
                 <Text className="text-sm font-bold text-[#74a7dd]">?</Text>
               </View>
             </View>
             <View className="flex flex-row items-center justify-between rounded-full bg-[#2185EE] px-4 py-1 pr-2">
               <Text className="text-white">Cognitive Behavioral Therapy</Text>
-              <View className="bg-white ml-3 flex h-6 w-6 items-center justify-center rounded-full">
+              <View className="ml-3 flex h-6 w-6 items-center justify-center rounded-full bg-white">
                 <Text className="text-sm font-bold text-[#74a7dd]">?</Text>
               </View>
             </View>

@@ -9,22 +9,25 @@ import {
   View,
 } from "react-native";
 import { useRouter } from "expo-router";
+import { useUser } from "@clerk/clerk-expo";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
+
+import { api } from "../utils/api";
 
 function NextMeetingCard() {
   const [nextScheduledTherapist, setNextScheduledTherapist] = useState("1");
   const router = useRouter();
 
   return (
-    <View className="bg-white mt-4 rounded-xl shadow-sm">
+    <View className="mt-4 rounded-xl bg-white shadow-sm">
       <View className="px-6 pt-6">
         <View className="flex w-full flex-row">
           <Text className="font-nunito-sans text-xl">Monday, 04/16</Text>
-          <Text className="text-blue-500 font-nunito-sans-bold order-last ml-auto text-xl ">
+          <Text className="order-last ml-auto font-nunito-sans-bold text-xl text-blue-500 ">
             8:30
           </Text>
         </View>
-        <Text className="text-slate-500 font-nunito-sans text-sm">
+        <Text className="font-nunito-sans text-sm text-slate-500">
           via Google Meet
         </Text>
         <View className="mt-4 flex w-full flex-row items-center justify-between align-middle">
@@ -42,7 +45,7 @@ function NextMeetingCard() {
                 />
               </TouchableOpacity>
             </View>
-            <Text className="font-nunito-sans ml-2 text-xl">
+            <Text className="ml-2 font-nunito-sans text-xl">
               John Williams{" "}
             </Text>
           </View>
@@ -57,9 +60,9 @@ function NextMeetingCard() {
       <TouchableOpacity
         onPress={() => Linking.openURL("https://meet.google.com/xcc-pqgk-gxx")}
       >
-        <View className="bg-blue-500 mt-6 flex w-full flex-row items-center justify-center rounded-bl-xl rounded-br-xl py-3 align-middle">
+        <View className="mt-6 flex w-full flex-row items-center justify-center rounded-bl-xl rounded-br-xl bg-blue-500 py-3 align-middle">
           <FontAwesome size={20} color="white" name="video-camera" />
-          <Text className="font-nunito-sans-bold text-white ml-4 text-lg">
+          <Text className="ml-4 font-nunito-sans-bold text-lg text-white">
             Join the meeting
           </Text>
         </View>
@@ -69,27 +72,39 @@ function NextMeetingCard() {
 }
 
 function LastNotes() {
-  const router = useRouter();
+  const { user } = useUser();
 
-  const notes = () => {
-    router.push("/chat");
+  const { mutate } = api.notes.create.useMutation();
+
+  const handleNewNote = () => {
+    if (user) {
+      console.log(user.id);
+
+      mutate({
+        content: "Content",
+        createdAt: new Date(),
+        userId: user.id,
+      });
+    } else {
+      throw new Error("User not found");
+    }
   };
 
   return (
-    <View className="bg-white mt-4 rounded-xl shadow-sm">
+    <View className="mt-4 rounded-xl bg-white shadow-sm">
       <View className="flex w-full flex-row items-center justify-between gap-8 px-6 py-4 align-middle">
         <View className="flex flex-col">
           <View className="flex flex-row">
-            <Text className="text-blue-500 font-nunito-sans-bold text-xl">
+            <Text className="font-nunito-sans-bold text-xl text-blue-500">
               5{" "}
             </Text>
             <Text className="font-nunito-sans text-xl">May</Text>
           </View>
-          <Text className="font-nunito-sans mt-2 text-base">
+          <Text className="mt-2 font-nunito-sans text-base">
             I feel very pressured with all the demands of work and family life.
           </Text>
         </View>
-        <TouchableOpacity onPress={notes}>
+        <TouchableOpacity onPress={handleNewNote}>
           <MaterialIcons
             className="mr-4"
             size={32}
@@ -104,19 +119,19 @@ function LastNotes() {
 
 export default function Index() {
   return (
-    <SafeAreaView className="bg-off-white min-h-screen">
+    <SafeAreaView className="min-h-screen bg-off-white">
       <ScrollView
         className="min-h-max px-4"
         showsVerticalScrollIndicator={false}
       >
         <View className="h-full">
           <View className="flex flex-row items-center justify-between">
-            <Text className="font-nunito-sans-bold mt-12 text-3xl">
+            <Text className="mt-12 font-nunito-sans-bold text-3xl">
               Next session
             </Text>
           </View>
           <NextMeetingCard />
-          <Text className="font-nunito-sans-bold mt-8 text-3xl">
+          <Text className="mt-8 font-nunito-sans-bold text-3xl">
             Last notes
           </Text>
           <LastNotes />

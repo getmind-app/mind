@@ -52,8 +52,17 @@ model User {
     email         String?   @unique
     emailVerified DateTime?
     image         String?
+    notes         Note[]
     accounts      Account[]
     sessions      Session[]
+}
+
+model Note {
+    id           String   @id @default(cuid())
+    content      String   @unique
+    createdAt    DateTime
+    userId       String
+    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model VerificationToken {

@@ -17,7 +17,7 @@ export default function SearchScreen() {
   const { user } = useClerk();
 
   return (
-    <SafeAreaView className="bg-off-white min-h-screen ">
+    <SafeAreaView className="min-h-screen bg-off-white ">
       <View className="h-full py-2">
         <View className="flex flex-col px-4">
           <Text className="pt-12 font-['Nunito-Sans-Bold'] text-3xl">
@@ -31,8 +31,8 @@ export default function SearchScreen() {
               placeholder="Looking for a therapist?"
             />
             <TouchableOpacity>
-              <View className="bg-blue-500 flex items-center justify-center rounded px-6 py-1">
-                <Text className="text-white font-['Nunito-Sans-Bold'] text-lg">
+              <View className="flex items-center justify-center rounded bg-blue-500 px-6 py-1">
+                <Text className="font-['Nunito-Sans-Bold'] text-lg text-white">
                   Search
                 </Text>
               </View>
@@ -47,23 +47,25 @@ export default function SearchScreen() {
           <View className="flex flex-col">
             <View className="flex flex-row items-center align-middle">
               <View className="flex flex-row">
-                <TouchableOpacity onPress={() => router.push("/profile")}>
-                  <Image
-                    className="rounded-full"
-                    alt={`${user?.firstName}'s profile picture`}
-                    source={{
-                      uri: user?.profileImageUrl,
-                      width: 48,
-                      height: 48,
-                    }}
-                  />
-                </TouchableOpacity>
+                <View className="flex items-center justify-center overflow-hidden rounded-full align-middle">
+                  <TouchableOpacity onPress={() => router.push("/psych")}>
+                    <Image
+                      className="flex items-center justify-center rounded-full"
+                      alt="John Williams' profile picture"
+                      source={{
+                        uri: "https://images.pexels.com/photos/4098353/pexels-photo-4098353.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+                        width: 48,
+                        height: 48,
+                      }}
+                    />
+                  </TouchableOpacity>
+                </View>
 
                 <View className="ml-4 flex flex-col justify-center align-middle">
                   <Text className="-mb-1 font-['Nunito-Sans-Bold'] text-lg">
-                    {user?.fullName}
+                    John Michael Williams
                   </Text>
-                  <Text className="text-slate-500 font-['Nunito-Sans']">
+                  <Text className="font-['Nunito-Sans'] text-slate-500">
                     Psychologist - 32/43243
                   </Text>
                 </View>
