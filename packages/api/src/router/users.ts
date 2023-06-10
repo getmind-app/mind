@@ -50,4 +50,11 @@ export const usersRouter = createTRPCRouter({
       };
     }
   }),
+  getAllProfessionals: protectedProcedure.query(async () => {
+    const users = await clerk.users.getUserList();
+    const professionals = users.filter(
+      (user) => user.publicMetadata?.role === "professional",
+    );
+    return professionals;
+  }),
 });

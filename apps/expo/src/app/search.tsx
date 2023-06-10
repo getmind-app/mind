@@ -9,12 +9,12 @@ import {
   View,
 } from "react-native";
 import { useRouter } from "expo-router";
-import { useClerk } from "@clerk/clerk-expo";
+
+import { api } from "../utils/api";
 
 export default function SearchScreen() {
   const [search, setSearch] = useState("");
-  const router = useRouter();
-  const { user } = useClerk();
+  const [pressed, setPressed] = useState(false);
 
   return (
     <SafeAreaView className="min-h-screen bg-off-white ">
@@ -23,6 +23,7 @@ export default function SearchScreen() {
           <Text className="pt-12 font-['Nunito-Sans-Bold'] text-3xl">
             Search
           </Text>
+
           <View className="flex flex-row items-center justify-between pt-4 align-middle">
             <TextInput
               onChangeText={setSearch}
@@ -30,7 +31,11 @@ export default function SearchScreen() {
               value={search}
               placeholder="Looking for a therapist?"
             />
-            <TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                setPressed(!pressed);
+              }}
+            >
               <View className="flex items-center justify-center rounded bg-blue-500 px-6 py-1">
                 <Text className="font-['Nunito-Sans-Bold'] text-lg text-white">
                   Search
@@ -40,40 +45,62 @@ export default function SearchScreen() {
           </View>
         </View>
         <View className="flex flex-row items-center gap-x-4 px-4 pt-4 align-middle"></View>
-        <ScrollView
-          className="min-h-max px-4 pt-4"
-          showsVerticalScrollIndicator={false}
-        >
-          <View className="flex flex-col">
-            <View className="flex flex-row items-center align-middle">
-              <View className="flex flex-row">
-                <View className="flex items-center justify-center overflow-hidden rounded-full align-middle">
-                  <TouchableOpacity onPress={() => router.push("/psych")}>
-                    <Image
-                      className="flex items-center justify-center rounded-full"
-                      alt="John Williams' profile picture"
-                      source={{
-                        uri: "https://images.pexels.com/photos/4098353/pexels-photo-4098353.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-                        width: 48,
-                        height: 48,
-                      }}
-                    />
-                  </TouchableOpacity>
-                </View>
-
-                <View className="ml-4 flex flex-col justify-center align-middle">
-                  <Text className="-mb-1 font-['Nunito-Sans-Bold'] text-lg">
-                    John Michael Williams
-                  </Text>
-                  <Text className="font-['Nunito-Sans'] text-slate-500">
-                    Psychologist - 32/43243
-                  </Text>
-                </View>
-              </View>
-            </View>
-          </View>
+        <ScrollView className="w-full" showsVerticalScrollIndicator={false}>
+          {pressed && <List />}
         </ScrollView>
       </View>
     </SafeAreaView>
+  );
+}
+function List() {
+  const { data, isLoading, isError, error } =
+    api.users.getAllProfessionals.useQuery();
+  const router = useRouter();
+
+  if (isError) {
+    return (
+      <View className="flex  items-center justify-center">
+        <Text>{JSON.stringify(error)}</Text>
+      </View>
+    );
+  }
+
+  if (isLoading || !data) {
+    return (
+      <View className="flex  items-center justify-center">
+        <Text>Loading</Text>
+      </View>
+    );
+  }
+  return (
+    <View className="flex w-full flex-col items-start justify-center gap-y-4 px-2">
+      {data.map(({ firstName, lastName, profileImageUrl, id }) => {
+        return (
+          <TouchableOpacity
+            className="flex flex-row gap-2"
+            key={id}
+            onPress={() => router.push(`/psych/${id}`)}
+          >
+            <Image
+              className="flex items-center justify-center rounded-full"
+              alt={`${firstName} ${lastName}' profile picture`}
+              source={{
+                uri: profileImageUrl,
+                width: 48,
+                height: 48,
+              }}
+            />
+            <View className="flex flex-col justify-center align-middle">
+              <Text className="-mb-1 font-['Nunito-Sans-Bold'] text-lg">
+                {firstName} {lastName}
+              </Text>
+              <Text className="font-['Nunito-Sans'] text-slate-500">
+                Psychologist - 32/43243
+              </Text>
+            </View>
+          </TouchableOpacity>
+        );
+      })}
+    </View>
   );
 }
