@@ -28,7 +28,7 @@ export default function TherapistSchedule() {
     <SafeAreaView className="bg-off-white">
       <Header title="Schedule" />
       <ScrollView className="px-4 pt-8">
-        <View className="bg-white relative mt-8 rounded-2xl p-4 pt-12">
+        <View className="relative mt-8 rounded-2xl bg-white p-4 pt-12">
           <View className="p-1/2 absolute -top-8 left-4 flex h-16 w-16 items-center justify-center overflow-hidden rounded-full">
             <Image
               alt="John Michael Williams"
@@ -39,10 +39,10 @@ export default function TherapistSchedule() {
               }}
             />
           </View>
-          <Text className="font-nunito-sans-bold mb-2 text-2xl">
+          <Text className="mb-2 font-nunito-sans-bold text-2xl">
             {psych}&apos;s Schedule
           </Text>
-          <Text className="font-nunito-sans mb-2 text-sm text-[#666666]">
+          <Text className="mb-2 font-nunito-sans text-sm text-[#666666]">
             Pick the date that you would like to meet:
           </Text>
           <Calendar onSelect={setSelectedDate} />
@@ -76,7 +76,7 @@ export default function TherapistSchedule() {
             }}
           >
             <Text
-              className={`font-nunito-sans-bold text-white text-center font-bold`}
+              className={`text-center font-nunito-sans-bold font-bold text-white`}
             >
               Confirm appointment
             </Text>
@@ -93,31 +93,31 @@ const Calendar = ({ onSelect }: { onSelect: (n: number) => void }) => {
   const numbers = Array.from(Array(31).keys());
 
   return (
-    <View className="bg-white mx-auto  flex w-min flex-row flex-wrap items-center justify-start rounded-lg pt-4">
-      <Text className="font-nunito-sans-bold relative left-3 w-full pb-3 text-xl">
+    <View className="mx-auto flex  w-min flex-row flex-wrap items-center justify-start rounded-lg bg-white pt-4">
+      <Text className="relative left-3 w-full pb-3 font-nunito-sans-bold text-xl">
         April
       </Text>
       {/* TODO: substituir esse magic number de 47px por algo responsivo */}
       <View className="flex w-full flex-row justify-between px-4">
-        <Text className="font-nunito-sans text-center text-sm text-[#666666]">
+        <Text className="text-center font-nunito-sans text-sm text-[#666666]">
           M
         </Text>
-        <Text className="font-nunito-sans text-center text-sm text-[#666666]">
+        <Text className="text-center font-nunito-sans text-sm text-[#666666]">
           T
         </Text>
-        <Text className="font-nunito-sans text-center text-sm text-[#666666]">
+        <Text className="text-center font-nunito-sans text-sm text-[#666666]">
           W
         </Text>
-        <Text className="font-nunito-sans text-center text-sm text-[#666666]">
+        <Text className="text-center font-nunito-sans text-sm text-[#666666]">
           T
         </Text>
-        <Text className="font-nunito-sans text-center text-sm text-[#666666]">
+        <Text className="text-center font-nunito-sans text-sm text-[#666666]">
           F
         </Text>
-        <Text className="font-nunito-sans text-center text-sm text-[#666666]">
+        <Text className="text-center font-nunito-sans text-sm text-[#666666]">
           S
         </Text>
-        <Text className="font-nunito-sans text-center text-sm text-[#666666]">
+        <Text className="text-center font-nunito-sans text-sm text-[#666666]">
           S
         </Text>
       </View>
@@ -214,8 +214,8 @@ function Day({
       onPress={() => onPress(number)}
     >
       <Text
-        className={`font-nunito-sans p-[6px] text-center text-sm ${
-          isSelected ? "text-white rounded-full bg-[#2185EE]" : ""
+        className={`p-[6px] text-center font-nunito-sans text-sm ${
+          isSelected ? "rounded-full bg-[#2185EE] text-white" : ""
         }`}
       >
         {number}
@@ -284,7 +284,7 @@ function ModalityPicker({
         </View>
       }
     >
-      <Text className="font-nunito-sans mt-2 text-[#666666]">
+      <Text className="mt-2 font-nunito-sans text-[#666666]">
         John&apos;s sessions happen at{" "}
         <Text className="font-nunito-sans underline">335 Pioneer Way</Text>
       </Text>
@@ -294,12 +294,12 @@ function ModalityPicker({
             onSelect("online");
             setExpanded(false);
           }}
-          className={`bg-off-white w-[48%] rounded-lg py-3 ${
+          className={`w-[48%] rounded-lg bg-off-white py-3 ${
             mode === "online" ? "bg-[#2185EE]" : ""
           }`}
         >
           <Text
-            className={`font-nunito-sans text-center text-base ${
+            className={`text-center font-nunito-sans text-base ${
               mode === "online" ? "text-white" : ""
             }`}
           >
@@ -311,12 +311,12 @@ function ModalityPicker({
             onSelect("in-person");
             setExpanded(false);
           }}
-          className={`bg-off-white w-[48%] rounded-lg py-3 ${
+          className={`w-[48%] rounded-lg bg-off-white py-3 ${
             mode === "in-person" ? "bg-[#2185EE]" : ""
           }`}
         >
           <Text
-            className={`font-nunito-sans text-center text-base ${
+            className={`text-center font-nunito-sans text-base ${
               mode === "in-person" ? "text-white" : ""
             }`}
           >

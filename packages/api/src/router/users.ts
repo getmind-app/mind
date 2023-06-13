@@ -57,4 +57,39 @@ export const usersRouter = createTRPCRouter({
     );
     return professionals;
   }),
+  getProfessional: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      }),
+    )
+    .query(async ({ input }) => {
+      const professionalData = await clerk.users.getUser(input.id);
+
+      // TODO: this is where we would query the database for the professional's appointments
+      const weeklyAppointments = 12;
+
+      // TODO: maybe this should be on our side
+      const professionalMetadataSchema = z.object({
+        crp: z.string(),
+        about: z.string(),
+        methodologies: z.array(z.string()),
+        education: z.array(
+          z.object({
+            institution: z.string(),
+            course: z.string(),
+          }),
+        ),
+        hourlyRate: z.number(),
+        yearsOfExperience: z.number(),
+      });
+
+      return {
+        ...professionalData,
+        publicMetadata: {
+          ...professionalMetadataSchema.parse(professionalData.publicMetadata),
+          weeklyAppointments,
+        },
+      };
+    }),
 });

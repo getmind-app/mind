@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import {
   Image,
   LayoutAnimation,
@@ -9,39 +9,54 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { useRouter } from "expo-router";
+import { useRouter, useSearchParams } from "expo-router";
 import { AntDesign, MaterialIcons } from "@expo/vector-icons";
 
 import { Header } from "../../components/Header";
+import { api } from "../../utils/api";
 
 export default function TherapistProfile() {
   const router = useRouter();
+  const params = useSearchParams();
+  const { data, isLoading, isError } = api.users.getProfessional.useQuery({
+    id: params.id as string,
+  });
+
+  if (isError) {
+    return <Text>There was an error</Text>;
+  }
+
+  if (isLoading) {
+    return <Text>Loading...</Text>;
+  }
 
   return (
-    <SafeAreaView className="bg-off-white">
+    <SafeAreaView>
       <Header title="Professional" />
       <ScrollView className="pt-4" showsVerticalScrollIndicator={false}>
         <View className="flex flex-col items-center justify-center px-4">
           <View className="flex flex-row items-center justify-center overflow-hidden rounded-full align-middle">
             <Image
               className="rounded-full"
-              alt="John Michael Williams"
+              alt={`${data.firstName} ${data.lastName} picture`}
               source={{
-                uri: "https://images.pexels.com/photos/4098353/pexels-photo-4098353.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+                uri: data.profileImageUrl,
                 width: 126,
                 height: 126,
               }}
             />
           </View>
           <Text className="pt-4 font-nunito-sans-bold text-2xl font-bold">
-            John Michael Williams
+            {data.firstName} {data.lastName}
           </Text>
           <View className="flex flex-row items-center gap-8 pt-4 align-middle">
             <View className="flex flex-col">
               <Text className="font-nunito-sans-bold text-base text-slate-500">
                 CRP
               </Text>
-              <Text className="font-nunito-sans-bold text-base">O3/33213</Text>
+              <Text className="font-nunito-sans-bold text-base">
+                {data.publicMetadata.crp}
+              </Text>
             </View>
             <View className="flex flex-col">
               <Text className="font-nunito-sans-bold text-base text-slate-500">
@@ -49,9 +64,9 @@ export default function TherapistProfile() {
               </Text>
               <View className="flex flex-row">
                 <Text className="font-nunito-sans-bold text-base text-blue-500">
-                  42{" "}
+                  {data.publicMetadata.weeklyAppointments}
                 </Text>
-                <Text className="font-nunito-sans-bold text-base">/ week</Text>
+                <Text className="font-nunito-sans-bold text-base"> / week</Text>
               </View>
             </View>
             <View className="flex flex-col">
@@ -60,9 +75,9 @@ export default function TherapistProfile() {
               </Text>
               <View className="flex flex-row">
                 <Text className="font-nunito-sans-bold text-base text-blue-500">
-                  4{" "}
+                  {data.publicMetadata.yearsOfExperience}
                 </Text>
-                <Text className="font-nunito-sans-bold text-base">years</Text>
+                <Text className="font-nunito-sans-bold text-base"> years</Text>
               </View>
             </View>
           </View>
@@ -71,24 +86,47 @@ export default function TherapistProfile() {
               <View className="flex flex-row items-center gap-2 px-24 py-3 align-middle">
                 <AntDesign name="message1" color="black" size={18} />
                 <Text className="font-nunito-sans-bold text-base">
-                  Talk to John
+                  Talk to {data.firstName}
                 </Text>
               </View>
             </View>
           </TouchableOpacity>
         </View>
         <View className="mt-8 px-4">
-          <AboutMe />
-          <Education />
-          <Methodologies />
+          <AboutMe>{data.publicMetadata.about}</AboutMe>
+          <Education>
+            <View className="col flex flex-col gap-y-2 pb-2 pt-4">
+              {data.publicMetadata.education.map(
+                ({ course, institution }, index) => (
+                  <Text key={index} className="font-nunito-sans text-base">
+                    {course} - {institution}
+                  </Text>
+                ),
+              )}
+            </View>
+          </Education>
+          <Methodologies>
+            <View className="mt-3 flex flex-row flex-wrap items-center gap-2 pb-2 pt-6">
+              {data.publicMetadata.methodologies.map((methodology, index) => (
+                <View
+                  key={index}
+                  className="flex flex-row items-center justify-between rounded-full bg-[#2185EE] px-4 py-1 pr-2"
+                >
+                  <Text className="capitalize text-white">{methodology}</Text>
+                  <View className="ml-3 flex h-6 w-6 items-center justify-center rounded-full bg-white">
+                    <Text className="text-sm font-bold text-[#74a7dd]">?</Text>
+                  </View>
+                </View>
+              ))}
+            </View>
+          </Methodologies>
         </View>
       </ScrollView>
-
       <View className="bottom-0 w-full rounded-t-md bg-blue-500 px-6 pb-2">
         <View className="flex flex-row items-center justify-between ">
           <View className="flex flex-col">
             <Text className="font-nunito-sans-bold text-base text-white">
-              $ 150,00
+              $ {data.publicMetadata.hourlyRate}
             </Text>
             <Text className="font-nunito-sans text-base text-white">
               Online and on-site
@@ -109,7 +147,7 @@ export default function TherapistProfile() {
   );
 }
 
-function AboutMe() {
+function AboutMe({ children }: { children: React.ReactNode }) {
   const [aboutMeOpen, setAboutMeOpen] = useState(true);
 
   const toggleAboutMe = () => {
@@ -136,11 +174,7 @@ function AboutMe() {
         </View>
         {aboutMeOpen ? (
           <View className="pb-2 pt-4">
-            <Text className="text-base">
-              I really enjoy helping people find peace of mind. I believe I was
-              born with a mission to assist everyone who seeks self-awareness
-              and personal growth.
-            </Text>
+            <Text className="text-base">{children}</Text>
           </View>
         ) : null}
       </View>
@@ -148,7 +182,7 @@ function AboutMe() {
   );
 }
 
-function Education() {
+function Education({ children }: { children: React.ReactNode }) {
   const [educationOpen, setEducationOpen] = useState(false);
 
   const toggleEducation = () => {
@@ -174,22 +208,13 @@ function Education() {
             )}
           </Pressable>
         </View>
-        {educationOpen ? (
-          <View className="col flex flex-col gap-y-2 pb-2 pt-4">
-            <Text className="font-nunito-sans text-base">
-              Bachelor's Degree in Psychology - Federal University of Paraná
-            </Text>
-            <Text className="font-nunito-sans text-base">
-              Postgraduate degree in Life Therapy - University of São Paulo
-            </Text>
-          </View>
-        ) : null}
+        {educationOpen ? children : null}
       </View>
     </View>
   );
 }
 
-function Methodologies() {
+function Methodologies({ children }: { children: React.ReactNode }) {
   const [methodologiesOpen, setMethodologiesOpen] = useState(false);
 
   const toggleMethodologies = () => {
@@ -217,28 +242,7 @@ function Methodologies() {
             )}
           </Pressable>
         </View>
-        {methodologiesOpen ? (
-          <View className="mt-3 flex flex-row flex-wrap items-center gap-2 pb-2 pt-6">
-            <View className="flex flex-row items-center justify-between rounded-full bg-[#2185EE] px-4 py-1 pr-2">
-              <Text className="text-white">Behaviorism</Text>
-              <View className="ml-3 flex h-6 w-6 items-center justify-center rounded-full bg-white">
-                <Text className="text-sm font-bold text-[#74a7dd]">?</Text>
-              </View>
-            </View>
-            <View className="flex flex-row items-center justify-between rounded-full bg-[#2185EE] px-4 py-1 pr-2">
-              <Text className="text-white">Bioenergetic</Text>
-              <View className="ml-3 flex h-6 w-6 items-center justify-center rounded-full bg-white">
-                <Text className="text-sm font-bold text-[#74a7dd]">?</Text>
-              </View>
-            </View>
-            <View className="flex flex-row items-center justify-between rounded-full bg-[#2185EE] px-4 py-1 pr-2">
-              <Text className="text-white">Cognitive Behavioral Therapy</Text>
-              <View className="ml-3 flex h-6 w-6 items-center justify-center rounded-full bg-white">
-                <Text className="text-sm font-bold text-[#74a7dd]">?</Text>
-              </View>
-            </View>
-          </View>
-        ) : null}
+        {methodologiesOpen ? children : null}
       </View>
     </View>
   );

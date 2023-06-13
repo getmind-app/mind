@@ -118,7 +118,7 @@ const RootLayout = () => {
           <>
             <SignedIn>
               <TabsRouter />
-              <StatusBar />
+              <StatusBar translucent />
             </SignedIn>
             <SignedOut>
               <SignInScreen />
@@ -134,7 +134,6 @@ export default RootLayout;
 function TabsRouter() {
   const { user } = useClerk();
   const router = useRouter();
-  const path = usePathname();
 
   // Se user não escolheu role, vai para tela de escolha
   useEffect(() => {
@@ -148,7 +147,6 @@ function TabsRouter() {
       screenOptions={{
         headerShown: false,
         tabBarShowLabel: false,
-
         tabBarActiveTintColor,
         tabBarInactiveTintColor,
       }}

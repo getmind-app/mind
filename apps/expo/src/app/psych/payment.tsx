@@ -23,14 +23,14 @@ export default function SessionPayment() {
         showsVerticalScrollIndicator={false}
         overScrollMode="never"
       >
-        <View className="bg-white relative mt-8 rounded-2xl p-4 pt-6 shadow-sm">
-          <Text className="font-nunito-sans-bold mb-4 text-2xl">
+        <View className="relative mt-8 rounded-2xl bg-white p-4 pt-6 shadow-sm">
+          <Text className="mb-4 font-nunito-sans-bold text-2xl">
             Appointments with {psych}
           </Text>
           <View className="mb-8">
             <View className="mb-2">
-              <Text className="font-nunito-sans mb-2 text-sm">Details</Text>
-              <Text className="font-nunito-sans mb-2 ml-3 text-[#666666]">
+              <Text className="mb-2 font-nunito-sans text-sm">Details</Text>
+              <Text className="mb-2 ml-3 font-nunito-sans text-[#666666]">
                 Appointments with {psych}
               </Text>
               <View>
@@ -46,13 +46,13 @@ export default function SessionPayment() {
               </View>
             </View>
             <View className="mb-4">
-              <Text className="font-nunito-sans mb-2 text-sm">Discount</Text>
+              <Text className="mb-2 font-nunito-sans text-sm">Discount</Text>
               <View>
                 <View className="ml-3 flex flex-row justify-between">
                   <Text className=" font-nunito-sans text-[#666666]">
                     First Appointment (10%)
                   </Text>
-                  <Text className="text-green-500 font-nunito-sans">
+                  <Text className="font-nunito-sans text-green-500">
                     - USD 8,00
                   </Text>
                 </View>
@@ -65,28 +65,28 @@ export default function SessionPayment() {
             </View>
           </View>
           <View>
-            <Text className="font-nunito-sans-bold mb-4 text-2xl">
+            <Text className="mb-4 font-nunito-sans-bold text-2xl">
               Payment method
             </Text>
             <View className="mb-2 flex flex-row items-center rounded-lg bg-[#E9E9E9] px-5 py-4">
               <View className="flex flex-row items-center">
                 <FontAwesome5 size={24} name="cc-visa" />
-                <Text className="font-nunito-sans-bold ml-4">**** 2215</Text>
+                <Text className="ml-4 font-nunito-sans-bold">**** 2215</Text>
               </View>
               <View className="ml-auto flex flex-row items-center">
                 <FontAwesome5 name="chevron-down" />
               </View>
             </View>
-            <Text className="font-nunito-sans ml-2 text-xs text-[#666666]">
+            <Text className="ml-2 font-nunito-sans text-xs text-[#666666]">
               The payment will be processed a day before each session.
             </Text>
           </View>
         </View>
-        <View className="bg-off-white relative mt-4 rounded-2xl p-4">
-          <Text className="font-nunito-sans-bold mb-2 text-2xl">
+        <View className="relative mt-4 rounded-2xl bg-off-white p-4">
+          <Text className="mb-2 font-nunito-sans-bold text-2xl">
             Confirm sessions
           </Text>
-          <Text className="font-nunito-sans mb-4 text-xs text-[#666666]">
+          <Text className="mb-4 font-nunito-sans text-xs text-[#666666]">
             You can cancel or reschedule your sessions up to 24 hours before.
           </Text>
           <Pressable
@@ -102,7 +102,7 @@ export default function SessionPayment() {
             className={`rounded-lg bg-[#2185EE] px-16 py-3`}
           >
             <Text
-              className={`font-nunito-sans-bold text-white text-center text-base`}
+              className={`text-center font-nunito-sans-bold text-base text-white`}
             >
               Confirm
             </Text>

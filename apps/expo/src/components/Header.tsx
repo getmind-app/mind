@@ -23,7 +23,7 @@ export const Header = ({ title }: HeaderProps) => {
           <Text className="font-nunito-sans text-base capitalize">{title}</Text>
         ),
         headerBackground: () => (
-          <View className="bg-off-white h-full w-full shadow-md"></View>
+          <View className="h-full w-full bg-off-white shadow-md"></View>
         ),
         headerBackVisible: false,
       }}
