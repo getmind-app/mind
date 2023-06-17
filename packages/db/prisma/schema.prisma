@@ -54,7 +54,7 @@ model User {
 model Note {
     id        String   @id @default(cuid())
     content   String
-    createdAt DateTime
+    createdAt DateTime @default(now())
     userId    String
     user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
@@ -65,12 +65,13 @@ model Therapist {
     dateOfBirth       DateTime
     document          String
     crp               String
-    about             String
+    about             String?
     hourlyRate        Float
     yearsOfExperience Int
     address           Address?
     education         Education[]
     methodologies     Methodology[]
+    appointments      Appointment[]
 }
 
 model Methodology {
@@ -85,8 +86,8 @@ model Education {
     id          String    @id @default(cuid())
     institution String
     degree      String
-    startAt     DateTime
-    endAt       DateTime
+    startAt     DateTime?
+    endAt       DateTime?
     therapistId String    @unique
     therapist   Therapist @relation(fields: [therapistId], references: [id], onDelete: Cascade)
 }
@@ -95,7 +96,7 @@ model Address {
     id           String    @id @default(cuid())
     street       String
     number       String
-    complement   String
+    complement   String?
     neighborhood String
     city         String
     state        String
@@ -106,11 +107,12 @@ model Address {
 }
 
 model Appointment {
-    id          String   @id @default(cuid())
+    id          String    @id @default(cuid())
     scheduledTo DateTime
-    scheduledAt DateTime
+    scheduledAt DateTime  @default(now())
     userId      String
     therapistId String
+    therapist   Therapist @relation(fields: [therapistId], references: [id], onDelete: Cascade)
 }
 
 model VerificationToken {

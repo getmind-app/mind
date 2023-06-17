@@ -138,7 +138,7 @@ function TabsRouter() {
   // Se user não escolheu role, vai para tela de escolha
   useEffect(() => {
     if (!user?.publicMetadata?.role) {
-      router.push("/choose-role");
+      router.push("/onboard");
     }
   }, [user]);
 
@@ -225,7 +225,7 @@ function TabsRouter() {
         }}
       />
       <Tabs.Screen
-        name="choose-role"
+        name="onboard"
         options={{
           title: "Choose role",
           href: null,

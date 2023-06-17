@@ -70,6 +70,9 @@ importers:
       '@expo/vector-icons':
         specifier: ^13.0.0
         version: 13.0.0
+      '@react-native-community/datetimepicker':
+        specifier: 6.7.3
+        version: 6.7.3
       '@react-navigation/stack':
         specifier: ^6.3.16
         version: 6.3.16(@react-navigation/native@6.1.6)(react-native-gesture-handler@2.10.1)(react-native-safe-area-context@4.5.0)(react-native-screens@3.20.0)(react-native@0.71.8)(react@18.2.0)
@@ -3233,6 +3236,12 @@ packages:
       - encoding
       - supports-color
       - utf-8-validate
+    dev: false
+
+  /@react-native-community/datetimepicker@6.7.3:
+    resolution: {integrity: sha512-fXWbEdHMLW/e8cts3snEsbOTbnFXfUHeO2pkiDFX3fWpFoDtUrRWvn50xbY13IJUUKHDhoJ+mj24nMRVIXfX1A==}
+    dependencies:
+      invariant: 2.2.4
     dev: false
 
   /@react-native/assets@1.0.0:

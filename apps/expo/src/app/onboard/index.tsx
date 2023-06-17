@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { Image, Pressable, Text, View } from "react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
 
-import { api } from "../utils/api";
+import { api } from "../../utils/api";
 
 export default function ChooseRole() {
   const { user } = useUser();
@@ -16,7 +16,9 @@ export default function ChooseRole() {
   const { mutate, isLoading } = api.users.setMetadata.useMutation({
     onSuccess: async function () {
       await user?.reload();
-      router.push("/");
+      selectedRole === "patient"
+        ? router.push("/")
+        : router.push("/onboard/psych");
     },
   });
 
@@ -33,49 +35,49 @@ export default function ChooseRole() {
   return (
     <SafeAreaView className="flex-1 flex-wrap items-center justify-center">
       <View className="flex w-full gap-y-4 px-4">
-        <Text className="font-nunito-sans mb-2 px-4 text-3xl">
+        <Text className="mb-2 px-4 font-nunito-sans text-3xl">
           Who are you?
         </Text>
         <View className="items-center">
-          <Pressable
+          <TouchableOpacity
             onPress={() => setSelectedRole("patient")}
             className={`w-full ${
               isLoading ? "opacity-30" : ""
             } relative overflow-hidden`}
           >
             <View
-              className={`bg-white flex w-full flex-row rounded-xl border-2 shadow-sm ${
+              className={`flex w-full flex-row rounded-xl border-2 bg-white shadow-sm ${
                 selectedRole === "patient" ? "border-blue-500" : "border-white"
               }`}
             >
               <View className="items-center">
                 <View className="gap-y-2 px-4 py-10">
-                  <Text className="font-nunito-sans ml-4 text-2xl">
+                  <Text className="ml-4 font-nunito-sans text-2xl">
                     Patient
                   </Text>
-                  <Text className="text-slate-500 font-nunito-sans ml-4 text-lg">
+                  <Text className="ml-4 font-nunito-sans text-lg text-slate-500">
                     Looking for help or{"\n"}just want to talk
                   </Text>
                 </View>
               </View>
               <Image
                 alt="Patient with a plant"
-                source={require("../../assets/profissional_2.png")}
+                source={require("../../../assets/profissional_2.png")}
                 className="absolute -bottom-2 right-4 h-36 w-36"
                 resizeMode="contain"
               />
             </View>
-          </Pressable>
+          </TouchableOpacity>
         </View>
         <View className="items-center">
-          <Pressable
+          <TouchableOpacity
             onPress={() => setSelectedRole("professional")}
             className={`w-full ${
               isLoading ? "opacity-30" : ""
             } relative overflow-hidden`}
           >
             <View
-              className={`bg-white flex w-full flex-row justify-end rounded-xl border-2 shadow-sm ${
+              className={`flex w-full flex-row justify-end rounded-xl border-2 bg-white shadow-sm ${
                 selectedRole === "professional"
                   ? "border-blue-500"
                   : "border-white"
@@ -83,7 +85,7 @@ export default function ChooseRole() {
             >
               <Image
                 alt="Psychologist reading a book"
-                source={require("../../assets/paciente.png")}
+                source={require("../../../assets/paciente.png")}
                 className="absolute -bottom-2 left-6 h-36 w-36"
                 resizeMode="contain"
               />
@@ -92,14 +94,14 @@ export default function ChooseRole() {
                   <Text className="font-nunito-sans text-2xl">
                     Professional
                   </Text>
-                  <Text className="text-slate-500 font-nunito-sans text-lg">
+                  <Text className="font-nunito-sans text-lg text-slate-500">
                     Meet and help{"\n"}new patients
                   </Text>
                 </View>
               </View>
             </View>
-          </Pressable>
-          <Pressable
+          </TouchableOpacity>
+          <TouchableOpacity
             className="w-full"
             disabled={!selectedRole}
             onPress={handleNext}
@@ -117,7 +119,7 @@ export default function ChooseRole() {
                 Next
               </Text>
             </View>
-          </Pressable>
+          </TouchableOpacity>
         </View>
       </View>
     </SafeAreaView>
