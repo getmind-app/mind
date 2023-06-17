@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Image,
   Text,
@@ -11,7 +11,7 @@ import {
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import Constants from "expo-constants";
 import { loadAsync } from "expo-font";
-import { SplashScreen, Tabs, usePathname, useRouter } from "expo-router";
+import { SplashScreen, Tabs, useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { StatusBar } from "expo-status-bar";
 import {

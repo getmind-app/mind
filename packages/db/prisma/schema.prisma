@@ -10,12 +10,6 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
-model Post {
-    id      String @id @default(cuid())
-    title   String
-    content String
-}
-
 // NextAuth.js Models
 // NOTE: When using postgresql, mysql or sqlserver, 
 // uncomment the @db.Text annotations below
@@ -58,11 +52,65 @@ model User {
 }
 
 model Note {
-    id           String   @id @default(cuid())
-    content      String   @unique
-    createdAt    DateTime
-    userId       String
-    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    id        String   @id @default(cuid())
+    content   String
+    createdAt DateTime
+    userId    String
+    user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Therapist {
+    id                String        @id @default(cuid())
+    name              String
+    dateOfBirth       DateTime
+    document          String
+    crp               String
+    about             String
+    hourlyRate        Float
+    yearsOfExperience Int
+    address           Address?
+    education         Education[]
+    methodologies     Methodology[]
+}
+
+model Methodology {
+    id          String    @id @default(cuid())
+    name        String
+    description String
+    therapistId String    @unique
+    therapist   Therapist @relation(fields: [therapistId], references: [id], onDelete: Cascade)
+}
+
+model Education {
+    id          String    @id @default(cuid())
+    institution String
+    degree      String
+    startAt     DateTime
+    endAt       DateTime
+    therapistId String    @unique
+    therapist   Therapist @relation(fields: [therapistId], references: [id], onDelete: Cascade)
+}
+
+model Address {
+    id           String    @id @default(cuid())
+    street       String
+    number       String
+    complement   String
+    neighborhood String
+    city         String
+    state        String
+    country      String
+    zipCode      String
+    therapistId  String    @unique
+    therapist    Therapist @relation(fields: [therapistId], references: [id], onDelete: Cascade)
+}
+
+model Appointment {
+    id          String   @id @default(cuid())
+    scheduledTo DateTime
+    scheduledAt DateTime
+    userId      String
+    therapistId String
 }
 
 model VerificationToken {
