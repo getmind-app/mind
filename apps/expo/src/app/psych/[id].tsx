@@ -39,9 +39,9 @@ export default function TherapistProfile() {
 
   return (
     <>
-      <SafeAreaView className="bg-off-white">
+      <SafeAreaView className="min-h-screen bg-off-white">
         <Header />
-        <ScrollView showsVerticalScrollIndicator={false} className="px-4 py-2">
+        <ScrollView showsVerticalScrollIndicator={false} className=" px-4 py-2">
           <View className="flex flex-col items-center justify-center">
             <View className="flex w-full flex-row">
               <Image

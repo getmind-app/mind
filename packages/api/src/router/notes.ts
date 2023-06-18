@@ -23,10 +23,9 @@ export const notesRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const notes = await ctx.prisma.note.findMany({
         where: { userId: input.userId },
-      });
-
-      notes.sort((a, b) => {
-        return b.createdAt.getTime() - a.createdAt.getTime();
+        orderBy: {
+          createdAt: "desc",
+        },
       });
 
       return notes;

@@ -15,4 +15,26 @@ export const appointmentsRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       return await ctx.prisma.appointment.create({ data: input });
     }),
+  findLastByUserId: protectedProcedure
+    .input(
+      z.object({
+        userId: z.string().min(1),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const appointments = await ctx.prisma.appointment.findMany({
+        where: {
+          userId: input.userId,
+          scheduledTo: {
+            gte: new Date(),
+          },
+        },
+        orderBy: {
+          scheduledTo: "asc",
+        },
+        take: 1,
+      });
+
+      return appointments.at(0);
+    }),
 });

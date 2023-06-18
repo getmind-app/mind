@@ -15,60 +15,121 @@ import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 
 import { api } from "../utils/api";
 
-function NextMeetingCard() {
-  const [nextScheduledTherapist, setNextScheduledTherapist] = useState("1");
+function NextAppointment() {
+  const { user } = useUser();
   const router = useRouter();
 
+  const { data, isLoading } = (
+    api.appointments as any
+  ).findLastByUserId.useQuery({
+    userId: user?.id,
+  });
+
+  const { data: therapist, isLoading: therapistLoading } = (
+    api.therapists as any
+  ).findById.useQuery({
+    id: data?.therapistId,
+  });
+
+  if (isLoading || therapistLoading) return <Text>Loading...</Text>;
+
   return (
-    <View className="mt-4 rounded-xl bg-white shadow-sm">
-      <View className="px-6 pt-6">
-        <View className="flex w-full flex-row">
-          <Text className="font-nunito-sans text-xl">Monday, 04/16</Text>
-          <Text className="order-last ml-auto font-nunito-sans-bold text-xl text-blue-500 ">
-            8:30
-          </Text>
-        </View>
-        <Text className="font-nunito-sans text-sm text-slate-500">
-          via Google Meet
-        </Text>
-        <View className="mt-4 flex w-full flex-row items-center justify-between align-middle">
-          <View className="flex flex-row items-center align-middle">
-            <View className="flex max-h-[32px] max-w-[32px] items-center justify-center overflow-hidden rounded-full align-middle">
-              <TouchableOpacity onPress={() => router.push("/psych")}>
-                <Image
-                  className="flex items-center justify-center rounded-full"
-                  alt="John Williams' profile picture"
-                  source={{
-                    uri: "https://images.pexels.com/photos/4098353/pexels-photo-4098353.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-                    width: 48,
-                    height: 48,
-                  }}
-                />
-              </TouchableOpacity>
+    <>
+      <Text className="mt-12 font-nunito-sans-bold text-3xl">Next session</Text>
+      {data ? (
+        <View className="mt-4 rounded-xl bg-white shadow-sm">
+          <View className="px-6 pt-6">
+            <View className="flex w-full flex-row justify-between">
+              <Text className="font-nunito-sans text-xl">
+                {new Intl.DateTimeFormat("en", { weekday: "long" }).format(
+                  new Date(data.scheduledTo),
+                )}
+                , {new Date(data.scheduledTo).getDate()}/
+                {new Date(data.scheduledTo).getMonth()}
+              </Text>
+              <Text className="font-nunito-sans-bold text-xl text-blue-500 ">
+                {new Date(data.scheduledTo).getHours()}:
+                {new Date(data.scheduledTo).getMinutes() == 0
+                  ? "00"
+                  : new Date(data.scheduledTo).getMinutes()}
+              </Text>
             </View>
-            <Text className="ml-2 font-nunito-sans text-xl">
-              John Williams{" "}
+            <Text className="font-nunito-sans text-sm text-slate-500">
+              {data.modality === "ONLINE"
+                ? "via Google Meet"
+                : "in person at " + therapist.address}
+            </Text>
+            <View className="mt-4 flex w-full flex-row items-center justify-between align-middle">
+              <View className="flex flex-row items-center align-middle">
+                <View className="flex items-center justify-center overflow-hidden rounded-full align-middle">
+                  <TouchableOpacity
+                    onPress={() => router.push("/psych/" + therapist.id)}
+                  >
+                    <Image
+                      className="flex items-center justify-center rounded-full"
+                      alt={`${therapist.name} profile picture`}
+                      source={{
+                        uri: therapist.profilePictureUrl,
+                        width: 32,
+                        height: 32,
+                      }}
+                    />
+                  </TouchableOpacity>
+                </View>
+                <Text className="ml-2 font-nunito-sans text-xl">
+                  {therapist.name}
+                </Text>
+              </View>
+              <MaterialIcons
+                style={{ paddingRight: 12 }}
+                color="black"
+                size={24}
+                name="add"
+              />
+            </View>
+          </View>
+          <TouchableOpacity
+            onPress={() =>
+              Linking.openURL(
+                data.modality === "ONLINE"
+                  ? data.link
+                  : "uber, maps sei la kkk",
+              )
+            }
+          >
+            <View className="mt-6 flex w-full flex-row items-center justify-center rounded-bl-xl rounded-br-xl bg-blue-500 py-3 align-middle">
+              <FontAwesome
+                size={20}
+                color="white"
+                name={`${data.modality === "ONLINE" ? "video-camera" : "car"}`}
+              />
+              <Text className="ml-4 font-nunito-sans-bold text-lg text-white">
+                {data.modality === "ONLINE"
+                  ? "Join the meeting"
+                  : "Get directions"}
+              </Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <View className="mt-4 rounded-xl bg-white shadow-sm">
+          <View className="px-6 pt-6">
+            <Text className="font-nunito-sans text-xl">Nothing for now!</Text>
+            <Text className="font-nunito-sans text-sm text-slate-500">
+              Search for you new therapist
             </Text>
           </View>
-          <MaterialIcons
-            style={{ paddingRight: 12 }}
-            color="black"
-            size={24}
-            name="add"
-          />
+          <TouchableOpacity onPress={() => router.push("/search")}>
+            <View className="mt-6 flex w-full flex-row items-center justify-center rounded-bl-xl rounded-br-xl bg-blue-500 py-3 align-middle">
+              <FontAwesome size={20} color="white" name="search" />
+              <Text className="ml-4 font-nunito-sans-bold text-lg text-white">
+                Therapists
+              </Text>
+            </View>
+          </TouchableOpacity>
         </View>
-      </View>
-      <TouchableOpacity
-        onPress={() => Linking.openURL("https://meet.google.com/xcc-pqgk-gxx")}
-      >
-        <View className="mt-6 flex w-full flex-row items-center justify-center rounded-bl-xl rounded-br-xl bg-blue-500 py-3 align-middle">
-          <FontAwesome size={20} color="white" name="video-camera" />
-          <Text className="ml-4 font-nunito-sans-bold text-lg text-white">
-            Join the meeting
-          </Text>
-        </View>
-      </TouchableOpacity>
-    </View>
+      )}
+    </>
   );
 }
 
@@ -85,6 +146,16 @@ function LastNotes() {
 
   return (
     <>
+      <View className="mt-8 flex flex-row items-center justify-between align-middle">
+        <Text className=" font-nunito-sans-bold text-3xl">Last notes</Text>
+        <TouchableOpacity onPress={() => router.push("/notes/new")}>
+          <View className="rounded-xl bg-blue-500 px-4 py-2 shadow-sm">
+            <Text className="text-center font-nunito-sans-bold text-base text-white">
+              +
+            </Text>
+          </View>
+        </TouchableOpacity>
+      </View>
       {data && data.length > 0 ? (
         data.map(
           ({
@@ -149,15 +220,7 @@ export default function Index() {
         showsVerticalScrollIndicator={false}
       >
         <View className="h-full">
-          <View className="flex flex-row items-center justify-between">
-            <Text className="mt-12 font-nunito-sans-bold text-3xl">
-              Next session
-            </Text>
-          </View>
-          <NextMeetingCard />
-          <Text className="mt-8 font-nunito-sans-bold text-3xl">
-            Last notes
-          </Text>
+          <NextAppointment />
           <LastNotes />
         </View>
       </ScrollView>

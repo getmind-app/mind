@@ -36,8 +36,8 @@ export default function SessionPayment() {
               <View>
                 <View className="ml-6 flex flex-row justify-between">
                   <Text className="font-nunito-sans text-[#666666]">
-                    {date} - {hour} - {/* TODO: tirar type casting */}
-                    {handleMode( as string)}
+                    {/* {date} - {hour} - {/* TODO: tirar type casting */}
+                    {/* {handleMode( as string)} */}
                   </Text>
                   <Text className=" font-nunito-sans text-[#666666]">
                     US$ {data.hourlyRate}
@@ -94,8 +94,8 @@ export default function SessionPayment() {
               router.push({
                 pathname: "psych/finish",
                 params: {
-                  psych,
-                  date,
+                  // psych,
+                  // date,
                 },
               });
             }}
