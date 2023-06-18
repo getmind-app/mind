@@ -12,14 +12,13 @@ import { useRouter } from "expo-router";
 
 import { api } from "../utils/api";
 
-// TODO: fazer a busca na base, único problema é a foto de perfil... poderíamos manter ela na base tb (url)
 export default function SearchScreen() {
   const [search, setSearch] = useState("");
   const [pressed, setPressed] = useState(false);
 
   return (
     <SafeAreaView className="min-h-screen bg-off-white ">
-      <View className="h-full px-4 py-2">
+      <View className="h-full px-4">
         <View className="flex flex-col">
           <Text className="pt-12 font-nunito-sans-bold text-3xl">Search</Text>
 
@@ -44,14 +43,31 @@ export default function SearchScreen() {
           </View>
         </View>
         <ScrollView className="w-full" showsVerticalScrollIndicator={false}>
-          {pressed && <List />}
+          {pressed && search.length > 0 ? (
+            <List search={search} />
+          ) : (
+            <View className="flex flex-col items-center justify-center gap-2 pt-32">
+              <Image
+                className="h-40 w-40"
+                alt={`No therapists picture`}
+                source={require("../../assets/login_mind.png")}
+              />
+              <Text className="font-nunito-sans-bold text-xl text-slate-500">
+                Find your new therapist
+              </Text>
+            </View>
+          )}
         </ScrollView>
       </View>
     </SafeAreaView>
   );
 }
-function List() {
-  const { data, isLoading, isError, error } = api.therapists.findAll.useQuery();
+
+function List(search: string) {
+  const { data, isLoading, isError, error } = (
+    api.therapists as any
+  ).findByNameLike.useQuery({ name: search });
+
   const router = useRouter();
 
   if (isError) {

@@ -9,10 +9,10 @@ export default function ChatScreen() {
   const router = useRouter();
 
   return (
-    <SafeAreaView className="bg-off-white min-h-screen ">
-      <View className="h-full py-2">
+    <SafeAreaView className="min-h-screen bg-off-white ">
+      <View className="h-full">
         <View className="flex flex-row items-center justify-between px-4">
-          <Text className="font-nunito-sans-bold pt-12 text-3xl">Chat</Text>
+          <Text className="pt-12 font-nunito-sans-bold text-3xl">Chat</Text>
         </View>
         <View className="flex flex-row items-center gap-x-4 px-4 pt-4 align-middle"></View>
         <ScrollView
@@ -39,9 +39,9 @@ export default function ChatScreen() {
                     <Text className="font-nunito-sans-bold">
                       {user?.fullName}
                     </Text>
-                    <View className="bg-blue-500 ml-2 h-2 w-2 rounded-full"></View>
+                    <View className="ml-2 h-2 w-2 rounded-full bg-blue-500"></View>
                   </View>
-                  <Text className="text-slate-500 font-nunito-sans">
+                  <Text className="font-nunito-sans text-slate-500">
                     Conteúdo da mensagem 😃
                   </Text>
                 </View>

@@ -45,4 +45,15 @@ export const therapistsRouter = createTRPCRouter({
   findAll: protectedProcedure.query(async ({ ctx }) => {
     return await ctx.prisma.therapist.findMany();
   }),
+  findByNameLike: protectedProcedure
+    .input(
+      z.object({
+        name: z.string().min(1),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      return await ctx.prisma.therapist.findMany({
+        where: { name: { contains: input.name } },
+      });
+    }),
 });

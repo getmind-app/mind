@@ -35,7 +35,7 @@ export const appointmentsRouter = createTRPCRouter({
         take: 1,
       });
 
-      return appointments.at(0);
+      return appointments.length > 0 ? appointments.at(0) : null;
     }),
   findByUserId: protectedProcedure
     .input(

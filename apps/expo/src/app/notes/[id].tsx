@@ -22,6 +22,7 @@ export default function Note() {
 
   const { mutate } = (api.notes as any).delete.useMutation({
     onSuccess: () => {
+      (api.notes as any).invalidateQueries();
       router.push("/");
     },
   });

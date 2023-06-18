@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Image,
   Linking,
@@ -8,7 +8,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import SkeletonContent from "react-native-skeleton-content";
 import { useRouter } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
@@ -25,18 +24,17 @@ function NextAppointment() {
     userId: user?.id,
   });
 
-  const { data: therapist, isLoading: therapistLoading } = (
-    api.therapists as any
-  ).findById.useQuery({
+  // TODO: apenas executar se a query de cima retornar algo
+  const { data: therapist } = (api.therapists as any).findById.useQuery({
     id: data?.therapistId,
   });
 
-  if (isLoading || therapistLoading) return <Text>Loading...</Text>;
+  if (isLoading) return <Text>Loading...</Text>;
 
   return (
     <>
       <Text className="mt-12 font-nunito-sans-bold text-3xl">Next session</Text>
-      {data ? (
+      {data && data.therapistId ? (
         <View className="mt-4 rounded-xl bg-white shadow-sm">
           <View className="px-6 pt-6">
             <View className="flex w-full flex-row justify-between">

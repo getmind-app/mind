@@ -32,34 +32,32 @@ export default function CalendarScreen() {
         <Text className="pt-12 font-nunito-sans-bold text-3xl">Calendar</Text>
         {data && data.length > 0 ? (
           data.map((appointment) => (
-            <>
-              <View
-                key={appointment.id}
-                className="mt-4 rounded-xl bg-white px-6 pt-6 shadow-sm"
-              >
-                <View className="flex w-full flex-row justify-between">
-                  <Text className="font-nunito-sans text-xl">
-                    {new Intl.DateTimeFormat("en", { weekday: "long" }).format(
-                      new Date(appointment.scheduledTo),
-                    )}
-                    , {new Date(appointment.scheduledTo).getDate()}/
-                    {new Date(appointment.scheduledTo).getMonth()}
-                  </Text>
-                  <Text className="font-nunito-sans-bold text-xl text-blue-500 ">
-                    {new Date(appointment.scheduledTo).getHours()}:
-                    {new Date(appointment.scheduledTo).getMinutes() == 0
-                      ? "00"
-                      : new Date(appointment.scheduledTo).getMinutes()}
-                  </Text>
-                </View>
-                <Text className="font-nunito-sans text-sm text-slate-500">
-                  {appointment.modality === "ONLINE"
-                    ? "via Google Meet"
-                    : "in person"}
+            <View
+              key={appointment.id}
+              className="mt-4 rounded-xl bg-white px-6 pt-6 shadow-sm"
+            >
+              <View className="flex w-full flex-row justify-between">
+                <Text className="font-nunito-sans text-xl">
+                  {new Intl.DateTimeFormat("en", { weekday: "long" }).format(
+                    new Date(appointment.scheduledTo),
+                  )}
+                  , {new Date(appointment.scheduledTo).getDate()}/
+                  {new Date(appointment.scheduledTo).getMonth()}
                 </Text>
-                <View className="mt-4 flex w-full flex-row items-center justify-between align-middle"></View>
+                <Text className="font-nunito-sans-bold text-xl text-blue-500 ">
+                  {new Date(appointment.scheduledTo).getHours()}:
+                  {new Date(appointment.scheduledTo).getMinutes() == 0
+                    ? "00"
+                    : new Date(appointment.scheduledTo).getMinutes()}
+                </Text>
               </View>
-            </>
+              <Text className="font-nunito-sans text-sm text-slate-500">
+                {appointment.modality === "ONLINE"
+                  ? "via Google Meet"
+                  : "in person"}
+              </Text>
+              <View className="mt-4 flex w-full flex-row items-center justify-between align-middle"></View>
+            </View>
           ))
         ) : (
           <View className="mt-4 rounded-xl bg-white shadow-sm">

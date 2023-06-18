@@ -26,7 +26,7 @@ export default function UserProfileScreen() {
 
   return (
     <SafeAreaView className="min-h-screen bg-off-white ">
-      <View className="h-full px-4 py-2">
+      <View className="h-full px-4">
         <View className="flex flex-row items-center justify-between">
           <Text className="pt-12 font-nunito-sans-bold text-3xl">Profile</Text>
         </View>
@@ -42,7 +42,11 @@ export default function UserProfileScreen() {
           />
           <View className="flex flex-col">
             <View>
-              {data?.name && <Text className="text-2xl">{data.name}</Text>}
+              {data?.name && (
+                <Text className="font-nunito-sans-bold text-3xl">
+                  {data.name}
+                </Text>
+              )}
             </View>
             <View>
               {user?.publicMetadata && (
