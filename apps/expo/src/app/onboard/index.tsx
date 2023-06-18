@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import { Image, Pressable, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
@@ -39,7 +39,7 @@ export default function ChooseRole() {
           Who are you?
         </Text>
         <View className="items-center">
-          <TouchableOpacity
+          <Pressable
             onPress={() => setSelectedRole("patient")}
             className={`w-full ${
               isLoading ? "opacity-30" : ""
@@ -67,10 +67,10 @@ export default function ChooseRole() {
                 resizeMode="contain"
               />
             </View>
-          </TouchableOpacity>
+          </Pressable>
         </View>
         <View className="items-center">
-          <TouchableOpacity
+          <Pressable
             onPress={() => setSelectedRole("professional")}
             className={`w-full ${
               isLoading ? "opacity-30" : ""
@@ -100,7 +100,7 @@ export default function ChooseRole() {
                 </View>
               </View>
             </View>
-          </TouchableOpacity>
+          </Pressable>
           <TouchableOpacity
             className="w-full"
             disabled={!selectedRole}

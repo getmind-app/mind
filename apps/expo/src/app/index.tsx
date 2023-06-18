@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import SkeletonContent from "react-native-skeleton-content";
 import { useRouter } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
@@ -73,47 +74,70 @@ function NextMeetingCard() {
 
 function LastNotes() {
   const { user } = useUser();
+  const router = useRouter();
 
-  const { mutate } = api.notes.create.useMutation();
+  const { data, isLoading } = (api.notes as any).findByUserId.useQuery({
+    userId: user?.id,
+  });
 
-  const handleNewNote = () => {
-    if (user) {
-      console.log(user.id);
-
-      mutate({
-        content: "Content",
-        createdAt: new Date(),
-        userId: user.id,
-      });
-    } else {
-      throw new Error("User not found");
-    }
-  };
+  // TODO: Adicionar skeletons para loading e achar uma forma de refazer a query quando o usuário criar/delete uma nota
+  if (isLoading) return <Text>Loading...</Text>;
 
   return (
-    <View className="mt-4 rounded-xl bg-white shadow-sm">
-      <View className="flex w-full flex-row items-center justify-between gap-8 px-6 py-4 align-middle">
-        <View className="flex flex-col">
-          <View className="flex flex-row">
-            <Text className="font-nunito-sans-bold text-xl text-blue-500">
-              5{" "}
-            </Text>
-            <Text className="font-nunito-sans text-xl">May</Text>
+    <>
+      {data ? (
+        data.map(
+          ({
+            id,
+            content,
+            createdAt,
+          }: {
+            id: string;
+            content: string;
+            createdAt: Date;
+          }) => (
+            <View key={id} className="mt-4 rounded-xl bg-white shadow-sm">
+              <View className="flex w-full flex-row items-center justify-between px-6 py-4 align-middle">
+                <View className="flex flex-col">
+                  <Text className="font-nunito-sans-bold text-xl text-slate-500">
+                    <Text className="text-blue-500">{createdAt.getDay()}</Text>{" "}
+                    {new Date(createdAt).toLocaleString("en", {
+                      month: "long",
+                    })}
+                  </Text>
+                  <Text className="pt-2 font-nunito-sans text-base">
+                    {content}
+                  </Text>
+                </View>
+                <TouchableOpacity onPress={() => router.push("/notes/" + id)}>
+                  <MaterialIcons
+                    size={32}
+                    name="chevron-right"
+                    color="#3b82f6"
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
+          ),
+        )
+      ) : (
+        <View className="mt-4 rounded-xl bg-white shadow-sm">
+          <View className="flex w-full flex-row items-center justify-between px-6 py-4 align-middle">
+            <View className="flex flex-col">
+              <Text className="font-nunito-sans-bold text-xl text-slate-500">
+                No notes for now
+              </Text>
+              <Text className="pt-2 font-nunito-sans text-base">
+                Create a new one right now
+              </Text>
+            </View>
+            <TouchableOpacity onPress={() => router.push("/notes/new")}>
+              <MaterialIcons size={32} name="chevron-right" color="#3b82f6" />
+            </TouchableOpacity>
           </View>
-          <Text className="mt-2 font-nunito-sans text-base">
-            I feel very pressured with all the demands of work and family life.
-          </Text>
         </View>
-        <TouchableOpacity onPress={handleNewNote}>
-          <MaterialIcons
-            className="mr-4"
-            size={32}
-            name="chevron-right"
-            color="#3b82f6"
-          />
-        </TouchableOpacity>
-      </View>
-    </View>
+      )}
+    </>
   );
 }
 

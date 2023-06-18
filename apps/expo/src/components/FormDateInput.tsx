@@ -23,7 +23,7 @@ export const FormDateInput = ({ title, value, onChange }: FormInputProps) => {
       <DateTimePicker
         minimumDate={new Date(1920, 1, 1)}
         maximumDate={new Date()}
-        style={{ width: 110, height: 50 }}
+        style={{ width: 110, height: 50 }} // TODO: Melhorar responsividade
         value={value}
         onChange={handleDateChange}
       />

@@ -61,6 +61,7 @@ model Note {
 
 model Therapist {
     id                String        @id @default(cuid())
+    createdAt         DateTime      @default(now())
     name              String
     dateOfBirth       DateTime
     document          String
@@ -68,6 +69,7 @@ model Therapist {
     about             String?
     hourlyRate        Float
     yearsOfExperience Int
+    userId            String?
     address           Address?
     education         Education[]
     methodologies     Methodology[]
@@ -106,6 +108,7 @@ model Address {
     therapist    Therapist @relation(fields: [therapistId], references: [id], onDelete: Cascade)
 }
 
+// Modality, Link, Address
 model Appointment {
     id          String    @id @default(cuid())
     scheduledTo DateTime
