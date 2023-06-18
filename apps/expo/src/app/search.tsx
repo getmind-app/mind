@@ -13,8 +13,10 @@ import { useRouter } from "expo-router";
 import { api } from "../utils/api";
 
 export default function SearchScreen() {
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState<string>("");
   const [pressed, setPressed] = useState(false);
+
+  console.log(search);
 
   return (
     <SafeAreaView className="min-h-screen bg-off-white ">
@@ -43,7 +45,7 @@ export default function SearchScreen() {
           </View>
         </View>
         <ScrollView className="w-full" showsVerticalScrollIndicator={false}>
-          {pressed && search.length > 0 ? (
+          {search.length > 0 ? (
             <List search={search} />
           ) : (
             <View className="flex flex-col items-center justify-center gap-2 pt-32">
@@ -66,7 +68,7 @@ export default function SearchScreen() {
 function List(search: string) {
   const { data, isLoading, isError, error } = (
     api.therapists as any
-  ).findByNameLike.useQuery({ name: search });
+  ).findByNameLike.useQuery({ name: search.search }); // Não entendi mt bem isso aq, mas funciona kkk
 
   const router = useRouter();
 
@@ -85,35 +87,45 @@ function List(search: string) {
       </View>
     );
   }
-  return (
+
+  console.log(data);
+
+  return data.length > 0 ? (
     <View className="flex w-full flex-col items-start justify-center gap-y-4">
-      {data.map(({ name, profilePictureUrl, id, crp }) => {
-        return (
-          <TouchableOpacity
-            className="flex flex-row items-center gap-4 align-middle"
-            key={id}
-            onPress={() => router.push(`/psych/${id}`)}
-          >
-            <Image
-              className="rounded-full"
-              alt={`${name}' profile picture`}
-              source={{
-                uri: profilePictureUrl,
-                width: 48,
-                height: 48,
-              }}
-            />
-            <View className="flex flex-col justify-center align-middle">
-              <Text className="-mb-1 font-nunito-sans-bold text-lg">
-                {name}
-              </Text>
-              <Text className=" font-nunito-sans text-slate-500">
-                Psychologist - {crp} {/*TODO: add mask*/}
-              </Text>
-            </View>
-          </TouchableOpacity>
-        );
-      })}
+      {data.map(({ name, profilePictureUrl, id, crp }) => (
+        <TouchableOpacity
+          className="flex flex-row items-center gap-4 align-middle"
+          key={id}
+          onPress={() => router.push(`/psych/${id}`)}
+        >
+          <Image
+            className="rounded-full"
+            alt={`${name}' profile picture`}
+            source={{
+              uri: profilePictureUrl,
+              width: 48,
+              height: 48,
+            }}
+          />
+          <View className="flex flex-col justify-center align-middle">
+            <Text className="-mb-1 font-nunito-sans-bold text-lg">{name}</Text>
+            <Text className=" font-nunito-sans text-slate-500">
+              Psychologist - {crp} {/*TODO: add mask*/}
+            </Text>
+          </View>
+        </TouchableOpacity>
+      ))}
+    </View>
+  ) : (
+    <View className="flex flex-col items-center justify-center gap-2 pt-32">
+      <Image
+        className="h-40 w-40"
+        alt={`No therapists picture`}
+        source={require("../../assets/login_mind.png")}
+      />
+      <Text className="font-nunito-sans-bold text-xl text-slate-500">
+        Find your new therapist
+      </Text>
     </View>
   );
 }
