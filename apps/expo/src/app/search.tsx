@@ -10,13 +10,11 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 
+import SkeletonCard from "../components/SkeletonCard";
 import { api } from "../utils/api";
 
 export default function SearchScreen() {
   const [search, setSearch] = useState<string>("");
-  const [pressed, setPressed] = useState(false);
-
-  console.log(search);
 
   return (
     <SafeAreaView className="min-h-screen bg-off-white ">
@@ -31,17 +29,6 @@ export default function SearchScreen() {
               value={search}
               placeholder="Looking for a therapist?"
             />
-            <TouchableOpacity
-              onPress={() => {
-                setPressed(!pressed);
-              }}
-            >
-              <View className="flex items-center justify-center rounded bg-blue-500 px-6 py-1">
-                <Text className="font-nunito-sans-bold text-lg text-white">
-                  Search
-                </Text>
-              </View>
-            </TouchableOpacity>
           </View>
         </View>
         <ScrollView className="w-full" showsVerticalScrollIndicator={false}>
@@ -80,15 +67,47 @@ function List(search: string) {
     );
   }
 
-  if (isLoading || !data) {
+  if (isLoading) {
     return (
-      <View className="flex  items-center justify-center">
-        <Text>Loading</Text>
+      <View className="flex flex-row items-center pt-4">
+        <View>
+          <SkeletonCard
+            width={50}
+            height={50}
+            borderRadius={50}
+            backgroundColor="#f5f5f5"
+            animationColor="#e0e0e0"
+            animationDirection="horizontal"
+            animationSpeed={1500}
+          />
+        </View>
+        <View className="flex flex-col gap-2 pl-4">
+          <View>
+            <SkeletonCard
+              width={100}
+              height={10}
+              borderRadius={8}
+              backgroundColor="#f5f5f5"
+              animationColor="#e0e0e0"
+              animationDirection="horizontal"
+              animationSpeed={1500}
+            />
+          </View>
+          <View>
+            <SkeletonCard
+              width={250}
+              height={10}
+              borderRadius={8}
+              backgroundColor="#f5f5f5"
+              animationColor="#e0e0e0"
+              animationDirection="horizontal"
+              animationSpeed={1500}
+            />
+          </View>
+        </View>
       </View>
     );
   }
-
-  console.log(data);
 
   return data.length > 0 ? (
     <View className="flex w-full flex-col items-start justify-center gap-y-4">
@@ -124,7 +143,7 @@ function List(search: string) {
         source={require("../../assets/login_mind.png")}
       />
       <Text className="font-nunito-sans-bold text-xl text-slate-500">
-        Find your new therapist
+        No therapists found!
       </Text>
     </View>
   );
