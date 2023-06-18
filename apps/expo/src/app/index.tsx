@@ -12,6 +12,7 @@ import { useRouter } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 
+import SkeletonCard from "../components/SkeletonCard";
 import { api } from "../utils/api";
 
 function NextAppointment() {
@@ -29,11 +30,23 @@ function NextAppointment() {
     id: data?.therapistId,
   });
 
-  if (isLoading) return <Text>Loading...</Text>;
+  if (isLoading)
+    return (
+      <View className="mt-4 flex flex-row justify-center">
+        <SkeletonCard
+          width={360}
+          height={150}
+          borderRadius={8}
+          backgroundColor="#f5f5f5"
+          animationColor="#e0e0e0"
+          animationDirection="horizontal"
+          animationSpeed={1500}
+        />
+      </View>
+    );
 
   return (
     <>
-      <Text className="mt-12 font-nunito-sans-bold text-3xl">Next session</Text>
       {data && data.therapistId ? (
         <View className="mt-4 rounded-xl bg-white shadow-sm">
           <View className="px-6 pt-6">
@@ -97,7 +110,7 @@ function NextAppointment() {
           >
             <View className="mt-6 flex w-full flex-row items-center justify-center rounded-bl-xl rounded-br-xl bg-blue-500 py-3 align-middle">
               <FontAwesome
-                size={20}
+                size={16}
                 color="white"
                 name={`${data.modality === "ONLINE" ? "video-camera" : "car"}`}
               />
@@ -119,7 +132,7 @@ function NextAppointment() {
           </View>
           <TouchableOpacity onPress={() => router.push("/search")}>
             <View className="mt-6 flex w-full flex-row items-center justify-center rounded-bl-xl rounded-br-xl bg-blue-500 py-3 align-middle">
-              <FontAwesome size={20} color="white" name="search" />
+              <FontAwesome size={16} color="white" name="search" />
               <Text className="ml-4 font-nunito-sans-bold text-lg text-white">
                 Therapists
               </Text>
@@ -139,21 +152,24 @@ function LastNotes() {
     userId: user?.id,
   });
 
-  // TODO: Adicionar skeletons para loading e achar uma forma de refazer a query quando o usuário criar/delete uma nota
-  if (isLoading) return <Text>Loading...</Text>;
+  // TODO: achar uma forma de refazer a query quando o usuário criar/delete uma nota
+  if (isLoading)
+    return (
+      <View className="mt-4 flex flex-row justify-center">
+        <SkeletonCard
+          width={360}
+          height={90}
+          borderRadius={8}
+          backgroundColor="#f5f5f5"
+          animationColor="#e0e0e0"
+          animationDirection="horizontal"
+          animationSpeed={1500}
+        />
+      </View>
+    );
 
   return (
     <>
-      <View className="mt-8 flex flex-row items-center justify-between align-middle">
-        <Text className=" font-nunito-sans-bold text-3xl">Last notes</Text>
-        <TouchableOpacity onPress={() => router.push("/notes/new")}>
-          <View className="rounded-xl bg-blue-500 px-4 py-2 shadow-sm">
-            <Text className="text-center font-nunito-sans-bold text-base text-white">
-              +
-            </Text>
-          </View>
-        </TouchableOpacity>
-      </View>
       {data && data.length > 0 ? (
         data.map(
           ({
@@ -211,6 +227,8 @@ function LastNotes() {
 }
 
 export default function Index() {
+  const router = useRouter();
+
   return (
     <SafeAreaView className="min-h-screen bg-off-white">
       <ScrollView
@@ -218,7 +236,20 @@ export default function Index() {
         showsVerticalScrollIndicator={false}
       >
         <View className="h-full">
+          <Text className="mt-12 font-nunito-sans-bold text-3xl">
+            Next session
+          </Text>
           <NextAppointment />
+          <View className="mt-8 flex flex-row items-center justify-between align-middle">
+            <Text className=" font-nunito-sans-bold text-3xl">Last notes</Text>
+            <TouchableOpacity onPress={() => router.push("/notes/new")}>
+              <View className="rounded-xl bg-blue-500 px-4 py-2 shadow-sm">
+                <Text className="text-center font-nunito-sans-bold text-base text-white">
+                  +
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </View>
           <LastNotes />
         </View>
       </ScrollView>
