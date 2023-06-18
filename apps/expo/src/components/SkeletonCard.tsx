@@ -1,9 +1,9 @@
 import React from "react";
-import { Animated, StyleSheet, View } from "react-native";
+import { Animated, Dimensions, StyleSheet, View } from "react-native";
 
 type SkeletonCardProps = {
-  width: number;
-  height: number;
+  widthRatio?: number;
+  heightRatio?: number;
   borderRadius?: number;
   backgroundColor?: string;
   animationColor?: string;
@@ -12,14 +12,16 @@ type SkeletonCardProps = {
 };
 
 const SkeletonCard: React.FC<SkeletonCardProps> = ({
-  width,
-  height,
+  widthRatio = 0.8,
+  heightRatio = 0.5,
   borderRadius = 8,
   backgroundColor = "#f5f5f5",
   animationColor = "#e0e0e0",
   animationDirection = "horizontal",
   animationSpeed = 1000,
 }) => {
+  const { width, height } = Dimensions.get("window");
+
   const animatedValue = React.useRef(new Animated.Value(0)).current;
 
   React.useEffect(() => {
@@ -43,6 +45,9 @@ const SkeletonCard: React.FC<SkeletonCardProps> = ({
     outputRange: [backgroundColor, animationColor],
   });
 
+  const cardWidth = width * widthRatio;
+  const cardHeight = height * heightRatio;
+
   const getAnimatedStyle = () => {
     if (animationDirection === "horizontal") {
       return {
@@ -51,7 +56,7 @@ const SkeletonCard: React.FC<SkeletonCardProps> = ({
           {
             translateX: animatedValue.interpolate({
               inputRange: [0, 1],
-              outputRange: [-width, width],
+              outputRange: [-cardWidth, cardWidth],
             }),
           },
         ],
@@ -65,13 +70,13 @@ const SkeletonCard: React.FC<SkeletonCardProps> = ({
           {
             translateX: animatedValue.interpolate({
               inputRange: [0, 1],
-              outputRange: [-width, width],
+              outputRange: [-cardWidth, cardWidth],
             }),
           },
           {
             translateY: animatedValue.interpolate({
               inputRange: [0, 1],
-              outputRange: [-height, height],
+              outputRange: [-cardHeight, cardHeight],
             }),
           },
         ],
@@ -84,7 +89,7 @@ const SkeletonCard: React.FC<SkeletonCardProps> = ({
         {
           translateY: animatedValue.interpolate({
             inputRange: [0, 1],
-            outputRange: [-height, height],
+            outputRange: [-cardHeight, cardHeight],
           }),
         },
       ],
@@ -96,8 +101,8 @@ const SkeletonCard: React.FC<SkeletonCardProps> = ({
       style={[
         styles.container,
         {
-          width,
-          height,
+          width: cardWidth,
+          height: cardHeight,
           borderRadius,
           backgroundColor,
         },

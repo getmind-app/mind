@@ -11,6 +11,7 @@ import { useRouter } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 
+import { CalendarSkeleton } from "../components/CalendarSkeleton";
 import SkeletonCard from "../components/SkeletonCard";
 import { api } from "../utils/api";
 
@@ -37,20 +38,7 @@ function Appointments() {
     userId: user?.id,
   });
 
-  if (isLoading)
-    return (
-      <View className="mt-4 flex flex-row justify-center">
-        <SkeletonCard
-          width={360}
-          height={140}
-          borderRadius={8}
-          backgroundColor="#f5f5f5"
-          animationColor="#e0e0e0"
-          animationDirection="horizontal"
-          animationSpeed={1500}
-        />
-      </View>
-    );
+  if (isLoading) return <CalendarSkeleton />;
 
   return data && data.length > 0 ? (
     data.map((appointment) => (
@@ -89,7 +77,7 @@ function Appointments() {
       </View>
       <TouchableOpacity onPress={() => router.push("/search")}>
         <View className="mt-6 flex w-full flex-row items-center justify-center rounded-bl-xl rounded-br-xl bg-blue-500 py-3 align-middle">
-          <FontAwesome size={20} color="white" name="search" />
+          <FontAwesome size={16} color="white" name="search" />
           <Text className="ml-4 font-nunito-sans-bold text-lg text-white">
             Therapists
           </Text>

@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 
+import { ProfileSkeleton } from "../components/ProfileSkeleton";
 import SkeletonCard from "../components/SkeletonCard";
 import { api } from "../utils/api";
 
@@ -68,49 +69,11 @@ function List(search: string) {
   }
 
   if (isLoading) {
-    return (
-      <View className="flex flex-row items-center pt-4">
-        <View>
-          <SkeletonCard
-            width={50}
-            height={50}
-            borderRadius={50}
-            backgroundColor="#f5f5f5"
-            animationColor="#e0e0e0"
-            animationDirection="horizontal"
-            animationSpeed={1500}
-          />
-        </View>
-        <View className="flex flex-col gap-2 pl-4">
-          <View>
-            <SkeletonCard
-              width={100}
-              height={10}
-              borderRadius={8}
-              backgroundColor="#f5f5f5"
-              animationColor="#e0e0e0"
-              animationDirection="horizontal"
-              animationSpeed={1500}
-            />
-          </View>
-          <View>
-            <SkeletonCard
-              width={250}
-              height={10}
-              borderRadius={8}
-              backgroundColor="#f5f5f5"
-              animationColor="#e0e0e0"
-              animationDirection="horizontal"
-              animationSpeed={1500}
-            />
-          </View>
-        </View>
-      </View>
-    );
+    return <ProfileSkeleton />;
   }
 
   return data.length > 0 ? (
-    <View className="flex w-full flex-col items-start justify-center gap-y-4">
+    <View className="flex w-full flex-col items-start justify-center gap-y-4 pt-2">
       {data.map(({ name, profilePictureUrl, id, crp }) => (
         <TouchableOpacity
           className="flex flex-row items-center gap-4 align-middle"

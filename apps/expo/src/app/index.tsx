@@ -32,10 +32,10 @@ function NextAppointment() {
 
   if (isLoading)
     return (
-      <View className="mt-4 flex flex-row justify-center">
+      <View className="mt-4 flex flex-row justify-center shadow-sm">
         <SkeletonCard
-          width={360}
-          height={150}
+          widthRatio={0.92}
+          heightRatio={0.18}
           borderRadius={8}
           backgroundColor="#f5f5f5"
           animationColor="#e0e0e0"
@@ -49,7 +49,7 @@ function NextAppointment() {
     <>
       {data && data.therapistId ? (
         <View className="mt-4 rounded-xl bg-white shadow-sm">
-          <View className="px-6 pt-6">
+          <View className="p-6">
             <View className="flex w-full flex-row justify-between">
               <Text className="font-nunito-sans text-xl">
                 {new Intl.DateTimeFormat("en", { weekday: "long" }).format(
@@ -155,16 +155,31 @@ function LastNotes() {
   // TODO: achar uma forma de refazer a query quando o usuário criar/delete uma nota
   if (isLoading)
     return (
-      <View className="mt-4 flex flex-row justify-center">
-        <SkeletonCard
-          width={360}
-          height={90}
-          borderRadius={8}
-          backgroundColor="#f5f5f5"
-          animationColor="#e0e0e0"
-          animationDirection="horizontal"
-          animationSpeed={1500}
-        />
+      <View className="mt-4 flex flex-row rounded-xl bg-white p-6 shadow-sm">
+        <View className="flex flex-col gap-4">
+          <View>
+            <SkeletonCard
+              widthRatio={0.3}
+              heightRatio={0.02}
+              borderRadius={8}
+              backgroundColor="#f5f5f5"
+              animationColor="#e0e0e0"
+              animationDirection="horizontal"
+              animationSpeed={1500}
+            />
+          </View>
+          <View>
+            <SkeletonCard
+              widthRatio={0.6}
+              heightRatio={0.01}
+              borderRadius={8}
+              backgroundColor="#f5f5f5"
+              animationColor="#e0e0e0"
+              animationDirection="horizontal"
+              animationSpeed={1500}
+            />
+          </View>
+        </View>
       </View>
     );
 
