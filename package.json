@@ -23,7 +23,7 @@
     "@acme/expo": "^0.1.0",
     "@expo-google-fonts/league-spartan": "^0.2.3",
     "@expo-google-fonts/nunito-sans": "^0.2.3",
-    "@expo/webpack-config": "^18.0.1",
+    "@expo/webpack-config": "^18.0.4",
     "@ianvs/prettier-plugin-sort-imports": "^3.7.2",
     "@manypkg/cli": "^0.20.0",
     "@types/prettier": "^2.7.2",
@@ -33,7 +33,7 @@
     "expo-splash-screen": "~0.18.1",
     "prettier": "^2.8.7",
     "prettier-plugin-tailwindcss": "^0.2.6",
-    "react-native-web": "~0.18.10",
+    "react-native-web": "~0.18.12",
     "turbo": "^1.8.8",
     "typescript": "^5.0.3"
   }

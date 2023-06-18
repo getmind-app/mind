@@ -81,7 +81,7 @@ const RootLayout = () => {
   });
 
   useEffect(() => {
-    async function loadResourcesAndDataAsync() {
+    (async function loadResourcesAndDataAsync() {
       try {
         SplashScreen.preventAutoHideAsync();
         const iconsFont = [
@@ -97,12 +97,10 @@ const RootLayout = () => {
         setAppIsReady(true);
         SplashScreen.hideAsync();
       }
-    }
-
-    loadResourcesAndDataAsync();
+    })();
   }, []);
 
-  if (!fontsLoaded) {
+  if (!fontsLoaded || !appIsReady) {
     return null;
   }
 
