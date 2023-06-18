@@ -14,10 +14,22 @@ export const therapistsRouter = createTRPCRouter({
         yearsOfExperience: z.number().min(0),
         about: z.string(),
         userId: z.string().min(1),
+        profilePictureUrl: z.string().min(1),
       }),
     )
-    .mutation(({ ctx, input }) => {
-      return ctx.prisma.therapist.create({ data: input });
+    .mutation(async ({ ctx, input }) => {
+      return await ctx.prisma.therapist.create({ data: input });
+    }),
+  findById: protectedProcedure
+    .input(
+      z.object({
+        id: z.string().min(1),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      return await ctx.prisma.therapist.findFirst({
+        where: { id: input.id },
+      });
     }),
   findByUserId: protectedProcedure
     .input(
@@ -25,12 +37,12 @@ export const therapistsRouter = createTRPCRouter({
         userId: z.string().min(1),
       }),
     )
-    .query(({ ctx, input }) => {
-      return ctx.prisma.therapist.findFirst({
+    .query(async ({ ctx, input }) => {
+      return await ctx.prisma.therapist.findFirst({
         where: { userId: input.userId },
       });
     }),
-  findAll: protectedProcedure.query(({ ctx }) => {
-    return ctx.prisma.therapist.findMany();
+  findAll: protectedProcedure.query(async ({ ctx }) => {
+    return await ctx.prisma.therapist.findMany();
   }),
 });

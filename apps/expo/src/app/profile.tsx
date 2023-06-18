@@ -13,9 +13,16 @@ import { api } from "../utils/api";
 
 export default function UserProfileScreen() {
   const { user, signOut } = useClerk();
+  const { mutateAsync } = (api.users as any).clearMetadata.useMutation({});
   const { data } = (api.therapists as any).findByUserId.useQuery({
     userId: user?.id,
   });
+
+  async function clearUserMetaData() {
+    console.log("Clearing user metadata");
+    await mutateAsync();
+    await user?.reload();
+  }
 
   return (
     <SafeAreaView className="min-h-screen bg-off-white ">
@@ -48,73 +55,43 @@ export default function UserProfileScreen() {
             </View>
           </View>
         </View>
-        <ScrollView
-          className="min-h-max pt-12"
-          showsVerticalScrollIndicator={false}
-        >
-          <View className="flex flex-col items-center justify-center">
-            <View className="flex flex-row">
-              <Card
-                label="Settings"
-                icon={<MaterialIcons size={32} name="settings" />}
-                onPress={signOut}
-              />
-              <Card
-                label="Sign Out"
-                icon={<MaterialIcons size={32} name="logout" />}
-                onPress={signOut}
-              />
-            </View>
-          </View>
+        <ScrollView className="pt-8" showsVerticalScrollIndicator={false}>
+          <MenuItem
+            isFirst={true}
+            label="🗣️  Personal info"
+            onPress={signOut}
+          />
+          <MenuItem label="⚙️  Settings" onPress={signOut} />
 
           {process.env.NODE_ENV === "development" ? (
-            <DevelopmentOptions />
+            <MenuItem
+              label="❌  Reset user metadata"
+              onPress={clearUserMetaData}
+            />
           ) : null}
+
+          <MenuItem isLast={true} label="🚪  Sign out" onPress={signOut} />
         </ScrollView>
       </View>
     </SafeAreaView>
   );
 }
 
-function DevelopmentOptions() {
-  // TODO: Remove type casting
-  const { mutateAsync } = (api.users as any).clearMetadata.useMutation({});
-  const { user } = useClerk();
-
-  async function clearUserMetaData() {
-    console.log("Clearing user metadata");
-    await mutateAsync();
-    await user?.reload();
-  }
-
+function MenuItem(props: {
+  label: string;
+  isFirst?: boolean;
+  isLast?: boolean;
+  onPress: () => void;
+}) {
   return (
-    <View className="mt-8 rounded bg-white shadow-sm">
-      <Text className="pt-4 text-center font-nunito-sans-bold text-2xl">
-        Dev Options
-      </Text>
-      <View className="rounded-lg p-2">
-        <TouchableOpacity onPress={clearUserMetaData}>
-          <View className="flex items-center justify-center rounded bg-gray-500 py-3">
-            <Text className="font-nunito-sans text-lg text-white">
-              Reset user metadata
-            </Text>
-          </View>
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
-}
-
-function Card(props: { label: string; icon: any; onPress: () => void }) {
-  return (
-    <TouchableOpacity onPress={() => props.onPress()}>
-      <View className="m-2 gap-y-2 rounded-xl bg-white p-8 shadow-sm">
-        <View className="flex flex-row items-center justify-center">
-          {props.icon}
-        </View>
-        <Text className="text-center font-nunito-sans text-2xl">
-          {props.label}
-        </Text>
+    <TouchableOpacity onPress={props.onPress}>
+      <View
+        className={`flex flex-row items-center justify-between bg-white px-6 py-4 align-middle shadow-sm ${
+          props.isFirst ? "rounded-t-xl" : ""
+        } ${props.isLast ? "rounded-b-xl" : ""}`}
+      >
+        <Text className="font-nunito-sans text-xl">{props.label}</Text>
+        <MaterialIcons size={24} name="chevron-right" />
       </View>
     </TouchableOpacity>
   );

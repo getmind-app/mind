@@ -7,40 +7,70 @@ import {
   Text,
   View,
 } from "react-native";
-import { useRouter, useSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter, useSearchParams } from "expo-router";
+import { useUser } from "@clerk/clerk-expo";
 
 import { AnimatedCard } from "../../components/Accordion";
 import { Header } from "../../components/Header";
+import { api } from "../../utils/api";
 
 export default function TherapistSchedule() {
   const router = useRouter();
-  const params = useSearchParams();
-  const { psych = "John" } = params;
+  const { user } = useUser();
+  const { id } = useLocalSearchParams();
+  const { data, isLoading, isError } = api.therapists.findById.useQuery({ id });
+  const { mutate } = (api.appointments as any).create.useMutation({
+    onSuccess: () => {
+      router.push({
+        pathname: "/psych/payment",
+        params: { id },
+      });
+    },
+  });
+
   /* TODO: trocar esse implementacao por um context, redux, zustand, jotai */
   const [selectedDate, setSelectedDate] = useState<number>();
   const [selectedHour, setSelectedHour] = useState<string>();
-  const [selectedMode, setSelectedMode] = useState<"in-person" | "online">();
+  const [selectedMode, setSelectedMode] = useState<"ON_SITE" | "ONLINE">();
   const allPicked = useMemo(() => {
     return selectedDate && selectedMode && selectedHour;
   }, [selectedHour, selectedMode, selectedDate]);
 
+  function handleConfirm() {
+    const today = new Date();
+
+    // TODO: fix the year and month
+    mutate({
+      scheduledTo: new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        selectedDate,
+        parseInt(selectedHour?.split(":")[0] ?? "1"),
+        parseInt(selectedHour?.split(":")[1] ?? "0"),
+      ),
+      modality: selectedMode,
+      therapistId: id,
+      userId: user?.id,
+    });
+  }
+
   return (
     <SafeAreaView className="bg-off-white">
-      <Header title="Schedule" />
-      <ScrollView className="px-4 pt-8">
+      <Header />
+      <ScrollView className="px-4">
         <View className="relative mt-8 rounded-2xl bg-white p-4 pt-12">
           <View className="p-1/2 absolute -top-8 left-4 flex h-16 w-16 items-center justify-center overflow-hidden rounded-full">
             <Image
-              alt="John Michael Williams"
+              alt={`${data?.name} picture`}
               source={{
-                uri: "https://images.pexels.com/photos/4098353/pexels-photo-4098353.jpeg?auto=compress&cs=tinysrgb&w=1260&h=751&dpr=1",
+                uri: data?.profilePictureUrl,
                 width: 64,
                 height: 64,
               }}
             />
           </View>
           <Text className="mb-2 font-nunito-sans-bold text-2xl">
-            {psych}&apos;s Schedule
+            {data?.name}&apos;s Schedule
           </Text>
           <Text className="mb-2 font-nunito-sans text-sm text-[#666666]">
             Pick the date that you would like to meet:
@@ -53,6 +83,7 @@ export default function TherapistSchedule() {
           date={selectedDate ?? 0}
         />
         <ModalityPicker
+          therapistName={data?.name ?? ""}
           hour={selectedHour}
           mode={selectedMode ?? ""}
           onSelect={setSelectedMode as any}
@@ -63,17 +94,7 @@ export default function TherapistSchedule() {
               allPicked ? "" : "opacity-30"
             }`}
             disabled={!allPicked}
-            onPress={() => {
-              router.push({
-                pathname: `/psych/payment`,
-                params: {
-                  hour: selectedHour,
-                  date: `04/${selectedDate}`,
-                  mode: selectedMode,
-                  psych,
-                },
-              });
-            }}
+            onPress={handleConfirm}
           >
             <Text
               className={`text-center font-nunito-sans-bold font-bold text-white`}
@@ -254,10 +275,12 @@ function Hour({
 }
 
 function ModalityPicker({
+  therapistName,
   mode,
   onSelect,
   hour,
 }: {
+  therapistName: string;
   mode: string;
   onSelect: (x: string) => void;
   hour?: string;
@@ -285,22 +308,22 @@ function ModalityPicker({
       }
     >
       <Text className="mt-2 font-nunito-sans text-[#666666]">
-        John&apos;s sessions happen at{" "}
+        {therapistName}&apos;s sessions happen at{" "}
         <Text className="font-nunito-sans underline">335 Pioneer Way</Text>
       </Text>
       <View className="mt-3 flex flex-row justify-between">
         <Pressable
           onPress={() => {
-            onSelect("online");
+            onSelect("ONLINE");
             setExpanded(false);
           }}
           className={`w-[48%] rounded-lg bg-off-white py-3 ${
-            mode === "online" ? "bg-[#2185EE]" : ""
+            mode === "ONLINE" ? "bg-[#2185EE]" : ""
           }`}
         >
           <Text
             className={`text-center font-nunito-sans text-base ${
-              mode === "online" ? "text-white" : ""
+              mode === "ONLINE" ? "text-white" : ""
             }`}
           >
             Online
@@ -308,16 +331,16 @@ function ModalityPicker({
         </Pressable>
         <Pressable
           onPress={() => {
-            onSelect("in-person");
+            onSelect("ON_SITE");
             setExpanded(false);
           }}
           className={`w-[48%] rounded-lg bg-off-white py-3 ${
-            mode === "in-person" ? "bg-[#2185EE]" : ""
+            mode === "ON_SITEn" ? "bg-[#2185EE]" : ""
           }`}
         >
           <Text
             className={`text-center font-nunito-sans text-base ${
-              mode === "in-person" ? "text-white" : ""
+              mode === "ON_SITE" ? "text-white" : ""
             }`}
           >
             In-person

@@ -1,23 +1,23 @@
 import { Pressable, SafeAreaView, ScrollView, Text, View } from "react-native";
-import { useRouter, useSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter, useSearchParams } from "expo-router";
 import { FontAwesome5 } from "@expo/vector-icons";
 
 import { Header } from "../../components/Header";
+import { api } from "../../utils/api";
 
 function handleMode(x: string) {
-  if (x === "online") return "Online";
-  if (x === "person") return "In Person";
+  if (x === "ONLINE") return "Online";
+  if (x === "ON_SITE") return "In Person";
 }
 
 export default function SessionPayment() {
-  const params = useSearchParams();
   const router = useRouter();
-  const { psych, date, hour, mode } = params;
+  const { id } = useLocalSearchParams();
+  const { data, isLoading, isError } = api.therapists.findById.useQuery({ id });
 
   return (
     <SafeAreaView className="bg-off-white">
       <Header title="Payment" />
-
       <ScrollView
         className="min-h-screen px-4"
         showsVerticalScrollIndicator={false}
@@ -25,22 +25,22 @@ export default function SessionPayment() {
       >
         <View className="relative mt-8 rounded-2xl bg-white p-4 pt-6 shadow-sm">
           <Text className="mb-4 font-nunito-sans-bold text-2xl">
-            Appointments with {psych}
+            Appointments with {data.name}
           </Text>
           <View className="mb-8">
             <View className="mb-2">
               <Text className="mb-2 font-nunito-sans text-sm">Details</Text>
               <Text className="mb-2 ml-3 font-nunito-sans text-[#666666]">
-                Appointments with {psych}
+                Appointments with {data.name}
               </Text>
               <View>
                 <View className="ml-6 flex flex-row justify-between">
                   <Text className="font-nunito-sans text-[#666666]">
                     {date} - {hour} - {/* TODO: tirar type casting */}
-                    {handleMode(mode as string)}
+                    {handleMode( as string)}
                   </Text>
                   <Text className=" font-nunito-sans text-[#666666]">
-                    USD 80,00
+                    US$ {data.hourlyRate}
                   </Text>
                 </View>
               </View>

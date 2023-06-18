@@ -235,23 +235,10 @@ function TabsRouter() {
         }}
       />
       <Tabs.Screen
-        name="notes/new"
+        name="notes"
         options={{
           title: "Notes",
           href: null,
-          tabBarStyle: {
-            maxHeight: 0,
-          },
-        }}
-      />
-      <Tabs.Screen
-        name="notes/[id]"
-        options={{
-          title: "Note",
-          href: null,
-          tabBarStyle: {
-            maxHeight: 0,
-          },
         }}
       />
     </Tabs>

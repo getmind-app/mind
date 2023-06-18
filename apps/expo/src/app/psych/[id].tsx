@@ -9,8 +9,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { useRouter, useSearchParams } from "expo-router";
-import { AntDesign, MaterialIcons } from "@expo/vector-icons";
+import { Link, useRouter, useSearchParams } from "expo-router";
+import { MaterialIcons } from "@expo/vector-icons";
 
 import { Header } from "../../components/Header";
 import { api } from "../../utils/api";
@@ -18,9 +18,16 @@ import { api } from "../../utils/api";
 export default function TherapistProfile() {
   const router = useRouter();
   const params = useSearchParams();
-  const { data, isLoading, isError } = api.users.getProfessional.useQuery({
+  const { data, isLoading, isError } = api.therapists.findById.useQuery({
     id: params.id as string,
   });
+
+  function handleSchedule() {
+    router.push({
+      pathname: "/psych/schedule",
+      params: { id: params.id },
+    });
+  }
 
   if (isError) {
     return <Text>There was an error</Text>;
@@ -32,76 +39,71 @@ export default function TherapistProfile() {
 
   return (
     <>
-      <SafeAreaView>
-        <Header title="Professional" />
-        <ScrollView className="pt-4" showsVerticalScrollIndicator={false}>
-          <View className="flex flex-col items-center justify-center px-4">
-            <View className="flex flex-row items-center justify-center overflow-hidden rounded-full align-middle">
+      <SafeAreaView className="bg-off-white">
+        <Header />
+        <ScrollView showsVerticalScrollIndicator={false} className="px-4 py-2">
+          <View className="flex flex-col items-center justify-center">
+            <View className="flex w-full flex-row">
               <Image
                 className="rounded-full"
-                alt={`${data.firstName} ${data.lastName} picture`}
+                alt={`${data.name} picture`}
                 source={{
-                  uri: data.profileImageUrl,
-                  width: 126,
-                  height: 126,
+                  uri: data.profilePictureUrl,
+                  width: 96,
+                  height: 96,
                 }}
               />
+              <View className="ml-4 flex flex-col justify-center align-middle">
+                <Text className="font-nunito-sans-bold text-3xl font-bold">
+                  {data.name}
+                </Text>
+                <TouchableOpacity onPress={() => router.push("/chat")}>
+                  <View className="w-32 rounded-xl bg-white px-4 py-1.5 shadow-sm">
+                    <Text className="text-center font-nunito-sans-bold text-base">
+                      Message
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
             </View>
-            <Text className="pt-4 font-nunito-sans-bold text-2xl font-bold">
-              {data.firstName} {data.lastName}
-            </Text>
-            <View className="flex flex-row items-center gap-8 pt-4 align-middle">
+            <View className="flex flex-row items-center gap-12 pt-6 align-middle">
               <View className="flex flex-col">
                 <Text className="font-nunito-sans-bold text-base text-slate-500">
                   CRP
                 </Text>
                 <Text className="font-nunito-sans-bold text-base">
-                  {data.publicMetadata.crp}
+                  {data.crp}
                 </Text>
               </View>
               <View className="flex flex-col">
                 <Text className="font-nunito-sans-bold text-base text-slate-500">
                   Patients
                 </Text>
-                <View className="flex flex-row">
-                  <Text className="font-nunito-sans-bold text-base text-blue-500">
-                    {data.publicMetadata.weeklyAppointments}
-                  </Text>
+                <Text className="font-nunito-sans-bold text-base text-blue-500">
+                  42
                   <Text className="font-nunito-sans-bold text-base">
                     {" "}
                     / week
                   </Text>
-                </View>
+                </Text>
               </View>
               <View className="flex flex-col">
                 <Text className="font-nunito-sans-bold text-base text-slate-500">
                   Practicing for
                 </Text>
-                <View className="flex flex-row">
-                  <Text className="font-nunito-sans-bold text-base text-blue-500">
-                    {data.publicMetadata.yearsOfExperience}
-                  </Text>
+                <Text className="font-nunito-sans-bold text-base text-blue-500">
+                  {data.yearsOfExperience}
                   <Text className="font-nunito-sans-bold text-base">
                     {" "}
                     years
                   </Text>
-                </View>
+                </Text>
               </View>
             </View>
-            <TouchableOpacity onPress={() => router.push("/chat")}>
-              <View className="mt-4 rounded-xl bg-white shadow-sm">
-                <View className="flex flex-row items-center gap-2 px-24 py-3 align-middle">
-                  <AntDesign name="message1" color="black" size={18} />
-                  <Text className="font-nunito-sans-bold text-base">
-                    Talk to {data.firstName}
-                  </Text>
-                </View>
-              </View>
-            </TouchableOpacity>
           </View>
-          <View className="mt-8 px-4">
-            <AboutMe>{data.publicMetadata.about}</AboutMe>
-            <Education>
+          <View className="pt-8">
+            <AboutMe>{data.about}</AboutMe>
+            {/* <Education>
               <View className="col flex flex-col gap-y-2 pb-2 pt-4">
                 {data.publicMetadata.education.map(
                   ({ course, institution }, index) => (
@@ -128,21 +130,21 @@ export default function TherapistProfile() {
                   </View>
                 ))}
               </View>
-            </Methodologies>
+            </Methodologies> */}
           </View>
         </ScrollView>
       </SafeAreaView>
       <View className="absolute bottom-0 w-full rounded-t-xl bg-blue-500 px-6 pb-8 pt-4">
         <View className="flex flex-row items-center justify-between ">
           <View className="flex flex-col">
-            <Text className="font-nunito-sans-bold text-base text-white">
-              $ {data.publicMetadata.hourlyRate}
+            <Text className="font-nunito-sans-bold text-base text-white shadow-sm">
+              $ {data.hourlyRate}
             </Text>
             <Text className="font-nunito-sans text-base text-white">
               Online and on-site
             </Text>
           </View>
-          <TouchableOpacity onPress={() => router.push("/psych/schedule")}>
+          <TouchableOpacity onPress={handleSchedule}>
             <View className="rounded-xl bg-white">
               <View className="flex flex-row items-center px-4 py-2 align-middle">
                 <Text className="font-nunito-sans-bold text-base">

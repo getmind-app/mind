@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { useRouter, useSearchParams } from "expo-router";
 
+import { Header } from "../../components/Header";
 import { api } from "../../utils/api";
 
 // TODO: no futuro precisamos deixar editar a nota
@@ -36,15 +37,18 @@ export default function Note() {
       style={{ flex: 1 }}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <View className="bg-off-white pb-4 pt-16">
+      <Header />
+      <View className="bg-off-white pb-4">
         <View className="h-full px-4 py-2">
           <ScrollView
-            className="min-h-max pt-4"
+            className="min-h-max"
             showsVerticalScrollIndicator={false}
           >
-            <View className="flex flex-row items-center justify-between pt-12">
+            <View className="flex flex-row items-center justify-between">
               <Text className="font-nunito-sans-bold text-3xl ">
-                <Text className="text-blue-500">{data.createdAt.getDay()}</Text>{" "}
+                <Text className="text-blue-500">
+                  {data.createdAt.getDate()}
+                </Text>{" "}
                 {data.createdAt.toLocaleString("en", {
                   month: "long",
                 })}
@@ -59,7 +63,7 @@ export default function Note() {
                 </View>
               </TouchableOpacity>
             </View>
-            <Text className="w-full py-4">{data.content}</Text>
+            <Text className="w-full py-4 font-nunito-sans">{data.content}</Text>
           </ScrollView>
         </View>
       </View>

@@ -23,7 +23,7 @@ export default function OnboardPsychScreen() {
   const [birthday, setBirthday] = useState<Date>(new Date());
   const [document, setDocument] = useState<string>("");
   const [crp, setCrp] = useState<string>("");
-  const [yearsOfExperience, setYearsOfExperience] = useState<string>("0");
+  const [yearsOfExperience, setYearsOfExperience] = useState<string>("");
   const [hourlyRate, setHourlyRate] = useState<number>(0.0);
 
   const [formValidated, setFormValidated] = useState<boolean>(true);
@@ -54,6 +54,7 @@ export default function OnboardPsychScreen() {
         hourlyRate,
         about: "", // TODO: arrumar isso, queria que fosse opcional
         userId: user?.id,
+        profilePictureUrl: user?.profileImageUrl,
       });
     }
   };
@@ -84,7 +85,7 @@ export default function OnboardPsychScreen() {
             </View>
             <FormTextInput
               value={name}
-              title="🖋️ Name"
+              title="🖋️ Full Name"
               placeholder="John Doe"
               onChange={setName}
             />

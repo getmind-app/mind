@@ -3,7 +3,7 @@ import { Stack, useRouter } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
 
 type HeaderProps = {
-  title: string;
+  title?: string;
 };
 
 export const Header = ({ title }: HeaderProps) => {

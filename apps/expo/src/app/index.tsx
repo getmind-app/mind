@@ -85,7 +85,7 @@ function LastNotes() {
 
   return (
     <>
-      {data ? (
+      {data && data.length > 0 ? (
         data.map(
           ({
             id,
@@ -100,8 +100,8 @@ function LastNotes() {
               <View className="flex w-full flex-row items-center justify-between px-6 py-4 align-middle">
                 <View className="flex flex-col">
                   <Text className="font-nunito-sans-bold text-xl text-slate-500">
-                    <Text className="text-blue-500">{createdAt.getDay()}</Text>{" "}
-                    {new Date(createdAt).toLocaleString("en", {
+                    <Text className="text-blue-500">{createdAt.getDate()}</Text>{" "}
+                    {createdAt.toLocaleString("en", {
                       month: "long",
                     })}
                   </Text>

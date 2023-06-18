@@ -11,6 +11,7 @@ import {
 import { useRouter } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
 
+import { Header } from "../../components/Header";
 import { api } from "../../utils/api";
 
 export default function NewNote() {
@@ -39,13 +40,14 @@ export default function NewNote() {
       style={{ flex: 1 }}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <View className="bg-off-white pb-4 pt-16">
+      <Header />
+      <View className="bg-off-white pb-4">
         <View className="h-full px-4 py-2">
           <ScrollView
-            className="min-h-max pt-4"
+            className="min-h-max"
             showsVerticalScrollIndicator={false}
           >
-            <View className="flex flex-row items-center justify-between pt-12">
+            <View className="flex flex-row items-center justify-between">
               <Text className=" font-nunito-sans-bold text-3xl">New note</Text>
               <TouchableOpacity onPress={handleNewNote}>
                 <View className="rounded-xl bg-blue-500">
@@ -58,7 +60,7 @@ export default function NewNote() {
               </TouchableOpacity>
             </View>
             <TextInput
-              className="w-full py-4"
+              className="w-full py-4 font-nunito-sans"
               onChangeText={setContent}
               value={content}
               placeholder="Write your note here"
