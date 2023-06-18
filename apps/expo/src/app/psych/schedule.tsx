@@ -18,8 +18,10 @@ export default function TherapistSchedule() {
   const router = useRouter();
   const { user } = useUser();
   const { id } = useLocalSearchParams();
-  const { data, isLoading, isError } = api.therapists.findById.useQuery({ id });
-  const { mutate } = (api.appointments as any).create.useMutation({
+  const { data, isLoading, isError, error } = api.therapists.findById.useQuery({
+    id: String(id),
+  });
+  const { mutate } = api.appointments.create.useMutation({
     onSuccess: () => {
       router.push({
         pathname: "/psych/payment",
@@ -39,20 +41,30 @@ export default function TherapistSchedule() {
   function handleConfirm() {
     const today = new Date();
 
+    if (!selectedDate || !selectedHour || !selectedMode) {
+      throw new Error("Missing form data");
+    }
+
     // TODO: fix the year and month
     mutate({
       scheduledTo: new Date(
         today.getFullYear(),
         today.getMonth(),
         selectedDate,
-        parseInt(selectedHour?.split(":")[0] ?? "1"),
-        parseInt(selectedHour?.split(":")[1] ?? "0"),
+        parseInt(selectedHour.split(":")[0] ?? "1"),
+        parseInt(selectedHour.split(":")[1] ?? "0"),
       ),
+      // depois que tivermos uma solução de formulários não vai precisar do type casting
       modality: selectedMode,
-      therapistId: id,
-      userId: user?.id,
+      therapistId: String(id),
+      userId: String(user?.id),
     });
   }
+
+  if (isLoading) return <Text>Loading...</Text>;
+  if (isError) return <Text>Error: {JSON.stringify(error)}</Text>;
+
+  if (!data) return <Text>Not found</Text>;
 
   return (
     <SafeAreaView className="bg-off-white">
@@ -61,16 +73,16 @@ export default function TherapistSchedule() {
         <View className="relative mt-8 rounded-2xl bg-white p-4 pt-12">
           <View className="p-1/2 absolute -top-8 left-4 flex h-16 w-16 items-center justify-center overflow-hidden rounded-full">
             <Image
-              alt={`${data?.name} picture`}
+              alt={`${data.name} picture`}
               source={{
-                uri: data?.profilePictureUrl,
+                uri: data.profilePictureUrl,
                 width: 64,
                 height: 64,
               }}
             />
           </View>
           <Text className="mb-2 font-nunito-sans-bold text-2xl">
-            {data?.name}&apos;s Schedule
+            {data.name}&apos;s Schedule
           </Text>
           <Text className="mb-2 font-nunito-sans text-sm text-[#666666]">
             Pick the date that you would like to meet:
@@ -83,10 +95,10 @@ export default function TherapistSchedule() {
           date={selectedDate ?? 0}
         />
         <ModalityPicker
-          therapistName={data?.name ?? ""}
+          therapistName={data.name ?? ""}
           hour={selectedHour}
           mode={selectedMode ?? ""}
-          onSelect={setSelectedMode as any}
+          onSelect={(pickedModality) => setSelectedMode(pickedModality)}
         />
         <View className="mb-28 mt-5 flex w-min flex-row justify-center">
           <Pressable
@@ -282,7 +294,7 @@ function ModalityPicker({
 }: {
   therapistName: string;
   mode: string;
-  onSelect: (x: string) => void;
+  onSelect: (pickedModality: "ONLINE" | "ON_SITE") => void;
   hour?: string;
 }) {
   const [expanded, setExpanded] = useState(false);

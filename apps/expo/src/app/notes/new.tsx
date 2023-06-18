@@ -19,7 +19,7 @@ export default function NewNote() {
   const router = useRouter();
   const [content, setContent] = useState("");
 
-  const { mutate, isLoading } = (api.notes as any).create.useMutation({
+  const { mutate, isLoading } = api.notes.create.useMutation({
     onSuccess: () => {
       router.push("/");
     },
@@ -29,7 +29,8 @@ export default function NewNote() {
     mutate({
       content: content,
       createdAt: new Date(),
-      userId: user?.id,
+      // TODO: receber o id do usuário como parâmetro
+      userId: String(user?.id),
     });
   }
 

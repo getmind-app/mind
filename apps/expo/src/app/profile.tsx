@@ -13,9 +13,9 @@ import { api } from "../utils/api";
 
 export default function UserProfileScreen() {
   const { user, signOut } = useClerk();
-  const { mutateAsync } = (api.users as any).clearMetadata.useMutation({});
-  const { data } = (api.therapists as any).findByUserId.useQuery({
-    userId: user?.id,
+  const { mutateAsync } = api.users.clearMetadata.useMutation({});
+  const { data } = api.therapists.findByUserId.useQuery({
+    userId: String(user?.id),
   });
 
   async function clearUserMetaData() {

@@ -19,15 +19,9 @@ function NextAppointment() {
   const { user } = useUser();
   const router = useRouter();
 
-  const { data, isLoading } = (
-    api.appointments as any
-  ).findLastByUserId.useQuery({
-    userId: user?.id,
-  });
-
-  // TODO: apenas executar se a query de cima retornar algo
-  const { data: therapist } = (api.therapists as any).findById.useQuery({
-    id: data?.therapistId,
+  // TODO: receber o id do usuário como parâmetro
+  const { data, isLoading } = api.appointments.findLastByUserId.useQuery({
+    userId: String(user?.id),
   });
 
   if (isLoading)
@@ -68,19 +62,19 @@ function NextAppointment() {
             <Text className="font-nunito-sans text-sm text-slate-500">
               {data.modality === "ONLINE"
                 ? "via Google Meet"
-                : "in person at " + therapist.address}
+                : "in person at " + data.therapist.address}
             </Text>
             <View className="mt-4 flex w-full flex-row items-center justify-between align-middle">
               <View className="flex flex-row items-center align-middle">
                 <View className="flex items-center justify-center overflow-hidden rounded-full align-middle">
                   <TouchableOpacity
-                    onPress={() => router.push("/psych/" + therapist.id)}
+                    onPress={() => router.push("/psych/" + data.therapist.id)}
                   >
                     <Image
                       className="flex items-center justify-center rounded-full"
-                      alt={`${therapist.name} profile picture`}
+                      alt={`${data.therapist.name} profile picture`}
                       source={{
-                        uri: therapist.profilePictureUrl,
+                        uri: data.therapist.profilePictureUrl,
                         width: 32,
                         height: 32,
                       }}
@@ -88,7 +82,7 @@ function NextAppointment() {
                   </TouchableOpacity>
                 </View>
                 <Text className="ml-2 font-nunito-sans text-xl">
-                  {therapist.name}
+                  {data.therapist.name}
                 </Text>
               </View>
               <MaterialIcons
@@ -100,13 +94,15 @@ function NextAppointment() {
             </View>
           </View>
           <TouchableOpacity
-            onPress={() =>
-              Linking.openURL(
-                data.modality === "ONLINE"
-                  ? data.link
-                  : "uber, maps sei la kkk",
-              )
-            }
+            onPress={() => {
+              if (data.modality === "ON_SITE") {
+                Linking.openURL("https://maps.google.com/");
+              } else if (data.modality === "ONLINE") {
+                Linking.openURL("https://meet.google.com/");
+              } else {
+                throw new Error("Invalid modality");
+              }
+            }}
           >
             <View className="mt-6 flex w-full flex-row items-center justify-center rounded-bl-xl rounded-br-xl bg-blue-500 py-3 align-middle">
               <FontAwesome
@@ -148,8 +144,9 @@ function LastNotes() {
   const { user } = useUser();
   const router = useRouter();
 
-  const { data, isLoading } = (api.notes as any).findByUserId.useQuery({
-    userId: user?.id,
+  const { data, isLoading } = api.notes.findByUserId.useQuery({
+    // TODO: receber o id do usuário como parâmetro
+    userId: String(user?.id),
   });
 
   // TODO: achar uma forma de refazer a query quando o usuário criar/delete uma nota

@@ -16,22 +16,27 @@ export default function Note() {
   const router = useRouter();
   const params = useSearchParams();
 
-  const { data, isLoading } = (api.notes as any).findById.useQuery({
-    id: params.id,
-  });
+  const { data, isLoading, refetch, isError, error } =
+    api.notes.findById.useQuery({
+      id: String(params.id),
+    });
 
-  const { mutate } = (api.notes as any).delete.useMutation({
-    onSuccess: () => {
-      (api.notes as any).invalidateQueries();
+  const { mutate } = api.notes.delete.useMutation({
+    onSuccess: async () => {
+      await refetch();
       router.push("/");
     },
   });
 
   function handleDelete() {
-    mutate({ id: params.id });
+    mutate({ id: String(params.id) });
   }
 
   if (isLoading) return <Text>Loading...</Text>;
+
+  if (isError) return <Text>Error: {JSON.stringify(error)}</Text>;
+
+  if (!data) return <Text>Not found</Text>;
 
   return (
     <KeyboardAvoidingView

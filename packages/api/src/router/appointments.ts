@@ -29,6 +29,13 @@ export const appointmentsRouter = createTRPCRouter({
             gte: new Date(),
           },
         },
+        include: {
+          therapist: {
+            include: {
+              address: true,
+            },
+          },
+        },
         orderBy: {
           scheduledTo: "desc",
         },

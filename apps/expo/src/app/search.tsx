@@ -11,7 +11,6 @@ import {
 import { useRouter } from "expo-router";
 
 import { ProfileSkeleton } from "../components/ProfileSkeleton";
-import SkeletonCard from "../components/SkeletonCard";
 import { api } from "../utils/api";
 
 export default function SearchScreen() {
@@ -53,10 +52,9 @@ export default function SearchScreen() {
   );
 }
 
-function List(search: string) {
-  const { data, isLoading, isError, error } = (
-    api.therapists as any
-  ).findByNameLike.useQuery({ name: search.search }); // Não entendi mt bem isso aq, mas funciona kkk
+function List({ search }: { search: string }) {
+  const { data, isLoading, isError, error } =
+    api.therapists.findByNameLike.useQuery({ name: search });
 
   const router = useRouter();
 
