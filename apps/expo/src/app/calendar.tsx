@@ -1,59 +1,85 @@
 import {
   Image,
   SafeAreaView,
+  ScrollView,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
+import { Header } from "react-native/Libraries/NewAppScreen";
+import { useRouter } from "expo-router";
+import { useUser } from "@clerk/clerk-expo";
+import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
+
+import { api } from "../utils/api";
 
 export default function CalendarScreen() {
+  const router = useRouter();
+  const { user } = useUser();
+  const { data, isLoading } = api.appointments.findByUserId.useQuery({
+    userId: user?.id,
+  });
+
+  if (isLoading) return <Text>Loading...</Text>;
+
   return (
-    <SafeAreaView>
-      <View className="mt-24">
-        <View className="flex min-h-screen w-full gap-y-8 px-4">
-          <Text className="fon px-4 text-3xl">Você é:</Text>
-          <View className="items-center">
-            <TouchableOpacity className="w-full">
-              <View className="bg-white flex w-full flex-row rounded-xl shadow-sm">
-                <View className="items-center">
-                  <View className="gap-y-2 px-4 py-10">
-                    <Text className="ml-4 text-2xl">Paciente</Text>
-                    <Text className="text-slate-500 ml-4 text-lg font-light">
-                      Buscando ajuda ou só{"\n"}alguém para conversar
-                    </Text>
-                  </View>
+    <SafeAreaView className="bg-off-white">
+      <ScrollView
+        className="min-h-screen px-4"
+        showsVerticalScrollIndicator={false}
+        overScrollMode="never"
+      >
+        <Text className="pt-12 font-nunito-sans-bold text-3xl">Calendar</Text>
+        {data && data.length > 0 ? (
+          data.map((appointment) => (
+            <>
+              <View
+                key={appointment.id}
+                className="mt-4 rounded-xl bg-white px-6 pt-6 shadow-sm"
+              >
+                <View className="flex w-full flex-row justify-between">
+                  <Text className="font-nunito-sans text-xl">
+                    {new Intl.DateTimeFormat("en", { weekday: "long" }).format(
+                      new Date(appointment.scheduledTo),
+                    )}
+                    , {new Date(appointment.scheduledTo).getDate()}/
+                    {new Date(appointment.scheduledTo).getMonth()}
+                  </Text>
+                  <Text className="font-nunito-sans-bold text-xl text-blue-500 ">
+                    {new Date(appointment.scheduledTo).getHours()}:
+                    {new Date(appointment.scheduledTo).getMinutes() == 0
+                      ? "00"
+                      : new Date(appointment.scheduledTo).getMinutes()}
+                  </Text>
                 </View>
-                <Image
-                  alt=""
-                  source={require("../../assets/profissional_2.png")}
-                  className="ml-1 mt-8 h-36 w-36"
-                  resizeMode="contain"
-                />
+                <Text className="font-nunito-sans text-sm text-slate-500">
+                  {appointment.modality === "ONLINE"
+                    ? "via Google Meet"
+                    : "in person"}
+                </Text>
+                <View className="mt-4 flex w-full flex-row items-center justify-between align-middle"></View>
+              </View>
+            </>
+          ))
+        ) : (
+          <View className="mt-4 rounded-xl bg-white shadow-sm">
+            <View className="px-6 pt-6">
+              <Text className="font-nunito-sans text-xl">Nothing for now!</Text>
+              <Text className="font-nunito-sans text-sm text-slate-500">
+                Search for you new therapist
+              </Text>
+            </View>
+            <TouchableOpacity onPress={() => router.push("/search")}>
+              <View className="mt-6 flex w-full flex-row items-center justify-center rounded-bl-xl rounded-br-xl bg-blue-500 py-3 align-middle">
+                <FontAwesome size={20} color="white" name="search" />
+                <Text className="ml-4 font-nunito-sans-bold text-lg text-white">
+                  Therapists
+                </Text>
               </View>
             </TouchableOpacity>
           </View>
-          <View className="items-center">
-            <TouchableOpacity className="w-full">
-              <View className="bg-white flex w-full flex-row rounded-xl shadow-sm">
-                <Image
-                  alt=""
-                  source={require("../../assets/paciente.png")}
-                  className="ml-9 mt-8 h-36 w-36"
-                  resizeMode="contain"
-                />
-                <View className="items-center">
-                  <View className="gap-y-2 px-4 py-10">
-                    <Text className="ml-4 text-2xl">Profissional</Text>
-                    <Text className="text-slate-500 ml-4 text-lg font-light">
-                      Conheça e atenda{"\n"}novos pacientes
-                    </Text>
-                  </View>
-                </View>
-              </View>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
+        )}
+      </ScrollView>
     </SafeAreaView>
   );
 }
