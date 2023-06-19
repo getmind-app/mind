@@ -13,7 +13,7 @@ function handleMode(x: string) {
 export default function SessionPayment() {
   const router = useRouter();
   const { id } = useLocalSearchParams();
-  const { data, isLoading, isError } = api.therapists.findById.useQuery({ id });
+  const { data } = api.appointments.findById.useQuery({ id: String(id) });
 
   return (
     <SafeAreaView className="bg-off-white">
@@ -25,22 +25,26 @@ export default function SessionPayment() {
       >
         <View className="relative mt-8 rounded-2xl bg-white p-4 pt-6 shadow-sm">
           <Text className="mb-4 font-nunito-sans-bold text-2xl">
-            Appointments with {data.name}
+            Appointments with {data?.therapist.name}
           </Text>
           <View className="mb-8">
             <View className="mb-2">
               <Text className="mb-2 font-nunito-sans text-sm">Details</Text>
               <Text className="mb-2 ml-3 font-nunito-sans text-[#666666]">
-                Appointments with {data.name}
+                Appointments with {data?.therapist.name}
               </Text>
               <View>
                 <View className="ml-6 flex flex-row justify-between">
                   <Text className="font-nunito-sans text-[#666666]">
-                    {/* {date} - {hour} - {/* TODO: tirar type casting */}
-                    {/* {handleMode( as string)} */}
+                    {data?.scheduledTo.getDate()} -{" "}
+                    {data?.scheduledTo.getHours()}:
+                    {data?.scheduledTo.getMinutes() == 0
+                      ? "00"
+                      : data?.scheduledTo.getMinutes()}{" "}
+                    -{handleMode(data?.modality ? data?.modality : "")}
                   </Text>
                   <Text className=" font-nunito-sans text-[#666666]">
-                    US$ {data.hourlyRate}
+                    US$ {data?.therapist.hourlyRate}
                   </Text>
                 </View>
               </View>
@@ -93,10 +97,7 @@ export default function SessionPayment() {
             onPress={() => {
               router.push({
                 pathname: "psych/finish",
-                params: {
-                  // psych,
-                  // date,
-                },
+                params: { id: id },
               });
             }}
             className={`rounded-lg bg-[#2185EE] px-16 py-3`}

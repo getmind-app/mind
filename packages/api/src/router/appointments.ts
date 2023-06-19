@@ -60,4 +60,20 @@ export const appointmentsRouter = createTRPCRouter({
         },
       });
     }),
+  findById: protectedProcedure
+    .input(
+      z.object({
+        id: z.string().min(1),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      return await ctx.prisma.appointment.findUnique({
+        where: {
+          id: input.id,
+        },
+        include: {
+          therapist: true,
+        },
+      });
+    }),
 });
