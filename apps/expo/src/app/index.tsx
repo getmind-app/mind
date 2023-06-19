@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Image,
   Linking,
+  RefreshControl,
   SafeAreaView,
   ScrollView,
   Text,
@@ -12,7 +13,7 @@ import { useRouter } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 
-import SkeletonCard from "../components/SkeletonCard";
+import { CardSkeleton } from "../components/CardSkeleton";
 import { api } from "../utils/api";
 
 function NextAppointment() {
@@ -24,20 +25,7 @@ function NextAppointment() {
     userId: String(user?.id),
   });
 
-  if (isLoading)
-    return (
-      <View className="mt-4 flex flex-row justify-center shadow-sm">
-        <SkeletonCard
-          widthRatio={0.92}
-          heightRatio={0.18}
-          borderRadius={8}
-          backgroundColor="#f5f5f5"
-          animationColor="#e0e0e0"
-          animationDirection="horizontal"
-          animationSpeed={1500}
-        />
-      </View>
-    );
+  if (isLoading) return <CardSkeleton />;
 
   return (
     <>
@@ -150,35 +138,7 @@ function LastNotes() {
   });
 
   // TODO: achar uma forma de refazer a query quando o usuário criar/delete uma nota
-  if (isLoading)
-    return (
-      <View className="mt-4 flex flex-row rounded-xl bg-white p-6 shadow-sm">
-        <View className="flex flex-col gap-4">
-          <View>
-            <SkeletonCard
-              widthRatio={0.3}
-              heightRatio={0.02}
-              borderRadius={8}
-              backgroundColor="#f5f5f5"
-              animationColor="#e0e0e0"
-              animationDirection="horizontal"
-              animationSpeed={1500}
-            />
-          </View>
-          <View>
-            <SkeletonCard
-              widthRatio={0.6}
-              heightRatio={0.01}
-              borderRadius={8}
-              backgroundColor="#f5f5f5"
-              animationColor="#e0e0e0"
-              animationDirection="horizontal"
-              animationSpeed={1500}
-            />
-          </View>
-        </View>
-      </View>
-    );
+  if (isLoading) return <CardSkeleton />;
 
   return (
     <>
@@ -240,12 +200,22 @@ function LastNotes() {
 
 export default function Index() {
   const router = useRouter();
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    console.log("refreshing"); // TODO: Invalidar queries
+    setRefreshing(false);
+  };
 
   return (
     <SafeAreaView className="min-h-screen bg-off-white">
       <ScrollView
         className="min-h-max px-4"
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       >
         <View className="h-full">
           <Text className="mt-12 font-nunito-sans-bold text-3xl">
@@ -255,9 +225,9 @@ export default function Index() {
           <View className="mt-8 flex flex-row items-center justify-between align-middle">
             <Text className=" font-nunito-sans-bold text-3xl">Last notes</Text>
             <TouchableOpacity onPress={() => router.push("/notes/new")}>
-              <View className="rounded-xl bg-blue-500 px-4 py-2 shadow-sm">
+              <View className="rounded-lg bg-blue-500 px-3 py-1 shadow-sm">
                 <Text className="text-center font-nunito-sans-bold text-base text-white">
-                  +
+                  New
                 </Text>
               </View>
             </TouchableOpacity>

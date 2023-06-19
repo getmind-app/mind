@@ -2,7 +2,7 @@ import { View } from "react-native";
 
 import SkeletonCard from "./SkeletonCard";
 
-export const CalendarSkeleton = () => {
+export const CardSkeleton = () => {
   return (
     <View className="mt-4 flex flex-row rounded-xl bg-white px-6 py-8 shadow-sm">
       <View className="flex flex-col gap-4">

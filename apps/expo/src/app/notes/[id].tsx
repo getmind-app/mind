@@ -32,7 +32,7 @@ export default function Note() {
     mutate({ id: String(params.id) });
   }
 
-  if (isLoading) return <Text>Loading...</Text>;
+  if (isLoading) return <View className="h-full bg-off-white"></View>;
 
   if (isError) return <Text>Error: {JSON.stringify(error)}</Text>;
 
@@ -44,8 +44,8 @@ export default function Note() {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <Header />
-      <View className="bg-off-white pb-4">
-        <View className="h-full px-4 py-2">
+      <View className="bg-off-white pb-4 pt-6">
+        <View className="h-full px-8 py-2">
           <ScrollView
             className="min-h-max"
             showsVerticalScrollIndicator={false}
@@ -69,7 +69,9 @@ export default function Note() {
                 </View>
               </TouchableOpacity>
             </View>
-            <Text className="w-full py-4 font-nunito-sans">{data.content}</Text>
+            <Text className="w-full py-4 font-nunito-sans text-lg">
+              {data.content}
+            </Text>
           </ScrollView>
         </View>
       </View>

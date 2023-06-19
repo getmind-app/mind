@@ -34,7 +34,7 @@ export default function NewNote() {
     });
   }
 
-  if (isLoading) return <Text>Loading...</Text>;
+  if (isLoading) return <View className="h-full bg-off-white"></View>;
 
   return (
     <KeyboardAvoidingView
@@ -42,8 +42,8 @@ export default function NewNote() {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <Header />
-      <View className="bg-off-white pb-4">
-        <View className="h-full px-4 py-2">
+      <View className="bg-off-white pb-4 pt-6">
+        <View className="h-full px-8 py-2">
           <ScrollView
             className="min-h-max"
             showsVerticalScrollIndicator={false}
@@ -61,7 +61,7 @@ export default function NewNote() {
               </TouchableOpacity>
             </View>
             <TextInput
-              className="w-full py-4 font-nunito-sans"
+              className="w-full py-4 font-nunito-sans text-lg"
               onChangeText={setContent}
               value={content}
               placeholder="Write your note here"
