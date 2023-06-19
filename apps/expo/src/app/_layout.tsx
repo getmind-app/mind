@@ -21,7 +21,6 @@ import {
   useClerk,
   useOAuth,
 } from "@clerk/clerk-expo";
-import { LeagueSpartan_700Bold } from "@expo-google-fonts/league-spartan";
 import {
   NunitoSans_400Regular,
   NunitoSans_700Bold,
@@ -77,7 +76,6 @@ const RootLayout = () => {
   const [fontsLoaded] = useFonts({
     "Nunito-Sans": NunitoSans_400Regular,
     "Nunito-Sans-Bold": NunitoSans_700Bold,
-    "League-Spartan": LeagueSpartan_700Bold,
   });
 
   useEffect(() => {

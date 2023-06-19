@@ -14,9 +14,6 @@ importers:
       '@acme/expo':
         specifier: ^0.1.0
         version: link:apps/expo
-      '@expo-google-fonts/league-spartan':
-        specifier: ^0.2.3
-        version: 0.2.3
       '@expo-google-fonts/nunito-sans':
         specifier: ^0.2.3
         version: 0.2.3
@@ -65,9 +62,6 @@ importers:
       '@clerk/clerk-expo':
         specifier: ^0.16.4
         version: 0.16.4(@babel/core@7.21.4)(@types/react@18.0.33)(expo-auth-session@4.0.3)(expo-web-browser@12.1.1)(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
-      '@expo-google-fonts/league-spartan':
-        specifier: 0.2.3
-        version: 0.2.3
       '@expo-google-fonts/nunito-sans':
         specifier: ^0.2.3
         version: 0.2.3
@@ -4742,10 +4736,6 @@ packages:
   /@eslint/js@8.37.0:
     resolution: {integrity: sha512-x5vzdtOOGgFVDCUs81QRB2+liax8rFg3+7hqM+QhBG0/G3F1ZsoYl97UrqgHgQ9KKT7G6c4V+aTUCgu/n22v1A==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
-
-  /@expo-google-fonts/league-spartan@0.2.3:
-    resolution: {integrity: sha512-Bd7FlrGOhHyjPjXTZnTuH4QYNXwv8M2+YSEiRs6vbSXskxJJgwBsYza3QW+u+G7sgSOVqFU74SOFxWrE8OZ2yQ==}
-    dev: false
 
   /@expo-google-fonts/nunito-sans@0.2.3:
     resolution: {integrity: sha512-8p1ZVigs6rCArGzQtLeaJ70wZI7hc32IyLnPQC6Ul1HW8Ok6qn+Q5tCpPz3/0k+LcMU6dyAmNj5fVzDSTho9aA==}
