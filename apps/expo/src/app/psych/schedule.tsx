@@ -1,5 +1,3 @@
-import { useUser } from "@clerk/clerk-expo";
-import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import {
   Image,
@@ -9,6 +7,8 @@ import {
   Text,
   View,
 } from "react-native";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { useUser } from "@clerk/clerk-expo";
 
 import { AnimatedCard } from "../../components/Accordion";
 import { Header } from "../../components/Header";
@@ -23,14 +23,14 @@ export default function TherapistSchedule() {
   });
   const { mutate, data: appointment } = api.appointments.create.useMutation({
     onSuccess: () => {
+      console.log(appointment);
+
       router.push({
         pathname: "/psych/payment",
-        params: { appointmentId: appointment?.id},
+        params: { appointmentId: appointment?.id },
       });
     },
   });
-
-  
 
   /* TODO: trocar esse implementacao por um context, redux, zustand, jotai */
   const [selectedDate, setSelectedDate] = useState<number>();

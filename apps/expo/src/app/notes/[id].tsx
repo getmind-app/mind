@@ -16,15 +16,16 @@ export default function Note() {
   const router = useRouter();
   const params = useSearchParams();
 
-  const { data, isLoading, refetch, isError, error } =
-    api.notes.findById.useQuery({
-      id: String(params.id),
-    });
+  const { data, isLoading, isError, error } = api.notes.findById.useQuery({
+    id: String(params.id),
+  });
 
   const { mutate } = api.notes.delete.useMutation({
-    onSuccess: async () => {
-      await refetch();
-      router.push("/");
+    onSuccess: () => {
+      router.push({
+        pathname: "/",
+        params: { deletedNote: true },
+      });
     },
   });
 

@@ -12,8 +12,12 @@ function handleMode(x: string) {
 
 export default function SessionPayment() {
   const router = useRouter();
-  const { id } = useLocalSearchParams();
-  const { data } = api.appointments.findById.useQuery({ id: String(id) });
+  const { appointmentId } = useLocalSearchParams();
+  const { data } = api.appointments.findById.useQuery({
+    id: String(appointmentId),
+  });
+
+  console.log(String(appointmentId));
 
   return (
     <SafeAreaView className="bg-off-white">

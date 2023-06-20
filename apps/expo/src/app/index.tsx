@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Image,
   Linking,
@@ -9,21 +9,28 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 
 import { CardSkeleton } from "../components/CardSkeleton";
 import { api } from "../utils/api";
 
-function NextAppointment() {
+function NextAppointment({ isRefreshing }: { isRefreshing: boolean }) {
   const { user } = useUser();
   const router = useRouter();
 
   // TODO: receber o id do usuário como parâmetro
-  const { data, isLoading } = api.appointments.findLastByUserId.useQuery({
-    userId: String(user?.id),
-  });
+  const { data, isLoading, refetch } =
+    api.appointments.findLastByUserId.useQuery({
+      userId: String(user?.id),
+    });
+
+  useEffect(() => {
+    if (isRefreshing) {
+      refetch();
+    }
+  }, [isRefreshing, refetch]);
 
   if (isLoading) return <CardSkeleton />;
 
@@ -52,7 +59,7 @@ function NextAppointment() {
                 ? "via Google Meet"
                 : "in person at " + data.therapist.address}
             </Text>
-            <View className="mt-4 flex w-full flex-row items-center justify-between align-middle">
+            <View className="flex w-full flex-row items-center justify-between pt-4 align-middle">
               <View className="flex flex-row items-center align-middle">
                 <View className="flex items-center justify-center overflow-hidden rounded-full align-middle">
                   <TouchableOpacity
@@ -69,7 +76,7 @@ function NextAppointment() {
                     />
                   </TouchableOpacity>
                 </View>
-                <Text className="ml-2 font-nunito-sans text-xl">
+                <Text className="pl-2 font-nunito-sans text-xl">
                   {data.therapist.name}
                 </Text>
               </View>
@@ -92,7 +99,7 @@ function NextAppointment() {
               }
             }}
           >
-            <View className="mt-6 flex w-full flex-row items-center justify-center rounded-bl-xl rounded-br-xl bg-blue-500 py-3 align-middle">
+            <View className="flex w-full flex-row items-center justify-center rounded-bl-xl rounded-br-xl bg-blue-500 py-3 align-middle">
               <FontAwesome
                 size={16}
                 color="white"
@@ -128,14 +135,20 @@ function NextAppointment() {
   );
 }
 
-function LastNotes() {
+function LastNotes({ isRefreshing }: { isRefreshing: boolean }) {
   const { user } = useUser();
   const router = useRouter();
 
-  const { data, isLoading } = api.notes.findByUserId.useQuery({
+  const { data, isLoading, refetch } = api.notes.findByUserId.useQuery({
     // TODO: receber o id do usuário como parâmetro
     userId: String(user?.id),
   });
+
+  useEffect(() => {
+    if (isRefreshing) {
+      refetch();
+    }
+  }, [isRefreshing, refetch]);
 
   // TODO: achar uma forma de refazer a query quando o usuário criar/delete uma nota
   if (isLoading) return <CardSkeleton />;
@@ -200,13 +213,21 @@ function LastNotes() {
 
 export default function Index() {
   const router = useRouter();
+  const { newNote, deletedNote } = useLocalSearchParams();
   const [refreshing, setRefreshing] = useState(false);
 
   const onRefresh = () => {
     setRefreshing(true);
-    console.log("refreshing"); // TODO: Invalidar queries
-    setRefreshing(false);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 500); // Adjust the delay time as needed
   };
+
+  useEffect(() => {
+    if (newNote || deletedNote) {
+      onRefresh();
+    }
+  }, [newNote, deletedNote]);
 
   return (
     <SafeAreaView className="min-h-screen bg-off-white">
@@ -221,7 +242,7 @@ export default function Index() {
           <Text className="mt-12 font-nunito-sans-bold text-3xl">
             Next session
           </Text>
-          <NextAppointment />
+          <NextAppointment isRefreshing={refreshing} />
           <View className="mt-8 flex flex-row items-center justify-between align-middle">
             <Text className=" font-nunito-sans-bold text-3xl">Last notes</Text>
             <TouchableOpacity onPress={() => router.push("/notes/new")}>
@@ -232,7 +253,7 @@ export default function Index() {
               </View>
             </TouchableOpacity>
           </View>
-          <LastNotes />
+          <LastNotes isRefreshing={refreshing} />
         </View>
       </ScrollView>
     </SafeAreaView>

@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
+  Image,
   RefreshControl,
   SafeAreaView,
   ScrollView,
@@ -13,20 +14,27 @@ import { FontAwesome } from "@expo/vector-icons";
 
 import { CardSkeleton } from "../components/CardSkeleton";
 import { api } from "../utils/api";
-import { type Appointment } from ".prisma/client";
+import { type Appointment, type Therapist } from ".prisma/client";
 
 export default function CalendarScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const { user } = useUser();
-  const { data, isLoading } = api.appointments.findByUserId.useQuery({
+  const { data, isLoading, refetch } = api.appointments.findByUserId.useQuery({
     userId: String(user?.id),
   });
 
   const onRefresh = () => {
     setRefreshing(true);
-    console.log("refreshing"); // TODO: Invalidar queries
-    setRefreshing(false);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 500);
   };
+
+  useEffect(() => {
+    if (refreshing) {
+      refetch();
+    }
+  }, [refreshing, refetch]);
 
   return (
     <SafeAreaView className="bg-off-white">
@@ -49,7 +57,7 @@ function Appointments({
   data,
   isLoading,
 }: {
-  data: Appointment[];
+  data: (Appointment & { therapist: Therapist })[];
   isLoading: boolean;
 }) {
   const router = useRouter();
@@ -61,29 +69,47 @@ function Appointments({
       {data.map((appointment) => (
         <View
           key={appointment.id}
-          className="mt-4 rounded-xl bg-white px-6 pt-6 shadow-sm"
+          className="mt-4 rounded-xl bg-white p-6 shadow-sm"
         >
-          <View className="flex w-full flex-row justify-between">
-            <Text className="font-nunito-sans text-xl">
-              {new Intl.DateTimeFormat("en", { weekday: "long" }).format(
-                new Date(appointment.scheduledTo),
-              )}
-              , {new Date(appointment.scheduledTo).getDate()}/
-              {new Date(appointment.scheduledTo).getMonth()}
-            </Text>
-            <Text className="font-nunito-sans-bold text-xl text-blue-500 ">
-              {new Date(appointment.scheduledTo).getHours()}:
-              {new Date(appointment.scheduledTo).getMinutes() == 0
-                ? "00"
-                : new Date(appointment.scheduledTo).getMinutes()}
-            </Text>
+          <View className="flex flex-row justify-between">
+            <View className="flex flex-col">
+              <Text className="font-nunito-sans text-xl">
+                {new Intl.DateTimeFormat("en", { weekday: "long" }).format(
+                  new Date(appointment.scheduledTo),
+                )}
+                , {new Date(appointment.scheduledTo).getDate()}/
+                {new Date(appointment.scheduledTo).getMonth()}
+              </Text>
+              <View className="flex flex-row">
+                <Text className="font-nunito-sans text-sm text-slate-500">
+                  with{"  "}
+                </Text>
+                <Image
+                  className="rounded-full"
+                  alt={`${appointment.therapist.name}'s profile picture`}
+                  source={{
+                    uri: appointment.therapist.profilePictureUrl,
+                    width: 20,
+                    height: 20,
+                  }}
+                />
+                <Text className="font-nunito-sans text-sm text-slate-500">
+                  {"  "}
+                  {appointment.modality === "ONLINE"
+                    ? "via Google Meet"
+                    : "in person"}
+                </Text>
+              </View>
+            </View>
+            <View className="flex flex-col">
+              <Text className="font-nunito-sans-bold text-xl text-blue-500 ">
+                {new Date(appointment.scheduledTo).getHours()}:
+                {new Date(appointment.scheduledTo).getMinutes() == 0
+                  ? "00"
+                  : new Date(appointment.scheduledTo).getMinutes()}
+              </Text>
+            </View>
           </View>
-          <Text className="font-nunito-sans text-sm text-slate-500">
-            {appointment.modality === "ONLINE"
-              ? "via Google Meet"
-              : "in person"}
-          </Text>
-          <View className="mt-4 flex w-full flex-row items-center justify-between align-middle"></View>
         </View>
       ))}
     </>

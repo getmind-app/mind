@@ -55,6 +55,9 @@ export const appointmentsRouter = createTRPCRouter({
         where: {
           userId: input.userId,
         },
+        include: {
+          therapist: true,
+        },
         orderBy: {
           scheduledTo: "desc",
         },

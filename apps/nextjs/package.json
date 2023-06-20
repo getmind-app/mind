@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "npx @cloudflare/next-on-pages@1",
+    "build": "pnpm with-env next build",
     "clean": "git clean -xdf .next .turbo node_modules",
     "dev:android": "pnpm with-env next dev",
     "dev:ios": "pnpm with-env next dev",
@@ -34,7 +34,6 @@
   },
   "devDependencies": {
     "@acme/eslint-config": "^0.1.0",
-    "@cloudflare/next-on-pages": "^1.1.0",
     "@types/node": "^18.15.11",
     "@types/react": "^18.0.33",
     "@types/react-dom": "^18.0.11",
