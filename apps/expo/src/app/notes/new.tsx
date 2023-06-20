@@ -21,7 +21,10 @@ export default function NewNote() {
 
   const { mutate, isLoading } = api.notes.create.useMutation({
     onSuccess: () => {
-      router.push("/");
+      router.push({
+        pathname: "/",
+        params: { newNote: true },
+      });
     },
   });
 

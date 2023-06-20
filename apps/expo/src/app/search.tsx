@@ -22,12 +22,13 @@ export default function SearchScreen() {
         <View className="flex flex-col">
           <Text className="pt-12 font-nunito-sans-bold text-3xl">Search</Text>
 
-          <View className="flex flex-row items-center justify-between pt-4 align-middle">
+          <View className="flex flex-row items-center justify-between pt-2 align-middle">
             <TextInput
               onChangeText={setSearch}
               autoFocus={false}
               value={search}
               placeholder="Looking for a therapist?"
+              className="font-nunito-sans text-lg"
             />
           </View>
         </View>
