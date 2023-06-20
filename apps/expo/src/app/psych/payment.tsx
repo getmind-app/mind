@@ -17,7 +17,12 @@ export default function SessionPayment() {
     id: String(appointmentId),
   });
 
-  console.log(String(appointmentId));
+  function handleConfirm() {
+    router.push({
+      pathname: "psych/finish",
+      params: { appointmentId: appointmentId },
+    });
+  }
 
   return (
     <SafeAreaView className="bg-off-white">
@@ -29,7 +34,7 @@ export default function SessionPayment() {
       >
         <View className="relative mt-8 rounded-2xl bg-white p-4 pt-6 shadow-sm">
           <Text className="mb-4 font-nunito-sans-bold text-2xl">
-            Appointments with {data?.therapist.name}
+            Your appointment
           </Text>
           <View className="mb-8">
             <View className="mb-2">
@@ -61,7 +66,9 @@ export default function SessionPayment() {
                     First Appointment (10%)
                   </Text>
                   <Text className="font-nunito-sans text-green-500">
-                    - USD 8,00
+                    {data?.therapist && data?.therapist.hourlyRate
+                      ? "- US$ " + data.therapist.hourlyRate * 0.1
+                      : "N/A"}{" "}
                   </Text>
                 </View>
               </View>
@@ -69,7 +76,11 @@ export default function SessionPayment() {
 
             <View className="flex flex-row justify-between">
               <Text className="font-nunito-sans">Total</Text>
-              <Text className="font-nunito-sans">USD 72,00</Text>
+              <Text className="font-nunito-sans">
+                {data?.therapist && data?.therapist.hourlyRate
+                  ? "US$ " + data.therapist.hourlyRate * 0.9
+                  : "N/A"}{" "}
+              </Text>
             </View>
           </View>
           <View>
@@ -98,12 +109,7 @@ export default function SessionPayment() {
             You can cancel or reschedule your sessions up to 24 hours before.
           </Text>
           <Pressable
-            onPress={() => {
-              router.push({
-                pathname: "psych/finish",
-                params: { id: id },
-              });
-            }}
+            onPress={handleConfirm}
             className={`rounded-lg bg-[#2185EE] px-16 py-3`}
           >
             <Text

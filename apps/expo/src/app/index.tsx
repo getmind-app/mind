@@ -166,7 +166,7 @@ function LastNotes({ isRefreshing }: { isRefreshing: boolean }) {
             content: string;
             createdAt: Date;
           }) => (
-            <View key={id} className="mt-4 rounded-xl bg-white shadow-sm">
+            <View key={id} className="my-2 rounded-xl bg-white shadow-sm">
               <View className="flex w-full flex-row items-center justify-between px-6 py-4 align-middle">
                 <View className="flex flex-col">
                   <Text className="font-nunito-sans-bold text-xl text-slate-500">
@@ -230,9 +230,9 @@ export default function Index() {
   }, [newNote, deletedNote]);
 
   return (
-    <SafeAreaView className="min-h-screen bg-off-white">
+    <SafeAreaView className="bg-off-white">
       <ScrollView
-        className="min-h-max px-4"
+        className="px-4"
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
