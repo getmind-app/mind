@@ -230,7 +230,7 @@ export default function Index() {
   }, [newNote, deletedNote]);
 
   return (
-    <SafeAreaView className="bg-off-white">
+    <SafeAreaView className="h-full bg-off-white">
       <ScrollView
         className="px-4"
         showsVerticalScrollIndicator={false}

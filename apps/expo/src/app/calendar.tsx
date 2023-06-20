@@ -37,7 +37,7 @@ export default function CalendarScreen() {
   }, [refreshing, refetch]);
 
   return (
-    <SafeAreaView className="bg-off-white">
+    <SafeAreaView className="h-full bg-off-white">
       <ScrollView
         className="px-4"
         showsVerticalScrollIndicator={false}
