@@ -21,10 +21,8 @@ export default function TherapistSchedule() {
   const { data, isLoading, isError, error } = api.therapists.findById.useQuery({
     id: String(id),
   });
-  const { mutate, data: appointment } = api.appointments.create.useMutation({
-    onSuccess: () => {
-      console.log(appointment);
-
+  const { mutate } = api.appointments.create.useMutation({
+    onSuccess: (appointment) => {
       router.push({
         pathname: "/psych/payment",
         params: { appointmentId: appointment?.id },

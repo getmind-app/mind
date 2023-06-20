@@ -39,7 +39,7 @@ export default function CalendarScreen() {
   return (
     <SafeAreaView className="bg-off-white">
       <ScrollView
-        className="min-h-screen px-4"
+        className="px-4"
         showsVerticalScrollIndicator={false}
         overScrollMode="never"
         refreshControl={
@@ -69,7 +69,7 @@ function Appointments({
       {data.map((appointment) => (
         <View
           key={appointment.id}
-          className="mt-4 rounded-xl bg-white p-6 shadow-sm"
+          className="my-2 rounded-xl bg-white p-6 shadow-sm"
         >
           <View className="flex flex-row justify-between">
             <View className="flex flex-col">

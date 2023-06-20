@@ -12,9 +12,11 @@ import { api } from "../../utils/api";
 
 export default function SessionFinishAppointment() {
   const router = useRouter();
-  const { id } = useSearchParams();
+  const { appointmentId } = useSearchParams();
 
-  const { data } = api.appointments.findById.useQuery({ id: String(id) });
+  const { data } = api.appointments.findById.useQuery({
+    id: String(appointmentId),
+  });
 
   return (
     <SafeAreaView>
@@ -36,21 +38,28 @@ export default function SessionFinishAppointment() {
               {data?.therapist.name.split(" ")[0]}{" "}
             </Text>
             <Text className="font-nunito-sans text-lg text-slate-500">
-              will be meeting with you on{" "}
+              will be meeting with you at{" "}
             </Text>
             <Text className="font-nunito-sans-bold text-lg">
+              {data?.scheduledTo.getHours()}:
+              {data?.scheduledTo.getMinutes() == 0
+                ? "00"
+                : data?.scheduledTo.getMinutes()}{" "}
+            </Text>
+            <Text className="font-nunito-sans text-lg text-slate-500">on </Text>
+            <Text className="font-nunito-sans-bold text-lg ">
               {data?.scheduledTo.getDay()}
             </Text>
           </Text>
         </View>
         <TouchableOpacity
           onPress={() => {
-            router.push("/home/calendar");
+            router.push("/calendar");
           }}
           className="w-4/5 pt-8"
         >
           <View className="flex flex-row items-center justify-center rounded-xl bg-blue-500 px-6 py-2">
-            <MaterialIcons size={24} name="schedule" color="white" />
+            <MaterialIcons size={20} name="schedule" color="white" />
             <Text className="ml-2 font-nunito-sans-bold text-xl text-white">
               Create event
             </Text>
@@ -58,12 +67,14 @@ export default function SessionFinishAppointment() {
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {
-            router.push("/home/calendar");
+            router.push("/calendar");
           }}
           className="w-4/5 pt-4"
         >
           <View className="flex flex-row items-center justify-center rounded-xl bg-white px-12 py-2 shadow-sm">
-            <Text className="font-nunito-sans text-xl">Message John</Text>
+            <Text className="font-nunito-sans text-xl">
+              Message {data?.therapist.name.split(" ")[0]}
+            </Text>
           </View>
         </TouchableOpacity>
       </View>
