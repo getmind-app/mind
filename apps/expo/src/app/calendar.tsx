@@ -2,12 +2,12 @@ import { useEffect, useState } from "react";
 import {
   Image,
   RefreshControl,
-  SafeAreaView,
   ScrollView,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
 import { FontAwesome } from "@expo/vector-icons";

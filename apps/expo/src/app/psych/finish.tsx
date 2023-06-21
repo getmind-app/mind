@@ -1,10 +1,5 @@
-import {
-  Image,
-  SafeAreaView,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter, useSearchParams } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
 

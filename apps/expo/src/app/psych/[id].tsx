@@ -3,16 +3,15 @@ import {
   Image,
   LayoutAnimation,
   Pressable,
-  SafeAreaView,
   ScrollView,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter, useSearchParams } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
 
-import { CardSkeleton } from "../../components/CardSkeleton";
 import { Header } from "../../components/Header";
 import { ProfileSkeleton } from "../../components/ProfileSkeleton";
 import { api } from "../../utils/api";
