@@ -9,10 +9,12 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { Link, useRouter, useSearchParams } from "expo-router";
+import { useRouter, useSearchParams } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
 
+import { CardSkeleton } from "../../components/CardSkeleton";
 import { Header } from "../../components/Header";
+import { ProfileSkeleton } from "../../components/ProfileSkeleton";
 import { api } from "../../utils/api";
 
 export default function TherapistProfile() {
@@ -34,28 +36,31 @@ export default function TherapistProfile() {
   }
 
   if (isLoading) {
-    return <Text>Loading...</Text>;
+    return <ProfileSkeleton />;
   }
 
   return (
     <>
-      <SafeAreaView className="min-h-screen bg-off-white">
+      <SafeAreaView className="bg-off-white">
         <Header />
-        <ScrollView showsVerticalScrollIndicator={false} className=" px-4 py-2">
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          className="h-full px-4 py-2"
+        >
           <View className="flex flex-col items-center justify-center">
             <View className="flex w-full flex-row">
               <Image
                 className="rounded-full"
-                alt={`${data.name} picture`}
+                alt={`${data?.name} picture`}
                 source={{
-                  uri: data.profilePictureUrl,
+                  uri: data?.profilePictureUrl,
                   width: 96,
                   height: 96,
                 }}
               />
-              <View className="ml-4 flex flex-col justify-center align-middle">
+              <View className="flex flex-col justify-center gap-1.5 pl-4 align-middle">
                 <Text className="font-nunito-sans-bold text-3xl font-bold">
-                  {data.name}
+                  {data?.name}
                 </Text>
                 <TouchableOpacity onPress={() => router.push("/chat")}>
                   <View className="w-32 rounded-xl bg-white px-4 py-1.5 shadow-sm">
@@ -72,7 +77,7 @@ export default function TherapistProfile() {
                   CRP
                 </Text>
                 <Text className="font-nunito-sans-bold text-base">
-                  {data.crp}
+                  {data?.crp}
                 </Text>
               </View>
               <View className="flex flex-col">
@@ -92,7 +97,7 @@ export default function TherapistProfile() {
                   Practicing for
                 </Text>
                 <Text className="font-nunito-sans-bold text-base text-blue-500">
-                  {data.yearsOfExperience}
+                  {data?.yearsOfExperience}
                   <Text className="font-nunito-sans-bold text-base">
                     {" "}
                     years
@@ -102,35 +107,20 @@ export default function TherapistProfile() {
             </View>
           </View>
           <View className="pt-8">
-            <AboutMe>{data.about}</AboutMe>
-            {/* <Education>
-              <View className="col flex flex-col gap-y-2 pb-2 pt-4">
-                {data.publicMetadata.education.map(
-                  ({ course, institution }, index) => (
-                    <Text key={index} className="font-nunito-sans text-base">
-                      {course} - {institution}
-                    </Text>
-                  ),
-                )}
-              </View>
+            {/* <AboutMe>{data?.about}</AboutMe> */}
+            <AboutMe>
+              Hey there, I really enjoy helping people find peace for their
+              minds. I believe I was born with the mission to assist anyone
+              seeking self-awareness and personal growth.
+            </AboutMe>
+            <Education>
+              Cognitive Psychology - Stanford University
+              {/* {data?.education} */}
             </Education>
             <Methodologies>
-              <View className="mt-3 flex flex-row flex-wrap items-center gap-2 pb-2 pt-6">
-                {data.publicMetadata.methodologies.map((methodology, index) => (
-                  <View
-                    key={index}
-                    className="flex flex-row items-center justify-between rounded-full bg-[#2185EE] px-4 py-1 pr-2"
-                  >
-                    <Text className="capitalize text-white">{methodology}</Text>
-                    <View className="ml-3 flex h-6 w-6 items-center justify-center rounded-full bg-white">
-                      <Text className="text-sm font-bold text-[#74a7dd]">
-                        ?
-                      </Text>
-                    </View>
-                  </View>
-                ))}
-              </View>
-            </Methodologies> */}
+              {/* {data?.methodologies} */}
+              Cognitive Behavioral Therapy, Mindfulness, Psychodynamic
+            </Methodologies>
           </View>
         </ScrollView>
       </SafeAreaView>
@@ -138,7 +128,7 @@ export default function TherapistProfile() {
         <View className="flex flex-row items-center justify-between ">
           <View className="flex flex-col">
             <Text className="font-nunito-sans-bold text-base text-white shadow-sm">
-              $ {data.hourlyRate}
+              $ {data?.hourlyRate}
             </Text>
             <Text className="font-nunito-sans text-base text-white">
               Online and on-site
@@ -186,7 +176,7 @@ function AboutMe({ children }: { children: React.ReactNode }) {
         </View>
         {aboutMeOpen ? (
           <View className="pb-2 pt-4">
-            <Text className="text-base">{children}</Text>
+            <Text className="font-nunito-sans text-base">{children}</Text>
           </View>
         ) : null}
       </View>
@@ -220,7 +210,11 @@ function Education({ children }: { children: React.ReactNode }) {
             )}
           </Pressable>
         </View>
-        {educationOpen ? children : null}
+        {educationOpen ? (
+          <View className="pb-2 pt-4">
+            <Text className="font-nunito-sans text-base">{children}</Text>
+          </View>
+        ) : null}
       </View>
     </View>
   );
@@ -254,7 +248,11 @@ function Methodologies({ children }: { children: React.ReactNode }) {
             )}
           </Pressable>
         </View>
-        {methodologiesOpen ? children : null}
+        {methodologiesOpen ? (
+          <View className="pb-2 pt-4">
+            <Text className="font-nunito-sans text-base">{children}</Text>
+          </View>
+        ) : null}
       </View>
     </View>
   );

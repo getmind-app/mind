@@ -28,7 +28,13 @@ export const therapistsRouter = createTRPCRouter({
     )
     .query(async ({ ctx, input }) => {
       return await ctx.prisma.therapist.findFirst({
-        where: { id: input.id },
+        where: {
+          id: input.id,
+        },
+        include: {
+          education: true,
+          methodologies: true,
+        },
       });
     }),
   findByUserId: protectedProcedure

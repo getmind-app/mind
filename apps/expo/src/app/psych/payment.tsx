@@ -1,4 +1,12 @@
-import { Pressable, SafeAreaView, ScrollView, Text, View } from "react-native";
+import {
+  Pressable,
+  SafeAreaView,
+  ScrollView,
+  Text,
+  Touchable,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { useLocalSearchParams, useRouter, useSearchParams } from "expo-router";
 import { FontAwesome5 } from "@expo/vector-icons";
 
@@ -108,7 +116,7 @@ export default function SessionPayment() {
           <Text className="mb-4 font-nunito-sans text-xs text-[#666666]">
             You can cancel or reschedule your sessions up to 24 hours before.
           </Text>
-          <Pressable
+          <TouchableOpacity
             onPress={handleConfirm}
             className={`rounded-lg bg-[#2185EE] px-16 py-3`}
           >
@@ -117,7 +125,7 @@ export default function SessionPayment() {
             >
               Confirm
             </Text>
-          </Pressable>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </SafeAreaView>
