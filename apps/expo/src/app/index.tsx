@@ -3,12 +3,12 @@ import {
   Image,
   Linking,
   RefreshControl,
-  SafeAreaView,
   ScrollView,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
@@ -244,11 +244,11 @@ export default function Index() {
         }
       >
         <View className="h-full">
-          <Text className="mt-12 font-nunito-sans-bold text-3xl">
+          <Text className="pt-12 font-nunito-sans-bold text-3xl">
             Next session
           </Text>
           <NextAppointment isRefreshing={refreshing} />
-          <View className="mt-8 flex flex-row items-center justify-between align-middle">
+          <View className="flex flex-row items-center justify-between pt-8 align-middle">
             <Text className=" font-nunito-sans-bold text-3xl">Last notes</Text>
             <TouchableOpacity onPress={() => router.push("/notes/new")}>
               <View className="rounded-lg bg-blue-500 px-3 py-1 shadow-sm">

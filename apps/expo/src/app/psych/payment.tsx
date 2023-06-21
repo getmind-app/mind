@@ -1,13 +1,6 @@
-import {
-  Pressable,
-  SafeAreaView,
-  ScrollView,
-  Text,
-  Touchable,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { useLocalSearchParams, useRouter, useSearchParams } from "expo-router";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { FontAwesome5 } from "@expo/vector-icons";
 
 import { Header } from "../../components/Header";

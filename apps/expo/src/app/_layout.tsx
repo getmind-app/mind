@@ -245,7 +245,7 @@ function SignInScreen() {
   const { onApplePress, onGooglePress } = useAuthProviders();
 
   return (
-    <View className="flex min-h-screen w-full items-center justify-center bg-off-white">
+    <View className="flex h-full w-full items-center justify-center bg-off-white">
       <View className="relative bottom-12 right-4">
         <LogoSvg />
       </View>
