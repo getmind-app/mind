@@ -123,12 +123,12 @@ export default function TherapistSchedule() {
 const Calendar = ({ onSelect }: { onSelect: (n: number) => void }) => {
   const [selectedDate, setSelectedDate] = useState<number>();
 
-  const numbers = Array.from(Array(31).keys());
+  const numbers = Array.from(Array(30).keys());
 
   return (
     <View className="mx-auto flex  w-min flex-row flex-wrap items-center justify-start rounded-lg bg-white pt-4">
       <Text className="relative left-3 w-full pb-3 font-nunito-sans-bold text-xl">
-        April
+        June
       </Text>
       {/* TODO: substituir esse magic number de 47px por algo responsivo */}
       <View className="flex w-full flex-row justify-between px-4">
@@ -315,7 +315,9 @@ function ModalityPicker({
       title={
         <View className="flex flex-row justify-between">
           <Text className={"font-nunito-sans text-xl"}>Meet</Text>
-          <Text className={"font-nunito-sans text-xl capitalize"}>{mode} </Text>
+          <Text className={"font-nunito-sans text-xl capitalize"}>
+            {mode == "ON_SITE" ? "On site" : "Online"}
+          </Text>
         </View>
       }
     >
@@ -347,7 +349,7 @@ function ModalityPicker({
             setExpanded(false);
           }}
           className={`w-[48%] rounded-lg bg-off-white py-3 ${
-            mode === "ON_SITEn" ? "bg-[#2185EE]" : ""
+            mode === "ON_SITE" ? "bg-[#2185EE]" : ""
           }`}
         >
           <Text

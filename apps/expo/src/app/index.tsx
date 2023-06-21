@@ -45,7 +45,7 @@ function NextAppointment({ isRefreshing }: { isRefreshing: boolean }) {
                   new Date(data.scheduledTo),
                 )}
                 , {new Date(data.scheduledTo).getDate()}/
-                {new Date(data.scheduledTo).getMonth()}
+                {new Date(data.scheduledTo).getMonth() + 1}
               </Text>
               <Text className="font-nunito-sans-bold text-xl text-blue-500 ">
                 {new Date(data.scheduledTo).getHours()}:
@@ -55,9 +55,14 @@ function NextAppointment({ isRefreshing }: { isRefreshing: boolean }) {
               </Text>
             </View>
             <Text className="font-nunito-sans text-sm text-slate-500">
-              {data.modality === "ONLINE"
-                ? "via Google Meet"
-                : "in person at " + data.therapist.address}
+              {data.modality === "ONLINE" ? (
+                "via Google Meet"
+              ) : (
+                <Text>
+                  in person at{" "}
+                  <Text className="underline">335 Pioneer Way</Text>
+                </Text>
+              )}
             </Text>
             <View className="flex w-full flex-row items-center justify-between pt-4 align-middle">
               <View className="flex flex-row items-center align-middle">

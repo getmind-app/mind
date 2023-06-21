@@ -41,7 +41,6 @@ export default function CalendarScreen() {
       <ScrollView
         className="px-4"
         showsVerticalScrollIndicator={false}
-        overScrollMode="never"
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }

@@ -48,7 +48,7 @@ export default function SessionFinishAppointment() {
             </Text>
             <Text className="font-nunito-sans text-lg text-slate-500">on </Text>
             <Text className="font-nunito-sans-bold text-lg ">
-              {data?.scheduledTo.getDay()}
+              {data?.scheduledTo.getDate()}
             </Text>
           </Text>
         </View>
