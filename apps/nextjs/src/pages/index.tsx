@@ -41,14 +41,14 @@ const Home: NextPage = () => {
         <h2 className="text-center text-lg">
           Schedule and payment management <br /> for therapy sessions
         </h2>
-        <p className="text-sm text-slate-400">
-          Coming soon to {<FaAndroid className="m-1 inline-block" />} and{" "}
-          {<FaApple className="m-1 inline-block" />}
-        </p>
-
+        <a href="https://drive.google.com/file/d/17eLDNSTf1d6JOi_rno87TqVCkSjuFAf4/view?usp=drive_link">
+          <div className="rounded-md bg-white px-4 py-2 font-bold text-blue-500 backdrop-blur-sm backdrop-filter hover:bg-off-white">
+            Quick demo
+          </div>
+        </a>
         <div className="flex w-full max-w-lg flex-col items-center justify-center gap-2">
           <h3 className="text-2xl">Meet the founders</h3>
-          <div className="flex w-full justify-center gap-12 pt-8">
+          <div className="flex w-full justify-center gap-12 pt-4">
             <div className="flex flex-col items-center gap-2">
               <Image
                 className="rounded-full"
