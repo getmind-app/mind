@@ -53,8 +53,8 @@ export default function OnboardPsychScreen() {
         yearsOfExperience: parseInt(yearsOfExperience),
         hourlyRate,
         about: "", // TODO: arrumar isso, queria que fosse opcional
-        userId: user?.id,
-        profilePictureUrl: user?.profileImageUrl,
+        userId: String(user?.id),
+        profilePictureUrl: String(user?.profileImageUrl),
       });
     }
   };

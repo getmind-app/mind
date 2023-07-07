@@ -178,7 +178,7 @@ function HourPicker({ date, hour, onSelect }: HourPickerProps) {
       Array.from(Array(Math.floor(Math.random() * 6)).keys())
         .map((n) => n + 9 + Math.floor(Math.random() * 5))
         .sort((a, b) => a - b)
-        .filter((a, b, c) => c.findLastIndex((v) => v === a) === b),
+        .filter((a, b, c) => c.findIndex((v) => v === a) === b),
     );
     onSelect("");
     setExpanded(true);
