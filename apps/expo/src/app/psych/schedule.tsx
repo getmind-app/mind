@@ -61,9 +61,9 @@ export default function TherapistSchedule() {
   if (!data) return <Text>Not found</Text>;
 
   return (
-    <SafeAreaView className="bg-off-white">
+    <>
       <Header />
-      <ScrollView className="px-4">
+      <ScrollView className="bg-off-white px-4">
         <View className="relative mt-8 rounded-2xl bg-white p-4 pt-12">
           <View className="p-1/2 absolute -top-8 left-4 flex h-16 w-16 items-center justify-center overflow-hidden rounded-full">
             <Image
@@ -110,7 +110,7 @@ export default function TherapistSchedule() {
           </Pressable>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </>
   );
 }
 

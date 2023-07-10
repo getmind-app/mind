@@ -248,7 +248,7 @@ export default function Index() {
             Next session
           </Text>
           <NextAppointment isRefreshing={refreshing} />
-          <View className="flex flex-row items-center justify-between pt-8 align-middle">
+          <View className="mb-2 flex flex-row items-center justify-between pt-8 align-middle">
             <Text className=" font-nunito-sans-bold text-3xl">Last notes</Text>
             <TouchableOpacity onPress={() => router.push("/notes/new")}>
               <View className="rounded-lg bg-blue-500 px-3 py-1 shadow-sm">

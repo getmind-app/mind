@@ -67,9 +67,7 @@ export default function SessionFinishAppointment() {
           className="w-4/5 pt-4"
         >
           <View className="flex flex-row items-center justify-center rounded-xl bg-white px-12 py-2 shadow-sm">
-            <Text className="font-nunito-sans text-xl">
-              Message {data?.therapist.name.split(" ")[0]}
-            </Text>
+            <Text className="font-nunito-sans text-xl">Your appointments</Text>
           </View>
         </TouchableOpacity>
       </View>

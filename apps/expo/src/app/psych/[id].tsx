@@ -8,7 +8,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter, useSearchParams } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
 
@@ -40,89 +39,81 @@ export default function TherapistProfile() {
 
   return (
     <>
-      <SafeAreaView className="bg-off-white">
-        <Header />
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          className="h-full px-4 py-2"
-        >
-          <View className="flex flex-col items-center justify-center">
-            <View className="flex w-full flex-row">
-              <Image
-                className="rounded-full"
-                alt={`${data?.name} picture`}
-                source={{
-                  uri: data?.profilePictureUrl,
-                  width: 96,
-                  height: 96,
-                }}
-              />
-              <View className="flex flex-col justify-center gap-1.5 pl-4 align-middle">
-                <Text className="font-nunito-sans-bold text-3xl font-bold">
-                  {data?.name}
-                </Text>
-                <TouchableOpacity onPress={() => router.push("/chat")}>
-                  <View className="w-32 rounded-xl bg-white px-4 py-1.5 shadow-sm">
-                    <Text className="text-center font-nunito-sans-bold text-base">
-                      Message
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-              </View>
-            </View>
-            <View className="flex flex-row items-center gap-12 pt-6 align-middle">
-              <View className="flex flex-col">
-                <Text className="font-nunito-sans-bold text-base text-slate-500">
-                  CRP
-                </Text>
-                <Text className="font-nunito-sans-bold text-base">
-                  {data?.crp}
-                </Text>
-              </View>
-              <View className="flex flex-col">
-                <Text className="font-nunito-sans-bold text-base text-slate-500">
-                  Patients
-                </Text>
-                <Text className="font-nunito-sans-bold text-base text-blue-500">
-                  42
-                  <Text className="font-nunito-sans-bold text-base">
-                    {" "}
-                    / week
+      <Header />
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        className="h-full bg-off-white px-4 py-2"
+      >
+        <View className="flex flex-col items-center justify-center">
+          <View className="flex w-full flex-row">
+            <Image
+              className="rounded-full"
+              alt={`${data?.name} picture`}
+              source={{
+                uri: data?.profilePictureUrl,
+                width: 96,
+                height: 96,
+              }}
+            />
+            <View className="flex flex-col justify-center gap-1.5 pl-4 align-middle">
+              <Text className="font-nunito-sans-bold text-3xl font-bold">
+                {data?.name}
+              </Text>
+              <TouchableOpacity onPress={() => router.push("/chat")}>
+                <View className="w-32 rounded-xl bg-white px-4 py-1.5 shadow-sm">
+                  <Text className="text-center font-nunito-sans-bold text-base">
+                    Message
                   </Text>
-                </Text>
-              </View>
-              <View className="flex flex-col">
-                <Text className="font-nunito-sans-bold text-base text-slate-500">
-                  Practicing for
-                </Text>
-                <Text className="font-nunito-sans-bold text-base text-blue-500">
-                  {data?.yearsOfExperience}
-                  <Text className="font-nunito-sans-bold text-base">
-                    {" "}
-                    years
-                  </Text>
-                </Text>
-              </View>
+                </View>
+              </TouchableOpacity>
             </View>
           </View>
-          <View className="pt-8">
-            {/* <AboutMe>{data?.about}</AboutMe> */}
-            <AboutMe>
-              Hey there, I really enjoy helping people find peace for their
-              minds. I believe I was born with the mission to assist anyone
-              seeking self-awareness and personal growth.
-            </AboutMe>
-            <Education>
-              Cognitive Psychology - Stanford University
-              {/* {data?.education} */}
-            </Education>
-            <Methodologies>
-              {/* {data?.methodologies} */}
-              Cognitive Behavioral Therapy, Mindfulness, Psychodynamic
-            </Methodologies>
+          <View className="flex flex-row items-center gap-12 pt-6 align-middle">
+            <View className="flex flex-col">
+              <Text className="font-nunito-sans-bold text-base text-slate-500">
+                CRP
+              </Text>
+              <Text className="font-nunito-sans-bold text-base">
+                {data?.crp}
+              </Text>
+            </View>
+            <View className="flex flex-col">
+              <Text className="font-nunito-sans-bold text-base text-slate-500">
+                Patients
+              </Text>
+              <Text className="font-nunito-sans-bold text-base text-blue-500">
+                42
+                <Text className="font-nunito-sans-bold text-base"> / week</Text>
+              </Text>
+            </View>
+            <View className="flex flex-col">
+              <Text className="font-nunito-sans-bold text-base text-slate-500">
+                Practicing for
+              </Text>
+              <Text className="font-nunito-sans-bold text-base text-blue-500">
+                {data?.yearsOfExperience}
+                <Text className="font-nunito-sans-bold text-base"> years</Text>
+              </Text>
+            </View>
           </View>
-        </ScrollView>
-      </SafeAreaView>
+        </View>
+        <View className="pt-8">
+          {/* <AboutMe>{data?.about}</AboutMe> */}
+          <AboutMe>
+            Hey there, I really enjoy helping people find peace for their minds.
+            I believe I was born with the mission to assist anyone seeking
+            self-awareness and personal growth.
+          </AboutMe>
+          <Education>
+            Cognitive Psychology - Stanford University
+            {/* {data?.education} */}
+          </Education>
+          <Methodologies>
+            {/* {data?.methodologies} */}
+            Cognitive Behavioral Therapy, Mindfulness, Psychodynamic
+          </Methodologies>
+        </View>
+      </ScrollView>
       <View className="absolute bottom-0 w-full rounded-t-xl bg-blue-500 px-6 pb-8 pt-4">
         <View className="flex flex-row items-center justify-between ">
           <View className="flex flex-col">

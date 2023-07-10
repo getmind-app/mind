@@ -26,14 +26,14 @@ export default function SessionPayment() {
   }
 
   return (
-    <SafeAreaView className="bg-off-white">
-      <Header title="Payment" />
+    <>
+      <Header />
       <ScrollView
-        className="min-h-screen px-4"
+        className="min-h-screen bg-off-white px-4"
         showsVerticalScrollIndicator={false}
         overScrollMode="never"
       >
-        <View className="relative mt-8 rounded-2xl bg-white p-4 pt-6 shadow-sm">
+        <View className="relative mt-4 rounded-2xl bg-white p-4 pt-6 shadow-sm">
           <Text className="mb-4 font-nunito-sans-bold text-2xl">
             Your appointment
           </Text>
@@ -51,7 +51,7 @@ export default function SessionPayment() {
                     {data?.scheduledTo.getMinutes() == 0
                       ? "00"
                       : data?.scheduledTo.getMinutes()}{" "}
-                    -{handleMode(data?.modality ? data?.modality : "")}
+                    - {handleMode(data?.modality ? data?.modality : "")}
                   </Text>
                   <Text className=" font-nunito-sans text-[#666666]">
                     US$ {data?.therapist.hourlyRate}
@@ -75,7 +75,7 @@ export default function SessionPayment() {
               </View>
             </View>
 
-            <View className="flex flex-row justify-between">
+            <View className="flex flex-row justify-between ">
               <Text className="font-nunito-sans">Total</Text>
               <Text className="font-nunito-sans">
                 {data?.therapist && data?.therapist.hourlyRate
@@ -103,10 +103,10 @@ export default function SessionPayment() {
           </View>
         </View>
         <View className="relative mt-4 rounded-2xl bg-off-white p-4">
-          <Text className="mb-2 font-nunito-sans-bold text-2xl">
+          <Text className="mb-1 font-nunito-sans-bold text-2xl">
             Confirm sessions
           </Text>
-          <Text className="mb-4 font-nunito-sans text-xs text-[#666666]">
+          <Text className="mb-6 font-nunito-sans text-xs text-[#666666]">
             You can cancel or reschedule your sessions up to 24 hours before.
           </Text>
           <TouchableOpacity
@@ -121,6 +121,6 @@ export default function SessionPayment() {
           </TouchableOpacity>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </>
   );
 }
