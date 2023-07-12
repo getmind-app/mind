@@ -33,6 +33,7 @@ model Therapist {
     education         Education[]
     methodologies     Methodology[]
     appointments      Appointment[]
+    hours             Hour[]
 }
 
 model Methodology {
@@ -79,7 +80,23 @@ model Appointment {
     therapist   Therapist @relation(fields: [therapistId], references: [id], onDelete: Cascade)
 }
 
+model Hour {
+    id          String     @id @default(cuid())
+    startAt     Int
+    weekDay     WeekDay
+    Therapist   Therapist? @relation(fields: [therapistId], references: [id], onDelete: Cascade)
+    therapistId String?
+}
+
 enum Modality {
     ONLINE
     ON_SITE
+}
+
+enum WeekDay {
+    MONDAY
+    TUESDAY
+    WEDNESDAY
+    THURSDAY
+    FRIDAY
 }

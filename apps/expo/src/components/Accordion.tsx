@@ -31,7 +31,7 @@ export const AnimatedCard = ({
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
-      height: withTiming(animationHeight.value, { duration: 200 }),
+      height: withTiming(animationHeight.value, { duration: 300 }),
     };
   });
 
@@ -42,7 +42,7 @@ export const AnimatedCard = ({
   };
 
   return (
-    <View className={"bg-white relative mt-3 rounded-2xl p-3"}>
+    <View className={"relative mt-3 rounded-2xl bg-white p-3"}>
       <TouchableOpacity className={"rounded"} onPress={toggleAccordion}>
         {title}
       </TouchableOpacity>

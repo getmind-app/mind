@@ -34,6 +34,8 @@ export const therapistsRouter = createTRPCRouter({
         include: {
           education: true,
           methodologies: true,
+          appointments: true,
+          hours: true,
         },
       });
     }),

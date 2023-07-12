@@ -1,20 +1,32 @@
 import { useEffect, useMemo, useState } from "react";
-import { Image, Pressable, ScrollView, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  Image,
+  LayoutAnimation,
+  Pressable,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
 
 import { AnimatedCard } from "../../components/Accordion";
 import { Header } from "../../components/Header";
 import { api } from "../../utils/api";
+import { type Appointment, type Hour } from ".prisma/client";
 
 export default function TherapistSchedule() {
+  LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+
   const router = useRouter();
   const { user } = useUser();
   const { id } = useLocalSearchParams();
+
   const { data, isLoading, isError, error } = api.therapists.findById.useQuery({
     id: String(id),
   });
+
   const { mutate } = api.appointments.create.useMutation({
     onSuccess: (appointment) => {
       router.push({
@@ -25,26 +37,24 @@ export default function TherapistSchedule() {
   });
 
   /* TODO: trocar esse implementacao por um context, redux, zustand, jotai */
-  const [selectedDate, setSelectedDate] = useState<number>();
+  const [selectedDate, setSelectedDate] = useState<Date>();
   const [selectedHour, setSelectedHour] = useState<string>();
   const [selectedMode, setSelectedMode] = useState<"ON_SITE" | "ONLINE">();
+
   const allPicked = useMemo(() => {
     return selectedDate && selectedMode && selectedHour;
   }, [selectedHour, selectedMode, selectedDate]);
 
   function handleConfirm() {
-    const today = new Date();
-
     if (!selectedDate || !selectedHour || !selectedMode) {
       throw new Error("Missing form data");
     }
 
-    // TODO: fix the year and month
     mutate({
       scheduledTo: new Date(
-        today.getFullYear(),
-        today.getMonth(),
-        selectedDate,
+        selectedDate.getFullYear(),
+        selectedDate.getMonth(),
+        selectedDate.getDate(),
         parseInt(selectedHour.split(":")[0] ?? "1"),
         parseInt(selectedHour.split(":")[1] ?? "0"),
       ),
@@ -57,7 +67,6 @@ export default function TherapistSchedule() {
 
   if (isLoading) return <Text>Loading...</Text>;
   if (isError) return <Text>Error: {JSON.stringify(error)}</Text>;
-
   if (!data) return <Text>Not found</Text>;
 
   return (
@@ -85,8 +94,10 @@ export default function TherapistSchedule() {
         </View>
         <HourPicker
           hour={selectedHour ?? ""}
+          date={selectedDate ?? null}
+          therapistAppointments={data.appointments as Appointment[]} // acredito que n seja o ideal trazer todas as sessões
+          therapistHours={data.hours as Hour[]} // não sei pq isso
           onSelect={setSelectedHour}
-          date={selectedDate ?? 0}
         />
         <ModalityPicker
           therapistName={data.name ?? ""}
@@ -103,7 +114,7 @@ export default function TherapistSchedule() {
             onPress={handleConfirm}
           >
             <Text
-              className={`text-center font-nunito-sans-bold font-bold text-white`}
+              className={`text-center font-nunito-sans-bold text-lg font-bold text-white`}
             >
               Confirm appointment
             </Text>
@@ -114,75 +125,86 @@ export default function TherapistSchedule() {
   );
 }
 
-const Calendar = ({ onSelect }: { onSelect: (n: number) => void }) => {
-  const [selectedDate, setSelectedDate] = useState<number>();
-
-  const numbers = Array.from(Array(30).keys());
+const Calendar = ({ onSelect }: { onSelect: (n: Date) => void }) => {
+  const [selectedDate, setSelectedDate] = useState<Date>();
 
   return (
-    <View className="mx-auto flex  w-min flex-row flex-wrap items-center justify-start rounded-lg bg-white pt-4">
+    <View className="rounded-lg bg-white pt-4">
       <Text className="relative left-3 w-full pb-3 font-nunito-sans-bold text-xl">
-        June
+        {new Date().toLocaleString("en-US", { month: "long" })}
       </Text>
-      {/* TODO: substituir esse magic number de 47px por algo responsivo */}
-      <View className="flex w-full flex-row justify-between px-4">
-        <Text className="text-center font-nunito-sans text-sm text-[#666666]">
-          M
-        </Text>
-        <Text className="text-center font-nunito-sans text-sm text-[#666666]">
-          T
-        </Text>
-        <Text className="text-center font-nunito-sans text-sm text-[#666666]">
-          W
-        </Text>
-        <Text className="text-center font-nunito-sans text-sm text-[#666666]">
-          T
-        </Text>
-        <Text className="text-center font-nunito-sans text-sm text-[#666666]">
-          F
-        </Text>
-        <Text className="text-center font-nunito-sans text-sm text-[#666666]">
-          S
-        </Text>
-        <Text className="text-center font-nunito-sans text-sm text-[#666666]">
-          S
-        </Text>
-      </View>
-      {numbers.map((number) => (
-        <Day
-          number={number + 1}
-          isSelected={number + 1 === selectedDate}
-          onPress={(n: number) => {
-            setSelectedDate(n);
-            onSelect(n);
-          }}
-          key={number}
-        />
-      ))}
+      <ScrollView horizontal={true}>
+        {getDaysInCurrentMonth().map((day) => (
+          <Day
+            number={day}
+            isSelected={day === selectedDate?.getDate()}
+            onPress={(n: number) => {
+              const date = new Date();
+              date.setDate(n);
+              date.setMonth(new Date().getMonth());
+              date.setFullYear(new Date().getFullYear());
+
+              setSelectedDate(date);
+              onSelect(date);
+            }}
+            key={day}
+          />
+        ))}
+      </ScrollView>
     </View>
   );
 };
 
 type HourPickerProps = {
-  date: number;
+  date: Date | null;
   hour: string;
+  therapistHours: Hour[];
+  therapistAppointments: Appointment[];
   onSelect: (n: string) => void;
 };
 
-function HourPicker({ date, hour, onSelect }: HourPickerProps) {
-  const [numbers, setNumbers] = useState<number[]>([]);
+function HourPicker({
+  date,
+  hour,
+  therapistHours,
+  therapistAppointments,
+  onSelect,
+}: HourPickerProps) {
   const [expanded, setExpanded] = useState(false);
+  const weekdays = [
+    "SUNDAY",
+    "MONDAY",
+    "TUESDAY",
+    "WEDNESDAY",
+    "THURSDAY",
+    "FRIDAY",
+    "SATURDAY",
+  ];
+
   useEffect(() => {
-    if (date === 0) return;
-    setNumbers(
-      Array.from(Array(Math.floor(Math.random() * 6)).keys())
-        .map((n) => n + 9 + Math.floor(Math.random() * 5))
-        .sort((a, b) => a - b)
-        .filter((a, b, c) => c.findIndex((v) => v === a) === b),
-    );
-    onSelect("");
-    setExpanded(true);
+    if (date) {
+      setExpanded(true);
+    }
   }, [date]);
+
+  // não sei pq essa tipagem ta zaralhada
+  const availableHours = therapistHours
+    .filter((hour) => {
+      return hour.weekDay === weekdays[date?.getDay() ?? 1];
+    })
+    .filter((hour) => {
+      const isAppointmentMatch = therapistAppointments.some((appointment) => {
+        return (
+          appointment.scheduledTo.getHours() === hour.startAt &&
+          appointment.scheduledTo.getDate() === date?.getDate() &&
+          appointment.scheduledTo.getMonth() === date?.getMonth() &&
+          appointment.scheduledTo.getFullYear() === date?.getFullYear()
+        );
+      });
+
+      return !isAppointmentMatch;
+    })
+    .map((h) => h.startAt);
 
   return (
     <AnimatedCard
@@ -198,18 +220,18 @@ function HourPicker({ date, hour, onSelect }: HourPickerProps) {
     >
       <ScrollView horizontal={true}>
         <View className="mt-2 flex flex-row">
-          {date === 0 && (
+          {!date && (
             <Text className="font-nunito-sans text-[#666666]">
               Please select a date
             </Text>
           )}
-          {date !== 0 && numbers.length === 0 && (
+          {date && availableHours.length === 0 && (
             <Text className="font-nunito-sans text-[#666666]">
-              There are no more available sessions for this date!
+              There are no more available sessions for this date! 🫤
             </Text>
           )}
-          {numbers.map((n, i) => (
-            <Hour
+          {availableHours.map((n, i) => (
+            <HourComponent
               key={i}
               number={`${n}:00`}
               onPress={(v) => {
@@ -235,23 +257,24 @@ function Day({
   onPress: (x: number) => void;
 }) {
   return (
-    <Pressable
-      className={`flex w-[47px] p-2 ${isSelected ? "rounded-full" : ""}`}
-      android_disableSound={true}
+    <TouchableOpacity
+      className={`mr-2 flex w-16 rounded-lg ${
+        isSelected ? "bg-[#2185EE]" : "bg-off-white"
+      }`}
       onPress={() => onPress(number)}
     >
       <Text
-        className={`p-[6px] text-center font-nunito-sans text-sm ${
-          isSelected ? "rounded-full bg-[#2185EE] text-white" : ""
+        className={`p-3 text-center font-nunito-sans text-sm ${
+          isSelected ? "font-nunito-sans-bold text-white" : ""
         }`}
       >
         {number}
       </Text>
-    </Pressable>
+    </TouchableOpacity>
   );
 }
 
-function Hour({
+function HourComponent({
   number,
   isSelected,
   onPress,
@@ -262,20 +285,20 @@ function Hour({
 }) {
   return (
     <View className="flex flex-row items-center justify-between">
-      <Pressable
+      <TouchableOpacity
         onPress={() => onPress(number)}
         className={`mr-2 flex items-center justify-center rounded-lg px-5 py-3 ${
-          isSelected ? " bg-[#2185EE]" : "bg-off-white"
+          isSelected ? "bg-[#2185EE]" : "bg-off-white"
         }`}
       >
         <Text
           className={`font-nunito-sans text-base ${
-            isSelected ? "text-white" : ""
+            isSelected ? "font-nunito-sans-bold text-white" : ""
           }`}
         >
           {number}
         </Text>
-      </Pressable>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -323,7 +346,7 @@ function ModalityPicker({
         <Pressable
           onPress={() => {
             onSelect("ONLINE");
-            setExpanded(false);
+            setTimeout(() => setExpanded(false), 300);
           }}
           className={`w-[48%] rounded-lg bg-off-white py-3 ${
             mode === "ONLINE" ? "bg-[#2185EE]" : ""
@@ -331,7 +354,7 @@ function ModalityPicker({
         >
           <Text
             className={`text-center font-nunito-sans text-base ${
-              mode === "ONLINE" ? "text-white" : ""
+              mode === "ONLINE" ? "font-nunito-sans-bold text-white" : ""
             }`}
           >
             Online
@@ -348,7 +371,7 @@ function ModalityPicker({
         >
           <Text
             className={`text-center font-nunito-sans text-base ${
-              mode === "ON_SITE" ? "text-white" : ""
+              mode === "ON_SITE" ? "font-nunito-sans-bold text-white" : ""
             }`}
           >
             In-person
@@ -357,4 +380,23 @@ function ModalityPicker({
       </View>
     </AnimatedCard>
   );
+}
+
+// TODO: probably there's a better way to do this
+function getDaysInCurrentMonth() {
+  const date = new Date();
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1; // Adding 1 because months are zero-based
+
+  // Set the date to the next month and day 0 (last day of the current month)
+  date.setFullYear(year, month, 0);
+
+  const daysInMonth = date.getDate();
+  const daysArray = [];
+
+  for (let day = 1; day <= daysInMonth; day++) {
+    daysArray.push(day);
+  }
+
+  return daysArray;
 }

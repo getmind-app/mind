@@ -77,7 +77,7 @@ function Appointments({
                   new Date(appointment.scheduledTo),
                 )}
                 , {new Date(appointment.scheduledTo).getDate()}/
-                {new Date(appointment.scheduledTo).getMonth()}
+                {new Date(appointment.scheduledTo).getMonth() + 1}
               </Text>
               <View className="flex flex-row">
                 <Text className="font-nunito-sans text-sm text-slate-500">
