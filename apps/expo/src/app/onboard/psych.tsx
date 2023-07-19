@@ -13,6 +13,7 @@ import { useUser } from "@clerk/clerk-expo";
 import { FormCurrencyInput } from "../../components/FormCurrencyInput";
 import { FormDateInput } from "../../components/FormDateInput";
 import { FormTextInput } from "../../components/FormTextInput";
+import { formatISODate } from "../../helpers/formatISODate";
 import { api } from "../../utils/api";
 
 export default function OnboardPsychScreen() {
@@ -21,6 +22,7 @@ export default function OnboardPsychScreen() {
 
   const [name, setName] = useState<string>(user?.fullName ?? "");
   const [birthday, setBirthday] = useState<Date>(new Date());
+  const [showBirthdayPicker, setShowBirthdayPicker] = useState(false);
   const [document, setDocument] = useState<string>("");
   const [crp, setCrp] = useState<string>("");
   const [yearsOfExperience, setYearsOfExperience] = useState<string>("");
@@ -92,8 +94,16 @@ export default function OnboardPsychScreen() {
             <FormDateInput
               title="🥳 Birthday"
               value={birthday}
-              onChange={setBirthday}
+              onChange={(value) => {
+                setBirthday(value);
+                setShowBirthdayPicker(false);
+              }}
+              show={showBirthdayPicker}
+              onTitlePress={() => setShowBirthdayPicker(!showBirthdayPicker)}
             />
+            <Text className={`h-10 w-full font-nunito-sans text-xl`}>
+              {formatISODate(birthday)}
+            </Text>
             <FormTextInput
               value={document}
               title="🪪 Document"
