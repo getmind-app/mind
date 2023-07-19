@@ -44,7 +44,7 @@ const Home: NextPage = () => {
               Mind helps you to find the best therapist, schedule
               <br /> appointments and pay for them.
             </p>
-            <div className="flex items-center gap-8 align-middle">
+            <div className="flex items-center gap-6 align-middle">
               <Link href="https://drive.google.com/file/d/17eLDNSTf1d6JOi_rno87TqVCkSjuFAf4/view?usp=drive_link">
                 <button className="rounded-lg bg-blue-500 px-4 py-2 font-bold text-white transition duration-300 hover:bg-blue-400">
                   Quick demo
