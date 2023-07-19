@@ -25,17 +25,11 @@ const Home: NextPage = () => {
       </Head>
 
       <main
-        className={`${nunitoSans.variable} flex h-screen flex-col items-center justify-center bg-off-white px-32 align-middle font-nunito-sans text-black`}
+        className={`${nunitoSans.variable} flex h-screen flex-col items-center justify-center bg-off-white px-8 align-middle font-nunito-sans text-black md:px-32`}
       >
         <div className="flex items-center justify-center gap-24 align-middle">
-          <div className="mb-4 flex flex-col gap-6">
-            <Image
-              className="mb-6"
-              width={48}
-              height={48}
-              src={Icon}
-              alt="Mind logo"
-            />
+          <div className="mb-8 flex flex-col gap-6">
+            <Image className="mb-6 w-16" src={Icon} alt="Mind logo" />
             <h2 className="text-5xl font-bold">
               Therapy made easy, <br />{" "}
               <span className="text-blue-500">for everyone</span>
@@ -54,7 +48,7 @@ const Home: NextPage = () => {
                 <div className="group duration-200">
                   <div className="flex items-center gap-1.5">
                     <p>Talk to us</p>
-                    <div className="flex items-center transition-transform duration-500 group-hover:translate-x-1">
+                    <div className="hidden items-center transition-transform duration-500 group-hover:translate-x-1 md:block">
                       <BsArrowRightShort size={24} />
                     </div>
                   </div>
@@ -62,25 +56,19 @@ const Home: NextPage = () => {
               </Link>
             </div>
           </div>
-          <div>
-            <Image
-              width={540}
-              height={540}
-              src={Mockup}
-              alt="Mind app mockups"
-            />
+          <div className="hidden md:block">
+            <Image className="w-[36rem]" src={Mockup} alt="Mind app mockups" />
           </div>
         </div>
-        <div>
-          <p className="pb-2 text-center text-lg">Soon on</p>
+        <div className="hidden md:block">
+          <p className="text-center text-lg md:pb-2">Soon on</p>
           <div className="flex items-center gap-2">
             <div>
-              <Image width={120} height={120} src={AppStore} alt="App store" />
+              <Image className="w-24 md:w-36" src={AppStore} alt="App store" />
             </div>
             <div>
               <Image
-                width={136}
-                height={136}
+                className="w-28 md:w-40"
                 src={PlayStore}
                 alt="Play store"
               />
