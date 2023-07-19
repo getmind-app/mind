@@ -43,6 +43,9 @@ importers:
       prettier-plugin-tailwindcss:
         specifier: ^0.2.6
         version: 0.2.6(@ianvs/prettier-plugin-sort-imports@3.7.2)(prettier@2.8.7)
+      react-icons:
+        specifier: ^4.10.1
+        version: 4.10.1(react@18.2.0)
       react-native-web:
         specifier: ~0.18.12
         version: 0.18.12(react-dom@18.2.0)(react@18.2.0)
@@ -12936,6 +12939,14 @@ packages:
       react-dom: 18.2.0(react@18.2.0)
       react-fast-compare: 3.2.2
       shallowequal: 1.1.0
+    dev: false
+
+  /react-icons@4.10.1(react@18.2.0):
+    resolution: {integrity: sha512-/ngzDP/77tlCfqthiiGNZeYFACw85fUjZtLbedmJ5DTlNDIwETxhwBzdOJ21zj4iJdvc0J3y7yOsX3PpxAJzrw==}
+    peerDependencies:
+      react: '*'
+    dependencies:
+      react: 18.2.0
     dev: false
 
   /react-icons@4.9.0(react@18.2.0):

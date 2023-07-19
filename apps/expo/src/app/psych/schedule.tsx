@@ -85,7 +85,7 @@ export default function TherapistSchedule() {
             />
           </View>
           <Text className="mb-2 font-nunito-sans-bold text-2xl">
-            {data.name}&apos;s Schedule
+            {data.name.split(" ").at(0)}&apos;s Schedule
           </Text>
           <Text className="mb-2 font-nunito-sans text-sm text-[#666666]">
             Pick the date that you would like to meet:
@@ -95,8 +95,8 @@ export default function TherapistSchedule() {
         <HourPicker
           hour={selectedHour ?? ""}
           date={selectedDate ?? null}
-          therapistAppointments={data.appointments as Appointment[]} // acredito que n seja o ideal trazer todas as sessões
-          therapistHours={data.hours as Hour[]} // não sei pq isso
+          therapistAppointments={data.appointments} // acredito que n seja o ideal trazer todas as sessões
+          therapistHours={data.hours} // não sei pq isso
           onSelect={setSelectedHour}
         />
         <ModalityPicker
