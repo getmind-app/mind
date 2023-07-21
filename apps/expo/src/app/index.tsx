@@ -8,7 +8,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
@@ -16,11 +15,57 @@ import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import { CardSkeleton } from "../components/CardSkeleton";
 import { api } from "../utils/api";
 
+export default function Index() {
+  const router = useRouter();
+  const { newNote, deletedNote } = useLocalSearchParams();
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 500); // Adjust the delay time as needed
+  };
+
+  useEffect(() => {
+    if (newNote || deletedNote) {
+      onRefresh();
+    }
+  }, [newNote, deletedNote]);
+
+  return (
+    <ScrollView
+      className="bg-off-white px-4 pt-12"
+      showsVerticalScrollIndicator={false}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+    >
+      <View className="h-full">
+        <Text className="pt-12 font-nunito-sans-bold text-3xl">
+          Next session
+        </Text>
+        <NextAppointment isRefreshing={refreshing} />
+        <View className="mb-2 flex flex-row items-center justify-between pt-8 align-middle">
+          <Text className=" font-nunito-sans-bold text-3xl">Last notes</Text>
+          <TouchableOpacity onPress={() => router.push("/notes/new")}>
+            <View className="rounded-lg bg-blue-500 px-3 py-1 shadow-sm">
+              <Text className="text-center font-nunito-sans-bold text-base text-white">
+                New
+              </Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+        <LastNotes isRefreshing={refreshing} />
+      </View>
+    </ScrollView>
+  );
+}
+
 function NextAppointment({ isRefreshing }: { isRefreshing: boolean }) {
   const { user } = useUser();
   const router = useRouter();
 
-  // TODO: receber o id do usuário como parâmetro
   const { data, isLoading, refetch } =
     api.appointments.findLastByUserId.useQuery({
       userId: String(user?.id),
@@ -213,54 +258,5 @@ function LastNotes({ isRefreshing }: { isRefreshing: boolean }) {
         </View>
       )}
     </>
-  );
-}
-
-export default function Index() {
-  const router = useRouter();
-  const { newNote, deletedNote } = useLocalSearchParams();
-  const [refreshing, setRefreshing] = useState(false);
-
-  const onRefresh = () => {
-    setRefreshing(true);
-    setTimeout(() => {
-      setRefreshing(false);
-    }, 500); // Adjust the delay time as needed
-  };
-
-  useEffect(() => {
-    if (newNote || deletedNote) {
-      onRefresh();
-    }
-  }, [newNote, deletedNote]);
-
-  return (
-    <SafeAreaView className="h-full bg-off-white">
-      <ScrollView
-        className="px-4"
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-      >
-        <View className="h-full">
-          <Text className="pt-12 font-nunito-sans-bold text-3xl">
-            Next session
-          </Text>
-          <NextAppointment isRefreshing={refreshing} />
-          <View className="mb-2 flex flex-row items-center justify-between pt-8 align-middle">
-            <Text className=" font-nunito-sans-bold text-3xl">Last notes</Text>
-            <TouchableOpacity onPress={() => router.push("/notes/new")}>
-              <View className="rounded-lg bg-blue-500 px-3 py-1 shadow-sm">
-                <Text className="text-center font-nunito-sans-bold text-base text-white">
-                  New
-                </Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-          <LastNotes isRefreshing={refreshing} />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
   );
 }

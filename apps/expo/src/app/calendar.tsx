@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
 import { FontAwesome } from "@expo/vector-icons";
@@ -37,18 +36,16 @@ export default function CalendarScreen() {
   }, [refreshing, refetch]);
 
   return (
-    <SafeAreaView className="h-full bg-off-white">
-      <ScrollView
-        className="px-4"
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-      >
-        <Text className="pt-12 font-nunito-sans-bold text-3xl">Calendar</Text>
-        <Appointments data={data ? data : []} isLoading={isLoading} />
-      </ScrollView>
-    </SafeAreaView>
+    <ScrollView
+      className="bg-off-white px-4 pt-12"
+      showsVerticalScrollIndicator={false}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+    >
+      <Text className="pt-12 font-nunito-sans-bold text-3xl">Calendar</Text>
+      <Appointments data={data ? data : []} isLoading={isLoading} />
+    </ScrollView>
   );
 }
 

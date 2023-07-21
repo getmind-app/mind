@@ -1,5 +1,4 @@
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { useClerk } from "@clerk/clerk-expo";
 import { MaterialIcons } from "@expo/vector-icons";
 
@@ -12,66 +11,60 @@ export default function UserProfileScreen() {
     userId: String(user?.id),
   });
 
-  async function clearUserMetaData() {
+  async function clearUserMetaData(): Promise<void> {
     console.log("Clearing user metadata");
     await mutateAsync();
     await user?.reload();
   }
 
   return (
-    <SafeAreaView className="min-h-screen bg-off-white ">
-      <View className="h-full px-4">
-        <View className="flex flex-row items-center justify-between">
-          <Text className="pt-12 font-nunito-sans-bold text-3xl">Profile</Text>
-        </View>
-        <View className="flex flex-row items-center gap-x-4 pt-4 align-middle">
-          <Image
-            className="rounded-full"
-            alt={`${user?.firstName}'s profile picture`}
-            source={{
-              uri: user?.profileImageUrl,
-              width: 80,
-              height: 80,
-            }}
-          />
-          <View className="flex flex-col">
-            <View>
-              {data?.name && (
-                <Text className="font-nunito-sans-bold text-3xl">
-                  {data.name}
-                </Text>
-              )}
-            </View>
-            <View>
-              {user?.publicMetadata && (
-                <Text className="font-nunito-sans text-lg text-slate-500">
-                  {user.publicMetadata.role == "patient"
-                    ? "Patient"
-                    : "Professional"}
-                </Text>
-              )}
-            </View>
+    <View className="h-full bg-off-white px-4 pt-24">
+      <View className="flex flex-row items-center gap-x-4 pt-4 align-middle">
+        <Image
+          className="rounded-full"
+          alt={`${user?.firstName}'s profile picture`}
+          source={{
+            uri: user?.profileImageUrl,
+            width: 72,
+            height: 72,
+          }}
+        />
+        <View className="flex flex-col">
+          <View>
+            {data?.name && (
+              <Text className="font-nunito-sans-bold text-3xl">
+                {data.name}
+              </Text>
+            )}
+          </View>
+          <View>
+            {user?.publicMetadata && (
+              <Text className="pl-1 font-nunito-sans text-lg text-slate-500">
+                {user.publicMetadata.role == "patient"
+                  ? "Patient"
+                  : "Professional"}
+              </Text>
+            )}
           </View>
         </View>
-        <ScrollView className="pt-8" showsVerticalScrollIndicator={false}>
-          <MenuItem
-            isFirst={true}
-            label="🗣️  Personal info"
-            onPress={signOut}
-          />
-          <MenuItem label="⚙️  Settings" onPress={signOut} />
-
-          {process.env.NODE_ENV === "development" ? (
-            <MenuItem
-              label="❌  Reset user metadata"
-              onPress={clearUserMetaData}
-            />
-          ) : null}
-
-          <MenuItem isLast={true} label="🚪  Sign out" onPress={signOut} />
-        </ScrollView>
       </View>
-    </SafeAreaView>
+      {user?.publicMetadata && user.publicMetadata.role == "professional" ? (
+        <AvailableHours />
+      ) : null}
+      <ScrollView className="pt-8" showsVerticalScrollIndicator={false}>
+        <MenuItem isFirst={true} label="🗣️  Personal info" onPress={signOut} />
+        <MenuItem label="⚙️  Settings" onPress={signOut} />
+
+        {process.env.NODE_ENV === "development" ? (
+          <MenuItem
+            label="❌  Reset user metadata"
+            onPress={clearUserMetaData}
+          />
+        ) : null}
+
+        <MenuItem isLast={true} label="🚪  Sign out" onPress={signOut} />
+      </ScrollView>
+    </View>
   );
 }
 
@@ -92,5 +85,16 @@ function MenuItem(props: {
         <MaterialIcons size={24} name="chevron-right" />
       </View>
     </TouchableOpacity>
+  );
+}
+
+function AvailableHours() {
+  return (
+    <View className="pt-8">
+      <Text className="pb-2 font-nunito-sans-bold text-xl">
+        Available hours
+      </Text>
+      <View className="flex flex-row rounded-xl bg-white px-6 py-4 align-middle shadow-sm"></View>
+    </View>
   );
 }

@@ -181,17 +181,6 @@ function TabsRouter() {
         }}
       />
       <Tabs.Screen
-        name="chat"
-        options={{
-          title: "Chat",
-          tabBarIcon: (props) => (
-            <TabBarIconWrapper focused={props.focused}>
-              <AntDesign name="message1" {...props} />
-            </TabBarIconWrapper>
-          ),
-        }}
-      />
-      <Tabs.Screen
         name="profile"
         options={{
           title: "User Profile",

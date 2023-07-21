@@ -59,13 +59,6 @@ export default function TherapistProfile() {
               <Text className="font-nunito-sans-bold text-3xl font-bold">
                 {data?.name}
               </Text>
-              <TouchableOpacity onPress={() => router.push("/chat")}>
-                <View className="w-32 rounded-xl bg-white px-4 py-1.5 shadow-sm">
-                  <Text className="text-center font-nunito-sans-bold text-base">
-                    Message
-                  </Text>
-                </View>
-              </TouchableOpacity>
             </View>
           </View>
           <View className="flex flex-row items-center gap-12 pt-6 align-middle">

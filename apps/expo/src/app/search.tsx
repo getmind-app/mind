@@ -17,39 +17,37 @@ export default function SearchScreen() {
   const [search, setSearch] = useState<string>("");
 
   return (
-    <SafeAreaView className="min-h-screen bg-off-white ">
-      <View className="h-full px-4">
-        <View className="flex flex-col">
-          <Text className="pt-12 font-nunito-sans-bold text-3xl">Search</Text>
+    <View className="h-full bg-off-white px-4 pt-12">
+      <View className="flex flex-col">
+        <Text className="pt-12 font-nunito-sans-bold text-3xl">Search</Text>
 
-          <View className="flex flex-row items-center justify-between pt-2 align-middle">
-            <TextInput
-              onChangeText={setSearch}
-              autoFocus={false}
-              value={search}
-              placeholder="Looking for a therapist?"
-              className="font-nunito-sans text-lg"
-            />
-          </View>
+        <View className="flex flex-row items-center justify-between pt-2 align-middle">
+          <TextInput
+            onChangeText={setSearch}
+            autoFocus={false}
+            value={search}
+            placeholder="Looking for a therapist?"
+            className="font-nunito-sans text-lg"
+          />
         </View>
-        <ScrollView className="w-full" showsVerticalScrollIndicator={false}>
-          {search.length > 0 ? (
-            <List search={search} />
-          ) : (
-            <View className="flex flex-col items-center justify-center gap-2 pt-32">
-              <Image
-                className="h-40 w-40"
-                alt={`No therapists picture`}
-                source={require("../../assets/login_mind.png")}
-              />
-              <Text className="font-nunito-sans-bold text-xl text-slate-500">
-                Find your new therapist
-              </Text>
-            </View>
-          )}
-        </ScrollView>
       </View>
-    </SafeAreaView>
+      <ScrollView className="w-full" showsVerticalScrollIndicator={false}>
+        {search.length > 0 ? (
+          <List search={search} />
+        ) : (
+          <View className="flex flex-col items-center justify-center gap-2 pt-32">
+            <Image
+              className="h-40 w-40"
+              alt={`No therapists picture`}
+              source={require("../../assets/login_mind.png")}
+            />
+            <Text className="font-nunito-sans-bold text-xl text-slate-500">
+              Find your new therapist
+            </Text>
+          </View>
+        )}
+      </ScrollView>
+    </View>
   );
 }
 
