@@ -8,7 +8,7 @@ import { BsArrowRightShort } from "react-icons/bs";
 import AppStore from "../../assets/app_store.png";
 import PlayStore from "../../assets/google_play.png";
 import Icon from "../../assets/icon.png";
-import Mockup from "../../assets/mock-hd.png";
+import Mockup from "../../assets/render.png";
 
 const nunitoSans = Nunito_Sans({
   subsets: ["latin"],

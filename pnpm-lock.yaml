@@ -224,6 +224,9 @@ importers:
       '@types/babel__core':
         specifier: ^7.20.0
         version: 7.20.0
+      '@types/lodash-es':
+        specifier: ^4.17.8
+        version: 4.17.8
       '@types/webpack-env':
         specifier: ^1.18.0
         version: 1.18.0
@@ -4875,6 +4878,16 @@ packages:
     dependencies:
       '@types/node': 18.15.11
     dev: false
+
+  /@types/lodash-es@4.17.8:
+    resolution: {integrity: sha512-euY3XQcZmIzSy7YH5+Unb3b2X12Wtk54YWINBvvGQ5SmMvwb11JQskGsfkH/5HXK77Kr8GF0wkVDIxzAisWtog==}
+    dependencies:
+      '@types/lodash': 4.14.195
+    dev: true
+
+  /@types/lodash@4.14.195:
+    resolution: {integrity: sha512-Hwx9EUgdwf2GLarOjQp5ZH8ZmblzcbTBC2wtQWNKARBSxM9ezRIAUpeDTgoQRAFB0+8CNWXVA9+MaSOzOF3nPg==}
+    dev: true
 
   /@types/luxon@3.3.0:
     resolution: {integrity: sha512-uKRI5QORDnrGFYgcdAVnHvEIvEZ8noTpP/Bg+HeUzZghwinDlIS87DEenV5r1YoOF9G4x600YsUXLWZ19rmTmg==}

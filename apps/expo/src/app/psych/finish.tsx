@@ -33,17 +33,21 @@ export default function SessionFinishAppointment() {
               {data?.therapist.name.split(" ")[0]}{" "}
             </Text>
             <Text className="font-nunito-sans text-lg text-slate-500">
-              will be meeting with you at{" "}
+              will be meeting with you on{" "}
             </Text>
+            <Text className="font-nunito-sans-bold text-lg ">
+              {new Intl.DateTimeFormat("en", { month: "long" }).format(
+                data?.scheduledTo,
+              )}
+              , {data?.scheduledTo.getDate()}{" "}
+            </Text>
+            <Text className="font-nunito-sans text-lg text-slate-500">at </Text>
+
             <Text className="font-nunito-sans-bold text-lg">
               {data?.scheduledTo.getHours()}:
               {data?.scheduledTo.getMinutes() == 0
                 ? "00"
-                : data?.scheduledTo.getMinutes()}{" "}
-            </Text>
-            <Text className="font-nunito-sans text-lg text-slate-500">on </Text>
-            <Text className="font-nunito-sans-bold text-lg ">
-              {data?.scheduledTo.getDate()}
+                : data?.scheduledTo.getMinutes()}
             </Text>
           </Text>
         </View>
@@ -53,7 +57,7 @@ export default function SessionFinishAppointment() {
           }}
           className="w-4/5 pt-8"
         >
-          <View className="flex flex-row items-center justify-center rounded-xl bg-blue-500 px-6 py-2">
+          <View className="flex flex-row items-center justify-center rounded-xl bg-[#2185EE] px-6 py-2">
             <MaterialIcons size={20} name="schedule" color="white" />
             <Text className="ml-2 font-nunito-sans-bold text-xl text-white">
               Create event
