@@ -187,7 +187,6 @@ function HourPicker({
     }
   }, [date]);
 
-  // não sei pq essa tipagem ta zaralhada
   const availableHours = therapistHours
     .filter((hour) => {
       return hour.weekDay === weekdays[date?.getDay() ?? 1];

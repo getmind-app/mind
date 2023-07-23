@@ -226,6 +226,13 @@ function TabsRouter() {
           href: null,
         }}
       />
+      <Tabs.Screen
+        name="settings"
+        options={{
+          title: "Settings",
+          href: null,
+        }}
+      />
     </Tabs>
   );
 }

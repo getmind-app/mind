@@ -1,10 +1,12 @@
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { useRouter } from "expo-router";
 import { useClerk } from "@clerk/clerk-expo";
 import { MaterialIcons } from "@expo/vector-icons";
 
 import { api } from "../utils/api";
 
 export default function UserProfileScreen() {
+  const router = useRouter();
   const { user, signOut } = useClerk();
   const { mutateAsync } = api.users.clearMetadata.useMutation({});
   const { data } = api.therapists.findByUserId.useQuery({
@@ -48,12 +50,16 @@ export default function UserProfileScreen() {
           </View>
         </View>
       </View>
-      {user?.publicMetadata && user.publicMetadata.role == "professional" ? (
-        <AvailableHours />
-      ) : null}
       <ScrollView className="pt-8" showsVerticalScrollIndicator={false}>
         <MenuItem isFirst={true} label="🗣️  Personal info" onPress={signOut} />
         <MenuItem label="⚙️  Settings" onPress={signOut} />
+
+        {user?.publicMetadata && user.publicMetadata.role == "professional" ? (
+          <MenuItem
+            label="🕰️  Available hours"
+            onPress={() => router.push("/settings/available-hours")}
+          />
+        ) : null}
 
         {process.env.NODE_ENV === "development" ? (
           <MenuItem
@@ -85,16 +91,5 @@ function MenuItem(props: {
         <MaterialIcons size={24} name="chevron-right" />
       </View>
     </TouchableOpacity>
-  );
-}
-
-function AvailableHours() {
-  return (
-    <View className="pt-8">
-      <Text className="pb-2 font-nunito-sans-bold text-xl">
-        Available hours
-      </Text>
-      <View className="flex flex-row rounded-xl bg-white px-6 py-4 align-middle shadow-sm"></View>
-    </View>
   );
 }
