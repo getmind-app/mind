@@ -17,6 +17,7 @@ export default function UserProfileScreen() {
     console.log("Clearing user metadata");
     await mutateAsync();
     await user?.reload();
+    router.push("/onboard");
   }
 
   return (

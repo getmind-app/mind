@@ -15,6 +15,7 @@
     "@expo-google-fonts/nunito-sans": "^0.2.3",
     "@expo/metro-config": "^0.7.1",
     "@expo/vector-icons": "^13.0.0",
+    "@hookform/resolvers": "^3.1.1",
     "@ouroboros/react-native-picker": "^0.3.1",
     "@react-native-community/datetimepicker": "6.7.3",
     "@react-native-masked-view/masked-view": "^0.2.9",
@@ -26,6 +27,7 @@
     "@trpc/server": "^10.31.0",
     "@types/luxon": "^3.3.0",
     "@types/react": "~18.0.27",
+    "cpf-cnpj-validator": "^1.0.3",
     "expo": "^48.0.10",
     "expo-auth-session": "^4.0.3",
     "expo-constants": "~14.2.1",
@@ -44,6 +46,7 @@
     "nativewind": "^2.0.11",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-hook-form": "^7.45.2",
     "react-native": "0.71.8",
     "react-native-currency-input": "^1.1.0",
     "react-native-linear-gradient": "^2.7.2",
@@ -55,7 +58,8 @@
     "react-native-skeleton-placeholder": "^5.2.4",
     "react-native-svg": "13.4.0",
     "react-native-vector-icons": "^9.2.0",
-    "superjson": "1.9.1"
+    "superjson": "1.9.1",
+    "zod": "^3.21.4"
   },
   "devDependencies": {
     "@acme/api": "*",

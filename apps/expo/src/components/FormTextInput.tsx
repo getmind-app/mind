@@ -1,43 +1,46 @@
-import { Text, TextInput, View, type InputModeOptions } from "react-native";
+import { Text } from "react-native";
+import {
+  Controller,
+  type Control,
+  type FieldPath,
+  type FieldValues,
+  type RegisterOptions,
+} from "react-hook-form";
 
-type FormInputProps = {
-  title: string;
-  placeholder: string;
-  complement?: string;
-  inputType?: InputModeOptions;
-  value: string;
-  onChange: (value: string) => void;
-};
+import { TextInput, type TextInputProps } from "./TextInput";
 
-export const FormTextInput = ({
-  title,
-  placeholder,
-  complement,
-  inputType,
-  value,
-  onChange,
-}: FormInputProps) => {
-  const handleTextChange = (text: string) => {
-    onChange(text);
-  };
-
+export function FormTextInput<
+  TFieldValues extends FieldValues = FieldValues,
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
+>({
+  control,
+  name,
+  rules,
+  error,
+  ...otherProps
+}: TextInputProps & {
+  control: Control<TFieldValues>;
+  name: TName;
+  rules?: Omit<
+    RegisterOptions<TFieldValues, TName>,
+    "valueAsNumber" | "valueAsDate" | "setValueAs" | "disabled"
+  >;
+  error?: string;
+}) {
   return (
-    <View className="gap-2 py-3">
-      <Text className="font-nunito-sans text-lg text-slate-700">{title}</Text>
-      <View className="flex flex-row items-center">
+    <Controller
+      control={control}
+      name={name}
+      rules={rules}
+      render={({ field: { onChange, onBlur, value }, fieldState }) => (
         <TextInput
+          error={fieldState.error?.message}
           value={value}
-          inputMode={inputType ? inputType : "text"}
-          onChangeText={handleTextChange}
-          placeholder={placeholder}
-          className={`h-10 ${
-            complement ? "" : "w-full"
-          } font-nunito-sans text-xl`}
+          onChangeText={onChange}
+          onBlur={onBlur}
+          {...otherProps}
         />
-        {complement ? (
-          <Text className="ml-2 font-nunito-sans text-xl">{complement}</Text>
-        ) : null}
-      </View>
-    </View>
+      )}
+    />
   );
-};
+}

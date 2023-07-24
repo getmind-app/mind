@@ -9,6 +9,10 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { cpf } from "cpf-cnpj-validator";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 import { FormCurrencyInput } from "../../components/FormCurrencyInput";
 import { FormDateInput } from "../../components/FormDateInput";
@@ -16,50 +20,76 @@ import { FormTextInput } from "../../components/FormTextInput";
 import { formatISODate } from "../../helpers/formatISODate";
 import { api } from "../../utils/api";
 
+const schema = z.object({
+  document: z
+    .string({
+      required_error: "The document is required",
+    })
+    .min(11, "Your document must be 11 characters long")
+    .refine((value) => cpf.isValid(value), "Must be a valid CPF"),
+  fullName: z
+    .string({
+      required_error: "Full name is required",
+    })
+    .min(2, "Full name must be at least 2 characters"),
+  yearsOfExperience: z
+    .string({
+      required_error: "Your years of experience is required",
+    })
+    .min(0, "Please provide a valid number of years"),
+  hourlyRate: z
+    .number({
+      required_error: "Your hourly rate is required",
+    })
+    .min(0, "Please provide a valid hourly rate"),
+  crp: z
+    .string({
+      required_error: "Your CRP is required",
+    })
+    .min(8, "Your CRP must be valid"),
+});
+
 export default function OnboardPsychScreen() {
   const { user } = useUser();
   const router = useRouter();
 
-  const [name, setName] = useState<string>(user?.fullName ?? "");
-  const [birthday, setBirthday] = useState<Date>(new Date());
   const [showBirthdayPicker, setShowBirthdayPicker] = useState(false);
-  const [document, setDocument] = useState<string>("");
-  const [crp, setCrp] = useState<string>("");
-  const [yearsOfExperience, setYearsOfExperience] = useState<string>("");
-  const [hourlyRate, setHourlyRate] = useState<number>(0.0);
 
-  const [formValidated, setFormValidated] = useState<boolean>(true);
+  const {
+    control,
+    handleSubmit,
+    register,
+    formState: { isValid, errors },
+    getValues,
+  } = useForm({
+    defaultValues: {
+      name: "",
+      birthday: new Date(),
+      document: "",
+      crp: "",
+      yearsOfExperience: "",
+      hourlyRate: "",
+      formValidated: "",
+    },
+    resolver: zodResolver(schema),
+  });
+  const onSubmit = handleSubmit((data) => {
+    mutate({
+      ...data,
+      userId: String(user?.id),
+      profilePictureUrl: String(user?.profileImageUrl),
+      about: "",
+      dateOfBirth: data.birthday,
+      yearsOfExperience: parseInt(data.yearsOfExperience),
+      hourlyRate: parseInt(data.hourlyRate),
+    });
+  });
 
   const { mutate, isLoading } = api.therapists.create.useMutation({
     onSuccess: () => {
       router.push("/"); // TODO: acredito que aqui teriamos que fazer mais validaçoes
     },
   });
-
-  // TODO: validar campos https://chat.openai.com/share/fc55daf1-562c-48e8-b51d-2a87dc8e0638
-  // Não sei se seria melhor usar o Formik ou o Yup (Formik já no projeto)
-  const handleNext = () => {
-    if (
-      name &&
-      birthday &&
-      document &&
-      crp &&
-      yearsOfExperience &&
-      hourlyRate
-    ) {
-      mutate({
-        name,
-        dateOfBirth: birthday,
-        document,
-        crp,
-        yearsOfExperience: parseInt(yearsOfExperience),
-        hourlyRate,
-        about: "", // TODO: arrumar isso, queria que fosse opcional
-        userId: String(user?.id),
-        profilePictureUrl: String(user?.profileImageUrl),
-      });
-    }
-  };
 
   if (isLoading) {
     return (
@@ -68,7 +98,6 @@ export default function OnboardPsychScreen() {
       </View>
     );
   }
-
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
@@ -86,63 +115,69 @@ export default function OnboardPsychScreen() {
               </Text>
             </View>
             <FormTextInput
-              value={name}
+              control={control}
+              rules={{
+                required: {
+                  value: true,
+                  message: "Your full name is required",
+                },
+                min: {
+                  value: 2,
+                  message: "Full name must be at least 2 characters",
+                },
+              }}
+              name="name"
               title="🖋️ Full Name"
               placeholder="John Doe"
-              onChange={setName}
             />
             <FormDateInput
               title="🥳 Birthday"
-              value={birthday}
-              onChange={(value) => {
-                setBirthday(value);
-                setShowBirthdayPicker(false);
-              }}
+              name="birthday"
+              control={control}
               show={showBirthdayPicker}
+              handleChange={() => setShowBirthdayPicker(false)}
               onTitlePress={() => setShowBirthdayPicker(!showBirthdayPicker)}
             />
-            <Text className={`h-10 w-full font-nunito-sans text-xl`}>
-              {formatISODate(birthday)}
+            <Text
+              onPress={() => setShowBirthdayPicker(true)}
+              className={`h-10 w-full font-nunito-sans text-xl`}
+            >
+              {formatISODate(getValues("birthday"))}
             </Text>
             <FormTextInput
-              value={document}
-              title="🪪 Document"
-              placeholder="054.408.229-09"
-              onChange={setDocument}
+              control={control}
+              name="document"
+              title="🪪 Document (CPF)"
+              placeholder="123.456.789-01"
             />
+
             <FormTextInput
-              value={crp}
+              control={control}
+              name="crp"
               title="🧠 CRP"
               placeholder="02/43243"
-              onChange={setCrp}
             />
             <FormTextInput
-              value={yearsOfExperience}
               title="🗣️ Experience"
               placeholder="2"
-              complement="years"
-              onChange={setYearsOfExperience}
-              inputType="numeric"
+              unit="years"
+              control={control}
+              name="yearsOfExperience"
+              inputMode="numeric"
             />
             <FormCurrencyInput
-              value={hourlyRate}
+              name="hourlyRate"
+              control={control}
               title="💰 Hourly Rate"
-              onChange={setHourlyRate}
             />
           </ScrollView>
-          <TouchableOpacity
-            className="w-full"
-            disabled={!formValidated}
-            onPress={handleNext}
-          >
+          <TouchableOpacity className="w-full" onPress={onSubmit}>
             <View
-              className={`mt-8 flex w-full items-center justify-center rounded-xl ${
-                formValidated ? "bg-blue-500" : "bg-gray-300 opacity-50"
-              } py-2`}
+              className={`mt-8 flex w-full items-center justify-center rounded-xl bg-blue-500 py-2`}
             >
               <Text
                 className={`font-nunito-sans-bold text-lg ${
-                  formValidated ? "text-white" : "text-black"
+                  isValid ? "text-white" : "text-black"
                 }`}
               >
                 Next
