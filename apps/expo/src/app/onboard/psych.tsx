@@ -11,6 +11,7 @@ import { useRouter } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { cpf } from "cpf-cnpj-validator";
+import { DateTime } from "luxon";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -19,6 +20,9 @@ import { FormDateInput } from "../../components/FormDateInput";
 import { FormTextInput } from "../../components/FormTextInput";
 import { formatISODate } from "../../helpers/formatISODate";
 import { api } from "../../utils/api";
+
+// maximumDate={DateTime.local().minus({ years: 18 }).toJSDate()}
+//               minimumDate={DateTime.local(1900).toJSDate()}
 
 const schema = z.object({
   document: z
@@ -33,10 +37,11 @@ const schema = z.object({
     })
     .min(2, "Full name must be at least 2 characters"),
   yearsOfExperience: z
-    .string({
+    .date({
       required_error: "Your years of experience is required",
     })
-    .min(0, "Please provide a valid number of years"),
+    .max(DateTime.local().minus({ years: 25 }).toJSDate())
+    .min(DateTime.local(1900).toJSDate()),
   hourlyRate: z
     .number({
       required_error: "Your hourly rate is required",
@@ -58,13 +63,12 @@ export default function OnboardPsychScreen() {
   const {
     control,
     handleSubmit,
-    register,
     formState: { isValid, errors },
     getValues,
   } = useForm({
     defaultValues: {
       name: "",
-      birthday: new Date(),
+      birthday: DateTime.local().minus({ years: 18 }).toJSDate(),
       document: "",
       crp: "",
       yearsOfExperience: "",
@@ -116,38 +120,26 @@ export default function OnboardPsychScreen() {
             </View>
             <FormTextInput
               control={control}
-              rules={{
-                required: {
-                  value: true,
-                  message: "Your full name is required",
-                },
-                min: {
-                  value: 2,
-                  message: "Full name must be at least 2 characters",
-                },
-              }}
               name="name"
               title="🖋️ Full Name"
               placeholder="John Doe"
             />
+            <Text>{JSON.stringify(errors.birthday)}</Text>
+            <Text>{JSON.stringify(getValues("birthday"))}</Text>
             <FormDateInput
               title="🥳 Birthday"
               name="birthday"
               control={control}
               show={showBirthdayPicker}
               handleChange={() => setShowBirthdayPicker(false)}
-              onTitlePress={() => setShowBirthdayPicker(!showBirthdayPicker)}
+              onValuePress={() => setShowBirthdayPicker(!showBirthdayPicker)}
+              maximumDate={DateTime.local().minus({ years: 18 }).toJSDate()}
+              minimumDate={DateTime.local(1900).toJSDate()}
             />
-            <Text
-              onPress={() => setShowBirthdayPicker(true)}
-              className={`h-10 w-full font-nunito-sans text-xl`}
-            >
-              {formatISODate(getValues("birthday"))}
-            </Text>
             <FormTextInput
               control={control}
               name="document"
-              title="🪪 Document (CPF)"
+              title="📃 Document (CPF)"
               placeholder="123.456.789-01"
             />
 

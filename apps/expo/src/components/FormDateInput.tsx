@@ -1,7 +1,5 @@
 import { Text, View } from "react-native";
-import DateTimePicker, {
-  type DateTimePickerEvent,
-} from "@react-native-community/datetimepicker";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import {
   Controller,
   type Control,
@@ -10,10 +8,13 @@ import {
   type RegisterOptions,
 } from "react-hook-form";
 
-type FormInputProps = {
+import { formatISODate } from "../helpers/formatISODate";
+
+type DatePickerProps = Parameters<typeof DateTimePicker>["0"];
+type FormDateProps = {
   title: string;
   show: boolean;
-  onTitlePress?: () => void;
+  onValuePress?: () => void;
   handleChange: (date?: Date) => void;
 };
 
@@ -23,36 +24,58 @@ export function FormDateInput<
 >({
   title,
   show,
-  onTitlePress,
+  onValuePress: onValuePress,
   control,
   name,
   handleChange,
-}: FormInputProps & {
-  control: Control<TFieldValues>;
-  name: TName;
-  rules?: Omit<
-    RegisterOptions<TFieldValues, TName>,
-    "valueAsNumber" | "valueAsDate" | "setValueAs" | "disabled"
-  >;
-  error?: string;
-}) {
+  error,
+  ...otherProps
+}: FormDateProps &
+  Omit<DatePickerProps, "value"> & {
+    control: Control<TFieldValues>;
+    name: TName;
+    rules?: Omit<
+      RegisterOptions<TFieldValues, TName>,
+      "valueAsNumber" | "valueAsDate" | "setValueAs" | "disabled"
+    >;
+    error?: string;
+  }) {
   return (
     <Controller
       control={control}
       name={name}
       render={({ field: { onChange, value }, fieldState }) => (
-        <View className="gap-2 py-3">
-          <Text
-            onPress={onTitlePress}
-            className="font-nunito-sans text-lg text-slate-700"
-          >
-            {title}
-          </Text>
+        <>
+          <View className="gap-2 py-3">
+            <Text className="font-nunito-sans text-lg text-slate-700">
+              {title}
+            </Text>
+            <View
+              className={`flex flex-row items-center rounded border border-transparent px-2 ${
+                fieldState.error?.message ? "border-red-600" : ""
+              }`}
+            >
+              <Text
+                onPress={onValuePress}
+                className={`flex h-10 w-full flex-row items-center justify-center  font-nunito-sans text-xl`}
+              >
+                {formatISODate(value)}
+              </Text>
+              {fieldState.error?.message ? (
+                <Text className="font-nunito ml-2 text-center text-red-600">
+                  {fieldState.error.message}
+                </Text>
+              ) : null}
+            </View>
+          </View>
           {show && (
             <DateTimePicker
-              minimumDate={new Date(1920, 1, 1)}
-              maximumDate={new Date()}
-              style={{ width: 110, height: 50 }} // TODO: Melhorar responsividade
+              {...otherProps}
+              display="default"
+              style={{
+                width: 110,
+                height: 50,
+              }} // TODO: Melhorar responsividade
               value={value}
               onChange={(value, date) => {
                 onChange(date);
@@ -60,7 +83,7 @@ export function FormDateInput<
               }}
             />
           )}
-        </View>
+        </>
       )}
     />
   );
