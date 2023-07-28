@@ -61,12 +61,12 @@ export function FormDateInput<
               >
                 {formatISODate(value)}
               </Text>
-              {fieldState.error?.message ? (
-                <Text className="font-nunito ml-2 text-center text-red-600">
-                  {fieldState.error.message}
-                </Text>
-              ) : null}
             </View>
+            {fieldState.error?.message ? (
+              <Text className="font-nunito ml-2 text-center text-red-600">
+                {fieldState.error.message}
+              </Text>
+            ) : null}
           </View>
           {show && (
             <DateTimePicker

@@ -31,17 +31,23 @@ const schema = z.object({
     })
     .min(11, "Your document must be 11 characters long")
     .refine((value) => cpf.isValid(value), "Must be a valid CPF"),
-  fullName: z
+  name: z
     .string({
       required_error: "Full name is required",
     })
     .min(2, "Full name must be at least 2 characters"),
-  yearsOfExperience: z
+  yearsOfExperience: z.string({
+    required_error: "Your years of experience is required",
+  }),
+  birthday: z
     .date({
-      required_error: "Your years of experience is required",
+      required_error: "Must provide your birthday",
     })
-    .max(DateTime.local().minus({ years: 25 }).toJSDate())
-    .min(DateTime.local(1900).toJSDate()),
+    .max(
+      DateTime.local().minus({ years: 18 }).toJSDate(),
+      "Must be older than 18",
+    )
+    .min(DateTime.local(1900).toJSDate(), "Can't be too old"),
   hourlyRate: z
     .number({
       required_error: "Your hourly rate is required",
@@ -64,7 +70,6 @@ export default function OnboardPsychScreen() {
     control,
     handleSubmit,
     formState: { isValid, errors },
-    getValues,
   } = useForm({
     defaultValues: {
       name: "",
@@ -78,6 +83,7 @@ export default function OnboardPsychScreen() {
     resolver: zodResolver(schema),
   });
   const onSubmit = handleSubmit((data) => {
+    console.log("dale");
     mutate({
       ...data,
       userId: String(user?.id),
@@ -139,13 +145,14 @@ export default function OnboardPsychScreen() {
               name="document"
               title="📃 Document (CPF)"
               placeholder="123.456.789-01"
+              inputMode="numeric"
             />
-
             <FormTextInput
               control={control}
               name="crp"
               title="🧠 CRP"
               placeholder="02/43243"
+              inputMode="numeric"
             />
             <FormTextInput
               title="🗣️ Experience"
