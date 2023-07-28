@@ -124,8 +124,6 @@ export default function OnboardPsychScreen() {
               title="🖋️ Full Name"
               placeholder="John Doe"
             />
-            <Text>{JSON.stringify(errors.birthday)}</Text>
-            <Text>{JSON.stringify(getValues("birthday"))}</Text>
             <FormDateInput
               title="🥳 Birthday"
               name="birthday"
