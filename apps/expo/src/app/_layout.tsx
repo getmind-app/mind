@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Image,
   Text,
@@ -11,9 +11,11 @@ import {
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import Constants from "expo-constants";
 import { loadAsync } from "expo-font";
+import * as Linking from "expo-linking";
 import { SplashScreen, Tabs, useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { StatusBar } from "expo-status-bar";
+import * as WebBrowser from "expo-web-browser";
 import {
   ClerkProvider,
   SignedIn,
@@ -31,6 +33,7 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 import { LogoSvg } from "../components/LogoSvg";
+import { useWarmUpBrowser } from "../hooks/useWarmUpBrowser";
 import { TRPCProvider } from "../utils/api";
 
 type tabBarStyle = Animated.WithAnimatedValue<StyleProp<ViewStyle>>;
@@ -238,8 +241,6 @@ function TabsRouter() {
 }
 
 function SignInScreen() {
-  const { onApplePress, onGooglePress } = useAuthProviders();
-
   return (
     <View className="flex h-full w-full items-center justify-center bg-off-white">
       <View className="relative bottom-12 right-4">
@@ -249,7 +250,7 @@ function SignInScreen() {
       <Text className="font-nunito-sans text-base text-gray-500">
         Let us help. Focus on connecting.
       </Text>
-      <View className="flex w-full gap-y-4 px-8">
+      <View className="flex w-full gap-y-8 px-8">
         <View className="flex items-center justify-center pt-8">
           <Image
             alt=""
@@ -258,40 +259,25 @@ function SignInScreen() {
             resizeMode="contain"
           />
         </View>
-        <TouchableOpacity onPress={onGooglePress} className="w-full">
-          <View className="mt-8  flex w-full flex-row items-center justify-center rounded-xl bg-blue-500 px-8 py-4 font-bold shadow-sm">
-            <FontAwesome color="white" size={22} name="google" />
-            <Text className="ml-4 font-nunito-sans text-xl text-white">
-              Sign in with{" "}
-            </Text>
-            <Text className=" font-nunito-sans-bold text-xl text-white">
-              Google
-            </Text>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={onApplePress} className="w-full">
-          <View className="flex w-full flex-row items-center justify-center rounded-xl bg-white px-8 py-4 font-bold shadow-sm">
-            <FontAwesome size={22} name="apple" />
-            <Text className="ml-4 font-nunito-sans text-xl">Sign in with </Text>
-            <Text className="font-nunito-sans text-xl">Apple</Text>
-          </View>
-        </TouchableOpacity>
+        <SingInWithGoogleButton />
+        <SignInWithApple />
       </View>
     </View>
   );
 }
 
-function useAuthProviders() {
-  const { startOAuthFlow: googleOAuthFlow } = useOAuth({
+WebBrowser.maybeCompleteAuthSession();
+function SingInWithGoogleButton() {
+  useWarmUpBrowser();
+
+  const { startOAuthFlow } = useOAuth({
     strategy: "oauth_google",
   });
-  const { startOAuthFlow: appleOAuthFlow } = useOAuth({
-    strategy: "oauth_apple",
-  });
 
-  const onGooglePress = React.useCallback(async () => {
+  const onPress = useCallback(async () => {
     try {
-      const { createdSessionId, setActive } = await googleOAuthFlow({});
+      const { createdSessionId, setActive } = await startOAuthFlow();
+
       if (createdSessionId && setActive) {
         setActive({ session: createdSessionId });
       } else {
@@ -300,14 +286,34 @@ function useAuthProviders() {
         );
       }
     } catch (err) {
-      console.log(JSON.stringify(err, null, 2));
-      console.log("error signing in", err);
+      console.error("OAuth error", err);
     }
   }, []);
 
-  const onApplePress = React.useCallback(async () => {
+  return (
+    <TouchableOpacity onPress={onPress} className="mb-4 w-full">
+      <View className="flex w-full flex-row items-center justify-center rounded-xl bg-blue-500 px-8 py-4 font-bold shadow-sm">
+        <FontAwesome color="white" size={22} name="google" />
+        <Text className="ml-4 font-nunito-sans text-xl text-white">
+          Sign in with{" "}
+        </Text>
+        <Text className=" font-nunito-sans-bold text-xl text-white">
+          Google
+        </Text>
+      </View>
+    </TouchableOpacity>
+  );
+}
+
+function SignInWithApple() {
+  useWarmUpBrowser();
+
+  const { startOAuthFlow } = useOAuth({ strategy: "oauth_apple" });
+
+  const onPress = useCallback(async () => {
     try {
-      const { createdSessionId, setActive } = await appleOAuthFlow({});
+      const { createdSessionId, setActive } = await startOAuthFlow();
+
       if (createdSessionId && setActive) {
         setActive({ session: createdSessionId });
       } else {
@@ -316,13 +322,17 @@ function useAuthProviders() {
         );
       }
     } catch (err) {
-      console.log(JSON.stringify(err, null, 2));
-      console.log("error signing in", err);
+      console.error("OAuth error", err);
     }
   }, []);
 
-  return {
-    onGooglePress,
-    onApplePress,
-  };
+  return (
+    <TouchableOpacity onPress={onPress} className="w-full">
+      <View className="flex w-full flex-row items-center justify-center rounded-xl bg-white px-8 py-4 font-bold shadow-sm">
+        <FontAwesome size={22} name="apple" />
+        <Text className="ml-4 font-nunito-sans text-xl">Sign in with </Text>
+        <Text className="font-nunito-sans text-xl">Apple</Text>
+      </View>
+    </TouchableOpacity>
+  );
 }
