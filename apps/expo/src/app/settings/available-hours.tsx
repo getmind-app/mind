@@ -153,7 +153,7 @@ function DaySelector({
 }) {
   function onPress(day: WeekDay) {
     return function () {
-      if (selectedDays.some((d) => d === day)) {
+      if (selectedDays.includes(day)) {
         const newDays = [...selectedDays].filter((d) => d !== day);
         setSelectedDays(newDays);
       } else {
