@@ -251,7 +251,7 @@ function SignInScreen() {
         Let us help. Focus on connecting.
       </Text>
       <View className="flex w-full gap-y-8 px-8">
-        <View className="flex items-center justify-center pt-8">
+        <View className="flex items-center justify-center pb-12 pt-8">
           <Image
             alt=""
             source={require("../../assets/login_mind.png")}
