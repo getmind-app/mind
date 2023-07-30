@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useUser } from "@clerk/clerk-expo";
 import { groupBy } from "lodash-es";
 import { DateTime } from "luxon";
@@ -8,9 +8,7 @@ import { useForm } from "react-hook-form";
 import { CardSkeleton } from "../../components/CardSkeleton";
 import { FormDateInput } from "../../components/FormDateInput";
 import { api } from "../../utils/api";
-import { type Hour } from ".prisma/client";
-
-type Days = "monday" | "tuesday" | "thursday" | "wednesday" | "friday";
+import { type Hour, type WeekDay } from ".prisma/client";
 
 export default function AvailableHours() {
   const { user } = useUser();
@@ -71,12 +69,12 @@ export default function AvailableHours() {
 }
 
 function AddHours() {
-  const [selectedDays, setSelectedDays] = useState<Days[]>([]);
+  const [selectedDays, setSelectedDays] = useState<WeekDay[]>([]);
   const [showStartHourPicker, setShowStartHourPicker] = useState(false);
   const [showEndHourPicker, setShowEndHourPicker] = useState(false);
   const x = useForm({
     defaultValues: {
-      days: [] as Days[],
+      days: [] as WeekDay[],
       startHour: DateTime.now()
         .set({
           hour: 9,
@@ -150,10 +148,10 @@ function DaySelector({
   selectedDays,
   setSelectedDays,
 }: {
-  selectedDays: Days[];
-  setSelectedDays: React.Dispatch<React.SetStateAction<Days[]>>;
+  selectedDays: WeekDay[];
+  setSelectedDays: React.Dispatch<React.SetStateAction<WeekDay[]>>;
 }) {
-  function onPress(day: Days) {
+  function onPress(day: WeekDay) {
     return function () {
       if (selectedDays.some((d) => d === day)) {
         const newDays = [...selectedDays].filter((d) => d !== day);
@@ -175,28 +173,28 @@ function DaySelector({
       }}
     >
       <DayToSelect
-        day={"monday"}
-        selected={selectedDays.includes("monday")}
+        day={"MONDAY"}
+        selected={selectedDays.includes("MONDAY")}
         onPress={onPress}
       />
       <DayToSelect
-        day={"tuesday"}
-        selected={selectedDays.includes("tuesday")}
+        day={"TUESDAY"}
+        selected={selectedDays.includes("TUESDAY")}
         onPress={onPress}
       />
       <DayToSelect
-        day={"wednesday"}
-        selected={selectedDays.includes("wednesday")}
+        day={"WEDNESDAY"}
+        selected={selectedDays.includes("WEDNESDAY")}
         onPress={onPress}
       />
       <DayToSelect
-        day={"thursday"}
-        selected={selectedDays.includes("thursday")}
+        day={"THURSDAY"}
+        selected={selectedDays.includes("THURSDAY")}
         onPress={onPress}
       />
       <DayToSelect
-        day={"friday"}
-        selected={selectedDays.includes("friday")}
+        day={"FRIDAY"}
+        selected={selectedDays.includes("FRIDAY")}
         onPress={onPress}
       />
     </View>
@@ -208,9 +206,9 @@ function DayToSelect({
   selected,
   onPress,
 }: {
-  day: Days;
+  day: WeekDay;
   selected: boolean;
-  onPress: (day: Days) => () => void;
+  onPress: (day: WeekDay) => () => void;
 }) {
   return (
     <Text
