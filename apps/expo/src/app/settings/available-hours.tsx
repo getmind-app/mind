@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useUser } from "@clerk/clerk-expo";
 import { groupBy } from "lodash-es";
@@ -9,6 +9,10 @@ import { CardSkeleton } from "../../components/CardSkeleton";
 import { FormDateInput } from "../../components/FormDateInput";
 import { api } from "../../utils/api";
 import { type Hour, type WeekDay } from ".prisma/client";
+
+function getHourFromISO(date: Date): string {
+  return DateTime.fromISO(date.toISOString()).toFormat("HH");
+}
 
 export default function AvailableHours() {
   const { user } = useUser();
@@ -69,10 +73,17 @@ export default function AvailableHours() {
 }
 
 function AddHours() {
+  const utils = api.useContext();
   const [selectedDays, setSelectedDays] = useState<WeekDay[]>([]);
   const [showStartHourPicker, setShowStartHourPicker] = useState(false);
   const [showEndHourPicker, setShowEndHourPicker] = useState(false);
-  const x = useForm({
+  const setTherapistHours = api.therapists.setAvailableHours.useMutation({
+    onSuccess() {
+      utils.therapists.findByUserId.invalidate();
+    },
+  });
+
+  const { control, handleSubmit, setValue } = useForm({
     defaultValues: {
       days: [] as WeekDay[],
       startHour: DateTime.now()
@@ -90,6 +101,20 @@ function AddHours() {
     },
   });
 
+  // this is an ugly workaround, ideally we wouldn't need selectedDays
+  // and would just pass down the form value "days" to DaySelector
+  useEffect(() => {
+    setValue("days", selectedDays);
+  }, [selectedDays, setValue]);
+
+  const onSubmit = handleSubmit((values) => {
+    setTherapistHours.mutate({
+      days: values.days,
+      startHour: parseInt(getHourFromISO(values.startHour)),
+      endHour: parseInt(getHourFromISO(values.endHour)),
+    });
+  });
+
   return (
     <View
       className="w-full rounded-xl bg-white px-6 py-4"
@@ -102,24 +127,19 @@ function AddHours() {
         selectedDays={selectedDays}
         setSelectedDays={setSelectedDays}
       />
-
       <FormDateInput
-        control={x.control}
+        control={control}
         handleChange={() => setShowStartHourPicker(false)}
         onValuePress={() => setShowStartHourPicker(true)}
         name="startHour"
         show={showStartHourPicker}
         title="Start Hour:"
         mode="time"
-        valueDisplayFunction={(date) =>
-          DateTime.fromISO(date.toISOString()).toFormat("HH:00")
-        }
+        valueDisplayFunction={(date) => `${getHourFromISO(date)}:00`}
       />
       <FormDateInput
-        control={x.control}
-        valueDisplayFunction={(date) =>
-          DateTime.fromISO(date.toISOString()).toFormat("HH:00")
-        }
+        control={control}
+        valueDisplayFunction={(date) => `${getHourFromISO(date)}:00`}
         handleChange={() => setShowEndHourPicker(false)}
         onValuePress={() => setShowEndHourPicker(true)}
         name="endHour"
@@ -127,7 +147,7 @@ function AddHours() {
         title="End Hour:"
         mode="time"
       />
-      <TouchableOpacity className="w-full" onPress={() => {}}>
+      <TouchableOpacity className="w-full" onPress={onSubmit}>
         <View
           className={`flex w-full items-center justify-center rounded-xl bg-blue-500 py-2`}
         >
