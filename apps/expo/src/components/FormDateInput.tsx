@@ -11,6 +11,7 @@ import {
 import { formatISODate } from "../helpers/formatISODate";
 
 type DatePickerProps = Parameters<typeof DateTimePicker>["0"];
+
 type FormDateProps = {
   title: string;
   show: boolean;
@@ -29,6 +30,8 @@ export function FormDateInput<
   name,
   handleChange,
   error,
+  mode = "date",
+  valueDisplayFunction = formatISODate,
   ...otherProps
 }: FormDateProps &
   Omit<DatePickerProps, "value"> & {
@@ -39,6 +42,8 @@ export function FormDateInput<
       "valueAsNumber" | "valueAsDate" | "setValueAs" | "disabled"
     >;
     error?: string;
+    valueDisplayFunction: (date: Date) => string;
+    mode: "date" | "time";
   }) {
   return (
     <Controller
@@ -51,7 +56,7 @@ export function FormDateInput<
               {title}
             </Text>
             <View
-              className={`flex flex-row items-center rounded border border-transparent px-2 ${
+              className={`flex flex-row items-center rounded border border-off-white px-2 ${
                 fieldState.error?.message ? "border-red-600" : ""
               }`}
             >
@@ -59,7 +64,7 @@ export function FormDateInput<
                 onPress={onValuePress}
                 className={`flex h-10 w-full flex-row items-center justify-center  font-nunito-sans text-xl`}
               >
-                {formatISODate(value)}
+                {value ? valueDisplayFunction(value) : "Select a value"}
               </Text>
             </View>
             {fieldState.error?.message ? (
@@ -72,6 +77,7 @@ export function FormDateInput<
             <DateTimePicker
               {...otherProps}
               display="default"
+              mode={mode}
               style={{
                 width: 110,
                 height: 50,

@@ -16,7 +16,7 @@ export const TextInput = ({
     <View className="gap-2 py-3">
       <Text className="font-nunito-sans text-lg text-slate-700">{title}</Text>
       <View
-        className={`flex flex-row items-center rounded border border-transparent px-2 ${
+        className={`flex flex-row items-center rounded border border-off-white  px-2 ${
           error ? "border-red-600" : ""
         }`}
       >

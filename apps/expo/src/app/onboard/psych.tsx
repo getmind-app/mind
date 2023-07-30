@@ -18,11 +18,7 @@ import { z } from "zod";
 import { FormCurrencyInput } from "../../components/FormCurrencyInput";
 import { FormDateInput } from "../../components/FormDateInput";
 import { FormTextInput } from "../../components/FormTextInput";
-import { formatISODate } from "../../helpers/formatISODate";
 import { api } from "../../utils/api";
-
-// maximumDate={DateTime.local().minus({ years: 18 }).toJSDate()}
-//               minimumDate={DateTime.local(1900).toJSDate()}
 
 const schema = z.object({
   document: z
@@ -69,7 +65,7 @@ export default function OnboardPsychScreen() {
   const {
     control,
     handleSubmit,
-    formState: { isValid, errors },
+    formState: { isValid },
   } = useForm({
     defaultValues: {
       name: "",
@@ -83,7 +79,6 @@ export default function OnboardPsychScreen() {
     resolver: zodResolver(schema),
   });
   const onSubmit = handleSubmit((data) => {
-    console.log("dale");
     mutate({
       ...data,
       userId: String(user?.id),
@@ -97,7 +92,7 @@ export default function OnboardPsychScreen() {
 
   const { mutate, isLoading } = api.therapists.create.useMutation({
     onSuccess: () => {
-      router.push("/"); // TODO: acredito que aqui teriamos que fazer mais validaçoes
+      router.push("/settings/available-hours");
     },
   });
 
