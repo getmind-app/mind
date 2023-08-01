@@ -79,4 +79,23 @@ export const appointmentsRouter = createTRPCRouter({
         },
       });
     }),
+  update: protectedProcedure
+    .input(
+      z.object({
+        id: z.string().min(1),
+        scheduledTo: z.date(),
+        modality: z.enum(["ONLINE", "ON_SITE"]),
+        isPaid: z.boolean(),
+        therapistId: z.string().min(1),
+        userId: z.string().min(1),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      return await ctx.prisma.appointment.update({
+        where: {
+          id: input.id,
+        },
+        data: input,
+      });
+    }),
 });

@@ -71,7 +71,7 @@ model Appointment {
     scheduledAt DateTime  @default(now())
     modality    Modality
     link        String?
-    isPayed     Boolean   @default(false)
+    isPaid      Boolean   @default(false)
     userId      String
     therapistId String
     therapist   Therapist @relation(fields: [therapistId], references: [id], onDelete: Cascade)

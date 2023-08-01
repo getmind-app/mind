@@ -26,7 +26,12 @@ export default function AvailableHours() {
     userId: String(user.id),
   });
 
-  if (!data || isLoading) return <CardSkeleton />;
+  if (!data || isLoading)
+    return (
+      <View className="mx-4 mt-12">
+        <CardSkeleton />
+      </View>
+    );
 
   const groupedHours = groupBy(data.hours, "weekDay");
 
@@ -42,7 +47,7 @@ export default function AvailableHours() {
         <View
           className={`rounded-lg ${
             addHours ? "mb-2 bg-gray-200" : "bg-blue-500"
-          } shadow-sm" px-3 py-1`}
+          } shadow-sm" px-3 py-2`}
         >
           <Text
             className={`text-center font-nunito-sans-bold text-base ${
@@ -54,20 +59,22 @@ export default function AvailableHours() {
         </View>
       </TouchableOpacity>
       {addHours ? <AddHours /> : null}
-      {Object.entries(groupedHours).map(([weekDay, hours]) => (
-        <View key={weekDay} className="gap-2 pb-4">
-          <Text className="font-nunito-sans text-xl">
-            {capitalizeWeekDay(weekDay)}
-          </Text>
-          <View className="flex flex-row rounded-xl bg-white px-6 py-4 align-middle shadow-sm">
-            <ScrollView horizontal={true}>
-              {hours.map((hour: Hour) => (
-                <HourButton key={hour.id} {...hour} />
-              ))}
-            </ScrollView>
+      <ScrollView className="pt-4">
+        {Object.entries(groupedHours).map(([weekDay, hours]) => (
+          <View key={weekDay} className="gap-2 pb-4">
+            <Text className="font-nunito-sans text-xl">
+              {capitalizeWeekDay(weekDay)}
+            </Text>
+            <View className="flex flex-row rounded-xl bg-white p-4 align-middle shadow-sm">
+              <ScrollView horizontal={true}>
+                {hours.map((hour: Hour) => (
+                  <HourButton key={hour.id} {...hour} />
+                ))}
+              </ScrollView>
+            </View>
           </View>
-        </View>
-      ))}
+        ))}
+      </ScrollView>
     </View>
   );
 }
@@ -117,7 +124,7 @@ function AddHours() {
 
   return (
     <View
-      className="w-full rounded-xl bg-white px-6 py-4"
+      className="mt-4 w-full rounded-xl bg-white px-6 py-4 shadow-sm"
       style={{
         flex: 1,
         maxHeight: 340,

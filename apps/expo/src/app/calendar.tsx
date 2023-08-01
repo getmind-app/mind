@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import {
   Image,
+  LayoutAnimation,
+  Pressable,
   RefreshControl,
   ScrollView,
   Text,
@@ -9,7 +11,7 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
-import { FontAwesome } from "@expo/vector-icons";
+import { Feather, FontAwesome } from "@expo/vector-icons";
 
 import { CardSkeleton } from "../components/CardSkeleton";
 import { api } from "../utils/api";
@@ -57,58 +59,24 @@ function Appointments({
   isLoading: boolean;
 }) {
   const router = useRouter();
+  const { user } = useUser();
+
+  LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 
   if (isLoading) return <CardSkeleton />;
 
-  return data && data.length > 0 ? (
-    <>
-      {data.map((appointment) => (
-        <View
-          key={appointment.id}
-          className="my-2 rounded-xl bg-white p-6 shadow-sm"
-        >
-          <View className="flex flex-row justify-between">
-            <View className="flex flex-col">
-              <Text className="font-nunito-sans text-xl">
-                {new Intl.DateTimeFormat("en", { weekday: "long" }).format(
-                  new Date(appointment.scheduledTo),
-                )}
-                , {new Date(appointment.scheduledTo).getDate()}/
-                {new Date(appointment.scheduledTo).getMonth() + 1}
-              </Text>
-              <View className="flex flex-row">
-                <Text className="font-nunito-sans text-sm text-slate-500">
-                  with{"  "}
-                </Text>
-                <Image
-                  className="rounded-full"
-                  alt={`${appointment.therapist.name}'s profile picture`}
-                  source={{
-                    uri: appointment.therapist.profilePictureUrl,
-                    width: 20,
-                    height: 20,
-                  }}
-                />
-                <Text className="font-nunito-sans text-sm text-slate-500">
-                  {"  "}
-                  {appointment.modality === "ONLINE"
-                    ? "via Google Meet"
-                    : "in person"}
-                </Text>
-              </View>
-            </View>
-            <View className="flex flex-col">
-              <Text className="font-nunito-sans-bold text-xl text-blue-500 ">
-                {new Date(appointment.scheduledTo).getHours()}:
-                {new Date(appointment.scheduledTo).getMinutes() == 0
-                  ? "00"
-                  : new Date(appointment.scheduledTo).getMinutes()}
-              </Text>
-            </View>
-          </View>
-        </View>
-      ))}
-    </>
+  return (data && data.length) > 0 ? (
+    <View>
+      {data.map((appoinment) =>
+        user ? (
+          <AppointmentCard
+            key={appoinment.id}
+            appointment={appoinment}
+            metadata={user.publicMetadata}
+          />
+        ) : null,
+      )}
+    </View>
   ) : (
     <View className="mt-4 rounded-xl bg-white shadow-sm">
       <View className="px-6 pt-6">
@@ -125,6 +93,107 @@ function Appointments({
           </Text>
         </View>
       </TouchableOpacity>
+    </View>
+  );
+}
+
+function AppointmentCard({
+  appointment,
+  metadata,
+}: {
+  appointment: Appointment & { therapist: Therapist };
+  metadata: UserPublicMetadata;
+}) {
+  const [open, setOpen] = useState<boolean>(false);
+  const [isPaid, setIsPaid] = useState<boolean>(appointment.isPaid as boolean); // why?
+
+  console.log(isPaid);
+
+  const { mutate } = api.appointments.update.useMutation({});
+
+  const handlePaymentConfirmation = () => {
+    mutate({
+      id: appointment.id,
+      scheduledTo: appointment.scheduledTo,
+      modality: appointment.modality,
+      isPaid: isPaid,
+      therapistId: appointment.therapistId,
+      userId: appointment.userId,
+    });
+  };
+
+  return (
+    <View
+      key={appointment.id}
+      className="my-2 rounded-xl bg-white p-6 shadow-sm"
+    >
+      <View className="flex flex-row justify-between">
+        <View className="flex flex-col gap-1">
+          <Text className="font-nunito-sans text-xl">
+            {new Intl.DateTimeFormat("en", { weekday: "long" }).format(
+              new Date(appointment.scheduledTo),
+            )}
+            , {new Date(appointment.scheduledTo).getDate()}/
+            {new Date(appointment.scheduledTo).getMonth() + 1}
+          </Text>
+          <View className="flex flex-row">
+            <Text className="font-nunito-sans text-sm text-slate-500">
+              with{"  "}
+            </Text>
+            <Image
+              className="rounded-full"
+              alt={`${appointment.therapist.name}'s profile picture`}
+              source={{
+                uri: appointment.therapist.profilePictureUrl,
+                width: 20,
+                height: 20,
+              }}
+            />
+            <Text className="font-nunito-sans text-sm text-slate-500">
+              {"  "}
+              {appointment.modality === "ONLINE"
+                ? "via Google Meet"
+                : "in person"}
+            </Text>
+          </View>
+        </View>
+        <View className="flex flex-row gap-2">
+          <Text className="font-nunito-sans-bold text-xl text-blue-500 ">
+            {new Date(appointment.scheduledTo).getHours()}:
+            {new Date(appointment.scheduledTo).getMinutes() == 0
+              ? "00"
+              : new Date(appointment.scheduledTo).getMinutes()}
+          </Text>
+          {metadata && metadata.role == "professional" ? (
+            <Pressable onPress={() => setOpen(!open)}>
+              {open ? (
+                <Feather size={24} name="chevron-up" />
+              ) : (
+                <Feather size={24} name="chevron-down" />
+              )}
+            </Pressable>
+          ) : null}
+        </View>
+      </View>
+      {open ? (
+        <View className="flex flex-row items-center pt-4 align-middle">
+          <Text className="text-base">The patient paid?</Text>
+          <View className="pl-2">
+            <Pressable
+              onPress={() => {
+                setIsPaid(!isPaid);
+                handlePaymentConfirmation();
+              }}
+            >
+              {isPaid ? (
+                <Feather size={24} name="check-circle" color="green" />
+              ) : (
+                <Feather size={24} name="x-circle" color="red" />
+              )}
+            </Pressable>
+          </View>
+        </View>
+      ) : null}
     </View>
   );
 }
