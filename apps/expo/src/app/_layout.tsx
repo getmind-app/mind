@@ -36,8 +36,6 @@ import { LogoSvg } from "../components/LogoSvg";
 import { useWarmUpBrowser } from "../hooks/useWarmUpBrowser";
 import { TRPCProvider } from "../utils/api";
 
-type tabBarStyle = Animated.WithAnimatedValue<StyleProp<ViewStyle>>;
-
 const tokenCache = {
   getToken(key: string) {
     try {
@@ -114,15 +112,13 @@ const RootLayout = () => {
     >
       <TRPCProvider>
         <SafeAreaProvider>
-          <>
-            <SignedIn>
-              <TabsRouter />
-              <StatusBar translucent />
-            </SignedIn>
-            <SignedOut>
-              <SignInScreen />
-            </SignedOut>
-          </>
+          <SignedIn>
+            <TabsRouter />
+            <StatusBar translucent />
+          </SignedIn>
+          <SignedOut>
+            <SignInScreen />
+          </SignedOut>
         </SafeAreaProvider>
       </TRPCProvider>
     </ClerkProvider>
