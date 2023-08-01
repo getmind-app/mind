@@ -124,7 +124,7 @@ function AddHours() {
 
     return (
         <View
-            className="w-full rounded-xl bg-white px-6 py-4"
+            className="mt-4 w-full rounded-xl bg-white px-6 py-4 shadow-sm"
             style={{
                 flex: 1,
                 maxHeight: 340,

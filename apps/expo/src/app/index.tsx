@@ -12,6 +12,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 
 import { CardSkeleton } from "../components/CardSkeleton";
+import DefaultCard from "../components/DefaultCard";
 import { api } from "../utils/api";
 
 export default function Index() {
@@ -145,7 +146,7 @@ function NextAppointment() {
                             if (data.modality === "ON_SITE") {
                                 Linking.openURL("https://maps.google.com/");
                             } else if (data.modality === "ONLINE") {
-                                Linking.openURL("https://meet.google.com/");
+                                Linking.openURL(data.link || "No link found");
                             } else {
                                 throw new Error("Invalid modality");
                             }
@@ -170,28 +171,7 @@ function NextAppointment() {
                     </TouchableOpacity>
                 </View>
             ) : (
-                <View className="mt-4 rounded-xl bg-white shadow-sm">
-                    <View className="px-6 pt-6">
-                        <Text className="font-nunito-sans text-xl">
-                            Nothing for now!
-                        </Text>
-                        <Text className="font-nunito-sans text-sm text-slate-500">
-                            Search for you new therapist
-                        </Text>
-                    </View>
-                    <TouchableOpacity onPress={() => router.push("/search")}>
-                        <View className="mt-6 flex w-full flex-row items-center justify-center rounded-bl-xl rounded-br-xl bg-blue-500 py-3 align-middle">
-                            <FontAwesome
-                                size={16}
-                                color="white"
-                                name="search"
-                            />
-                            <Text className="ml-4 font-nunito-sans-bold text-lg text-white">
-                                Therapists
-                            </Text>
-                        </View>
-                    </TouchableOpacity>
-                </View>
+                <DefaultCard />
             )}
         </>
     );

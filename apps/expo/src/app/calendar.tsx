@@ -9,12 +9,12 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
-import { Circle } from "react-native-svg";
 import { useRouter } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
 import { Feather, FontAwesome } from "@expo/vector-icons";
 
 import { CardSkeleton } from "../components/CardSkeleton";
+import DefaultCard from "../components/DefaultCard";
 import { api } from "../utils/api";
 import {
     type Appointment,
@@ -67,7 +67,6 @@ function Appointments({
     data: (Appointment & { therapist: Therapist })[];
     isLoading: boolean;
 }) {
-    const router = useRouter();
     const { user } = useUser();
 
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -87,24 +86,7 @@ function Appointments({
             )}
         </View>
     ) : (
-        <View className="mt-4 rounded-xl bg-white shadow-sm">
-            <View className="px-6 pt-6">
-                <Text className="font-nunito-sans text-xl">
-                    Nothing for now!
-                </Text>
-                <Text className="font-nunito-sans text-sm text-slate-500">
-                    Search for you new therapist
-                </Text>
-            </View>
-            <TouchableOpacity onPress={() => router.push("/search")}>
-                <View className="mt-6 flex w-full flex-row items-center justify-center rounded-bl-xl rounded-br-xl bg-blue-500 py-3 align-middle">
-                    <FontAwesome size={16} color="white" name="search" />
-                    <Text className="ml-4 font-nunito-sans-bold text-lg text-white">
-                        Therapists
-                    </Text>
-                </View>
-            </TouchableOpacity>
-        </View>
+        <DefaultCard />
     );
 }
 
@@ -153,19 +135,30 @@ function AppointmentCard({
                         </Text>
                     </View>
                 </View>
-                <View className="flex flex-row gap-2">
+                <View className="flex flex-col items-center gap-4">
                     <Text className="font-nunito-sans-bold text-xl text-blue-500 ">
                         {new Date(appointment.scheduledTo).getHours()}:
                         {new Date(appointment.scheduledTo).getMinutes() == 0
                             ? "00"
                             : new Date(appointment.scheduledTo).getMinutes()}
                     </Text>
-                    {metadata && metadata.role == "professional" ? (
+                    {(metadata &&
+                        metadata.role == "professional" &&
+                        appointment.status == "PENDENT") ||
+                    appointment.status == "ACCEPTED" ? (
                         <Pressable onPress={() => setOpen(!open)}>
                             {open ? (
-                                <Feather size={24} name="chevron-up" />
+                                <Feather
+                                    size={24}
+                                    color="#64748b"
+                                    name="chevron-up"
+                                />
                             ) : (
-                                <Feather size={24} name="chevron-down" />
+                                <Feather
+                                    size={24}
+                                    color="#64748b"
+                                    name="chevron-down"
+                                />
                             )}
                         </Pressable>
                     ) : null}
