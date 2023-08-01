@@ -66,15 +66,16 @@ model Address {
 }
 
 model Appointment {
-    id          String    @id @default(cuid())
+    id          String            @id @default(cuid())
     scheduledTo DateTime
-    scheduledAt DateTime  @default(now())
+    scheduledAt DateTime          @default(now())
     modality    Modality
+    status      AppointmentStatus @default(PENDENT)
     link        String?
-    isPaid      Boolean   @default(false)
+    isPaid      Boolean           @default(false)
     userId      String
     therapistId String
-    therapist   Therapist @relation(fields: [therapistId], references: [id], onDelete: Cascade)
+    therapist   Therapist         @relation(fields: [therapistId], references: [id], onDelete: Cascade)
 }
 
 model Hour {
@@ -88,6 +89,13 @@ model Hour {
 enum Modality {
     ONLINE
     ON_SITE
+}
+
+enum AppointmentStatus {
+    PENDENT
+    ACCEPTED
+    REJECTED
+    CANCELED
 }
 
 enum WeekDay {
