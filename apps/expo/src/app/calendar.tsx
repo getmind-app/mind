@@ -9,6 +9,7 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
+import { Circle } from "react-native-svg";
 import { useRouter } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
 import { Feather, FontAwesome } from "@expo/vector-icons";
@@ -241,9 +242,7 @@ function SessionConfirmation({
 }) {
     const { mutate } = api.appointments.update.useMutation({});
 
-    const { refetch } = api.appointments.findByUserId.useQuery({
-        userId: String(appointment.userId),
-    });
+    const utils = api.useContext();
 
     const handleSessionConfirmation = async (newStatus: AppointmentStatus) => {
         mutate({
@@ -256,9 +255,7 @@ function SessionConfirmation({
             userId: appointment.userId,
         });
 
-        // invalidate the query to refetch the data
-        // but its not working as expected
-        await refetch();
+        await utils.appointments.findByUserId.invalidate();
     };
 
     return (
@@ -292,7 +289,7 @@ function Status({ status }: { status: AppointmentStatus }) {
     const getStatusColor = (status: AppointmentStatus) => {
         switch (status) {
             case "ACCEPTED":
-                return "text-green-400";
+                return "text-green-600";
             case "PENDENT":
                 return "text-yellow-400";
             case "REJECTED" || "CANCELED":
@@ -302,11 +299,32 @@ function Status({ status }: { status: AppointmentStatus }) {
         }
     };
 
+    // awful approach
+
+    const getCircleColor = (status: AppointmentStatus) => {
+        switch (status) {
+            case "ACCEPTED":
+                return "green";
+            case "PENDENT":
+                return "yellow";
+            case "REJECTED" || "CANCELED":
+                return "red";
+            default:
+                return "blue";
+        }
+    };
+
     const textColor = getStatusColor(status);
+    const circleColor = getCircleColor(status);
 
     return (
-        <Text className={`${textColor} pl-1 font-nunito-sans-bold text-base`}>
-            {status}
-        </Text>
+        <View className="flex flex-row items-center pl-1 align-middle">
+            <FontAwesome size={12} name="circle" color={circleColor} />
+            <Text
+                className={`${textColor} pl-2 font-nunito-sans-bold text-base`}
+            >
+                {status}
+            </Text>
+        </View>
     );
 }

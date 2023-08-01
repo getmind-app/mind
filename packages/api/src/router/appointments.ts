@@ -22,6 +22,9 @@ export const appointmentsRouter = createTRPCRouter({
                 scheduledTo: {
                     gte: new Date(),
                 },
+                status: {
+                    not: "CANCELED" || "REJECTED" || "PENDENT",
+                },
             },
             include: {
                 therapist: {
