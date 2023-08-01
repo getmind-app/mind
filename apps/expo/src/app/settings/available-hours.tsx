@@ -59,20 +59,22 @@ export default function AvailableHours() {
                 </View>
             </TouchableOpacity>
             {addHours ? <AddHours /> : null}
-            {Object.entries(groupedHours).map(([weekDay, hours]) => (
-                <View key={weekDay} className="gap-2 pb-4">
-                    <Text className="font-nunito-sans text-xl">
-                        {capitalizeWeekDay(weekDay)}
-                    </Text>
-                    <View className="flex flex-row rounded-xl bg-white px-6 py-4 align-middle shadow-sm">
-                        <ScrollView horizontal={true}>
-                            {hours.map((hour: Hour) => (
-                                <HourButton key={hour.id} {...hour} />
-                            ))}
-                        </ScrollView>
+            <ScrollView className="pt-4">
+                {Object.entries(groupedHours).map(([weekDay, hours]) => (
+                    <View key={weekDay} className="gap-2 pb-4">
+                        <Text className="font-nunito-sans text-xl">
+                            {capitalizeWeekDay(weekDay)}
+                        </Text>
+                        <View className="flex flex-row rounded-xl bg-white p-4 align-middle shadow-sm">
+                            <ScrollView horizontal={true}>
+                                {hours.map((hour: Hour) => (
+                                    <HourButton key={hour.id} {...hour} />
+                                ))}
+                            </ScrollView>
+                        </View>
                     </View>
-                </View>
-            ))}
+                ))}
+            </ScrollView>
         </View>
     );
 }
