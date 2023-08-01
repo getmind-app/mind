@@ -3,9 +3,9 @@ import { ExpoRoot, SplashScreen } from "expo-router";
 
 SplashScreen.preventAutoHideAsync();
 export function App() {
-  const ctx = require.context("./src/app");
+    const ctx = require.context("./src/app");
 
-  return <ExpoRoot context={ctx} />;
+    return <ExpoRoot context={ctx} />;
 }
 
 registerRootComponent(App);
