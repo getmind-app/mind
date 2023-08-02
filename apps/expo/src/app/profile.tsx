@@ -9,9 +9,6 @@ export default function UserProfileScreen() {
     const router = useRouter();
     const { user, signOut } = useClerk();
     const { mutateAsync } = api.users.clearMetadata.useMutation({});
-    const { data } = api.therapists.findByUserId.useQuery({
-        userId: String(user?.id),
-    });
 
     async function clearUserMetaData(): Promise<void> {
         console.log("Clearing user metadata");
@@ -34,9 +31,9 @@ export default function UserProfileScreen() {
                 />
                 <View className="flex flex-col">
                     <View>
-                        {data?.name && (
+                        {user?.firstName && (
                             <Text className="font-nunito-sans-bold text-3xl">
-                                {data.name}
+                                {user?.firstName}
                             </Text>
                         )}
                     </View>

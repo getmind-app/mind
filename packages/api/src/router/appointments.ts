@@ -40,25 +40,19 @@ export const appointmentsRouter = createTRPCRouter({
 
         return foundAppointment;
     }),
-    findByUserId: protectedProcedure
-        .input(
-            z.object({
-                userId: z.string().min(1),
-            }),
-        )
-        .query(async ({ ctx, input }) => {
-            return await ctx.prisma.appointment.findMany({
-                where: {
-                    userId: input.userId,
-                },
-                include: {
-                    therapist: true,
-                },
-                orderBy: {
-                    scheduledTo: "desc",
-                },
-            });
-        }),
+    findByUserId: protectedProcedure.query(async ({ ctx }) => {
+        return await ctx.prisma.appointment.findMany({
+            where: {
+                userId: ctx.auth.userId,
+            },
+            include: {
+                therapist: true,
+            },
+            orderBy: {
+                scheduledTo: "desc",
+            },
+        });
+    }),
     findById: protectedProcedure
         .input(
             z.object({
@@ -72,6 +66,25 @@ export const appointmentsRouter = createTRPCRouter({
                 },
                 include: {
                     therapist: true,
+                },
+            });
+        }),
+    findByTherapistId: protectedProcedure
+        .input(
+            z.object({
+                therapistId: z.string().min(1),
+            }),
+        )
+        .query(async ({ ctx, input }) => {
+            return await ctx.prisma.appointment.findMany({
+                where: {
+                    therapistId: input.therapistId,
+                },
+                include: {
+                    therapist: true,
+                },
+                orderBy: {
+                    scheduledTo: "desc",
                 },
             });
         }),

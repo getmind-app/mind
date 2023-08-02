@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 
 import { CardSkeleton } from "../../components/CardSkeleton";
 import { FormDateInput } from "../../components/FormDateInput";
+import { Header } from "../../components/Header";
 import { api } from "../../utils/api";
 import { type Hour, type WeekDay } from ".prisma/client";
 
@@ -36,46 +37,49 @@ export default function AvailableHours() {
     const groupedHours = groupBy(data.hours, "weekDay");
 
     return (
-        <View className="h-full bg-off-white px-4 pt-12">
-            <Text className="pt-12 font-nunito-sans-bold text-3xl">
-                Available hours
-            </Text>
-            <Text className="pb-4 font-nunito-sans text-base text-slate-500">
-                Set available hours for your appointments.
-            </Text>
-            <TouchableOpacity onPress={() => setAddHours(!addHours)}>
-                <View
-                    className={`rounded-lg ${
-                        addHours ? "mb-2 bg-gray-200" : "bg-blue-500"
-                    } shadow-sm" px-3 py-2`}
-                >
-                    <Text
-                        className={`text-center font-nunito-sans-bold text-base ${
-                            addHours ? "text-black" : "text-white"
-                        }`}
+        <>
+            <Header />
+            <View className="bg-off-white px-4 pt-4">
+                <Text className="font-nunito-sans-bold text-3xl">
+                    Available hours
+                </Text>
+                <Text className="pb-4 font-nunito-sans text-base text-slate-500">
+                    Set available hours for your appointments.
+                </Text>
+                <TouchableOpacity onPress={() => setAddHours(!addHours)}>
+                    <View
+                        className={`rounded-lg ${
+                            addHours ? "mb-2 bg-gray-200" : "bg-blue-500"
+                        } shadow-sm" px-3 py-2`}
                     >
-                        Add Hours
-                    </Text>
-                </View>
-            </TouchableOpacity>
-            {addHours ? <AddHours /> : null}
-            <ScrollView className="pt-4">
-                {Object.entries(groupedHours).map(([weekDay, hours]) => (
-                    <View key={weekDay} className="gap-2 pb-4">
-                        <Text className="font-nunito-sans text-xl">
-                            {capitalizeWeekDay(weekDay)}
+                        <Text
+                            className={`text-center font-nunito-sans-bold text-base ${
+                                addHours ? "text-black" : "text-white"
+                            }`}
+                        >
+                            Add Hours
                         </Text>
-                        <View className="flex flex-row rounded-xl bg-white p-4 align-middle shadow-sm">
-                            <ScrollView horizontal={true}>
-                                {hours.map((hour: Hour) => (
-                                    <HourButton key={hour.id} {...hour} />
-                                ))}
-                            </ScrollView>
-                        </View>
                     </View>
-                ))}
-            </ScrollView>
-        </View>
+                </TouchableOpacity>
+                {addHours ? <AddHours /> : null}
+                <ScrollView className="pt-4">
+                    {Object.entries(groupedHours).map(([weekDay, hours]) => (
+                        <View key={weekDay} className="gap-2 pb-4">
+                            <Text className="font-nunito-sans text-xl">
+                                {capitalizeWeekDay(weekDay)}
+                            </Text>
+                            <View className="flex flex-row rounded-xl bg-white p-4 align-middle shadow-sm">
+                                <ScrollView horizontal={true}>
+                                    {hours.map((hour: Hour) => (
+                                        <HourButton key={hour.id} {...hour} />
+                                    ))}
+                                </ScrollView>
+                            </View>
+                        </View>
+                    ))}
+                </ScrollView>
+            </View>
+        </>
     );
 }
 

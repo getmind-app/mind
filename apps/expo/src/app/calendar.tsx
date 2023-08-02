@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react";
 import {
+    Alert,
     Image,
     LayoutAnimation,
+    Modal,
     Pressable,
     RefreshControl,
     ScrollView,
     Text,
     TouchableOpacity,
+    TouchableWithoutFeedback,
     View,
 } from "react-native";
-import { useRouter } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
 import { Feather, FontAwesome } from "@expo/vector-icons";
 
@@ -25,11 +27,30 @@ import {
 export default function CalendarScreen() {
     const [refreshing, setRefreshing] = useState(false);
     const { user } = useUser();
-    const { data, isLoading, refetch } = api.appointments.findByUserId.useQuery(
-        {
-            userId: String(user?.id),
-        },
-    );
+    let appointments: (Appointment & { therapist: Therapist })[] = [];
+    let loading = false;
+    let refetchAppointments: () => void;
+
+    // probably commiting a crime here
+    if (user?.publicMetadata.role == "professional") {
+        const { data: therapist } = api.therapists.findByUserId.useQuery();
+
+        const { data, isLoading, refetch } =
+            api.appointments.findByTherapistId.useQuery({
+                therapistId: String(therapist?.id),
+            });
+
+        appointments = data ? data : [];
+        loading = isLoading;
+        refetchAppointments = refetch;
+    } else {
+        const { data, isLoading, refetch } =
+            api.appointments.findByUserId.useQuery();
+
+        appointments = data ? data : [];
+        loading = isLoading;
+        refetchAppointments = refetch;
+    }
 
     const onRefresh = () => {
         setRefreshing(true);
@@ -40,9 +61,9 @@ export default function CalendarScreen() {
 
     useEffect(() => {
         if (refreshing) {
-            refetch();
+            refetchAppointments();
         }
-    }, [refreshing, refetch]);
+    }, [refreshing]);
 
     return (
         <ScrollView
@@ -55,7 +76,7 @@ export default function CalendarScreen() {
             <Text className="pt-12 font-nunito-sans-bold text-3xl">
                 Calendar
             </Text>
-            <Appointments data={data ? data : []} isLoading={isLoading} />
+            <Appointments data={appointments} isLoading={loading} />
         </ScrollView>
     );
 }
@@ -98,6 +119,12 @@ function AppointmentCard({
     metadata: UserPublicMetadata;
 }) {
     const [open, setOpen] = useState<boolean>(false);
+    const { user } = useUser();
+
+    // Search for patient's profile picture if the user is a professional
+    const { data } = api.users.findByUserId.useQuery({
+        userId: String(appointment.userId),
+    });
 
     return (
         <View
@@ -122,7 +149,11 @@ function AppointmentCard({
                             className="rounded-full"
                             alt={`${appointment.therapist.name}'s profile picture`}
                             source={{
-                                uri: appointment.therapist.profilePictureUrl,
+                                uri:
+                                    user?.publicMetadata.role == "professional"
+                                        ? data?.profileImageUrl
+                                        : appointment.therapist
+                                              .profilePictureUrl,
                                 width: 20,
                                 height: 20,
                             }}
@@ -142,10 +173,10 @@ function AppointmentCard({
                             ? "00"
                             : new Date(appointment.scheduledTo).getMinutes()}
                     </Text>
-                    {(metadata &&
-                        metadata.role == "professional" &&
-                        appointment.status == "PENDENT") ||
-                    appointment.status == "ACCEPTED" ? (
+                    {(appointment.status == "PENDENT" &&
+                        metadata.role == "professional") ||
+                    (appointment.status == "ACCEPTED" &&
+                        isMoreThan24HoursLater(appointment.scheduledTo)) ? (
                         <Pressable onPress={() => setOpen(!open)}>
                             {open ? (
                                 <Feather
@@ -164,7 +195,15 @@ function AppointmentCard({
                     ) : null}
                 </View>
             </View>
-            {open ? <TherapistOptions appointment={appointment} /> : null}
+            {open ? (
+                <>
+                    {metadata.role == "professional" ? (
+                        <TherapistOptions appointment={appointment} />
+                    ) : (
+                        <PatientOptions appointment={appointment} />
+                    )}
+                </>
+            ) : null}
         </View>
     );
 }
@@ -184,6 +223,17 @@ function TherapistOptions({
             ) : null}
         </View>
     );
+}
+
+function PatientOptions({
+    appointment,
+}: {
+    appointment: Appointment & { therapist: Therapist };
+}) {
+    return appointment.status === "ACCEPTED" &&
+        isMoreThan24HoursLater(appointment.scheduledTo) ? (
+        <SessionCancel appointment={appointment} />
+    ) : null;
 }
 
 function PaymentConfirmation({
@@ -278,6 +328,71 @@ function SessionConfirmation({
     );
 }
 
+function SessionCancel({
+    appointment,
+}: {
+    appointment: Appointment & { therapist: Therapist };
+}) {
+    const { mutate } = api.appointments.update.useMutation({});
+    const [modalVisible, setModalVisible] = useState(false);
+
+    const handleSessionCancel = () => {
+        mutate({
+            id: appointment.id,
+            scheduledTo: appointment.scheduledTo,
+            modality: appointment.modality,
+            status: "CANCELED",
+            isPaid: appointment.isPaid,
+            therapistId: appointment.therapistId,
+            userId: appointment.userId,
+        });
+    };
+
+    // TODO: make modal a component, prettify it and add some transparency to the background (bg-opacity-x does not work idk why)
+    return (
+        <>
+            <Modal animationType="fade" transparent visible={modalVisible}>
+                <TouchableWithoutFeedback
+                    onPress={() => setModalVisible(false)}
+                >
+                    <View className="flex h-full flex-col items-center justify-center bg-off-white align-middle">
+                        <View className="w-72 items-center gap-4 rounded-lg bg-white px-6 py-4 align-middle shadow-sm">
+                            <Text className="font-nunito-sans-bold text-2xl">
+                                Are you sure?
+                            </Text>
+                            <Pressable
+                                className="rounded-lg bg-red-400 "
+                                onPress={() => {
+                                    handleSessionCancel();
+                                    setModalVisible(false);
+                                }}
+                            >
+                                <Text className="px-6 py-3 text-center font-nunito-sans-bold text-lg text-white">
+                                    Cancel
+                                </Text>
+                            </Pressable>
+                        </View>
+                    </View>
+                </TouchableWithoutFeedback>
+            </Modal>
+            <View className="flex flex-row items-center pt-4 align-middle">
+                <Text className="text-base">Cancel the session?</Text>
+                <View className="pl-3">
+                    <TouchableOpacity
+                        onPress={() => {
+                            setModalVisible(true);
+                        }}
+                    >
+                        <View className="rounded-lg bg-red-400 shadow-sm">
+                            <Text className="px-3 py-2 text-white">Yes</Text>
+                        </View>
+                    </TouchableOpacity>
+                </View>
+            </View>
+        </>
+    );
+}
+
 function Status({ status }: { status: AppointmentStatus }) {
     const getStatusColor = (status: AppointmentStatus) => {
         switch (status) {
@@ -320,4 +435,19 @@ function Status({ status }: { status: AppointmentStatus }) {
             </Text>
         </View>
     );
+}
+
+function isMoreThan24HoursLater(dateToCheck: string | Date): boolean {
+    // Get the current date
+    const currentDate = new Date();
+
+    // Get the date to compare with
+    const targetDate = new Date(dateToCheck);
+
+    // Calculate the difference in hours between the two dates
+    const timeDifferenceInHours =
+        (targetDate.getTime() - currentDate.getTime()) / (1000 * 60 * 60);
+
+    // Compare the time difference with 24 hours
+    return timeDifferenceInHours > 24;
 }

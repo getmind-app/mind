@@ -7,7 +7,6 @@ export default function SettingsLayout() {
                 name="available-hours"
                 options={{
                     title: "Available hours",
-                    headerShown: false,
                 }}
             />
         </Stack>
