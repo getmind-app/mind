@@ -12,7 +12,7 @@ import { useUser } from "@clerk/clerk-expo";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { cpf } from "cpf-cnpj-validator";
 import { DateTime } from "luxon";
-import { useForm } from "react-hook-form";
+import { Control, FieldValues, useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { FormCurrencyInput } from "../../components/FormCurrencyInput";
@@ -144,18 +144,21 @@ export default function OnboardPsychScreen() {
                             name="document"
                             title="📃 Document (CPF)"
                             placeholder="123.456.789-01"
+                            mask="999.999.999-99"
                             inputMode="numeric"
                         />
                         <FormTextInput
                             control={control}
                             name="crp"
                             title="🧠 CRP"
-                            placeholder="02/43243"
+                            placeholder="01/23456"
+                            mask="99/999999"
                             inputMode="numeric"
                         />
                         <FormTextInput
                             title="🗣️ Experience"
                             placeholder="2"
+                            mask="99"
                             unit="years"
                             control={control}
                             name="yearsOfExperience"

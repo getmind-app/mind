@@ -12,6 +12,7 @@ import { TextInput, type TextInputProps } from "./TextInput";
 export function FormTextInput<
     TFieldValues extends FieldValues = FieldValues,
     TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
+    T extends string | undefined = undefined,
 >({
     control,
     name,
@@ -36,7 +37,6 @@ export function FormTextInput<
                 <TextInput
                     error={fieldState.error?.message}
                     value={value}
-                    onChangeText={onChange}
                     onBlur={onBlur}
                     {...otherProps}
                 />

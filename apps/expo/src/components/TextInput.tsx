@@ -1,17 +1,27 @@
 import { TextInput as NativeTextInput, Text, View } from "react-native";
+import {
+    MaskedTextInput,
+    type MaskedTextInputProps,
+} from "react-native-mask-text";
 
-export type TextInputProps = NativeTextInput["props"] & {
-    title: string;
-    unit?: string;
-    error?: string;
-};
+export type TextInputProps = Parameters<typeof TextInput>[0];
 
-export const TextInput = ({
+export function TextInput<T extends string>({
     title,
     unit,
     error,
+    mask,
+    onChangeText,
     ...otherProps
-}: TextInputProps) => {
+}: {
+    title: string;
+    unit?: string;
+    error?: string;
+    mask?: T;
+    onChangeText?: T extends string
+        ? MaskedTextInputProps["onChangeText"]
+        : NativeTextInput["props"]["onChangeText"];
+} & Omit<NativeTextInput["props"], "onChangeText">) {
     return (
         <View className="gap-2 py-3">
             <Text className="font-nunito-sans text-lg text-slate-700">
@@ -22,12 +32,23 @@ export const TextInput = ({
                     error ? "border-red-600" : ""
                 }`}
             >
-                <NativeTextInput
-                    className={`h-10 ${
-                        unit ? "" : "w-full"
-                    } flex flex-row items-center justify-center  font-nunito-sans text-xl`}
-                    {...otherProps}
-                />
+                {mask ? (
+                    <MaskedTextInput
+                        mask={mask}
+                        onChangeText={onChangeText}
+                        {...otherProps}
+                    />
+                ) : (
+                    <NativeTextInput
+                        // TODO: remover as any
+                        onChangeText={onChangeText as any}
+                        className={`h-10 ${
+                            unit ? "" : "w-full"
+                        } flex flex-row items-center justify-center  font-nunito-sans text-xl`}
+                        {...otherProps}
+                    />
+                )}
+
                 {unit ? (
                     <Text className="ml-2 font-nunito-sans text-xl">
                         {unit}
@@ -41,4 +62,4 @@ export const TextInput = ({
             ) : null}
         </View>
     );
-};
+}

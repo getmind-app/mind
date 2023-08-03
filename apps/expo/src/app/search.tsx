@@ -13,7 +13,7 @@ import { ProfileSkeleton } from "../components/ProfileSkeleton";
 import { api } from "../utils/api";
 
 export default function SearchScreen() {
-    const [search, setSearch] = useState<string>("");
+    const [search, setSearch] = useState("");
 
     return (
         <View className="h-full bg-off-white px-4 pt-12">
