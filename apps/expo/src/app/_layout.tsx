@@ -3,6 +3,7 @@ import { Image, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import Constants from "expo-constants";
 import { loadAsync } from "expo-font";
+import { useLocales, type Locale } from "expo-localization";
 import { SplashScreen, Tabs, useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { StatusBar } from "expo-status-bar";
@@ -22,6 +23,7 @@ import {
 import AntDesign from "@expo/vector-icons/AntDesign";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { FormattedMessage, IntlProvider } from "react-intl";
 
 import { LogoSvg } from "../components/LogoSvg";
 import { useWarmUpBrowser } from "../hooks/useWarmUpBrowser";
@@ -63,9 +65,15 @@ function TabBarIconWrapper({
     );
 }
 
+function langImport(locale: Locale["languageTag"]) {
+    return import(`../../lang/${locale}.json`);
+}
+
 const RootLayout = () => {
     // https://docs.expo.dev/archive/classic-updates/preloading-and-caching-assets/#pre-loading-and-caching-assets
     const [appIsReady, setAppIsReady] = useState(false);
+    const [messages, setMessages] = useState<Record<string, string>>({});
+    const locale = useLocales()[0];
 
     const [fontsLoaded] = useFonts({
         "Nunito-Sans": NunitoSans_400Regular,
@@ -90,6 +98,12 @@ const RootLayout = () => {
                 SplashScreen.hideAsync();
             }
         })();
+        (async function getMessagesBasedOnLocale() {
+            if (locale) {
+                const messages = await langImport(locale.languageTag);
+                setMessages(messages);
+            }
+        });
     }, []);
 
     if (!fontsLoaded || !appIsReady) {
@@ -103,17 +117,28 @@ const RootLayout = () => {
             }
             tokenCache={tokenCache}
         >
-            <TRPCProvider>
-                <SafeAreaProvider>
-                    <SignedIn>
-                        <TabsRouter />
-                        <StatusBar translucent />
-                    </SignedIn>
-                    <SignedOut>
-                        <SignInScreen />
-                    </SignedOut>
-                </SafeAreaProvider>
-            </TRPCProvider>
+            <IntlProvider
+                messages={messages}
+                locale={locale?.languageTag ?? "en"}
+                defaultLocale="en"
+            >
+                <TRPCProvider>
+                    <SafeAreaProvider>
+                        <SignedIn>
+                            <TabsRouter />
+                            <StatusBar translucent />
+                        </SignedIn>
+                        <SignedOut>
+                            <FormattedMessage
+                                description={"Today's date"}
+                                defaultMessage="Today is {ts, date, ::yyyyMMdd}"
+                                values={{ ts: Date.now() }}
+                            />
+                            <SignInScreen />
+                        </SignedOut>
+                    </SafeAreaProvider>
+                </TRPCProvider>
+            </IntlProvider>
         </ClerkProvider>
     );
 };
