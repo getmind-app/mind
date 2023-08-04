@@ -1,41 +1,41 @@
 {
-    "name": "create-t3-turbo",
-    "private": true,
-    "engines": {
-        "node": ">=v18.15.0"
-    },
-    "packageManager": "pnpm@8.1.1",
-    "scripts": {
-        "build": "turbo build",
-        "clean": "git clean -xdf node_modules",
-        "clean:workspaces": "turbo clean",
-        "db:generate": "turbo db:generate",
-        "db:push": "turbo db:push db:generate",
-        "dev:android": "turbo dev:android --parallel",
-        "dev:ios": "turbo dev:ios --parallel",
-        "format": "prettier --write \"**/*.{js,cjs,mjs,ts,tsx,md,json}\" --ignore-path .gitignore",
-        "lint": "turbo lint && manypkg check",
-        "lint:fix": "turbo lint:fix && manypkg fix",
-        "type-check": "turbo type-check"
-    },
-    "dependencies": {
-        "@acme/eslint-config": "^0.1.0",
-        "@acme/expo": "^0.1.0",
-        "@expo-google-fonts/nunito-sans": "^0.2.3",
-        "@expo/webpack-config": "^18.0.4",
-        "@ianvs/prettier-plugin-sort-imports": "^3.7.2",
-        "@manypkg/cli": "^0.20.0",
-        "@types/prettier": "^2.7.2",
-        "eslint": "^8.37.0",
-        "expo-asset": "~8.9.1",
-        "expo-font": "~11.1.1",
-        "expo-splash-screen": "~0.18.1",
-        "lodash-es": "^4.17.21",
-        "prettier": "^2.8.7",
-        "prettier-plugin-tailwindcss": "^0.2.6",
-        "react-icons": "^4.10.1",
-        "react-native-web": "~0.18.12",
-        "turbo": "^1.8.8",
-        "typescript": "^5.0.3"
-    }
+  "name": "create-t3-turbo",
+  "private": true,
+  "engines": {
+    "node": ">=v18.15.0"
+  },
+  "packageManager": "pnpm@8.1.1",
+  "scripts": {
+    "build": "turbo build",
+    "clean": "git clean -xdf node_modules",
+    "clean:workspaces": "turbo clean",
+    "db:generate": "turbo db:generate",
+    "db:push": "turbo db:push db:generate",
+    "dev:android": "turbo dev:android --parallel",
+    "dev:ios": "turbo dev:ios --parallel",
+    "format": "prettier --write \"**/*.{js,cjs,mjs,ts,tsx,md,json}\" --ignore-path .gitignore",
+    "lint": "turbo lint && manypkg check",
+    "lint:fix": "turbo lint:fix && manypkg fix",
+    "type-check": "turbo type-check"
+  },
+  "dependencies": {
+    "@acme/eslint-config": "^0.1.0",
+    "@acme/expo": "^0.1.0",
+    "@expo-google-fonts/nunito-sans": "^0.2.3",
+    "@expo/webpack-config": "^18.0.4",
+    "@ianvs/prettier-plugin-sort-imports": "^3.7.2",
+    "@manypkg/cli": "^0.20.0",
+    "@types/prettier": "^2.7.2",
+    "eslint": "^8.37.0",
+    "expo-asset": "~8.9.1",
+    "expo-font": "~11.1.1",
+    "expo-splash-screen": "~0.18.1",
+    "lodash-es": "^4.17.21",
+    "prettier": "^2.8.7",
+    "prettier-plugin-tailwindcss": "^0.2.6",
+    "react-icons": "^4.10.1",
+    "react-native-web": "~0.18.12",
+    "turbo": "^1.8.8",
+    "typescript": "^5.0.3"
+  }
 }

@@ -1,6 +1,0 @@
-{
-  "EZyvgg": {
-    "defaultMessage": "Today is {ts, date, ::yyyyMMdd}",
-    "description": "Today's date"
-  }
-}
