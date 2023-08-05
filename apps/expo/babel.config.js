@@ -11,6 +11,7 @@ module.exports = function (api) {
             "nativewind/babel",
             require.resolve("expo-router/babel"),
             "react-native-reanimated/plugin",
+            "macros",
         ],
         presets: ["babel-preset-expo"],
     };

@@ -22,6 +22,7 @@ import {
 import AntDesign from "@expo/vector-icons/AntDesign";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { Trans } from "@lingui/macro";
 
 import { LogoSvg } from "../components/LogoSvg";
 import { useWarmUpBrowser } from "../hooks/useWarmUpBrowser";
@@ -237,7 +238,9 @@ function SignInScreen() {
             <View className="relative bottom-12 right-4">
                 <LogoSvg />
             </View>
-            <Text className="pt-4 font-nunito-sans text-3xl">Welcome</Text>
+            <Text className="pt-4 font-nunito-sans text-3xl">
+                <Trans> Welcome</Trans>
+            </Text>
             <Text className="font-nunito-sans text-base text-gray-500">
                 Let us help. Focus on connecting.
             </Text>
