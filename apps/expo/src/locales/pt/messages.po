@@ -13,6 +13,59 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: src/app/_layout.tsx:242
+#: src/app/index.tsx:171
+msgid "Get directions"
+msgstr "Ver rota"
+
+#: src/app/index.tsx:104
+msgid "in person at <0>335 Pioneer Way</0>"
+msgstr "pessoalmente em <0>335 Pioneer Way</0>"
+
+#: src/app/index.tsx:170
+msgid "Join the meeting"
+msgstr "Entrar na reunião"
+
+#: src/app/index.tsx:55
+msgid "Last notes"
+msgstr "Últimas notas"
+
+#: src/app/_layout.tsx:256
+msgid "Let us help. Focus on connecting."
+msgstr "Foque na conversa. Nós cuidamos do resto."
+
+#: src/app/index.tsx:60
+msgid "New"
+msgstr "Nova"
+
+#: src/app/index.tsx:50
+msgid "Next session"
+msgstr "Próxima sessão"
+
+#: src/app/index.tsx:243
+msgid "Notes are a tool for helping you track your progress"
+msgstr "Notas te ajudam a acompanhar o seu progresso"
+
+#: src/components/DefaultCard.tsx:13
+msgid "Nothing for now!"
+msgstr "Nenhuma sessão agendada"
+
+#: src/components/DefaultCard.tsx:16
+msgid "Search for you new therapist"
+msgstr "Encontre seu novo terapeuta"
+
+#: src/app/_layout.tsx:271
+#: src/app/_layout.tsx:282
+msgid "Sign in with"
+msgstr "Acessar com"
+
+#: src/components/DefaultCard.tsx:23
+msgid "Therapists"
+msgstr "Terapeutas"
+
+#: src/app/_layout.tsx:253
 msgid "Welcome"
 msgstr "Bem-vindo"
+
+#: src/app/index.tsx:240
+msgid "You have no notes"
+msgstr "Você não tem notas"

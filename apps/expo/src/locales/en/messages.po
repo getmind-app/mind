@@ -13,6 +13,59 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: src/app/_layout.tsx:242
+#: src/app/index.tsx:171
+msgid "Get directions"
+msgstr "Get directions"
+
+#: src/app/index.tsx:104
+msgid "in person at <0>335 Pioneer Way</0>"
+msgstr "in person at <0>335 Pioneer Way</0>"
+
+#: src/app/index.tsx:170
+msgid "Join the meeting"
+msgstr "Join the meeting"
+
+#: src/app/index.tsx:55
+msgid "Last notes"
+msgstr "Last notes"
+
+#: src/app/_layout.tsx:256
+msgid "Let us help. Focus on connecting."
+msgstr "Let us help. Focus on connecting."
+
+#: src/app/index.tsx:60
+msgid "New"
+msgstr "New"
+
+#: src/app/index.tsx:50
+msgid "Next session"
+msgstr "Next session"
+
+#: src/app/index.tsx:243
+msgid "Notes are a tool for helping you track your progress"
+msgstr "Notes are a tool for helping you track your progress"
+
+#: src/components/DefaultCard.tsx:13
+msgid "Nothing for now!"
+msgstr "Nothing for now!"
+
+#: src/components/DefaultCard.tsx:16
+msgid "Search for you new therapist"
+msgstr "Search for you new therapist"
+
+#: src/app/_layout.tsx:271
+#: src/app/_layout.tsx:282
+msgid "Sign in with"
+msgstr "Sign in with"
+
+#: src/components/DefaultCard.tsx:23
+msgid "Therapists"
+msgstr "Therapists"
+
+#: src/app/_layout.tsx:253
 msgid "Welcome"
 msgstr "Welcome"
+
+#: src/app/index.tsx:240
+msgid "You have no notes"
+msgstr "You have no notes"

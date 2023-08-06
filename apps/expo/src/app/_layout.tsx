@@ -1,12 +1,12 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import Constants from "expo-constants";
 import { loadAsync } from "expo-font";
+import { getLocales } from "expo-localization";
 import { SplashScreen, Tabs, useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { StatusBar } from "expo-status-bar";
-import * as WebBrowser from "expo-web-browser";
 import {
     ClerkProvider,
     SignedIn,
@@ -22,11 +22,20 @@ import {
 import AntDesign from "@expo/vector-icons/AntDesign";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { i18n } from "@lingui/core";
 import { Trans } from "@lingui/macro";
+import { I18nProvider } from "@lingui/react";
 
+import { messages as enMessages } from "../../src/locales/en/messages";
+import { messages as ptMessages } from "../../src/locales/pt/messages";
 import { LogoSvg } from "../components/LogoSvg";
-import { useWarmUpBrowser } from "../hooks/useWarmUpBrowser";
 import { TRPCProvider } from "../utils/api";
+
+i18n.load({
+    en: enMessages,
+    pt: ptMessages,
+});
+i18n.activate(getLocales()[0]?.languageCode as string);
 
 const tokenCache = {
     getToken(key: string) {
@@ -106,13 +115,15 @@ const RootLayout = () => {
         >
             <TRPCProvider>
                 <SafeAreaProvider>
-                    <SignedIn>
-                        <TabsRouter />
-                        <StatusBar translucent />
-                    </SignedIn>
-                    <SignedOut>
-                        <SignInScreen />
-                    </SignedOut>
+                    <I18nProvider i18n={i18n}>
+                        <SignedIn>
+                            <TabsRouter />
+                            <StatusBar translucent />
+                        </SignedIn>
+                        <SignedOut>
+                            <SignInScreen />
+                        </SignedOut>
+                    </I18nProvider>
                 </SafeAreaProvider>
             </TRPCProvider>
         </ClerkProvider>
@@ -239,10 +250,10 @@ function SignInScreen() {
                 <LogoSvg />
             </View>
             <Text className="pt-4 font-nunito-sans text-3xl">
-                <Trans> Welcome</Trans>
+                <Trans>Welcome</Trans>
             </Text>
             <Text className="font-nunito-sans text-base text-gray-500">
-                Let us help. Focus on connecting.
+                <Trans>Let us help. Focus on connecting.</Trans>
             </Text>
             <View className="flex w-full gap-y-4 px-8">
                 <View className="flex items-center justify-center pt-8">
@@ -257,9 +268,9 @@ function SignInScreen() {
                     <View className="mt-8  flex w-full flex-row items-center justify-center rounded-xl bg-blue-500 px-8 py-4 font-bold shadow-sm">
                         <FontAwesome color="white" size={22} name="google" />
                         <Text className="ml-4 font-nunito-sans text-xl text-white">
-                            Sign in with{" "}
+                            <Trans>Sign in with</Trans>{" "}
                         </Text>
-                        <Text className=" font-nunito-sans-bold text-xl text-white">
+                        <Text className="font-nunito-sans-bold text-xl text-white">
                             Google
                         </Text>
                     </View>
@@ -268,7 +279,7 @@ function SignInScreen() {
                     <View className="flex w-full flex-row items-center justify-center rounded-xl bg-white px-8 py-4 font-bold shadow-sm">
                         <FontAwesome size={22} name="apple" />
                         <Text className="ml-4 font-nunito-sans text-xl">
-                            Sign in with{" "}
+                            <Trans>Sign in with</Trans>{" "}
                         </Text>
                         <Text className="font-nunito-sans text-xl">Apple</Text>
                     </View>
