@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import {
-    Alert,
     Image,
     LayoutAnimation,
     Modal,
@@ -160,6 +159,7 @@ function AppointmentCard({
                         />
                         <Text className="font-nunito-sans text-sm text-slate-500">
                             {"  "}
+                            {appointment.therapist.name}{" "}
                             {appointment.modality === "ONLINE"
                                 ? "via Google Meet"
                                 : "in person"}
