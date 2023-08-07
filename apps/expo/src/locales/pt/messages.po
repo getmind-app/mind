@@ -25,6 +25,10 @@ msgstr "pessoalmente em <0>335 Pioneer Way</0>"
 msgid "Join the meeting"
 msgstr "Entrar na reunião"
 
+#: src/app/onboard/index.tsx:64
+msgid "just want to talk"
+msgstr "só conversar"
+
 #: src/app/index.tsx:55
 msgid "Last notes"
 msgstr "Últimas notas"
@@ -33,9 +37,25 @@ msgstr "Últimas notas"
 msgid "Let us help. Focus on connecting."
 msgstr "Foque na conversa. Nós cuidamos do resto."
 
+#: src/app/onboard/index.tsx:62
+msgid "Looking for help or"
+msgstr "Procurando ajuda ou"
+
+#: src/app/onboard/index.tsx:103
+msgid "Meet and help"
+msgstr "Conhecer e ajudar"
+
 #: src/app/index.tsx:60
 msgid "New"
 msgstr "Nova"
+
+#: src/app/onboard/index.tsx:105
+msgid "new patients"
+msgstr "novos pacientes"
+
+#: src/app/onboard/index.tsx:128
+msgid "Next"
+msgstr "Próximo"
 
 #: src/app/index.tsx:50
 msgid "Next session"
@@ -48,6 +68,14 @@ msgstr "Notas te ajudam a acompanhar o seu progresso"
 #: src/components/DefaultCard.tsx:13
 msgid "Nothing for now!"
 msgstr "Nenhuma sessão agendada"
+
+#: src/app/onboard/index.tsx:59
+msgid "Patient"
+msgstr "Paciente"
+
+#: src/app/onboard/index.tsx:100
+msgid "Professional"
+msgstr "Profissional"
 
 #: src/components/DefaultCard.tsx:16
 msgid "Search for you new therapist"
@@ -65,6 +93,10 @@ msgstr "Terapeutas"
 #: src/app/_layout.tsx:253
 msgid "Welcome"
 msgstr "Bem-vindo"
+
+#: src/app/onboard/index.tsx:40
+msgid "Who are you?"
+msgstr "Quem é você?"
 
 #: src/app/index.tsx:240
 msgid "You have no notes"

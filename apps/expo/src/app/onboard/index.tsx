@@ -3,6 +3,7 @@ import { Image, Pressable, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
+import { Trans } from "@lingui/macro";
 
 import { api } from "../../utils/api";
 
@@ -36,7 +37,7 @@ export default function ChooseRole() {
         <SafeAreaView className="flex-1 flex-wrap items-center justify-center">
             <View className="flex w-full gap-y-4 px-4">
                 <Text className="mb-2 px-4 font-nunito-sans text-3xl">
-                    Who are you?
+                    <Trans>Who are you?</Trans>
                 </Text>
                 <View className="items-center">
                     <Pressable
@@ -55,11 +56,12 @@ export default function ChooseRole() {
                             <View className="items-center">
                                 <View className="gap-y-2 px-4 py-10">
                                     <Text className="ml-4 font-nunito-sans text-2xl">
-                                        Patient
+                                        <Trans>Patient</Trans>
                                     </Text>
                                     <Text className="ml-4 font-nunito-sans text-lg text-slate-500">
-                                        Looking for help or{"\n"}just want to
-                                        talk
+                                        <Trans>Looking for help or</Trans>
+                                        {"\n"}
+                                        <Trans>just want to talk</Trans>
                                     </Text>
                                 </View>
                             </View>
@@ -95,10 +97,12 @@ export default function ChooseRole() {
                             <View className="w-3/4 items-center">
                                 <View className="ml-12 gap-y-2 px-4 py-10">
                                     <Text className="font-nunito-sans text-2xl">
-                                        Professional
+                                        <Trans>Professional</Trans>
                                     </Text>
                                     <Text className="font-nunito-sans text-lg text-slate-500">
-                                        Meet and help{"\n"}new patients
+                                        <Trans>Meet and help</Trans>
+                                        {"\n"}
+                                        <Trans>new patients</Trans>
                                     </Text>
                                 </View>
                             </View>
@@ -121,7 +125,7 @@ export default function ChooseRole() {
                                     selectedRole ? "text-white" : "text-black"
                                 }`}
                             >
-                                Next
+                                <Trans>Next</Trans>
                             </Text>
                         </View>
                     </TouchableOpacity>
