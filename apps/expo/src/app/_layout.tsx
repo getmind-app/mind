@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import Constants from "expo-constants";
@@ -6,7 +6,6 @@ import { loadAsync } from "expo-font";
 import { SplashScreen, Tabs, useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { StatusBar } from "expo-status-bar";
-import * as WebBrowser from "expo-web-browser";
 import {
     ClerkProvider,
     SignedIn,
@@ -24,7 +23,6 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 import { LogoSvg } from "../components/LogoSvg";
-import { useWarmUpBrowser } from "../hooks/useWarmUpBrowser";
 import { TRPCProvider } from "../utils/api";
 
 const tokenCache = {
@@ -133,6 +131,9 @@ function TabsRouter() {
     return (
         <Tabs
             screenOptions={{
+                tabBarStyle: {
+                    marginHorizontal: 16,
+                },
                 headerShown: false,
                 tabBarShowLabel: false,
                 tabBarActiveTintColor,
