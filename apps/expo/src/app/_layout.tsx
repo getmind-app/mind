@@ -132,7 +132,7 @@ function TabsRouter() {
         <Tabs
             screenOptions={{
                 tabBarStyle: {
-                    marginHorizontal: 16,
+                    paddingHorizontal: 16,
                 },
                 headerShown: false,
                 tabBarShowLabel: false,
