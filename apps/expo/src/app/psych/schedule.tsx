@@ -411,5 +411,5 @@ function getDaysInCurrentMonth() {
         daysArray.push(day);
     }
 
-    return daysArray;
+    return daysArray.filter((day) => day >= new Date().getDate());
 }
