@@ -8,6 +8,7 @@ import {
     View,
 } from "react-native";
 import { useRouter } from "expo-router";
+import { Trans, t } from "@lingui/macro";
 
 import { ProfileSkeleton } from "../components/ProfileSkeleton";
 import { api } from "../utils/api";
@@ -19,7 +20,7 @@ export default function SearchScreen() {
         <View className="h-full bg-off-white px-4 pt-12">
             <View className="flex flex-col">
                 <Text className="pt-12 font-nunito-sans-bold text-3xl">
-                    Search
+                    <Trans>Search</Trans>
                 </Text>
 
                 <View className="flex flex-row items-center justify-between pt-2 align-middle">
@@ -27,7 +28,7 @@ export default function SearchScreen() {
                         onChangeText={setSearch}
                         autoFocus={false}
                         value={search}
-                        placeholder="Looking for a therapist?"
+                        placeholder={t({ message: "Looking for a therapist?" })}
                         className="font-nunito-sans text-lg"
                     />
                 </View>
@@ -43,7 +44,7 @@ export default function SearchScreen() {
                             source={require("../../assets/login_mind.png")}
                         />
                         <Text className="font-nunito-sans-bold text-xl text-slate-500">
-                            Find your new therapist
+                            <Trans>Find your new therapist</Trans>
                         </Text>
                     </View>
                 )}
@@ -80,7 +81,7 @@ function List({ search }: { search: string }) {
                 >
                     <Image
                         className="rounded-full"
-                        alt={`${name}' profile picture`}
+                        alt={t({ message: `${name}' profile picture` })}
                         source={{
                             uri: profilePictureUrl,
                             width: 48,
@@ -92,7 +93,8 @@ function List({ search }: { search: string }) {
                             {name}
                         </Text>
                         <Text className=" font-nunito-sans text-slate-500">
-                            Psychologist - {crp} {/*TODO: add mask*/}
+                            {/*TODO: add mask*/}
+                            <Trans>Psychologist - {crp}</Trans>
                         </Text>
                     </View>
                 </TouchableOpacity>
@@ -106,7 +108,7 @@ function List({ search }: { search: string }) {
                 source={require("../../assets/login_mind.png")}
             />
             <Text className="font-nunito-sans-bold text-xl text-slate-500">
-                No therapists found!
+                <Trans>No therapists found!</Trans>
             </Text>
         </View>
     );
