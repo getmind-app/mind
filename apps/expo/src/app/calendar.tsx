@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import {
-    Alert,
     Image,
     LayoutAnimation,
     Modal,
@@ -161,9 +160,15 @@ function AppointmentCard({
                         />
                         <Text className="font-nunito-sans text-sm text-slate-500">
                             {"  "}
+                            {appointment.therapist.name}{" "}
                             {appointment.modality === "ONLINE"
                                 ? t({ message: "via Google Meet" })
                                 : t({ message: "in person" })}
+                        </Text>
+                    </View>
+                    <View>
+                        <Text className="pt-2 font-nunito-sans text-base">
+                            {appointment.isPaid ? "Paid" : "Not paid"}
                         </Text>
                     </View>
                 </View>
@@ -197,13 +202,13 @@ function AppointmentCard({
                 </View>
             </View>
             {open ? (
-                <>
+                <View className="mt-2 border-t-2 border-slate-500/10">
                     {metadata.role == "professional" ? (
                         <TherapistOptions appointment={appointment} />
                     ) : (
                         <PatientOptions appointment={appointment} />
                     )}
-                </>
+                </View>
             ) : null}
         </View>
     );
@@ -215,7 +220,7 @@ function TherapistOptions({
     appointment: Appointment & { therapist: Therapist };
 }) {
     return (
-        <View className="flex flex-col gap-2 pl-2 pt-4">
+        <View className="flex flex-col gap-2 pl-2 pt-2">
             {appointment.status === "ACCEPTED" ? (
                 <PaymentConfirmation appointment={appointment} />
             ) : null}
@@ -261,21 +266,25 @@ function PaymentConfirmation({
     return (
         <View className="flex flex-row items-center pt-4 align-middle">
             <Text className="text-base">
-                <Trans>The patient paid?</Trans>
+                <Trans>Check as paid?</Trans>
             </Text>
             <View className="pl-3">
-                <Pressable
+                <TouchableOpacity
                     onPress={() => {
                         setIsPaid(!isPaid);
                         handlePaymentConfirmation();
                     }}
                 >
                     {isPaid ? (
-                        <Feather size={24} name="check-circle" color="green" />
+                        <View className="rounded-lg bg-red-400 shadow-sm">
+                            <Text className="px-3 py-1 text-white">No</Text>
+                        </View>
                     ) : (
-                        <Feather size={24} name="x-circle" color="red" />
+                        <View className="rounded-lg bg-green-400 shadow-sm">
+                            <Text className="px-3 py-1 text-white">Yes</Text>
+                        </View>
                     )}
-                </Pressable>
+                </TouchableOpacity>
             </View>
         </View>
     );

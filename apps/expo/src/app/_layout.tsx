@@ -145,6 +145,9 @@ function TabsRouter() {
     return (
         <Tabs
             screenOptions={{
+                tabBarStyle: {
+                    paddingHorizontal: 16,
+                },
                 headerShown: false,
                 tabBarShowLabel: false,
                 tabBarActiveTintColor,
