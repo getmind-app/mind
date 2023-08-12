@@ -17,6 +17,10 @@ msgstr ""
 msgid "{0}'s Schedule"
 msgstr "{0}'s Schedule"
 
+#: src/app/search.tsx:84
+msgid "{name}' profile picture"
+msgstr "{name}' profile picture"
+
 #: src/app/psych/schedule.tsx:360
 msgid "{therapistName}'s sessions happen at <0>335 Pioneer Way</0>"
 msgstr "{therapistName}'s sessions happen at <0>335 Pioneer Way</0>"
@@ -30,6 +34,14 @@ msgstr "/ week"
 msgid "<0>{0} </0><1/><2>{1}, {2} </2><3>at </3><4>{3}:{4}</4>"
 msgstr "<0>{0} </0><1/><2>{1}, {2} </2><3>at </3><4>{3}:{4}</4>"
 
+#: src/app/profile.tsx:59
+msgid "⚙️  Settings"
+msgstr "⚙️  Settings"
+
+#: src/app/profile.tsx:73
+msgid "❌  Reset user metadata"
+msgstr "❌  Reset user metadata"
+
 #: src/app/onboard/psych.tsx:174
 msgid "💰 Hourly Rate"
 msgstr "💰 Hourly Rate"
@@ -38,9 +50,17 @@ msgstr "💰 Hourly Rate"
 msgid "📃 Document (CPF)"
 msgstr "📃 Document (CPF)"
 
+#: src/app/profile.tsx:66
+msgid "🕰️  Available hours"
+msgstr "🕰️  Available hours"
+
 #: src/app/onboard/psych.tsx:126
 msgid "🖋️ Full Name"
 msgstr "🖋️ Full Name"
+
+#: src/app/profile.tsx:55
+msgid "🗣️  Personal info"
+msgstr "🗣️  Personal info"
 
 #: src/app/onboard/psych.tsx:163
 msgid "🗣️ Experience"
@@ -54,13 +74,45 @@ msgstr "🥳 Birthday"
 msgid "🧠 CRP"
 msgstr "🧠 CRP"
 
+#: src/app/profile.tsx:80
+msgid "🚪  Sign out"
+msgstr "🚪  Sign out"
+
 #: src/app/psych/[id].tsx:166
 msgid "About me"
 msgstr "About me"
 
+#: src/app/calendar.tsx:310
+msgid "Accept the session?"
+msgstr "Accept the session?"
+
+#: src/app/settings/available-hours.tsx:61
+msgid "Add Hours"
+msgstr "Add Hours"
+
 #: src/app/psych/payment.tsx:46
 msgid "Appointments with {0}"
 msgstr "Appointments with {0}"
+
+#: src/app/calendar.tsx:370
+msgid "Are you sure?"
+msgstr "Are you sure?"
+
+#: src/app/settings/available-hours.tsx:45
+msgid "Available hours"
+msgstr "Available hours"
+
+#: src/app/calendar.tsx:78
+msgid "Calendar"
+msgstr "Calendar"
+
+#: src/app/calendar.tsx:380
+msgid "Cancel"
+msgstr "Cancel"
+
+#: src/app/calendar.tsx:389
+msgid "Cancel the session?"
+msgstr "Cancel the session?"
 
 #: src/app/psych/payment.tsx:144
 msgid "Confirm"
@@ -98,6 +150,14 @@ msgstr "Discount"
 msgid "Education"
 msgstr "Education"
 
+#: src/app/settings/available-hours.tsx:159
+msgid "End Hour:"
+msgstr "End Hour:"
+
+#: src/app/search.tsx:47
+msgid "Find your new therapist"
+msgstr "Find your new therapist"
+
 #: src/app/psych/payment.tsx:79
 msgid "First Appointment (10%)"
 msgstr "First Appointment (10%)"
@@ -109,6 +169,10 @@ msgstr "Get directions"
 #: src/app/psych/schedule.tsx:225
 msgid "Hour"
 msgstr "Hour"
+
+#: src/app/calendar.tsx:166
+msgid "in person"
+msgstr "in person"
 
 #: src/app/psych/payment.tsx:11
 msgid "In Person"
@@ -142,6 +206,10 @@ msgstr "Last notes"
 #: src/app/_layout.tsx:256
 msgid "Let us help. Focus on connecting."
 msgstr "Let us help. Focus on connecting."
+
+#: src/app/search.tsx:31
+msgid "Looking for a therapist?"
+msgstr "Looking for a therapist?"
 
 #: src/app/onboard/index.tsx:62
 msgid "Looking for help or"
@@ -196,6 +264,14 @@ msgstr "Next"
 msgid "Next session"
 msgstr "Next session"
 
+#: src/app/calendar.tsx:331
+msgid "No"
+msgstr "No"
+
+#: src/app/search.tsx:111
+msgid "No therapists found!"
+msgstr "No therapists found!"
+
 #: src/app/index.tsx:243
 msgid "Notes are a tool for helping you track your progress"
 msgstr "Notes are a tool for helping you track your progress"
@@ -218,6 +294,7 @@ msgid "Online and on-site"
 msgstr "Online and on-site"
 
 #: src/app/onboard/index.tsx:59
+#: src/app/profile.tsx:45
 msgid "Patient"
 msgstr "Patient"
 
@@ -242,21 +319,46 @@ msgid "Practicing for"
 msgstr "Practicing for"
 
 #: src/app/onboard/index.tsx:100
+#: src/app/profile.tsx:46
 msgid "Professional"
 msgstr "Professional"
+
+#: src/app/search.tsx:97
+msgid "Psychologist - {crp}"
+msgstr "Psychologist - {crp}"
+
+#: src/app/settings/available-hours.tsx:171
+msgid "Save"
+msgstr "Save"
 
 #: src/app/psych/[id].tsx:139
 msgid "Schedule"
 msgstr "Schedule"
 
+#: src/app/search.tsx:23
+msgid "Search"
+msgstr "Search"
+
 #: src/components/DefaultCard.tsx:16
 msgid "Search for you new therapist"
 msgstr "Search for you new therapist"
+
+#: src/app/settings/available-hours.tsx:48
+msgid "Set available hours for your appointments."
+msgstr "Set available hours for your appointments."
 
 #: src/app/_layout.tsx:271
 #: src/app/_layout.tsx:282
 msgid "Sign in with"
 msgstr "Sign in with"
+
+#: src/app/settings/available-hours.tsx:148
+msgid "Start Hour:"
+msgstr "Start Hour:"
+
+#: src/app/calendar.tsx:264
+msgid "The patient paid?"
+msgstr "The patient paid?"
 
 #: src/app/psych/payment.tsx:120
 msgid "The payment will be processed a day before each session."
@@ -283,6 +385,10 @@ msgstr "US$"
 msgid "US$ "
 msgstr "US$ "
 
+#: src/app/calendar.tsx:165
+msgid "via Google Meet"
+msgstr "via Google Meet"
+
 #: src/app/_layout.tsx:253
 msgid "Welcome"
 msgstr "Welcome"
@@ -291,6 +397,10 @@ msgstr "Welcome"
 msgid "Who are you?"
 msgstr "Who are you?"
 
+#: src/app/calendar.tsx:147
+msgid "with"
+msgstr "with"
+
 #: src/app/notes/new.tsx:69
 msgid "Write your note here"
 msgstr "Write your note here"
@@ -298,6 +408,11 @@ msgstr "Write your note here"
 #: src/app/psych/[id].tsx:100
 msgid "years"
 msgstr "years"
+
+#: src/app/calendar.tsx:320
+#: src/app/calendar.tsx:399
+msgid "Yes"
+msgstr "Yes"
 
 #: src/app/psych/payment.tsx:132
 msgid "You can cancel or reschedule your sessions up to 24 hours before."
