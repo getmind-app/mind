@@ -1,13 +1,14 @@
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { FontAwesome5 } from "@expo/vector-icons";
+import { Trans, t } from "@lingui/macro";
 
 import { Header } from "../../components/Header";
 import { api } from "../../utils/api";
 
 function handleMode(x: string) {
-    if (x === "ONLINE") return "Online";
-    if (x === "ON_SITE") return "In Person";
+    if (x === "ONLINE") return t({ message: "Online" });
+    if (x === "ON_SITE") return t({ message: "In Person" });
 }
 
 export default function SessionPayment() {
@@ -34,15 +35,17 @@ export default function SessionPayment() {
             >
                 <View className="relative mt-4 rounded-2xl bg-white p-4 pt-6 shadow-sm">
                     <Text className="mb-4 font-nunito-sans-bold text-2xl">
-                        Your appointment
+                        <Trans>Your appointment</Trans>
                     </Text>
                     <View className="mb-8">
                         <View className="mb-2">
                             <Text className="mb-2 font-nunito-sans text-sm">
-                                Details
+                                <Trans>Details</Trans>
                             </Text>
                             <Text className="mb-2 ml-3 font-nunito-sans text-[#666666]">
-                                Appointments with {data?.therapist.name}
+                                <Trans>
+                                    Appointments with {data?.therapist.name}
+                                </Trans>
                             </Text>
                             <View>
                                 <View className="ml-6 flex flex-row justify-between">
@@ -60,24 +63,25 @@ export default function SessionPayment() {
                                         )}
                                     </Text>
                                     <Text className=" font-nunito-sans text-[#666666]">
-                                        US$ {data?.therapist.hourlyRate}
+                                        {t({ message: "US$" })}{" "}
+                                        {data?.therapist.hourlyRate}
                                     </Text>
                                 </View>
                             </View>
                         </View>
                         <View className="mb-4">
                             <Text className="mb-2 font-nunito-sans text-sm">
-                                Discount
+                                <Trans>Discount</Trans>
                             </Text>
                             <View>
                                 <View className="ml-3 flex flex-row justify-between">
                                     <Text className=" font-nunito-sans text-[#666666]">
-                                        First Appointment (10%)
+                                        <Trans>First Appointment (10%)</Trans>
                                     </Text>
                                     <Text className="font-nunito-sans text-green-500">
                                         {data?.therapist &&
                                         data?.therapist.hourlyRate
-                                            ? "- US$ " +
+                                            ? `- ${t({ message: "US$" })} ` +
                                               data.therapist.hourlyRate * 0.1
                                             : "N/A"}{" "}
                                     </Text>
@@ -86,17 +90,20 @@ export default function SessionPayment() {
                         </View>
 
                         <View className="flex flex-row justify-between ">
-                            <Text className="font-nunito-sans">Total</Text>
+                            <Text className="font-nunito-sans">
+                                <Trans>Total</Trans>
+                            </Text>
                             <Text className="font-nunito-sans">
                                 {data?.therapist && data?.therapist.hourlyRate
-                                    ? "US$ " + data.therapist.hourlyRate * 0.9
+                                    ? t({ message: "US$ " }) +
+                                      data.therapist.hourlyRate * 0.9
                                     : "N/A"}{" "}
                             </Text>
                         </View>
                     </View>
                     <View>
                         <Text className="mb-4 font-nunito-sans-bold text-2xl">
-                            Payment method
+                            <Trans>Payment method</Trans>
                         </Text>
                         <View className="mb-2 flex flex-row items-center rounded-lg bg-[#E9E9E9] px-5 py-4">
                             <View className="flex flex-row items-center">
@@ -110,18 +117,22 @@ export default function SessionPayment() {
                             </View>
                         </View>
                         <Text className="ml-2 font-nunito-sans text-xs text-[#666666]">
-                            The payment will be processed a day before each
-                            session.
+                            <Trans>
+                                The payment will be processed a day before each
+                                session.
+                            </Trans>
                         </Text>
                     </View>
                 </View>
                 <View className="relative mt-4 rounded-2xl bg-off-white p-4">
                     <Text className="mb-1 font-nunito-sans-bold text-2xl">
-                        Confirm sessions
+                        <Trans>Confirm sessions</Trans>
                     </Text>
                     <Text className="mb-6 font-nunito-sans text-xs text-[#666666]">
-                        You can cancel or reschedule your sessions up to 24
-                        hours before.
+                        <Trans>
+                            You can cancel or reschedule your sessions up to 24
+                            hours before.
+                        </Trans>
                     </Text>
                     <TouchableOpacity
                         onPress={handleConfirm}
@@ -130,7 +141,7 @@ export default function SessionPayment() {
                         <Text
                             className={`text-center font-nunito-sans-bold text-base text-white`}
                         >
-                            Confirm
+                            <Trans>Confirm</Trans>
                         </Text>
                     </TouchableOpacity>
                 </View>

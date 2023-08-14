@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useUser } from "@clerk/clerk-expo";
+import { Trans, t } from "@lingui/macro";
 import { groupBy } from "lodash-es";
 import { DateTime } from "luxon";
 import { useForm } from "react-hook-form";
@@ -41,10 +42,10 @@ export default function AvailableHours() {
             <Header />
             <View className="bg-off-white px-4 pt-4">
                 <Text className="font-nunito-sans-bold text-3xl">
-                    Available hours
+                    <Trans>Available hours</Trans>
                 </Text>
                 <Text className="pb-4 font-nunito-sans text-base text-slate-500">
-                    Set available hours for your appointments.
+                    <Trans>Set available hours for your appointments.</Trans>
                 </Text>
                 <TouchableOpacity onPress={() => setAddHours(!addHours)}>
                     <View
@@ -57,7 +58,7 @@ export default function AvailableHours() {
                                 addHours ? "text-black" : "text-white"
                             }`}
                         >
-                            Add Hours
+                            <Trans>Add Hours</Trans>
                         </Text>
                     </View>
                 </TouchableOpacity>
@@ -144,7 +145,7 @@ function AddHours() {
                 onValuePress={() => setShowStartHourPicker(true)}
                 name="startHour"
                 show={showStartHourPicker}
-                title="Start Hour:"
+                title={t({ message: "Start Hour:" })}
                 mode="time"
                 valueDisplayFunction={(date) => `${getHourFromISO(date)}:00`}
             />
@@ -155,7 +156,7 @@ function AddHours() {
                 onValuePress={() => setShowEndHourPicker(true)}
                 name="endHour"
                 show={showEndHourPicker}
-                title="End Hour:"
+                title={t({ message: "End Hour:" })}
                 mode="time"
             />
             <TouchableOpacity className="w-full" onPress={onSubmit}>
@@ -167,7 +168,7 @@ function AddHours() {
                             true ? "text-white" : "text-black"
                         }`}
                     >
-                        Save
+                        <Trans>Save</Trans>
                     </Text>
                 </View>
             </TouchableOpacity>
