@@ -75,12 +75,27 @@ function NextAppointment() {
     const { data, isLoading } =
         api.appointments.findNextUserAppointment.useQuery();
 
+    const address = data.therapist.address;
+
     const geocode = async () => {
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== "granted") {
+            return;
+        }
+
         const location = await Location.geocodeAsync(
-            "335 Pioneer Way, Mountain View, CA 94041",
+            address.street +
+                ", " +
+                address.number +
+                ", " +
+                address.city +
+                ", " +
+                address.state +
+                ", " +
+                address.country,
         );
 
-        return location[0];
+        return `https://www.google.com/maps/search/?api=1&query=${location[0]?.latitude},${location[0]?.longitude}`;
     };
 
     if (isLoading) return <CardSkeleton />;
@@ -111,20 +126,21 @@ function NextAppointment() {
                             ) : (
                                 <Text>
                                     <Trans>
-                                    in person at{" "}
-                                    <TouchableOpacity
-                                        onPress={() =>
-                                            geocode().then((geocode) =>
-                                                Linking.openURL(
-                                                    `https://www.google.com/maps/search/?api=1&query=${geocode?.latitude},${geocode?.longitude}`,
-                                                ),
-                                            )
-                                        }
-                                    >
-                                        <Text className="underline">
-                                            335 Pioneer Way
-                                        </Text>
-                                    </TouchableOpacity>
+                                        in person at{" "}
+                                        <TouchableOpacity
+                                            onPress={() =>
+                                                geocode().then((link) =>
+                                                    Linking.openURL(
+                                                        link ? link : "",
+                                                    ),
+                                                )
+                                            }
+                                        >
+                                            <Text className="underline">
+                                                {address.street},{" "}
+                                                {address.number}
+                                            </Text>
+                                        </TouchableOpacity>
                                     </Trans>
                                 </Text>
                             )}
@@ -166,8 +182,8 @@ function NextAppointment() {
                     <TouchableOpacity
                         onPress={() => {
                             if (data.modality === "ON_SITE") {
-                                Linking.openURL(
-                                    "https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`",
+                                geocode().then((link) =>
+                                    Linking.openURL(link ? link : ""),
                                 );
                             } else if (data.modality === "ONLINE") {
                                 Linking.openURL(data.link || "No link found");

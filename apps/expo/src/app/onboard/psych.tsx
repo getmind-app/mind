@@ -6,12 +6,6 @@ import {
     Text,
     TouchableOpacity,
     View,
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    Text,
-    TouchableOpacity,
-    View,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
@@ -69,39 +63,34 @@ export default function OnboardPsychScreen() {
 
     const [showBirthdayPicker, setShowBirthdayPicker] = useState(false);
 
-      const {
-            control,
-            handleSubmit,
-            formState: { isValid },
-      } = useForm({
-            defaultValues: {
-                  name: "",
-                  birthday: DateTime.local().minus({ years: 18 }).toJSDate(),
-                  document: "",
-                  crp: "",
-                  yearsOfExperience: "",
-                  hourlyRate: "",
-                  formValidated: "",
-            },
-            resolver: zodResolver(schema),
-      });
-      const onSubmit = handleSubmit((data) => {
-            mutate({
-                  ...data,
-                  userId: String(user?.id),
-                  profilePictureUrl: String(user?.imageUrl),
-                  about: "",
-                  dateOfBirth: data.birthday,
-                  yearsOfExperience: parseInt(data.yearsOfExperience),
-                  hourlyRate: parseInt(data.hourlyRate),
-            });
-      });
-
-    const { mutate, isLoading } = api.therapists.create.useMutation({
-        onSuccess: () => {
-            router.push("/settings/available-hours");
+    const {
+        control,
+        handleSubmit,
+        formState: { isValid },
+    } = useForm({
+        defaultValues: {
+            name: "",
+            birthday: DateTime.local().minus({ years: 18 }).toJSDate(),
+            document: "",
+            crp: "",
+            yearsOfExperience: "",
+            hourlyRate: "",
+            formValidated: "",
         },
+        resolver: zodResolver(schema),
     });
+    const onSubmit = handleSubmit((data) => {
+        mutate({
+            ...data,
+            userId: String(user?.id),
+            profilePictureUrl: String(user?.imageUrl),
+            about: "",
+            dateOfBirth: data.birthday,
+            yearsOfExperience: parseInt(data.yearsOfExperience),
+            hourlyRate: parseInt(data.hourlyRate),
+        });
+    });
+
     const { mutate, isLoading } = api.therapists.create.useMutation({
         onSuccess: () => {
             router.push("/settings/available-hours");

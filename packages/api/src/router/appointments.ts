@@ -16,29 +16,59 @@ export const appointmentsRouter = createTRPCRouter({
             return await ctx.prisma.appointment.create({ data: input });
         }),
     findNextUserAppointment: protectedProcedure.query(async ({ ctx }) => {
-        const foundAppointment = await ctx.prisma.appointment.findFirst({
-            where: {
-                userId: ctx.auth.userId,
-                scheduledTo: {
-                    gte: new Date(),
-                },
-                status: {
-                    not: "CANCELED" || "REJECTED" || "PENDENT",
-                },
-            },
-            include: {
-                therapist: {
-                    include: {
-                        address: true,
+        let foundAppointment;
+
+        if (ctx.auth.user?.publicMetadata?.role === "professional") {
+            const therapist = await ctx.prisma.therapist.findFirst({
+                where: { userId: ctx.auth.userId },
+            });
+
+            foundAppointment = await ctx.prisma.appointment.findFirst({
+                where: {
+                    therapist: therapist,
+                    scheduledTo: {
+                        gte: new Date(),
+                    },
+                    status: {
+                        not: "CANCELED" || "REJECTED" || "PENDENT",
                     },
                 },
-            },
-            orderBy: {
-                scheduledTo: "desc",
-            },
-        });
+                include: {
+                    therapist: {
+                        include: {
+                            address: true,
+                        },
+                    },
+                },
+                orderBy: {
+                    scheduledTo: "desc",
+                },
+            });
+        } else {
+            foundAppointment = await ctx.prisma.appointment.findFirst({
+                where: {
+                    userId: ctx.auth.userId,
+                    scheduledTo: {
+                        gte: new Date(),
+                    },
+                    status: {
+                        not: "CANCELED" || "REJECTED" || "PENDENT",
+                    },
+                },
+                include: {
+                    therapist: {
+                        include: {
+                            address: true,
+                        },
+                    },
+                },
+                orderBy: {
+                    scheduledTo: "desc",
+                },
+            });
 
-        return foundAppointment;
+            return foundAppointment;
+        }
     }),
     findByUserId: protectedProcedure.query(async ({ ctx }) => {
         return await ctx.prisma.appointment.findMany({

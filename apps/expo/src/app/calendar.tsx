@@ -143,7 +143,8 @@ function AppointmentCard({
                     </Text>
                     <View className="flex flex-row">
                         <Text className="font-nunito-sans text-sm text-slate-500">
-                            <Trans>with{"  "}</Trans>
+                            <Trans>with</Trans>
+                            {"  "}
                         </Text>
                         <Image
                             className="rounded-full"
