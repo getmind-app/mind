@@ -176,12 +176,12 @@ export default function OnboardPsychScreen() {
                     </ScrollView>
                     <TouchableOpacity className="w-full" onPress={onSubmit}>
                         <View
-                            className={`mt-8 flex w-full items-center justify-center rounded-xl bg-blue-500 py-2`}
+                            className={`mt-8 flex w-full items-center justify-center rounded-xl ${
+                                isValid ? "bg-blue-500" : "bg-blue-200"
+                            } py-2`}
                         >
                             <Text
-                                className={`font-nunito-sans-bold text-lg ${
-                                    isValid ? "text-white" : "text-black"
-                                }`}
+                                className={`font-nunito-sans-bold text-lg text-white`}
                             >
                                 <Trans>Next</Trans>
                             </Text>

@@ -75,13 +75,13 @@ function NextAppointment() {
     const { data, isLoading } =
         api.appointments.findNextUserAppointment.useQuery();
 
-    const address = data.therapist.address;
-
     const geocode = async () => {
         const { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== "granted") {
             return;
         }
+
+        const address = data.therapist.address;
 
         const location = await Location.geocodeAsync(
             address.street +
@@ -137,8 +137,8 @@ function NextAppointment() {
                                             }
                                         >
                                             <Text className="underline">
-                                                {address.street},{" "}
-                                                {address.number}
+                                                {data.therapist.address.street},{" "}
+                                                {data.therapist.address.number}
                                             </Text>
                                         </TouchableOpacity>
                                     </Trans>
