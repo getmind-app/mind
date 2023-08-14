@@ -3,6 +3,7 @@ import { Image, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import Constants from "expo-constants";
 import { loadAsync } from "expo-font";
+import * as Notifications from "expo-notifications";
 import { SplashScreen, Tabs, useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { StatusBar } from "expo-status-bar";
@@ -68,6 +69,14 @@ const RootLayout = () => {
     const [fontsLoaded] = useFonts({
         "Nunito-Sans": NunitoSans_400Regular,
         "Nunito-Sans-Bold": NunitoSans_700Bold,
+    });
+
+    Notifications.setNotificationHandler({
+        handleNotification: async () => ({
+            shouldShowAlert: true,
+            shouldPlaySound: true,
+            shouldSetBadge: true,
+        }),
     });
 
     useEffect(() => {

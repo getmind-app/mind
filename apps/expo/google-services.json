@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "202416674573",
+    "project_id": "mind-2b59e",
+    "storage_bucket": "mind-2b59e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:202416674573:android:3df9f1d3cfbeac25e50244",
+        "android_client_info": {
+          "package_name": "app.getmind"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "202416674573-n04tqc8n8q8uinpqums5k21ema4g3e8n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD_yzbiuncv9q3C35OIdaRjOI2YokZv16g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "202416674573-n04tqc8n8q8uinpqums5k21ema4g3e8n.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

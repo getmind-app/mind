@@ -8,6 +8,7 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
+import * as Location from "expo-location";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 
@@ -73,6 +74,14 @@ function NextAppointment() {
     const { data, isLoading } =
         api.appointments.findNextUserAppointment.useQuery();
 
+    const geocode = async () => {
+        const location = await Location.geocodeAsync(
+            "335 Pioneer Way, Mountain View, CA 94041",
+        );
+
+        return location[0];
+    };
+
     if (isLoading) return <CardSkeleton />;
 
     return (
@@ -101,9 +110,19 @@ function NextAppointment() {
                             ) : (
                                 <Text>
                                     in person at{" "}
-                                    <Text className="underline">
-                                        335 Pioneer Way
-                                    </Text>
+                                    <TouchableOpacity
+                                        onPress={() =>
+                                            geocode().then((geocode) =>
+                                                Linking.openURL(
+                                                    `https://www.google.com/maps/search/?api=1&query=${geocode?.latitude},${geocode?.longitude}`,
+                                                ),
+                                            )
+                                        }
+                                    >
+                                        <Text className="underline">
+                                            335 Pioneer Way
+                                        </Text>
+                                    </TouchableOpacity>
                                 </Text>
                             )}
                         </Text>
@@ -144,7 +163,9 @@ function NextAppointment() {
                     <TouchableOpacity
                         onPress={() => {
                             if (data.modality === "ON_SITE") {
-                                Linking.openURL("https://maps.google.com/");
+                                Linking.openURL(
+                                    "https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`",
+                                );
                             } else if (data.modality === "ONLINE") {
                                 Linking.openURL(data.link || "No link found");
                             } else {

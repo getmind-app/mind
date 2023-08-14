@@ -165,11 +165,13 @@ function AppointmentCard({
                                 : "in person"}
                         </Text>
                     </View>
-                    <View>
-                        <Text className="pt-2 font-nunito-sans text-base">
-                            {appointment.isPaid ? "Paid" : "Not paid"}
-                        </Text>
-                    </View>
+                    {user?.publicMetadata.role == "professional" && (
+                        <View>
+                            <Text className="pt-2 font-nunito-sans text-base">
+                                {appointment.isPaid ? "Paid" : "Not paid"}
+                            </Text>
+                        </View>
+                    )}
                 </View>
                 <View className="flex flex-col items-center gap-4">
                     <Text className="font-nunito-sans-bold text-xl text-blue-500 ">

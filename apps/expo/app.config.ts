@@ -30,6 +30,7 @@ const defineConfig = (): ExpoConfig => ({
             backgroundColor: "#fff",
         },
         package: "app.getmind",
+        googleServicesFile: "./google-services.json",
     },
     extra: {
         eas: {
