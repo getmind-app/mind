@@ -6,10 +6,17 @@ import {
     Text,
     TouchableOpacity,
     View,
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Trans, t } from "@lingui/macro";
 import { cpf } from "cpf-cnpj-validator";
 import { DateTime } from "luxon";
 import { useForm } from "react-hook-form";
@@ -62,34 +69,39 @@ export default function OnboardPsychScreen() {
 
     const [showBirthdayPicker, setShowBirthdayPicker] = useState(false);
 
-    const {
-        control,
-        handleSubmit,
-        formState: { isValid },
-    } = useForm({
-        defaultValues: {
-            name: "",
-            birthday: DateTime.local().minus({ years: 18 }).toJSDate(),
-            document: "",
-            crp: "",
-            yearsOfExperience: "",
-            hourlyRate: "",
-            formValidated: "",
-        },
-        resolver: zodResolver(schema),
-    });
-    const onSubmit = handleSubmit((data) => {
-        mutate({
-            ...data,
-            userId: String(user?.id),
-            profilePictureUrl: String(user?.imageUrl),
-            about: "",
-            dateOfBirth: data.birthday,
-            yearsOfExperience: parseInt(data.yearsOfExperience),
-            hourlyRate: parseInt(data.hourlyRate),
-        });
-    });
+      const {
+            control,
+            handleSubmit,
+            formState: { isValid },
+      } = useForm({
+            defaultValues: {
+                  name: "",
+                  birthday: DateTime.local().minus({ years: 18 }).toJSDate(),
+                  document: "",
+                  crp: "",
+                  yearsOfExperience: "",
+                  hourlyRate: "",
+                  formValidated: "",
+            },
+            resolver: zodResolver(schema),
+      });
+      const onSubmit = handleSubmit((data) => {
+            mutate({
+                  ...data,
+                  userId: String(user?.id),
+                  profilePictureUrl: String(user?.imageUrl),
+                  about: "",
+                  dateOfBirth: data.birthday,
+                  yearsOfExperience: parseInt(data.yearsOfExperience),
+                  hourlyRate: parseInt(data.hourlyRate),
+            });
+      });
 
+    const { mutate, isLoading } = api.therapists.create.useMutation({
+        onSuccess: () => {
+            router.push("/settings/available-hours");
+        },
+    });
     const { mutate, isLoading } = api.therapists.create.useMutation({
         onSuccess: () => {
             router.push("/settings/available-hours");
@@ -116,17 +128,20 @@ export default function OnboardPsychScreen() {
                     >
                         <View className="flex flex-row items-center justify-between">
                             <Text className="pt-12 font-nunito-sans-bold text-3xl">
-                                Onboard
+                                <Trans>Onboard</Trans>
                             </Text>
                         </View>
                         <FormTextInput
                             control={control}
                             name="name"
-                            title="🖋️ Full Name"
-                            placeholder="John Doe"
+                            title={t({ message: "🖋️ Full Name" })}
+                            placeholder={t({
+                                message: "John Doe",
+                                comment: "Psych Onboard Full Name Placeholder",
+                            })}
                         />
                         <FormDateInput
-                            title="🥳 Birthday"
+                            title={t({ message: "🥳 Birthday" })}
                             name="birthday"
                             control={control}
                             show={showBirthdayPicker}
@@ -142,7 +157,7 @@ export default function OnboardPsychScreen() {
                         <FormTextInput
                             control={control}
                             name="document"
-                            title="📃 Document (CPF)"
+                            title={t({ message: "📃 Document (CPF)" })}
                             placeholder="123.456.789-01"
                             mask="999.999.999-99"
                             inputMode="numeric"
@@ -150,13 +165,13 @@ export default function OnboardPsychScreen() {
                         <FormTextInput
                             control={control}
                             name="crp"
-                            title="🧠 CRP"
+                            title={t({ message: "🧠 CRP" })}
                             placeholder="01/23456"
                             mask="99/999999"
                             inputMode="numeric"
                         />
                         <FormTextInput
-                            title="🗣️ Experience"
+                            title={t({ message: "🗣️ Experience" })}
                             placeholder="2"
                             mask="99"
                             unit="years"
@@ -167,7 +182,7 @@ export default function OnboardPsychScreen() {
                         <FormCurrencyInput
                             name="hourlyRate"
                             control={control}
-                            title="💰 Hourly Rate"
+                            title={t({ message: "💰 Hourly Rate" })}
                         />
                     </ScrollView>
                     <TouchableOpacity className="w-full" onPress={onSubmit}>
@@ -179,7 +194,7 @@ export default function OnboardPsychScreen() {
                                     isValid ? "text-white" : "text-black"
                                 }`}
                             >
-                                Next
+                                <Trans>Next</Trans>
                             </Text>
                         </View>
                     </TouchableOpacity>

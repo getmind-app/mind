@@ -38,7 +38,7 @@ const defineConfig = (): ExpoConfig => ({
         },
         CLERK_PUBLISHABLE_KEY,
     },
-    plugins: ["./expo-plugins/with-modify-gradle.js"],
+    plugins: ["./expo-plugins/with-modify-gradle.js", "expo-localization"],
 });
 
 export default defineConfig;

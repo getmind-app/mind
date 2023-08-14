@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { useRouter, useSearchParams } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
+import { Trans } from "@lingui/macro";
 
 import { Header } from "../../components/Header";
 import { ProfileSkeleton } from "../../components/ProfileSkeleton";
@@ -72,25 +73,31 @@ export default function TherapistProfile() {
                         </View>
                         <View className="flex flex-col">
                             <Text className="font-nunito-sans-bold text-base text-slate-500">
-                                Patients
+                                <Trans>Patients</Trans>
                             </Text>
                             <Text className="font-nunito-sans-bold text-base text-blue-500">
                                 42
                                 <Text className="font-nunito-sans-bold text-base">
                                     {" "}
-                                    / week
+                                    <Trans
+                                        comment={
+                                            "Number of patients a therapist sees per week"
+                                        }
+                                    >
+                                        / week
+                                    </Trans>
                                 </Text>
                             </Text>
                         </View>
                         <View className="flex flex-col">
                             <Text className="font-nunito-sans-bold text-base text-slate-500">
-                                Practicing for
+                                <Trans>Practicing for</Trans>
                             </Text>
                             <Text className="font-nunito-sans-bold text-base text-blue-500">
                                 {data?.yearsOfExperience}
                                 <Text className="font-nunito-sans-bold text-base">
                                     {" "}
-                                    years
+                                    <Trans>years</Trans>
                                 </Text>
                             </Text>
                         </View>
@@ -121,14 +128,15 @@ export default function TherapistProfile() {
                             $ {data?.hourlyRate}
                         </Text>
                         <Text className="font-nunito-sans text-base text-white">
-                            Online and on-site
+                            {/* TODO: fazer disso dinamico com base nas configs do terapeuta*/}
+                            <Trans>Online and on-site</Trans>
                         </Text>
                     </View>
                     <TouchableOpacity onPress={handleSchedule}>
                         <View className="rounded-xl bg-white">
                             <View className="flex flex-row items-center px-4 py-2 align-middle">
                                 <Text className="font-nunito-sans-bold text-base">
-                                    Schedule
+                                    <Trans>Schedule</Trans>
                                 </Text>
                             </View>
                         </View>
@@ -155,7 +163,7 @@ function AboutMe({ children }: { children: React.ReactNode }) {
                     <View className="flex flex-row items-center gap-2 align-middle">
                         <Text>👤</Text>
                         <Text className=" font-nunito-sans-bold text-lg">
-                            About me
+                            <Trans>About me</Trans>
                         </Text>
                     </View>
                     <Pressable onPress={toggleAboutMe}>
@@ -203,7 +211,7 @@ function Education({ children }: { children: React.ReactNode }) {
                     <View className="flex flex-row items-center gap-2 align-middle">
                         <Text>🎓</Text>
                         <Text className=" font-nunito-sans-bold text-lg">
-                            Education
+                            <Trans>Education</Trans>
                         </Text>
                     </View>
                     <Pressable onPress={toggleEducation}>
@@ -243,7 +251,7 @@ function Methodologies({ children }: { children: React.ReactNode }) {
 
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 
-    // Esse mt-4 ta péssimo
+    // TODO: Esse mt-4 ta péssimo
     return (
         <View className="mt-4 w-full rounded-xl bg-white shadow-sm">
             <View className="px-6 py-4">
@@ -251,7 +259,7 @@ function Methodologies({ children }: { children: React.ReactNode }) {
                     <View className="flex flex-row items-center gap-2 align-middle">
                         <Text>📚</Text>
                         <Text className=" font-nunito-sans-bold text-lg">
-                            Methodologies
+                            <Trans>Methodologies</Trans>
                         </Text>
                     </View>
                     <Pressable onPress={toggleMethodologies}>

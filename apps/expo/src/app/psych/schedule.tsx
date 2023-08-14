@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
+import { Trans } from "@lingui/macro";
 
 import { AnimatedCard } from "../../components/Accordion";
 import { Header } from "../../components/Header";
@@ -86,10 +87,14 @@ export default function TherapistSchedule() {
                         />
                     </View>
                     <Text className="mb-2 font-nunito-sans-bold text-2xl">
-                        {data.name.split(" ").at(0)}&apos;s Schedule
+                        <Trans>
+                            {data.name.split(" ").at(0)}&apos;s Schedule
+                        </Trans>
                     </Text>
                     <Text className="mb-2 font-nunito-sans text-sm text-[#666666]">
-                        Pick the date that you would like to meet:
+                        <Trans>
+                            Pick the date that you would like to meet:
+                        </Trans>
                     </Text>
                     <Calendar onSelect={setSelectedDate} />
                 </View>
@@ -119,7 +124,7 @@ export default function TherapistSchedule() {
                         <Text
                             className={`text-center font-nunito-sans-bold text-lg font-bold text-white`}
                         >
-                            Confirm appointment
+                            <Trans>Confirm appointment</Trans>
                         </Text>
                     </Pressable>
                 </View>
@@ -216,7 +221,9 @@ function HourPicker({
         <AnimatedCard
             title={
                 <View className="flex flex-row justify-between">
-                    <Text className={"font-nunito-sans text-xl"}>Hour </Text>
+                    <Text className={"font-nunito-sans text-xl"}>
+                        <Trans>Hour </Trans>
+                    </Text>
                     <Text className={"font-nunito-sans text-xl"}>{hour} </Text>
                 </View>
             }
@@ -228,13 +235,15 @@ function HourPicker({
                 <View className="mt-2 flex flex-row">
                     {!date && (
                         <Text className="font-nunito-sans text-[#666666]">
-                            Please select a date
+                            <Trans>Please select a date</Trans>
                         </Text>
                     )}
                     {date && availableHours.length === 0 && (
                         <Text className="font-nunito-sans text-[#666666]">
-                            There are no more available sessions for this date!
-                            🫤
+                            <Trans>
+                                There are no more available sessions for this
+                                date! 🫤
+                            </Trans>
                         </Text>
                     )}
                     {availableHours.map((n, i) => (
@@ -338,7 +347,9 @@ function ModalityPicker({
             maxHeight={90}
             title={
                 <View className="flex flex-row justify-between">
-                    <Text className={"font-nunito-sans text-xl"}>Meet</Text>
+                    <Text className={"font-nunito-sans text-xl"}>
+                        <Trans>Meet</Trans>
+                    </Text>
                     <Text className={"font-nunito-sans text-xl capitalize"}>
                         {mode == "ON_SITE" ? "On site" : "Online"}
                     </Text>
@@ -346,10 +357,12 @@ function ModalityPicker({
             }
         >
             <Text className="mt-2 font-nunito-sans text-[#666666]">
-                {therapistName}&apos;s sessions happen at{" "}
-                <Text className="font-nunito-sans underline">
-                    335 Pioneer Way
-                </Text>
+                <Trans>
+                    {therapistName}&apos;s sessions happen at{" "}
+                    <Text className="font-nunito-sans underline">
+                        335 Pioneer Way
+                    </Text>
+                </Trans>
             </Text>
             <View className="mt-3 flex flex-row justify-between">
                 <Pressable
@@ -368,7 +381,7 @@ function ModalityPicker({
                                 : ""
                         }`}
                     >
-                        Online
+                        <Trans>Online</Trans>
                     </Text>
                 </Pressable>
                 <Pressable
@@ -387,7 +400,7 @@ function ModalityPicker({
                                 : ""
                         }`}
                     >
-                        In-person
+                        <Trans>In-person</Trans>
                     </Text>
                 </Pressable>
             </View>

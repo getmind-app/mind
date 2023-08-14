@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import { useUser } from "@clerk/clerk-expo";
 import { Feather, FontAwesome } from "@expo/vector-icons";
+import { Trans, t } from "@lingui/macro";
 
 import { CardSkeleton } from "../components/CardSkeleton";
 import DefaultCard from "../components/DefaultCard";
@@ -73,7 +74,7 @@ export default function CalendarScreen() {
             }
         >
             <Text className="pt-12 font-nunito-sans-bold text-3xl">
-                Calendar
+                <Trans>Calendar</Trans>
             </Text>
             <Appointments data={appointments} isLoading={loading} />
         </ScrollView>
@@ -142,7 +143,7 @@ function AppointmentCard({
                     </Text>
                     <View className="flex flex-row">
                         <Text className="font-nunito-sans text-sm text-slate-500">
-                            with{"  "}
+                            <Trans>with{"  "}</Trans>
                         </Text>
                         <Image
                             className="rounded-full"
@@ -161,8 +162,8 @@ function AppointmentCard({
                             {"  "}
                             {appointment.therapist.name}{" "}
                             {appointment.modality === "ONLINE"
-                                ? "via Google Meet"
-                                : "in person"}
+                                ? t({ message: "via Google Meet" })
+                                : t({ message: "in person" })}
                         </Text>
                     </View>
                     {user?.publicMetadata.role == "professional" && (
@@ -266,7 +267,9 @@ function PaymentConfirmation({
 
     return (
         <View className="flex flex-row items-center pt-4 align-middle">
-            <Text className="text-base">Check as paid?</Text>
+            <Text className="text-base">
+                <Trans>Check as paid?</Trans>
+            </Text>
             <View className="pl-3">
                 <TouchableOpacity
                     onPress={() => {
@@ -314,7 +317,9 @@ function SessionConfirmation({
 
     return (
         <View className="flex flex-row items-center pt-4 align-middle">
-            <Text className="text-base">Accept the session?</Text>
+            <Text className="text-base">
+                <Trans>Accept the session?</Trans>
+            </Text>
             <View className="flex flex-row gap-2 pl-3">
                 <TouchableOpacity
                     onPress={() => {
@@ -322,7 +327,9 @@ function SessionConfirmation({
                     }}
                 >
                     <View className="rounded-lg bg-green-400 shadow-sm">
-                        <Text className="px-3 py-2 text-white">Yes</Text>
+                        <Text className="px-3 py-2 text-white">
+                            <Trans>Yes</Trans>
+                        </Text>
                     </View>
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -331,7 +338,9 @@ function SessionConfirmation({
                     }}
                 >
                     <View className="rounded-lg bg-red-400 shadow-sm">
-                        <Text className="px-3 py-2 text-white">No</Text>
+                        <Text className="px-3 py-2 text-white">
+                            <Trans>No</Trans>
+                        </Text>
                     </View>
                 </TouchableOpacity>
             </View>
@@ -369,7 +378,7 @@ function SessionCancel({
                     <View className="flex h-full flex-col items-center justify-center bg-off-white align-middle">
                         <View className="w-72 items-center gap-4 rounded-lg bg-white px-6 py-4 align-middle shadow-sm">
                             <Text className="font-nunito-sans-bold text-2xl">
-                                Are you sure?
+                                <Trans>Are you sure?</Trans>
                             </Text>
                             <Pressable
                                 className="rounded-lg bg-red-400 "
@@ -379,7 +388,7 @@ function SessionCancel({
                                 }}
                             >
                                 <Text className="px-6 py-3 text-center font-nunito-sans-bold text-lg text-white">
-                                    Cancel
+                                    <Trans>Cancel</Trans>
                                 </Text>
                             </Pressable>
                         </View>
@@ -387,7 +396,9 @@ function SessionCancel({
                 </TouchableWithoutFeedback>
             </Modal>
             <View className="flex flex-row items-center pt-4 align-middle">
-                <Text className="text-base">Cancel the session?</Text>
+                <Text className="text-base">
+                    <Trans>Cancel the session?</Trans>
+                </Text>
                 <View className="pl-3">
                     <TouchableOpacity
                         onPress={() => {
@@ -395,7 +406,9 @@ function SessionCancel({
                         }}
                     >
                         <View className="rounded-lg bg-red-400 shadow-sm">
-                            <Text className="px-3 py-2 text-white">Yes</Text>
+                            <Text className="px-3 py-2 text-white">
+                                <Trans>Yes</Trans>
+                            </Text>
                         </View>
                     </TouchableOpacity>
                 </View>

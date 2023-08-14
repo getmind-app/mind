@@ -3,6 +3,7 @@ import * as Notifications from "expo-notifications";
 import { useRouter } from "expo-router";
 import { useClerk } from "@clerk/clerk-expo";
 import { MaterialIcons } from "@expo/vector-icons";
+import { t } from "@lingui/macro";
 
 import { api } from "../utils/api";
 
@@ -63,8 +64,8 @@ export default function UserProfileScreen() {
                         {user?.publicMetadata && (
                             <Text className="pl-1 font-nunito-sans text-lg text-slate-500">
                                 {user.publicMetadata.role == "patient"
-                                    ? "Patient"
-                                    : "Professional"}
+                                    ? t({ message: "Patient" })
+                                    : t({ message: "Professional" })}
                             </Text>
                         )}
                     </View>
@@ -73,30 +74,32 @@ export default function UserProfileScreen() {
             <ScrollView className="pt-8" showsVerticalScrollIndicator={false}>
                 <MenuItem
                     isFirst={true}
-                    label="🗣️ Personal info"
+                    label={t({ message: "🗣️  Personal info" })}
                     onPress={signOut}
                 />
-                <MenuItem label="⚙️ Settings" onPress={signOut} />
+                <MenuItem
+                    label={t({ message: "⚙️  Settings" })}
+                    onPress={signOut}
+                />
 
                 {user?.publicMetadata &&
                 user.publicMetadata.role == "professional" ? (
                     <MenuItem
-                        label="🕰️ Available hours"
+                        label={t({ message: "🕰️  Available hours" })}
                         onPress={() => router.push("/settings/available-hours")}
                     />
                 ) : null}
 
                 {process.env.NODE_ENV === "development" ? (
                     <MenuItem
-                        label="❌ Reset user metadata"
+                        label={t({ message: "❌  Reset user metadata" })}
                         onPress={clearUserMetaData}
                     />
                 ) : null}
                 <MenuItem
-                    label="📬 Notification"
-                    onPress={async () => {
-                        await schedulePushNotification();
-                    }}
+                    isLast={true}
+                    label={t({ message: "🚪  Sign out" })}
+                    onPress={signOut}
                 />
 
                 <MenuItem isLast={true} label="🚪 Sign out" onPress={signOut} />

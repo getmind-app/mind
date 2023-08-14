@@ -9,6 +9,7 @@ import {
     View,
 } from "react-native";
 import { useRouter } from "expo-router";
+import { Trans, t } from "@lingui/macro";
 
 import { Header } from "../../components/Header";
 import { api } from "../../utils/api";
@@ -49,13 +50,13 @@ export default function NewNote() {
                     >
                         <View className="flex flex-row items-center justify-between">
                             <Text className=" font-nunito-sans-bold text-3xl">
-                                New note
+                                <Trans>New note</Trans>
                             </Text>
                             <TouchableOpacity onPress={handleNewNote}>
                                 <View className="rounded-xl bg-blue-500">
                                     <View className="flex flex-row items-center px-4 py-2 align-middle">
                                         <Text className="font-nunito-sans-bold text-base text-white">
-                                            Create
+                                            <Trans>Create</Trans>
                                         </Text>
                                     </View>
                                 </View>
@@ -65,7 +66,7 @@ export default function NewNote() {
                             className="w-full py-4 font-nunito-sans text-lg"
                             onChangeText={setContent}
                             value={content}
-                            placeholder="Write your note here"
+                            placeholder={t({ message: "Write your note here" })}
                         />
                     </ScrollView>
                 </View>

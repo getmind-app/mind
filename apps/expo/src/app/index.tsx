@@ -11,6 +11,7 @@ import {
 import * as Location from "expo-location";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
+import { Trans, t } from "@lingui/macro";
 
 import { CardSkeleton } from "../components/CardSkeleton";
 import DefaultCard from "../components/DefaultCard";
@@ -47,17 +48,17 @@ export default function Index() {
         >
             <View className="h-full">
                 <Text className="pt-12 font-nunito-sans-bold text-3xl">
-                    Next session
+                    <Trans>Next session</Trans>
                 </Text>
                 <NextAppointment />
                 <View className="mb-2 flex flex-row items-center justify-between pt-8 align-middle">
                     <Text className=" font-nunito-sans-bold text-3xl">
-                        Last notes
+                        <Trans>Last notes</Trans>
                     </Text>
                     <TouchableOpacity onPress={() => router.push("/notes/new")}>
                         <View className="rounded-lg bg-blue-500 px-3 py-1 shadow-sm">
                             <Text className="text-center font-nunito-sans-bold text-base text-white">
-                                New
+                                <Trans>New</Trans>
                             </Text>
                         </View>
                     </TouchableOpacity>
@@ -109,6 +110,7 @@ function NextAppointment() {
                                 "via Google Meet"
                             ) : (
                                 <Text>
+                                    <Trans>
                                     in person at{" "}
                                     <TouchableOpacity
                                         onPress={() =>
@@ -123,6 +125,7 @@ function NextAppointment() {
                                             335 Pioneer Way
                                         </Text>
                                     </TouchableOpacity>
+                                    </Trans>
                                 </Text>
                             )}
                         </Text>
@@ -185,8 +188,8 @@ function NextAppointment() {
                             />
                             <Text className="ml-4 font-nunito-sans-bold text-lg text-white">
                                 {data.modality === "ONLINE"
-                                    ? "Join the meeting"
-                                    : "Get directions"}
+                                    ? t({ message: "Join the meeting" })
+                                    : t({ message: "Get directions" })}
                             </Text>
                         </View>
                     </TouchableOpacity>
@@ -255,10 +258,13 @@ function LastNotes() {
                     <View className="flex w-full flex-row items-center justify-between px-6 py-4 align-middle">
                         <View className="flex flex-col">
                             <Text className="font-nunito-sans-bold text-xl text-slate-500">
-                                No notes for now
+                                <Trans>You have no notes</Trans>
                             </Text>
                             <Text className="pt-2 font-nunito-sans text-base">
-                                Create a new one right now
+                                <Trans>
+                                    Notes are a tool for helping you track your
+                                    progress
+                                </Trans>
                             </Text>
                         </View>
                         <TouchableOpacity

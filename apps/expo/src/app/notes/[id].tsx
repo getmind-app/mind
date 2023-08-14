@@ -7,6 +7,7 @@ import {
     View,
 } from "react-native";
 import { useRouter, useSearchParams } from "expo-router";
+import { Trans } from "@lingui/macro";
 
 import { Header } from "../../components/Header";
 import { api } from "../../utils/api";
@@ -64,7 +65,7 @@ export default function Note() {
                                 <View className="rounded-xl bg-red-500">
                                     <View className="flex flex-row items-center px-4 py-2 align-middle">
                                         <Text className="font-nunito-sans-bold text-base text-white">
-                                            Delete
+                                            <Trans>Delete</Trans>
                                         </Text>
                                     </View>
                                 </View>
