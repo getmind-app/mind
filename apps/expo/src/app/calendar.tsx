@@ -182,7 +182,8 @@ function AppointmentCard({
                             ? "00"
                             : new Date(appointment.scheduledTo).getMinutes()}
                     </Text>
-                    {(appointment.status == "PENDENT" &&
+                    {appointment.status == "PENDENT" ||
+                    (appointment.status == "ACCEPTED" &&
                         metadata.role == "professional") ||
                     (appointment.status == "ACCEPTED" &&
                         isMoreThan24HoursLater(appointment.scheduledTo)) ? (
@@ -250,9 +251,18 @@ function PaymentConfirmation({
 }: {
     appointment: Appointment & { therapist: Therapist };
 }) {
-    const [isPaid, setIsPaid] = useState<boolean>(appointment.isPaid);
+    const utils = api.useContext();
+    const { user } = useUser();
 
-    const { mutate } = api.appointments.update.useMutation({});
+    const { mutate } = api.appointments.update.useMutation({
+        onSuccess: () => {
+            if (user?.publicMetadata.role == "professional") {
+                utils.appointments.findByTherapistId.invalidate();
+            } else {
+                utils.appointments.findByUserId.invalidate();
+            }
+        },
+    });
 
     const handlePaymentConfirmation = () => {
         mutate({
@@ -260,7 +270,7 @@ function PaymentConfirmation({
             scheduledTo: appointment.scheduledTo,
             modality: appointment.modality,
             status: appointment.status,
-            isPaid: isPaid,
+            isPaid: !appointment.isPaid,
             therapistId: appointment.therapistId,
             userId: appointment.userId,
         });
@@ -274,11 +284,10 @@ function PaymentConfirmation({
             <View className="pl-3">
                 <TouchableOpacity
                     onPress={() => {
-                        setIsPaid(!isPaid);
                         handlePaymentConfirmation();
                     }}
                 >
-                    {isPaid ? (
+                    {appointment.isPaid ? (
                         <View className="rounded-lg bg-red-400 shadow-sm">
                             <Text className="px-3 py-1 text-white">No</Text>
                         </View>

@@ -136,7 +136,7 @@ function NextAppointment() {
                                                 )
                                             }
                                         >
-                                            <Text className="underline">
+                                            <Text>
                                                 {data.therapist.address.street},{" "}
                                                 {data.therapist.address.number}
                                             </Text>
