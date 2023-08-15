@@ -259,7 +259,6 @@ function PaymentConfirmation({
     appointment: Appointment & { therapist: Therapist };
 }) {
     const utils = api.useContext();
-    const { user } = useUser();
 
     const { mutate } = api.appointments.update.useMutation({
         onSuccess: () => {
