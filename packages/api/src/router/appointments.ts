@@ -25,7 +25,7 @@ export const appointmentsRouter = createTRPCRouter({
 
             foundAppointment = await ctx.prisma.appointment.findFirst({
                 where: {
-                    therapist: therapist,
+                    therapistId: therapist?.id,
                     scheduledTo: {
                         gte: new Date(),
                     },

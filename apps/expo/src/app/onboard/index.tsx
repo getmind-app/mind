@@ -14,9 +14,21 @@ export default function ChooseRole() {
         "patient" | "professional"
     >();
 
+    const { mutate: createPatient } = api.patients.create.useMutation({});
+
     const { mutate, isLoading } = api.users.setMetadata.useMutation({
         onSuccess: async function () {
             await user?.reload();
+
+            if (selectedRole === "patient" && user) {
+                createPatient({
+                    name: String(user.fullName),
+                    email: String(user.emailAddresses[0]?.emailAddress),
+                    profilePictureUrl: user.profileImageUrl,
+                    userId: user.id,
+                });
+            }
+
             selectedRole === "patient"
                 ? router.push("/")
                 : router.push("/onboard/psych");

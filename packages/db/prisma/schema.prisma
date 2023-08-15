@@ -73,7 +73,8 @@ model Appointment {
     status      AppointmentStatus @default(PENDENT)
     link        String?
     isPaid      Boolean           @default(false)
-    userId      String
+    patientId   String
+    patient     Patient           @relation(fields: [patientId], references: [id], onDelete: Cascade)
     therapistId String
     therapist   Therapist         @relation(fields: [therapistId], references: [id], onDelete: Cascade)
 }
@@ -84,6 +85,16 @@ model Hour {
     weekDay     WeekDay
     Therapist   Therapist? @relation(fields: [therapistId], references: [id], onDelete: Cascade)
     therapistId String?
+}
+
+model Patient {
+    id                String        @id @default(cuid())
+    createdAt         DateTime      @default(now())
+    name              String
+    email             String        @unique
+    profilePictureUrl String
+    userId            String        @unique
+    appointments      Appointment[]
 }
 
 enum Modality {

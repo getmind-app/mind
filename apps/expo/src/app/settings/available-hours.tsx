@@ -17,16 +17,9 @@ function getHourFromISO(date: Date): string {
 }
 
 export default function AvailableHours() {
-    const { user } = useUser();
     const [addHours, setAddHours] = useState(false);
 
-    if (!user) {
-        throw new Error("Missing user");
-    }
-
-    const { data, isLoading } = api.therapists.findByUserId.useQuery({
-        userId: String(user.id),
-    });
+    const { data, isLoading } = api.therapists.findByUserId.useQuery();
 
     if (!data || isLoading)
         return (
@@ -90,8 +83,8 @@ function AddHours() {
     const [showStartHourPicker, setShowStartHourPicker] = useState(false);
     const [showEndHourPicker, setShowEndHourPicker] = useState(false);
     const setTherapistHours = api.therapists.setAvailableHours.useMutation({
-        onSuccess() {
-            utils.therapists.findByUserId.invalidate();
+        async onSuccess() {
+            await utils.therapists.findByUserId.invalidate();
         },
     });
 
