@@ -167,19 +167,20 @@ function AppointmentCard({
                                 : t({ message: "in person" })}
                         </Text>
                     </View>
-                    {user?.publicMetadata.role == "professional" && (
-                        <View>
-                            <Text
-                                className={`fontnunito-sans pt-2 ${
-                                    appointment.isPaid
-                                        ? "text-green-500"
-                                        : "text-red-500"
-                                }`}
-                            >
-                                {appointment.isPaid ? "Paid" : "Not paid"}
-                            </Text>
-                        </View>
-                    )}
+                    {user?.publicMetadata.role == "professional" &&
+                        appointment.status == "ACCEPTED" && (
+                            <View>
+                                <Text
+                                    className={`fontnunito-sans pt-2 ${
+                                        appointment.isPaid
+                                            ? "text-green-500"
+                                            : "text-red-500"
+                                    }`}
+                                >
+                                    {appointment.isPaid ? "Paid" : "Not paid"}
+                                </Text>
+                            </View>
+                        )}
                 </View>
                 <View className="flex flex-col items-center gap-4">
                     <Text className="font-nunito-sans-bold text-xl text-blue-500 ">
