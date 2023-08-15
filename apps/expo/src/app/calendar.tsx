@@ -169,7 +169,13 @@ function AppointmentCard({
                     </View>
                     {user?.publicMetadata.role == "professional" && (
                         <View>
-                            <Text className="pt-2 font-nunito-sans text-base">
+                            <Text
+                                className={`fontnunito-sans pt-2 ${
+                                    appointment.isPaid
+                                        ? "text-green-500"
+                                        : "text-red-500"
+                                }`}
+                            >
                                 {appointment.isPaid ? "Paid" : "Not paid"}
                             </Text>
                         </View>
