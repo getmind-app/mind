@@ -3,8 +3,8 @@ import { Image, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import Constants from "expo-constants";
 import { loadAsync } from "expo-font";
-import * as Notifications from "expo-notifications";
 import { getLocales } from "expo-localization";
+import * as Notifications from "expo-notifications";
 import { SplashScreen, Tabs, useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { StatusBar } from "expo-status-bar";
@@ -178,6 +178,10 @@ function TabsRouter() {
                 name="search"
                 options={{
                     title: "Search",
+                    href:
+                        user?.publicMetadata?.role === "professional"
+                            ? null
+                            : "/search",
                     tabBarIcon: (props) => (
                         <TabBarIconWrapper focused={props.focused}>
                             <AntDesign name="search1" {...props} />

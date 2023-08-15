@@ -256,11 +256,7 @@ function PaymentConfirmation({
 
     const { mutate } = api.appointments.update.useMutation({
         onSuccess: () => {
-            if (user?.publicMetadata.role == "professional") {
-                utils.appointments.findByTherapistId.invalidate();
-            } else {
-                utils.appointments.findByUserId.invalidate();
-            }
+            utils.appointments.findByTherapistId.invalidate();
         },
     });
 
@@ -307,9 +303,13 @@ function SessionConfirmation({
 }: {
     appointment: Appointment & { therapist: Therapist };
 }) {
-    const { mutate } = api.appointments.update.useMutation({});
-
     const utils = api.useContext();
+
+    const { mutate } = api.appointments.update.useMutation({
+        onSuccess: () => {
+            utils.appointments.findByTherapistId.invalidate();
+        },
+    });
 
     const handleSessionConfirmation = async (newStatus: AppointmentStatus) => {
         mutate({
@@ -321,8 +321,6 @@ function SessionConfirmation({
             therapistId: appointment.therapistId,
             userId: appointment.userId,
         });
-
-        await utils.appointments.findByUserId.invalidate();
     };
 
     return (
