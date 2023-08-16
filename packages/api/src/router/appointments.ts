@@ -9,7 +9,7 @@ export const appointmentsRouter = createTRPCRouter({
                 scheduledTo: z.date(),
                 modality: z.enum(["ONLINE", "ON_SITE"]),
                 therapistId: z.string().min(1),
-                userId: z.string().min(1),
+                patientId: z.string().min(1),
             }),
         )
         .mutation(async ({ ctx, input }) => {

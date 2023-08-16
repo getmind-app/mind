@@ -15,4 +15,11 @@ export const patientsRouter = createTRPCRouter({
         .mutation(async ({ ctx, input }) => {
             return await ctx.prisma.patient.create({ data: input });
         }),
+    findByUserId: protectedProcedure.query(async ({ ctx }) => {
+        return await ctx.prisma.patient.findFirst({
+            where: {
+                userId: ctx.auth.userId,
+            },
+        });
+    }),
 });
