@@ -100,7 +100,7 @@ export default function TherapistProfile() {
                         </View>
                     </View>
                 </View>
-                <View className="pt-8">
+                <View className="pb-32 pt-8">
                     {/* TODO: Use real data when implementend in the form */}
                     <ContentCard title="About" emoji="👤" loadOpen>
                         Hey there, I really enjoy helping people find peace for
@@ -120,10 +120,8 @@ export default function TherapistProfile() {
                             >
                                 <Text className="font-nunito-sans text-base underline">
                                     {data?.address?.street}{" "}
-                                    {data?.address?.number},{" "}
-                                    <Text className="text-slate-500">
-                                        {data?.address?.city}
-                                    </Text>
+                                    {data?.address?.number} -{" "}
+                                    {data?.address?.city}
                                 </Text>
                             </TouchableOpacity>
                         </ContentCard>
