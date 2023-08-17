@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { useUser } from "@clerk/clerk-expo";
 import { Trans, t } from "@lingui/macro";
 import { groupBy } from "lodash-es";
 import { DateTime } from "luxon";

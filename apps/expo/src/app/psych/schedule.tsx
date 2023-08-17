@@ -63,7 +63,7 @@ export default function TherapistSchedule() {
             // depois que tivermos uma solução de formulários não vai precisar do type casting
             modality: selectedMode,
             therapistId: String(id),
-            userId: String(user?.id),
+            patientId: String(user?.id),
         });
     }
 
@@ -241,8 +241,7 @@ function HourPicker({
                     {date && availableHours.length === 0 && (
                         <Text className="font-nunito-sans text-[#666666]">
                             <Trans>
-                                There are no more available sessions for this
-                                date! 🫤
+                                No more available sessions for this date!
                             </Trans>
                         </Text>
                     )}

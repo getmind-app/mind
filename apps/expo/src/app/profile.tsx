@@ -1,5 +1,4 @@
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
-import * as Notifications from "expo-notifications";
 import { useRouter } from "expo-router";
 import { useClerk } from "@clerk/clerk-expo";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -18,27 +17,6 @@ export default function UserProfileScreen() {
         await user?.reload();
         router.push("/onboard");
     }
-
-    const schedulePushNotification = async () => {
-        const { status } = await Notifications.getPermissionsAsync();
-
-        if (status !== "granted") {
-            await Notifications.requestPermissionsAsync();
-        }
-
-        const token = Notifications.getExpoPushTokenAsync();
-
-        console.log(token);
-
-        await Notifications.scheduleNotificationAsync({
-            content: {
-                title: "You've got mail! 📬",
-                body: "CADE MEU FUNDING PORRA",
-                data: { data: "goes here" },
-            },
-            trigger: { seconds: 2 },
-        });
-    };
 
     return (
         <View className="h-full bg-off-white px-4 pt-24">
@@ -101,8 +79,6 @@ export default function UserProfileScreen() {
                     label={t({ message: "🚪  Sign out" })}
                     onPress={signOut}
                 />
-
-                <MenuItem isLast={true} label="🚪 Sign out" onPress={signOut} />
             </ScrollView>
         </View>
     );

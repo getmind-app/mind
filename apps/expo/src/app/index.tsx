@@ -81,18 +81,18 @@ function NextAppointment() {
             return;
         }
 
-        const address = data.therapist.address;
+        const address = data?.therapist.address;
 
         const location = await Location.geocodeAsync(
-            address.street +
+            address?.street +
                 ", " +
-                address.number +
+                address?.number +
                 ", " +
-                address.city +
+                address?.city +
                 ", " +
-                address.state +
+                address?.state +
                 ", " +
-                address.country,
+                address?.country,
         );
 
         return `https://www.google.com/maps/search/?api=1&query=${location[0]?.latitude},${location[0]?.longitude}`;
@@ -137,8 +137,9 @@ function NextAppointment() {
                                             }
                                         >
                                             <Text>
-                                                {data.therapist.address.street},{" "}
-                                                {data.therapist.address.number}
+                                                {data.therapist.address?.street}
+                                                ,{" "}
+                                                {data.therapist.address?.number}
                                             </Text>
                                         </TouchableOpacity>
                                     </Trans>

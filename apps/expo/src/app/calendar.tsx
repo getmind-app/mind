@@ -21,36 +21,20 @@ import { api } from "../utils/api";
 import {
     type Appointment,
     type AppointmentStatus,
+    type Patient,
     type Therapist,
 } from ".prisma/client";
 
 export default function CalendarScreen() {
     const [refreshing, setRefreshing] = useState(false);
     const { user } = useUser();
-    let appointments: (Appointment & { therapist: Therapist })[] = [];
-    let loading = false;
-    let refetchAppointments: () => void;
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 
-    // probably commiting a crime here
-    if (user?.publicMetadata.role == "professional") {
-        const { data: therapist } = api.therapists.findByUserId.useQuery();
-
-        const { data, isLoading, refetch } =
-            api.appointments.findByTherapistId.useQuery({
-                therapistId: String(therapist?.id),
-            });
-
-        appointments = data ? data : [];
-        loading = isLoading;
-        refetchAppointments = refetch;
-    } else {
-        const { data, isLoading, refetch } =
-            api.appointments.findByUserId.useQuery();
-
-        appointments = data ? data : [];
-        loading = isLoading;
-        refetchAppointments = refetch;
-    }
+    const {
+        data: appointments,
+        isLoading,
+        refetch,
+    } = api.appointments.findAll.useQuery();
 
     const onRefresh = () => {
         setRefreshing(true);
@@ -61,9 +45,11 @@ export default function CalendarScreen() {
 
     useEffect(() => {
         if (refreshing) {
-            refetchAppointments();
+            refetch;
         }
     }, [refreshing]);
+
+    if (isLoading) return <CardSkeleton />;
 
     return (
         <ScrollView
@@ -76,38 +62,22 @@ export default function CalendarScreen() {
             <Text className="pt-12 font-nunito-sans-bold text-3xl">
                 <Trans>Calendar</Trans>
             </Text>
-            <Appointments data={appointments} isLoading={loading} />
-        </ScrollView>
-    );
-}
-
-function Appointments({
-    data,
-    isLoading,
-}: {
-    data: (Appointment & { therapist: Therapist })[];
-    isLoading: boolean;
-}) {
-    const { user } = useUser();
-
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-
-    if (isLoading) return <CardSkeleton />;
-
-    return (data && data.length) > 0 ? (
-        <View>
-            {data.map((appoinment) =>
-                user ? (
-                    <AppointmentCard
-                        key={appoinment.id}
-                        appointment={appoinment}
-                        metadata={user.publicMetadata}
-                    />
-                ) : null,
+            {appointments ? (
+                <View>
+                    {appointments.map((appoinment) =>
+                        user ? (
+                            <AppointmentCard
+                                key={appoinment.id}
+                                appointment={appoinment}
+                                metadata={user.publicMetadata}
+                            />
+                        ) : null,
+                    )}
+                </View>
+            ) : (
+                <DefaultCard />
             )}
-        </View>
-    ) : (
-        <DefaultCard />
+        </ScrollView>
     );
 }
 
@@ -115,16 +85,11 @@ function AppointmentCard({
     appointment,
     metadata,
 }: {
-    appointment: Appointment & { therapist: Therapist };
+    appointment: Appointment & { therapist: Therapist } & { patient: Patient };
     metadata: UserPublicMetadata;
 }) {
     const [open, setOpen] = useState<boolean>(false);
     const { user } = useUser();
-
-    // Search for patient's profile picture if the user is a professional
-    const { data } = api.users.findByUserId.useQuery({
-        userId: String(appointment.userId),
-    });
 
     return (
         <View
@@ -152,7 +117,7 @@ function AppointmentCard({
                             source={{
                                 uri:
                                     user?.publicMetadata.role == "professional"
-                                        ? data?.profileImageUrl
+                                        ? appointment.patient.profilePictureUrl
                                         : appointment.therapist
                                               .profilePictureUrl,
                                 width: 20,
@@ -261,8 +226,8 @@ function PaymentConfirmation({
     const utils = api.useContext();
 
     const { mutate } = api.appointments.update.useMutation({
-        onSuccess: () => {
-            utils.appointments.findByTherapistId.invalidate();
+        onSuccess: async () => {
+            await utils.appointments.findAll.invalidate();
         },
     });
 
@@ -274,7 +239,7 @@ function PaymentConfirmation({
             status: appointment.status,
             isPaid: !appointment.isPaid,
             therapistId: appointment.therapistId,
-            userId: appointment.userId,
+            patientId: appointment.patientId,
         });
     };
 
@@ -312,12 +277,12 @@ function SessionConfirmation({
     const utils = api.useContext();
 
     const { mutate } = api.appointments.update.useMutation({
-        onSuccess: () => {
-            utils.appointments.findByTherapistId.invalidate();
+        onSuccess: async () => {
+            await utils.appointments.findAll.invalidate();
         },
     });
 
-    const handleSessionConfirmation = async (newStatus: AppointmentStatus) => {
+    const handleSessionConfirmation = (newStatus: AppointmentStatus) => {
         mutate({
             id: appointment.id,
             scheduledTo: appointment.scheduledTo,
@@ -325,7 +290,7 @@ function SessionConfirmation({
             status: newStatus,
             isPaid: appointment.isPaid,
             therapistId: appointment.therapistId,
-            userId: appointment.userId,
+            patientId: appointment.patientId,
         });
     };
 
@@ -367,8 +332,14 @@ function SessionCancel({
 }: {
     appointment: Appointment & { therapist: Therapist };
 }) {
-    const { mutate } = api.appointments.update.useMutation({});
+    const utils = api.useContext();
     const [modalVisible, setModalVisible] = useState(false);
+
+    const { mutate } = api.appointments.update.useMutation({
+        onSuccess: async () => {
+            await utils.appointments.findAll.invalidate();
+        },
+    });
 
     const handleSessionCancel = () => {
         mutate({
@@ -378,7 +349,7 @@ function SessionCancel({
             status: "CANCELED",
             isPaid: appointment.isPaid,
             therapistId: appointment.therapistId,
-            userId: appointment.userId,
+            patientId: appointment.patientId,
         });
     };
 
@@ -476,16 +447,12 @@ function Status({ status }: { status: AppointmentStatus }) {
 }
 
 function isMoreThan24HoursLater(dateToCheck: string | Date): boolean {
-    // Get the current date
     const currentDate = new Date();
-
-    // Get the date to compare with
     const targetDate = new Date(dateToCheck);
 
     // Calculate the difference in hours between the two dates
     const timeDifferenceInHours =
         (targetDate.getTime() - currentDate.getTime()) / (1000 * 60 * 60);
 
-    // Compare the time difference with 24 hours
     return timeDifferenceInHours > 24;
 }

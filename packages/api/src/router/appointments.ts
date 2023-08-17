@@ -45,9 +45,13 @@ export const appointmentsRouter = createTRPCRouter({
                 },
             });
         } else {
+            const patient = await ctx.prisma.patient.findFirst({
+                where: { userId: ctx.auth.userId },
+            });
+
             foundAppointment = await ctx.prisma.appointment.findFirst({
                 where: {
-                    userId: ctx.auth.userId,
+                    patientId: patient?.id,
                     scheduledTo: {
                         gte: new Date(),
                     },
@@ -70,19 +74,6 @@ export const appointmentsRouter = createTRPCRouter({
             return foundAppointment;
         }
     }),
-    findByUserId: protectedProcedure.query(async ({ ctx }) => {
-        return await ctx.prisma.appointment.findMany({
-            where: {
-                userId: ctx.auth.userId,
-            },
-            include: {
-                therapist: true,
-            },
-            orderBy: {
-                scheduledTo: "desc",
-            },
-        });
-    }),
     findById: protectedProcedure
         .input(
             z.object({
@@ -99,25 +90,55 @@ export const appointmentsRouter = createTRPCRouter({
                 },
             });
         }),
-    findByTherapistId: protectedProcedure
-        .input(
-            z.object({
-                therapistId: z.string().min(1),
-            }),
-        )
-        .query(async ({ ctx, input }) => {
-            return await ctx.prisma.appointment.findMany({
+    findAll: protectedProcedure.query(async ({ ctx }) => {
+        let foundAppointment;
+
+        if (ctx.auth.user?.publicMetadata?.role === "professional") {
+            const therapist = await ctx.prisma.therapist.findFirst({
+                where: { userId: ctx.auth.userId },
+            });
+
+            foundAppointment = await ctx.prisma.appointment.findMany({
                 where: {
-                    therapistId: input.therapistId,
+                    therapistId: therapist?.id,
                 },
                 include: {
-                    therapist: true,
+                    therapist: {
+                        include: {
+                            address: true,
+                        },
+                    },
+                    patient: true,
                 },
                 orderBy: {
                     scheduledTo: "desc",
                 },
             });
-        }),
+        } else {
+            const patient = await ctx.prisma.patient.findFirst({
+                where: { userId: ctx.auth.userId },
+            });
+
+            foundAppointment = await ctx.prisma.appointment.findMany({
+                where: {
+                    patientId: patient?.id,
+                },
+                include: {
+                    therapist: {
+                        include: {
+                            address: true,
+                        },
+                    },
+                    patient: true,
+                },
+                orderBy: {
+                    scheduledTo: "desc",
+                },
+            });
+
+            return foundAppointment;
+        }
+    }),
     update: protectedProcedure
         .input(
             z.object({
@@ -127,7 +148,7 @@ export const appointmentsRouter = createTRPCRouter({
                 status: z.enum(["PENDENT", "ACCEPTED", "REJECTED", "CANCELED"]),
                 isPaid: z.boolean(),
                 therapistId: z.string().min(1),
-                userId: z.string().min(1),
+                patientId: z.string().min(1),
             }),
         )
         .mutation(async ({ ctx, input }) => {
