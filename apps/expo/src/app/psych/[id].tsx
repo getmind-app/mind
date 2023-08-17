@@ -9,6 +9,7 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
+import { type Float } from "react-native/Libraries/Types/CodegenTypes";
 import { useRouter, useSearchParams } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Trans } from "@lingui/macro";
@@ -18,20 +19,13 @@ import { ProfileSkeleton } from "../../components/ProfileSkeleton";
 import formatModality from "../../helpers/formatModality";
 import geocodeAddress from "../../helpers/geocodeAddress";
 import { api } from "../../utils/api";
+import { type Modality } from ".prisma/client";
 
 export default function TherapistProfile() {
-    const router = useRouter();
     const params = useSearchParams();
     const { data, isLoading, isError } = api.therapists.findById.useQuery({
         id: params.id as string,
     });
-
-    function handleSchedule() {
-        router.push({
-            pathname: "/psych/schedule",
-            params: { id: params.id },
-        });
-    }
 
     if (isError) {
         return <Text>There was an error</Text>;
@@ -106,60 +100,48 @@ export default function TherapistProfile() {
                         </View>
                     </View>
                 </View>
-                <View className="gap-4 pt-8">
+                <View className="pt-8">
                     {/* TODO: Use real data when implementend in the form */}
-                    <ContentCard title="About" emoji="👤">
+                    <ContentCard title="About" emoji="👤" loadOpen>
                         Hey there, I really enjoy helping people find peace for
                         their minds. I believe I was born with the mission to
                         assist anyone seeking self-awareness and personal
                         growth.
                     </ContentCard>
-
+                    {data?.modalities.includes("ON_SITE") && (
+                        <ContentCard title="Location" emoji="📍">
+                            <TouchableOpacity
+                                onPress={async () => {
+                                    const mapsLink = await geocodeAddress(
+                                        data?.address,
+                                    );
+                                    Linking.openURL(mapsLink as string);
+                                }}
+                            >
+                                <Text className="font-nunito-sans text-base underline">
+                                    {data?.address?.street}{" "}
+                                    {data?.address?.number},{" "}
+                                    <Text className="text-slate-500">
+                                        {data?.address?.city}
+                                    </Text>
+                                </Text>
+                            </TouchableOpacity>
+                        </ContentCard>
+                    )}
                     <ContentCard title="Education" emoji="🎓">
                         Cognitive Psychology - Stanford University
                     </ContentCard>
                     <ContentCard title="Methodologies" emoji="📚">
                         Cognitive Behavioral Therapy, Mindfulness, Psychodynamic
                     </ContentCard>
-                    <ContentCard title="Location" emoji="📍">
-                        <TouchableOpacity
-                            onPress={async () => {
-                                const mapsLink = await geocodeAddress(
-                                    data?.address,
-                                );
-                                Linking.openURL(mapsLink as string);
-                            }}
-                        ></TouchableOpacity>
-                    </ContentCard>
                 </View>
             </ScrollView>
-            <View className="absolute bottom-0 w-full rounded-t-xl bg-blue-500 px-6 pb-8 pt-4">
-                <View className="flex flex-row items-center justify-between ">
-                    <View className="flex flex-col">
-                        <Text className="font-nunito-sans-bold text-base text-white shadow-sm">
-                            $ {data?.hourlyRate}
-                        </Text>
-                        <Text className="font-nunito-sans text-base text-white">
-                            {data?.modalities.length === 1 ? (
-                                <Trans>
-                                    {formatModality(data?.modalities[0])}
-                                </Trans>
-                            ) : (
-                                <Trans>Online and on-site</Trans>
-                            )}
-                        </Text>
-                    </View>
-                    <TouchableOpacity onPress={handleSchedule}>
-                        <View className="rounded-xl bg-white">
-                            <View className="flex flex-row items-center px-4 py-2 align-middle">
-                                <Text className="font-nunito-sans-bold text-base">
-                                    <Trans>Schedule</Trans>
-                                </Text>
-                            </View>
-                        </View>
-                    </TouchableOpacity>
-                </View>
-            </View>
+            {data && (
+                <ScheduleBar
+                    modalities={data?.modalities}
+                    hourlyRate={data?.hourlyRate}
+                />
+            )}
         </>
     );
 }
@@ -168,12 +150,14 @@ function ContentCard({
     children,
     emoji,
     title,
+    loadOpen,
 }: {
     children: React.ReactNode;
     emoji: string;
     title: string;
+    loadOpen?: boolean;
 }) {
-    const [open, setOpen] = useState(false);
+    const [open, setOpen] = useState(loadOpen ? loadOpen : false);
 
     const toggle = () => {
         setOpen(!open);
@@ -182,38 +166,82 @@ function ContentCard({
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 
     return (
-        <View className="mt-4 w-full rounded-xl bg-white shadow-sm">
-            <View className="px-6 py-4">
-                <View className="flex flex-row items-center justify-between align-middle">
-                    <View className="flex flex-row items-center gap-2 align-middle">
-                        <Text>{emoji}</Text>
-                        <Text className=" font-nunito-sans-bold text-lg">
-                            <Trans>{title}</Trans>
-                        </Text>
-                    </View>
-                    <Pressable onPress={toggle}>
-                        {open ? (
-                            <MaterialIcons
-                                color="black"
-                                size={28}
-                                name="arrow-drop-up"
-                            />
-                        ) : (
-                            <MaterialIcons
-                                color="black"
-                                size={28}
-                                name="arrow-drop-down"
-                            />
-                        )}
-                    </Pressable>
+        <View className="mt-4 rounded-xl bg-white px-6 py-4 shadow-sm">
+            <View className="flex flex-row items-center justify-between align-middle">
+                <View className="flex flex-row items-center gap-2 align-middle">
+                    <Text>{emoji}</Text>
+                    <Text className=" font-nunito-sans-bold text-lg">
+                        <Trans>{title}</Trans>
+                    </Text>
                 </View>
-                {open ? (
-                    <View className="pb-2 pt-4">
-                        <Text className="font-nunito-sans text-base">
-                            {children}
-                        </Text>
+                <Pressable onPress={toggle}>
+                    {open ? (
+                        <MaterialIcons
+                            color="black"
+                            size={28}
+                            name="arrow-drop-up"
+                        />
+                    ) : (
+                        <MaterialIcons
+                            color="black"
+                            size={28}
+                            name="arrow-drop-down"
+                        />
+                    )}
+                </Pressable>
+            </View>
+            {open ? (
+                <View className="pb-2 pt-4">
+                    <Text className="font-nunito-sans text-base">
+                        {children}
+                    </Text>
+                </View>
+            ) : null}
+        </View>
+    );
+}
+
+function ScheduleBar({
+    modalities,
+    hourlyRate,
+}: {
+    modalities: Modality[];
+    hourlyRate: Float;
+}) {
+    const params = useSearchParams();
+    const router = useRouter();
+
+    function handleSchedule() {
+        router.push({
+            pathname: "/psych/schedule",
+            params: { id: params.id },
+        });
+    }
+
+    return (
+        <View className="absolute bottom-0 w-full rounded-t-xl bg-blue-500 px-6 pb-8 pt-4">
+            <View className="flex flex-row items-center justify-between ">
+                <View className="flex flex-col">
+                    <Text className="font-nunito-sans-bold text-base text-white shadow-sm">
+                        $ {hourlyRate}
+                    </Text>
+                    <Text className="font-nunito-sans text-base text-white">
+                        {modalities.length === 1 ? (
+                            <Trans>{formatModality(modalities[0])}</Trans>
+                        ) : (
+                            <Trans>Online and on-site</Trans>
+                        )}
+                    </Text>
+                </View>
+                <TouchableOpacity onPress={handleSchedule}>
+                    <View className="rounded-xl bg-white">
+                        <View className="flex flex-row items-center px-4 py-2 align-middle">
+                            <Text className="font-nunito-sans-bold text-base">
+                                <Trans>Schedule</Trans>
+                            </Text>
+                        </View>
                     </View>
-                ) : null}
+                </TouchableOpacity>
             </View>
         </View>
     );

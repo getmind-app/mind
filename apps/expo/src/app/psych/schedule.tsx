@@ -362,7 +362,7 @@ function ModalityPicker({
         <AnimatedCard
             expanded={expanded}
             setExpanded={setExpanded}
-            maxHeight={90}
+            maxHeight={therapist.modalities.length > 1 ? 90 : 40}
             title={
                 <View className="flex flex-row justify-between">
                     <Text className={"font-nunito-sans text-xl"}>
@@ -402,7 +402,7 @@ function ModalityPicker({
                 <Text className="mt-2 font-nunito-sans text-[#666666]">
                     {/* TODO: Translate */}
                     <Trans>
-                        {therapist.name}&apos;s sessions happen online
+                        {therapist.name}&apos;s sessions happen online!
                     </Trans>
                 </Text>
             )}

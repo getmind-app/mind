@@ -15,6 +15,7 @@ import { Trans, t } from "@lingui/macro";
 
 import { CardSkeleton } from "../components/CardSkeleton";
 import DefaultCard from "../components/DefaultCard";
+import geocodeAddress from "../helpers/geocodeAddress";
 import { api } from "../utils/api";
 
 export default function Index() {
@@ -181,16 +182,16 @@ function NextAppointment() {
                         </View>
                     </View>
                     <TouchableOpacity
-                        onPress={() => {
-                            if (data.modality === "ON_SITE") {
-                                geocode().then((link) =>
-                                    Linking.openURL(link ? link : ""),
-                                );
-                            } else if (data.modality === "ONLINE") {
-                                Linking.openURL(data.link || "No link found");
-                            } else {
-                                throw new Error("Invalid modality");
+                        onPress={async () => {
+                            if (data.modality === "ONLINE") {
+                                Linking.openURL(data?.link as string);
+                                return;
                             }
+
+                            const mapsLink = await geocodeAddress(
+                                data?.therapist.address,
+                            );
+                            Linking.openURL(mapsLink as string);
                         }}
                     >
                         <View className="flex w-full flex-row items-center justify-center rounded-bl-xl rounded-br-xl bg-blue-500 py-3 align-middle">
