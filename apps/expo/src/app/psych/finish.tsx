@@ -34,7 +34,9 @@ export default function SessionFinishAppointment() {
                             <Text className="font-nunito-sans-bold text-lg">
                                 {data?.therapist.name.split(" ")[0]}{" "}
                             </Text>
-                            <Text className="font-nunito-sans text-lg text-slate-500"></Text>
+                            <Text className="font-nunito-sans text-lg text-slate-500">
+                                will be meeting with you on{" "}
+                            </Text>
                             <Text className="font-nunito-sans-bold text-lg ">
                                 {new Intl.DateTimeFormat("en", {
                                     month: "long",

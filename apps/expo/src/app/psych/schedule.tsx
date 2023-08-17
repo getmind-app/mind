@@ -15,11 +15,9 @@ import { Trans } from "@lingui/macro";
 
 import { AnimatedCard } from "../../components/Accordion";
 import { Header } from "../../components/Header";
-import geocode from "../../helpers/geocodeAddress";
 import geocodeAddress from "../../helpers/geocodeAddress";
 import { api } from "../../utils/api";
 import {
-    Modality,
     type Address,
     type Appointment,
     type Education,
@@ -54,6 +52,8 @@ export default function TherapistSchedule() {
     const [selectedHour, setSelectedHour] = useState<string>();
     const [selectedMode, setSelectedMode] = useState<"ON_SITE" | "ONLINE">();
 
+    const { data: patient } = api.patients.findByUserId.useQuery();
+
     const allPicked = useMemo(() => {
         return selectedDate && selectedMode && selectedHour;
     }, [selectedHour, selectedMode, selectedDate]);
@@ -78,7 +78,7 @@ export default function TherapistSchedule() {
             // depois que tivermos uma solução de formulários não vai precisar do type casting
             modality: selectedMode,
             therapistId: String(id),
-            patientId: String(user?.id),
+            patientId: String(patient?.id),
         });
     }
 
@@ -362,7 +362,7 @@ function ModalityPicker({
         <AnimatedCard
             expanded={expanded}
             setExpanded={setExpanded}
-            maxHeight={therapist.modalities.length > 1 ? 90 : 60}
+            maxHeight={therapist.modalities.length > 1 ? 110 : 60}
             title={
                 <View className="flex flex-row justify-between">
                     <Text className={"font-nunito-sans text-xl"}>
