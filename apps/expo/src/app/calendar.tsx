@@ -49,8 +49,6 @@ export default function CalendarScreen() {
         }
     }, [refreshing]);
 
-    if (isLoading) return <CardSkeleton />;
-
     return (
         <ScrollView
             className="bg-off-white px-4 pt-12"
@@ -62,7 +60,8 @@ export default function CalendarScreen() {
             <Text className="pt-12 font-nunito-sans-bold text-3xl">
                 <Trans>Calendar</Trans>
             </Text>
-            {appointments ? (
+            {isLoading ? <CardSkeleton /> : null}
+            {appointments && appointments.length > 0 ? (
                 <View>
                     {appointments.map((appoinment) =>
                         user ? (
