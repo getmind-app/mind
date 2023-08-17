@@ -2,7 +2,7 @@ import * as Location from "expo-location";
 
 import { type Address } from ".prisma/client";
 
-const geocodeAddress = async (address: Address | null) => {
+const geocodeAddress = async (address: Address | null | undefined) => {
     if (!address) {
         return;
     }

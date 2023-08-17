@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import {
     Image,
     LayoutAnimation,
+    Linking,
     Pressable,
     ScrollView,
     Text,
@@ -14,6 +15,8 @@ import { Trans } from "@lingui/macro";
 
 import { Header } from "../../components/Header";
 import { ProfileSkeleton } from "../../components/ProfileSkeleton";
+import formatModality from "../../helpers/formatModality";
+import geocodeAddress from "../../helpers/geocodeAddress";
 import { api } from "../../utils/api";
 
 export default function TherapistProfile() {
@@ -103,22 +106,31 @@ export default function TherapistProfile() {
                         </View>
                     </View>
                 </View>
-                <View className="pt-8">
-                    {/* <AboutMe>{data?.about}</AboutMe> */}
-                    <AboutMe>
+                <View className="gap-4 pt-8">
+                    {/* TODO: Use real data when implementend in the form */}
+                    <ContentCard title="About" emoji="👤">
                         Hey there, I really enjoy helping people find peace for
                         their minds. I believe I was born with the mission to
                         assist anyone seeking self-awareness and personal
                         growth.
-                    </AboutMe>
-                    <Education>
+                    </ContentCard>
+
+                    <ContentCard title="Education" emoji="🎓">
                         Cognitive Psychology - Stanford University
-                        {/* {data?.education} */}
-                    </Education>
-                    <Methodologies>
-                        {/* {data?.methodologies} */}
+                    </ContentCard>
+                    <ContentCard title="Methodologies" emoji="📚">
                         Cognitive Behavioral Therapy, Mindfulness, Psychodynamic
-                    </Methodologies>
+                    </ContentCard>
+                    <ContentCard title="Location" emoji="📍">
+                        <TouchableOpacity
+                            onPress={async () => {
+                                const mapsLink = await geocodeAddress(
+                                    data?.address,
+                                );
+                                Linking.openURL(mapsLink as string);
+                            }}
+                        ></TouchableOpacity>
+                    </ContentCard>
                 </View>
             </ScrollView>
             <View className="absolute bottom-0 w-full rounded-t-xl bg-blue-500 px-6 pb-8 pt-4">
@@ -128,8 +140,13 @@ export default function TherapistProfile() {
                             $ {data?.hourlyRate}
                         </Text>
                         <Text className="font-nunito-sans text-base text-white">
-                            {/* TODO: fazer disso dinamico com base nas configs do terapeuta*/}
-                            <Trans>Online and on-site</Trans>
+                            {data?.modalities.length === 1 ? (
+                                <Trans>
+                                    {formatModality(data?.modalities[0])}
+                                </Trans>
+                            ) : (
+                                <Trans>Online and on-site</Trans>
+                            )}
                         </Text>
                     </View>
                     <TouchableOpacity onPress={handleSchedule}>
@@ -147,75 +164,35 @@ export default function TherapistProfile() {
     );
 }
 
-function AboutMe({ children }: { children: React.ReactNode }) {
-    const [aboutMeOpen, setAboutMeOpen] = useState(true);
+function ContentCard({
+    children,
+    emoji,
+    title,
+}: {
+    children: React.ReactNode;
+    emoji: string;
+    title: string;
+}) {
+    const [open, setOpen] = useState(false);
 
-    const toggleAboutMe = () => {
-        setAboutMeOpen(!aboutMeOpen);
+    const toggle = () => {
+        setOpen(!open);
     };
 
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 
-    return (
-        <View className="w-full rounded-xl bg-white shadow-sm">
-            <View className="px-6 py-4">
-                <View className="flex flex-row items-center justify-between align-middle">
-                    <View className="flex flex-row items-center gap-2 align-middle">
-                        <Text>👤</Text>
-                        <Text className=" font-nunito-sans-bold text-lg">
-                            <Trans>About me</Trans>
-                        </Text>
-                    </View>
-                    <Pressable onPress={toggleAboutMe}>
-                        {aboutMeOpen ? (
-                            <MaterialIcons
-                                color="black"
-                                size={28}
-                                name="arrow-drop-up"
-                            />
-                        ) : (
-                            <MaterialIcons
-                                color="black"
-                                size={28}
-                                name="arrow-drop-down"
-                            />
-                        )}
-                    </Pressable>
-                </View>
-                {aboutMeOpen ? (
-                    <View className="pb-2 pt-4">
-                        <Text className="font-nunito-sans text-base">
-                            {children}
-                        </Text>
-                    </View>
-                ) : null}
-            </View>
-        </View>
-    );
-}
-
-function Education({ children }: { children: React.ReactNode }) {
-    const [educationOpen, setEducationOpen] = useState(false);
-
-    const toggleEducation = () => {
-        setEducationOpen(!educationOpen);
-    };
-
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-
-    // Esse mt-4 ta péssimo
     return (
         <View className="mt-4 w-full rounded-xl bg-white shadow-sm">
             <View className="px-6 py-4">
                 <View className="flex flex-row items-center justify-between align-middle">
                     <View className="flex flex-row items-center gap-2 align-middle">
-                        <Text>🎓</Text>
+                        <Text>{emoji}</Text>
                         <Text className=" font-nunito-sans-bold text-lg">
-                            <Trans>Education</Trans>
+                            <Trans>{title}</Trans>
                         </Text>
                     </View>
-                    <Pressable onPress={toggleEducation}>
-                        {educationOpen ? (
+                    <Pressable onPress={toggle}>
+                        {open ? (
                             <MaterialIcons
                                 color="black"
                                 size={28}
@@ -230,55 +207,7 @@ function Education({ children }: { children: React.ReactNode }) {
                         )}
                     </Pressable>
                 </View>
-                {educationOpen ? (
-                    <View className="pb-2 pt-4">
-                        <Text className="font-nunito-sans text-base">
-                            {children}
-                        </Text>
-                    </View>
-                ) : null}
-            </View>
-        </View>
-    );
-}
-
-function Methodologies({ children }: { children: React.ReactNode }) {
-    const [methodologiesOpen, setMethodologiesOpen] = useState(false);
-
-    const toggleMethodologies = () => {
-        setMethodologiesOpen(!methodologiesOpen);
-    };
-
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-
-    // TODO: Esse mt-4 ta péssimo
-    return (
-        <View className="mt-4 w-full rounded-xl bg-white shadow-sm">
-            <View className="px-6 py-4">
-                <View className="flex flex-row items-center justify-between align-middle">
-                    <View className="flex flex-row items-center gap-2 align-middle">
-                        <Text>📚</Text>
-                        <Text className=" font-nunito-sans-bold text-lg">
-                            <Trans>Methodologies</Trans>
-                        </Text>
-                    </View>
-                    <Pressable onPress={toggleMethodologies}>
-                        {methodologiesOpen ? (
-                            <MaterialIcons
-                                color="black"
-                                size={28}
-                                name="arrow-drop-up"
-                            />
-                        ) : (
-                            <MaterialIcons
-                                color="black"
-                                size={28}
-                                name="arrow-drop-down"
-                            />
-                        )}
-                    </Pressable>
-                </View>
-                {methodologiesOpen ? (
+                {open ? (
                     <View className="pb-2 pt-4">
                         <Text className="font-nunito-sans text-base">
                             {children}
