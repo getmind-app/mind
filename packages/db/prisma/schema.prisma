@@ -26,6 +26,7 @@ model Therapist {
     yearsOfExperience Int
     profilePictureUrl String
     userId            String        @unique
+    modalities        Modality[]
     address           Address?
     education         Education[]
     methodologies     Methodology[]

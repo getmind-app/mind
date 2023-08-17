@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import {
     Image,
     LayoutAnimation,
+    Linking,
     Pressable,
     ScrollView,
     Text,
@@ -14,8 +15,18 @@ import { Trans } from "@lingui/macro";
 
 import { AnimatedCard } from "../../components/Accordion";
 import { Header } from "../../components/Header";
+import geocode from "../../helpers/geocodeAddress";
+import geocodeAddress from "../../helpers/geocodeAddress";
 import { api } from "../../utils/api";
-import { type Appointment, type Hour } from ".prisma/client";
+import {
+    Modality,
+    type Address,
+    type Appointment,
+    type Education,
+    type Hour,
+    type Methodology,
+    type Therapist,
+} from ".prisma/client";
 
 export default function TherapistSchedule() {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -50,6 +61,10 @@ export default function TherapistSchedule() {
     function handleConfirm() {
         if (!selectedDate || !selectedHour || !selectedMode) {
             throw new Error("Missing form data");
+        }
+
+        if (data?.modalities.length === 1) {
+            setSelectedMode(data?.modalities[0]);
         }
 
         mutate({
@@ -106,7 +121,7 @@ export default function TherapistSchedule() {
                     onSelect={setSelectedHour}
                 />
                 <ModalityPicker
-                    therapistName={data.name ?? ""}
+                    therapist={data}
                     hour={selectedHour}
                     mode={selectedMode ?? ""}
                     onSelect={(pickedModality) =>
@@ -319,12 +334,16 @@ function HourComponent({
 }
 
 function ModalityPicker({
-    therapistName,
+    therapist,
     mode,
     onSelect,
     hour,
 }: {
-    therapistName: string;
+    therapist: Therapist & { address: Address | null } & {
+        methodologies: Methodology[];
+    } & { education: Education[] } & { appointments: Appointment[] } & {
+        hours: Hour[];
+    };
     mode: string;
     onSelect: (pickedModality: "ONLINE" | "ON_SITE") => void;
     hour?: string;
@@ -355,54 +374,81 @@ function ModalityPicker({
                 </View>
             }
         >
-            <Text className="mt-2 font-nunito-sans text-[#666666]">
-                <Trans>
-                    {therapistName}&apos;s sessions happen at{" "}
-                    <Text className="font-nunito-sans underline">
-                        335 Pioneer Way
-                    </Text>
-                </Trans>
-            </Text>
-            <View className="mt-3 flex flex-row justify-between">
-                <Pressable
-                    onPress={() => {
-                        onSelect("ONLINE");
-                        setTimeout(() => setExpanded(false), 300);
+            {therapist.modalities.includes("ON_SITE") ? (
+                <TouchableOpacity
+                    onPress={async () => {
+                        const mapsLink = await geocodeAddress(
+                            therapist.address ? therapist.address : null,
+                        );
+
+                        Linking.openURL(
+                            mapsLink
+                                ? mapsLink
+                                : "https://www.google.com/maps/search/?api=1&query=google",
+                        );
                     }}
-                    className={`w-[48%] rounded-lg bg-off-white py-3 ${
-                        mode === "ONLINE" ? "bg-[#2185EE]" : ""
-                    }`}
                 >
-                    <Text
-                        className={`text-center font-nunito-sans text-base ${
-                            mode === "ONLINE"
-                                ? "font-nunito-sans-bold text-white"
-                                : ""
+                    <Text className="mt-2 font-nunito-sans text-[#666666]">
+                        <Trans>
+                            {therapist.name}&apos;s sessions happen at{" "}
+                            <Text className="font-nunito-sans underline">
+                                {therapist.address?.street},{" "}
+                                {therapist.address?.number}
+                            </Text>
+                        </Trans>
+                    </Text>
+                </TouchableOpacity>
+            ) : (
+                <Text className="mt-2 font-nunito-sans text-[#666666]">
+                    {/* TODO: Translate */}
+                    <Trans>
+                        {therapist.name}&apos;s sessions happen online
+                    </Trans>
+                </Text>
+            )}
+
+            {therapist.modalities.length > 1 && (
+                <View className="mt-3 flex flex-row justify-between">
+                    <TouchableOpacity
+                        onPress={() => {
+                            onSelect("ONLINE");
+                            setTimeout(() => setExpanded(false), 300);
+                        }}
+                        className={`w-[48%] rounded-lg bg-off-white py-3 ${
+                            mode === "ONLINE" ? "bg-[#2185EE]" : ""
                         }`}
                     >
-                        <Trans>Online</Trans>
-                    </Text>
-                </Pressable>
-                <Pressable
-                    onPress={() => {
-                        onSelect("ON_SITE");
-                        setExpanded(false);
-                    }}
-                    className={`w-[48%] rounded-lg bg-off-white py-3 ${
-                        mode === "ON_SITE" ? "bg-[#2185EE]" : ""
-                    }`}
-                >
-                    <Text
-                        className={`text-center font-nunito-sans text-base ${
-                            mode === "ON_SITE"
-                                ? "font-nunito-sans-bold text-white"
-                                : ""
+                        <Text
+                            className={`text-center font-nunito-sans text-base ${
+                                mode === "ONLINE"
+                                    ? "font-nunito-sans-bold text-white"
+                                    : ""
+                            }`}
+                        >
+                            <Trans>Online</Trans>
+                        </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={() => {
+                            onSelect("ON_SITE");
+                            setExpanded(false);
+                        }}
+                        className={`w-[48%] rounded-lg bg-off-white py-3 ${
+                            mode === "ON_SITE" ? "bg-[#2185EE]" : ""
                         }`}
                     >
-                        <Trans>In-person</Trans>
-                    </Text>
-                </Pressable>
-            </View>
+                        <Text
+                            className={`text-center font-nunito-sans text-base ${
+                                mode === "ON_SITE"
+                                    ? "font-nunito-sans-bold text-white"
+                                    : ""
+                            }`}
+                        >
+                            <Trans>In-person</Trans>
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+            )}
         </AnimatedCard>
     );
 }
