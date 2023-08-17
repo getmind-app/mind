@@ -12,7 +12,7 @@ import {
 import { type Float } from "react-native/Libraries/Types/CodegenTypes";
 import { useRouter, useSearchParams } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
-import { Trans } from "@lingui/macro";
+import { Trans, t } from "@lingui/macro";
 
 import { Header } from "../../components/Header";
 import { ProfileSkeleton } from "../../components/ProfileSkeleton";
@@ -102,14 +102,21 @@ export default function TherapistProfile() {
                 </View>
                 <View className="pb-32 pt-8">
                     {/* TODO: Use real data when implementend in the form */}
-                    <ContentCard title="About" emoji="👤" loadOpen>
+                    <ContentCard
+                        title={t({ message: "About" })}
+                        emoji="👤"
+                        loadOpen
+                    >
                         Hey there, I really enjoy helping people find peace for
                         their minds. I believe I was born with the mission to
                         assist anyone seeking self-awareness and personal
                         growth.
                     </ContentCard>
                     {data?.modalities.includes("ON_SITE") && (
-                        <ContentCard title="Location" emoji="📍">
+                        <ContentCard
+                            title={t({ message: "Location" })}
+                            emoji="📍"
+                        >
                             <TouchableOpacity
                                 onPress={async () => {
                                     const mapsLink = await geocodeAddress(
@@ -126,10 +133,13 @@ export default function TherapistProfile() {
                             </TouchableOpacity>
                         </ContentCard>
                     )}
-                    <ContentCard title="Education" emoji="🎓">
+                    <ContentCard title={t({ message: "Education" })} emoji="🎓">
                         Cognitive Psychology - Stanford University
                     </ContentCard>
-                    <ContentCard title="Methodologies" emoji="📚">
+                    <ContentCard
+                        title={t({ message: "Methodologies" })}
+                        emoji="📚"
+                    >
                         Cognitive Behavioral Therapy, Mindfulness, Psychodynamic
                     </ContentCard>
                 </View>
