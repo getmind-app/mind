@@ -26,6 +26,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { i18n } from "@lingui/core";
 import { Trans } from "@lingui/macro";
 import { I18nProvider } from "@lingui/react";
+import { StripeProvider } from "@stripe/stripe-react-native";
 
 import { messages as enMessages } from "../../src/locales/en/messages";
 import { messages as ptMessages } from "../../src/locales/pt/messages";
@@ -123,17 +124,24 @@ const RootLayout = () => {
             tokenCache={tokenCache}
         >
             <TRPCProvider>
-                <SafeAreaProvider>
-                    <I18nProvider i18n={i18n}>
-                        <SignedIn>
-                            <TabsRouter />
-                            <StatusBar translucent />
-                        </SignedIn>
-                        <SignedOut>
-                            <SignInScreen />
-                        </SignedOut>
-                    </I18nProvider>
-                </SafeAreaProvider>
+                <StripeProvider
+                    publishableKey={
+                        Constants.expoConfig?.extra
+                            ?.STRIPE_PUBLISHABLE_KEY as string
+                    }
+                >
+                    <SafeAreaProvider>
+                        <I18nProvider i18n={i18n}>
+                            <SignedIn>
+                                <TabsRouter />
+                                <StatusBar translucent />
+                            </SignedIn>
+                            <SignedOut>
+                                <SignInScreen />
+                            </SignedOut>
+                        </I18nProvider>
+                    </SafeAreaProvider>
+                </StripeProvider>
             </TRPCProvider>
         </ClerkProvider>
     );

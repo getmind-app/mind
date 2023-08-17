@@ -1,9 +1,12 @@
+import { useEffect } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { Trans, t } from "@lingui/macro";
+import { usePaymentSheet } from "@stripe/stripe-react-native";
 
 import { Header } from "../../components/Header";
+import initialisePaymentSheet from "../../helpers/initialisePaymentSheet";
 import { api } from "../../utils/api";
 
 function handleMode(x: string) {
@@ -13,6 +16,8 @@ function handleMode(x: string) {
 
 export default function SessionPayment() {
     const router = useRouter();
+    const { initPaymentSheet, presentPaymentSheet, loading } =
+        usePaymentSheet();
     const { appointmentId } = useLocalSearchParams();
     const { data } = api.appointments.findById.useQuery({
         id: String(appointmentId),
@@ -24,6 +29,10 @@ export default function SessionPayment() {
             params: { appointmentId: appointmentId },
         });
     }
+
+    useEffect(() => {
+        initialisePaymentSheet();
+    }, []);
 
     return (
         <>
