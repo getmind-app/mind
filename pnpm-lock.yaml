@@ -31,6 +31,9 @@ importers:
       '@manypkg/cli':
         specifier: ^0.20.0
         version: 0.20.0
+      '@stripe/stripe-react-native':
+        specifier: 0.23.3
+        version: 0.23.3(expo@48.0.10)(react-native@0.71.8)(react@18.2.0)
       '@types/prettier':
         specifier: ^2.7.2
         version: 2.7.2
@@ -4112,6 +4115,21 @@ packages:
     resolution: {integrity: sha512-V4BG07kuYSUkTCSBHG8G8TNhM+F19jXFWnQtzj+we8DrkpSBCee9Z3Ms8yiGer/dlmhe35/Xdgyo3/0rQKg7YA==}
     dependencies:
       '@sinonjs/commons': 3.0.0
+    dev: false
+
+  /@stripe/stripe-react-native@0.23.3(expo@48.0.10)(react-native@0.71.8)(react@18.2.0):
+    resolution: {integrity: sha512-jfvmNDYxjkIdc/Hths3wdKAAXThAf+IieV+KQhd5b7f1eWrTXBzA9IzUZkXb73r/LiSw/GB5K4bBOJTDjgvd+A==}
+    peerDependencies:
+      expo: '>=46.0.9'
+      react: '*'
+      react-native: '*'
+    peerDependenciesMeta:
+      expo:
+        optional: true
+    dependencies:
+      expo: 48.0.10(@babel/core@7.22.10)
+      react: 18.2.0
+      react-native: 0.71.8(@babel/core@7.22.10)(@babel/preset-env@7.21.4)(react@18.2.0)
     dev: false
 
   /@swc/helpers@0.4.14:
