@@ -124,24 +124,24 @@ const RootLayout = () => {
             tokenCache={tokenCache}
         >
             <TRPCProvider>
-                <StripeProvider
+                {/* <StripeProvider
                     publishableKey={
                         Constants.expoConfig?.extra
                             ?.STRIPE_PUBLISHABLE_KEY as string
                     }
-                >
-                    <SafeAreaProvider>
-                        <I18nProvider i18n={i18n}>
-                            <SignedIn>
-                                <TabsRouter />
-                                <StatusBar translucent />
-                            </SignedIn>
-                            <SignedOut>
-                                <SignInScreen />
-                            </SignedOut>
-                        </I18nProvider>
-                    </SafeAreaProvider>
-                </StripeProvider>
+                > */}
+                <SafeAreaProvider>
+                    <I18nProvider i18n={i18n}>
+                        <SignedIn>
+                            <TabsRouter />
+                            <StatusBar translucent />
+                        </SignedIn>
+                        <SignedOut>
+                            <SignInScreen />
+                        </SignedOut>
+                    </I18nProvider>
+                </SafeAreaProvider>
+                {/* </StripeProvider> */}
             </TRPCProvider>
         </ClerkProvider>
     );

@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import {
-    Image,
     LayoutAnimation,
     Linking,
     Pressable,
@@ -10,6 +9,7 @@ import {
     View,
 } from "react-native";
 import { type Float } from "react-native/Libraries/Types/CodegenTypes";
+import { Image } from "expo-image";
 import { useRouter, useSearchParams } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Trans, t } from "@lingui/macro";
@@ -43,23 +43,56 @@ export default function TherapistProfile() {
                 className="h-full bg-off-white px-4 py-2"
             >
                 <View className="flex flex-col items-center justify-center">
-                    <View className="flex w-full flex-row">
-                        <Image
-                            className="rounded-full"
-                            alt={`${data?.name} picture`}
-                            source={{
-                                uri: data?.profilePictureUrl,
-                                width: 96,
-                                height: 96,
+                    <View
+                        style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                            gap: 12,
+                        }}
+                    >
+                        <View
+                            style={{
+                                flex: 1,
+                                width: 72,
+                                height: 72,
+                                padding: 6,
                             }}
-                        />
-                        <View className="flex flex-col justify-center gap-1.5 pl-4 align-middle">
+                        >
+                            <Image
+                                style={{
+                                    borderRadius: 36,
+                                    width: "100%",
+                                    height: "100%",
+                                }}
+                                source={data?.profilePictureUrl}
+                                contentFit="cover"
+                            />
+                        </View>
+                        <View
+                            style={{
+                                flex: 4,
+                            }}
+                        >
                             <Text className="font-nunito-sans-bold text-3xl font-bold">
                                 {data?.name}
                             </Text>
                         </View>
                     </View>
-                    <View className="flex flex-row items-center gap-12 pt-6 align-middle">
+                    <View
+                        style={{
+                            flex: 1,
+                            flexWrap: "wrap",
+                            flexDirection: "row",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            width: "100%",
+                            paddingLeft: 12,
+                            paddingRight: 12,
+                            columnGap: 24,
+                            rowGap: 12,
+                            paddingTop: 12,
+                        }}
+                    >
                         <View className="flex flex-col">
                             <Text className="font-nunito-sans-bold text-base text-slate-500">
                                 CRP
