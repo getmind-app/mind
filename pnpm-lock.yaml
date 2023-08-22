@@ -176,6 +176,9 @@ importers:
       expo-font:
         specifier: ~11.1.1
         version: 11.1.1(expo@48.0.10)
+      expo-image:
+        specifier: ~1.0.1
+        version: 1.0.1(expo@48.0.10)
       expo-linear-gradient:
         specifier: ~12.1.2
         version: 12.1.2(expo@48.0.10)
@@ -7573,6 +7576,14 @@ packages:
     dependencies:
       expo: 48.0.10(@babel/core@7.22.10)
       fontfaceobserver: 2.3.0
+    dev: false
+
+  /expo-image@1.0.1(expo@48.0.10):
+    resolution: {integrity: sha512-h3xDHaw3ZWzOKar1eFXY4CsFgDstw6fo5Tzv6BXXs+Zte5betPMb567f8zCNnhpkr7UCo5CN7Cg92o+lqzdvRA==}
+    peerDependencies:
+      expo: '*'
+    dependencies:
+      expo: 48.0.10(@babel/core@7.22.10)
     dev: false
 
   /expo-json-utils@0.5.1:

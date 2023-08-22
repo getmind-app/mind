@@ -11,6 +11,7 @@ import {
     TouchableWithoutFeedback,
     View,
 } from "react-native";
+import { useRouter } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
 import { Feather, FontAwesome } from "@expo/vector-icons";
 import { Trans, t } from "@lingui/macro";
@@ -34,6 +35,7 @@ export default function CalendarScreen() {
         data: appointments,
         isLoading,
         refetch,
+        isError,
     } = api.appointments.findAll.useQuery();
 
     const onRefresh = () => {
@@ -49,6 +51,56 @@ export default function CalendarScreen() {
         }
     }, [refreshing]);
 
+    if (isLoading) {
+        return (
+            <BaseLayout refreshing={refreshing} onRefresh={onRefresh}>
+                <CardSkeleton />
+            </BaseLayout>
+        );
+    }
+
+    if (isError) {
+        return (
+            <BaseLayout refreshing={refreshing} onRefresh={onRefresh}>
+                <AppointmentCardError />
+            </BaseLayout>
+        );
+    }
+
+    if (!appointments || appointments.length === 0) {
+        return (
+            <BaseLayout refreshing={refreshing} onRefresh={onRefresh}>
+                <EmptyState />
+            </BaseLayout>
+        );
+    }
+
+    return (
+        <BaseLayout refreshing={refreshing} onRefresh={onRefresh}>
+            <View>
+                {appointments.map((appoinment) =>
+                    user ? (
+                        <AppointmentCard
+                            key={appoinment.id}
+                            appointment={appoinment}
+                            metadata={user.publicMetadata}
+                        />
+                    ) : null,
+                )}
+            </View>
+        </BaseLayout>
+    );
+}
+
+function BaseLayout({
+    refreshing,
+    onRefresh,
+    children,
+}: {
+    refreshing: boolean;
+    onRefresh: () => void;
+    children: React.ReactNode;
+}) {
     return (
         <ScrollView
             className="bg-off-white px-4 pt-12"
@@ -60,24 +112,45 @@ export default function CalendarScreen() {
             <Text className="pt-12 font-nunito-sans-bold text-3xl">
                 <Trans>Calendar</Trans>
             </Text>
-            {isLoading ? (
-                <CardSkeleton />
-            ) : appointments && appointments.length > 0 ? (
-                <View>
-                    {appointments.map((appoinment) =>
-                        user ? (
-                            <AppointmentCard
-                                key={appoinment.id}
-                                appointment={appoinment}
-                                metadata={user.publicMetadata}
-                            />
-                        ) : null,
-                    )}
-                </View>
-            ) : (
-                <DefaultCard />
-            )}
+            {children}
         </ScrollView>
+    );
+}
+
+function EmptyState() {
+    const router = useRouter();
+    return (
+        <View className="rounded-xl bg-white">
+            <View className="px-6 pt-6">
+                <Text className="font-nunito-sans text-lg">
+                    <Trans>Your appointments will show up here</Trans>
+                </Text>
+                <Text className="font-nunito-sans text-sm text-slate-500">
+                    <Trans>
+                        Options for canceling and rescheduling will also be
+                        available
+                    </Trans>
+                </Text>
+            </View>
+            <TouchableOpacity onPress={() => router.push("/search")}>
+                <View className="mt-6 flex w-full flex-row items-center justify-center rounded-b-xl bg-blue-500 py-3 align-middle">
+                    <FontAwesome size={16} color="white" name="search" />
+                    <Text className="ml-4 font-nunito-sans-bold text-lg text-white">
+                        <Trans>Therapists</Trans>
+                    </Text>
+                </View>
+            </TouchableOpacity>
+        </View>
+    );
+}
+
+function AppointmentCardError() {
+    return (
+        <View>
+            <Text className="font-nunito-sans text-xl">
+                {t({ message: "Something went wrong" })}
+            </Text>
+        </View>
     );
 }
 
@@ -88,7 +161,7 @@ function AppointmentCard({
     appointment: Appointment & { therapist: Therapist } & { patient: Patient };
     metadata: UserPublicMetadata;
 }) {
-    const [open, setOpen] = useState<boolean>(false);
+    const [open, setOpen] = useState(false);
     const { user } = useUser();
 
     return (
@@ -96,8 +169,17 @@ function AppointmentCard({
             key={appointment.id}
             className="my-2 rounded-xl bg-white p-6 shadow-sm"
         >
-            <View className="flex flex-row justify-between">
-                <View className="flex flex-col gap-1">
+            <View
+                style={{
+                    flexDirection: "row",
+                    flex: 1,
+                }}
+            >
+                <View
+                    style={{
+                        flex: 3,
+                    }}
+                >
                     <Status status={appointment.status} />
                     <Text className="font-nunito-sans text-xl">
                         {new Intl.DateTimeFormat("en", {
@@ -111,26 +193,26 @@ function AppointmentCard({
                             <Trans>with</Trans>
                             {"  "}
                         </Text>
-                        <Image
-                            className="rounded-full"
-                            alt={`${appointment.therapist.name}'s profile picture`}
-                            source={{
-                                uri:
+                            <Image
+                                className="rounded-full"
+                                alt={`${appointment.therapist.name}'s profile picture`}
+                                source={{
+                                    uri:
                                     user?.publicMetadata.role == "professional"
                                         ? appointment.patient.profilePictureUrl
-                                        : appointment.therapist
-                                              .profilePictureUrl,
-                                width: 20,
-                                height: 20,
-                            }}
-                        />
-                        <Text className="font-nunito-sans text-sm text-slate-500">
-                            {"  "}
-                            {appointment.therapist.name}{" "}
-                            {appointment.modality === "ONLINE"
-                                ? t({ message: "via Google Meet" })
-                                : t({ message: "in person" })}
-                        </Text>
+                                            : appointment.therapist
+                                                  .profilePictureUrl,
+                                    width: 20,
+                                    height: 20,
+                                }}
+                            />
+                            <Text className="font-nunito-sans text-sm text-slate-500">
+                                {"  "}
+                                {appointment.therapist.name}{" "}
+                                {appointment.modality === "ONLINE"
+                                    ? t({ message: "via Google Meet" })
+                                    : t({ message: "in person" })}
+                            </Text>
                     </View>
                     {user?.publicMetadata.role == "professional" &&
                         appointment.status == "ACCEPTED" && (
@@ -147,7 +229,11 @@ function AppointmentCard({
                             </View>
                         )}
                 </View>
-                <View className="flex flex-col items-center gap-4">
+                <View
+                    style={{
+                        flex: 1,
+                    }}
+                >
                     <Text className="font-nunito-sans-bold text-xl text-blue-500 ">
                         {new Date(appointment.scheduledTo).getHours()}:
                         {new Date(appointment.scheduledTo).getMinutes() == 0
@@ -212,10 +298,15 @@ function PatientOptions({
 }: {
     appointment: Appointment & { therapist: Therapist };
 }) {
-    return appointment.status === "ACCEPTED" &&
-        isMoreThan24HoursLater(appointment.scheduledTo) ? (
-        <SessionCancel appointment={appointment} />
-    ) : null;
+    const acceptedAndMoreThan24Hours =
+        appointment.status === "ACCEPTED" &&
+        isMoreThan24HoursLater(appointment.scheduledTo);
+
+    if (acceptedAndMoreThan24Hours) {
+        return <SessionCancel appointment={appointment} />;
+    }
+
+    return null;
 }
 
 function PaymentConfirmation({
@@ -402,43 +493,39 @@ function SessionCancel({
     );
 }
 
+const statusMapper: {
+    [key in AppointmentStatus]: {
+        color: string;
+        circleColor: string;
+    };
+} = {
+    ACCEPTED: {
+        color: "green-600",
+        circleColor: "green",
+    },
+    PENDENT: {
+        color: "yellow-400",
+        circleColor: "yellow",
+    },
+    REJECTED: {
+        color: "red-400",
+        circleColor: "red",
+    },
+    CANCELED: {
+        color: "red-400",
+        circleColor: "red",
+    },
+};
+
 function Status({ status }: { status: AppointmentStatus }) {
-    const getStatusColor = (status: AppointmentStatus) => {
-        switch (status) {
-            case "ACCEPTED":
-                return "text-green-600";
-            case "PENDENT":
-                return "text-yellow-400";
-            case "REJECTED" || "CANCELED":
-                return "text-red-400";
-            default:
-                return "text-blue-400";
-        }
-    };
-
-    // awful approach
-
-    const getCircleColor = (status: AppointmentStatus) => {
-        switch (status) {
-            case "ACCEPTED":
-                return "green";
-            case "PENDENT":
-                return "yellow";
-            case "REJECTED" || "CANCELED":
-                return "red";
-            default:
-                return "blue";
-        }
-    };
-
-    const textColor = getStatusColor(status);
-    const circleColor = getCircleColor(status);
+    const textColor = statusMapper[status].color;
+    const circleColor = statusMapper[status].circleColor;
 
     return (
-        <View className="flex flex-row items-center pl-1 align-middle">
+        <View className="flex flex-row items-center align-middle">
             <FontAwesome size={12} name="circle" color={circleColor} />
             <Text
-                className={`${textColor} pl-2 font-nunito-sans-bold text-base`}
+                className={`text-${textColor} pl-2 font-nunito-sans-bold text-base`}
             >
                 {status}
             </Text>
