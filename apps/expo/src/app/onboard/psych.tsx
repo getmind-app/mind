@@ -83,7 +83,7 @@ export default function OnboardPsychScreen() {
         mutate({
             ...data,
             userId: String(user?.id),
-            profilePictureUrl: String(user?.imageUrl),
+            profilePictureUrl: String(user?.profileImageUrl),
             about: "",
             dateOfBirth: data.birthday,
             yearsOfExperience: parseInt(data.yearsOfExperience),
@@ -92,7 +92,8 @@ export default function OnboardPsychScreen() {
     });
 
     const { mutate, isLoading } = api.therapists.create.useMutation({
-        onSuccess: () => {
+        onSuccess: async () => {
+            await user?.reload();
             router.push("/settings/available-hours");
         },
     });
