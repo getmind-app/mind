@@ -38,6 +38,7 @@ export function FormTextInput<
                     error={fieldState.error?.message}
                     value={value}
                     onBlur={onBlur}
+                    onChangeText={onChange}
                     {...otherProps}
                 />
             )}

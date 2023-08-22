@@ -38,7 +38,7 @@ export function TextInput<T extends string>({
                         className={`h-10 ${
                             unit ? "" : "w-full"
                         } flex flex-row items-center justify-center  font-nunito-sans text-xl`}
-                        onChangeText={onChangeText}
+                        onChangeText={onChangeText as any}
                         {...otherProps}
                     />
                 ) : (
