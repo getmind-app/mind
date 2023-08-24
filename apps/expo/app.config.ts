@@ -9,7 +9,7 @@ const STRIPE_PUBLISHABLE_KEY =
 const defineConfig = (): ExpoConfig => ({
     name: "expo",
     slug: "mind",
-    scheme: "expo",
+    scheme: "mind",
     version: "1.0.0",
     orientation: "portrait",
     icon: "./assets/icon.png",
@@ -26,6 +26,9 @@ const defineConfig = (): ExpoConfig => ({
     ios: {
         supportsTablet: true,
         bundleIdentifier: "your.bundle.identifier",
+        infoPlist: {
+            LSApplicationQueriesSchemes: ["mind"],
+        },
     },
     android: {
         adaptiveIcon: {

@@ -44,7 +44,10 @@
     "react-native-web": "~0.18.12",
     "turbo": "^1.8.8",
     "typescript": "^5.0.3",
-    "@stripe/stripe-react-native": "0.23.3"
+    "@stripe/stripe-react-native": "0.23.3",
+    "expo-dev-client": "~2.2.1",
+    "expo-linking": "~4.0.1",
+    "expo-clipboard": "~4.1.2"
   },
   "devDependencies": {
     "@babel/core": "^7.22.10",

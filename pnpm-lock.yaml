@@ -43,9 +43,18 @@ importers:
       expo-asset:
         specifier: ~8.9.1
         version: 8.9.1(expo@48.0.10)
+      expo-clipboard:
+        specifier: ~4.1.2
+        version: 4.1.2(expo@48.0.10)
+      expo-dev-client:
+        specifier: ~2.2.1
+        version: 2.2.1(expo@48.0.10)
       expo-font:
         specifier: ~11.1.1
         version: 11.1.1(expo@48.0.10)
+      expo-linking:
+        specifier: ~4.0.1
+        version: 4.0.1(expo@48.0.10)
       expo-localization:
         specifier: ~14.1.1
         version: 14.1.1(expo@48.0.10)
@@ -7495,6 +7504,14 @@ packages:
     transitivePeerDependencies:
       - expo
       - supports-color
+    dev: false
+
+  /expo-clipboard@4.1.2(expo@48.0.10):
+    resolution: {integrity: sha512-YSuIs4CV+3gypl7X74sp2ruwAVuhnOngsWs7EGkcvRdX0BBrZZMk3GXGw9a59sU6SW4wGWAfwrhyCT41GUaN+A==}
+    peerDependencies:
+      expo: '*'
+    dependencies:
+      expo: 48.0.10(@babel/core@7.22.10)
     dev: false
 
   /expo-constants@14.2.1(expo@48.0.10):

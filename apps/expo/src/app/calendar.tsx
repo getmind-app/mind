@@ -11,13 +11,14 @@ import {
     TouchableWithoutFeedback,
     View,
 } from "react-native";
+import * as Clipboard from "expo-clipboard";
+import * as Linking from "expo-linking";
 import { useRouter } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
 import { Feather, FontAwesome } from "@expo/vector-icons";
 import { Trans, t } from "@lingui/macro";
 
 import { CardSkeleton } from "../components/CardSkeleton";
-import DefaultCard from "../components/DefaultCard";
 import { api } from "../utils/api";
 import {
     type Appointment,
@@ -119,9 +120,17 @@ function BaseLayout({
 
 function EmptyState() {
     const router = useRouter();
+    const { user } = useUser();
+
+    // remove when we have a context provider
+    const therapistId =
+        user?.publicMetadata?.role == "professional"
+            ? api.therapists.findByUserId.useQuery().data?.id
+            : "";
+
     return (
-        <View className="rounded-xl bg-white">
-            <View className="px-6 pt-6">
+        <View className="mt-4 rounded-xl bg-white">
+            <View className=" px-6 pt-6">
                 <Text className="font-nunito-sans text-lg">
                     <Trans>Your appointments will show up here</Trans>
                 </Text>
@@ -132,14 +141,31 @@ function EmptyState() {
                     </Trans>
                 </Text>
             </View>
-            <TouchableOpacity onPress={() => router.push("/search")}>
-                <View className="mt-6 flex w-full flex-row items-center justify-center rounded-b-xl bg-blue-500 py-3 align-middle">
-                    <FontAwesome size={16} color="white" name="search" />
-                    <Text className="ml-4 font-nunito-sans-bold text-lg text-white">
-                        <Trans>Therapists</Trans>
-                    </Text>
-                </View>
-            </TouchableOpacity>
+            {user?.publicMetadata.role == "patient" ? (
+                <TouchableOpacity onPress={() => router.push("/search")}>
+                    <View className="mt-6 flex w-full flex-row items-center justify-center rounded-b-xl bg-blue-500 py-3 align-middle">
+                        <FontAwesome size={16} color="white" name="search" />
+                        <Text className="ml-4 font-nunito-sans-bold text-lg text-white">
+                            <Trans>Therapists</Trans>
+                        </Text>
+                    </View>
+                </TouchableOpacity>
+            ) : (
+                <TouchableOpacity
+                    onPress={() =>
+                        Clipboard.setStringAsync(
+                            Linking.createURL(`/psych/${therapistId}`),
+                        )
+                    }
+                >
+                    <View className="mt-6 flex w-full flex-row items-center justify-center rounded-b-xl bg-blue-500 py-3 align-middle">
+                        <FontAwesome size={16} color="white" name="link" />
+                        <Text className="ml-4 font-nunito-sans-bold text-lg text-white">
+                            <Trans>Share your link</Trans>
+                        </Text>
+                    </View>
+                </TouchableOpacity>
+            )}
         </View>
     );
 }
@@ -193,26 +219,26 @@ function AppointmentCard({
                             <Trans>with</Trans>
                             {"  "}
                         </Text>
-                            <Image
-                                className="rounded-full"
-                                alt={`${appointment.therapist.name}'s profile picture`}
-                                source={{
-                                    uri:
+                        <Image
+                            className="rounded-full"
+                            alt={`${appointment.therapist.name}'s profile picture`}
+                            source={{
+                                uri:
                                     user?.publicMetadata.role == "professional"
                                         ? appointment.patient.profilePictureUrl
-                                            : appointment.therapist
-                                                  .profilePictureUrl,
-                                    width: 20,
-                                    height: 20,
-                                }}
-                            />
-                            <Text className="font-nunito-sans text-sm text-slate-500">
-                                {"  "}
-                                {appointment.therapist.name}{" "}
-                                {appointment.modality === "ONLINE"
-                                    ? t({ message: "via Google Meet" })
-                                    : t({ message: "in person" })}
-                            </Text>
+                                        : appointment.therapist
+                                              .profilePictureUrl,
+                                width: 20,
+                                height: 20,
+                            }}
+                        />
+                        <Text className="font-nunito-sans text-sm text-slate-500">
+                            {"  "}
+                            {appointment.therapist.name}{" "}
+                            {appointment.modality === "ONLINE"
+                                ? t({ message: "via Google Meet" })
+                                : t({ message: "in person" })}
+                        </Text>
                     </View>
                     {user?.publicMetadata.role == "professional" &&
                         appointment.status == "ACCEPTED" && (

@@ -1,4 +1,6 @@
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import * as Clipboard from "expo-clipboard";
+import * as Linking from "expo-linking";
 import { useRouter } from "expo-router";
 import { useClerk } from "@clerk/clerk-expo";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -17,6 +19,12 @@ export default function UserProfileScreen() {
         await user?.reload();
         router.push("/onboard");
     }
+
+    // remove when we have a context provider
+    const therapistId =
+        user?.publicMetadata?.role == "professional"
+            ? api.therapists.findByUserId.useQuery().data?.id
+            : "";
 
     return (
         <View className="h-full bg-off-white px-4 pt-24">
@@ -62,10 +70,22 @@ export default function UserProfileScreen() {
 
                 {user?.publicMetadata &&
                 user.publicMetadata.role == "professional" ? (
-                    <MenuItem
-                        label={t({ message: "🕰️  Available hours" })}
-                        onPress={() => router.push("/settings/available-hours")}
-                    />
+                    <>
+                        <MenuItem
+                            label={t({ message: "🕰️  Available hours" })}
+                            onPress={() =>
+                                router.push("/settings/available-hours")
+                            }
+                        />
+                        <MenuItem
+                            label={t({ message: "🔗  Your link" })}
+                            onPress={() =>
+                                Clipboard.setStringAsync(
+                                    Linking.createURL(`/psych/${therapistId}`),
+                                )
+                            }
+                        />
+                    </>
                 ) : null}
 
                 {process.env.NODE_ENV === "development" ? (

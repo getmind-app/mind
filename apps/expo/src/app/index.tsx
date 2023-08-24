@@ -14,7 +14,7 @@ import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import { Trans, t } from "@lingui/macro";
 
 import { CardSkeleton } from "../components/CardSkeleton";
-import DefaultCard from "../components/DefaultCard";
+import DefaultHomeCard from "../components/DefaultHomeCard";
 import geocodeAddress from "../helpers/geocodeAddress";
 import { api } from "../utils/api";
 
@@ -213,7 +213,7 @@ function NextAppointment() {
                     </TouchableOpacity>
                 </View>
             ) : (
-                <DefaultCard />
+                <DefaultHomeCard />
             )}
         </>
     );
