@@ -12,6 +12,7 @@ export const therapistsRouter = createTRPCRouter({
                 dateOfBirth: z.date(),
                 document: z.string().min(1),
                 crp: z.string().min(1),
+                phone: z.string().min(1),
                 hourlyRate: z.number().positive(),
                 yearsOfExperience: z.number().min(0),
                 about: z.string(),

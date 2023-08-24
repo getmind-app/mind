@@ -55,6 +55,11 @@ const schema = z.object({
             required_error: "Your CRP is required",
         })
         .min(8, "Your CRP must be valid"),
+    phone: z
+        .string({
+            required_error: "Your phone number is required",
+        })
+        .min(10, "Your phone number must be valid"),
 });
 
 export default function OnboardPsychScreen() {
@@ -75,6 +80,7 @@ export default function OnboardPsychScreen() {
             crp: "",
             yearsOfExperience: "",
             hourlyRate: "",
+            phone: "",
             formValidated: "",
         },
         resolver: zodResolver(schema),
@@ -88,6 +94,7 @@ export default function OnboardPsychScreen() {
             dateOfBirth: data.birthday,
             yearsOfExperience: parseInt(data.yearsOfExperience),
             hourlyRate: parseInt(data.hourlyRate),
+            phone: data.phone,
         });
     });
 
@@ -150,6 +157,14 @@ export default function OnboardPsychScreen() {
                             title={t({ message: "📃 Document (CPF)" })}
                             placeholder="123.456.789-01"
                             mask="999.999.999-99"
+                            inputMode="numeric"
+                        />
+                        <FormTextInput
+                            control={control}
+                            name="phone"
+                            title={t({ message: "📞 Phone" })}
+                            placeholder="(11) 91234-5678"
+                            mask="(99) 99999-9999"
                             inputMode="numeric"
                         />
                         <FormTextInput
