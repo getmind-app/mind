@@ -101,7 +101,7 @@ export default function OnboardPsychScreen() {
     const { mutate, isLoading } = api.therapists.create.useMutation({
         onSuccess: async () => {
             await user?.reload();
-            router.push("/settings/available-hours");
+            router.push("/onboard/address");
         },
     });
 

@@ -17,6 +17,13 @@ export default function OnboardLayout() {
                     headerShown: false,
                 }}
             />
+            <Stack.Screen
+                name="address"
+                options={{
+                    title: "Address input",
+                    headerShown: false,
+                }}
+            />
         </Stack>
     );
 }

@@ -121,4 +121,31 @@ export const therapistsRouter = createTRPCRouter({
                 data: hoursToCreate,
             });
         }),
+    updateAddress: protectedProcedure
+        .input(
+            z.object({
+                street: z.string().min(1),
+                number: z.string().min(1),
+                complement: z.string().min(1),
+                neighborhood: z.string().min(1),
+                city: z.string().min(1),
+                state: z.string().min(1),
+                country: z.string().min(1),
+                zipCode: z.string().min(1),
+            }),
+        )
+        .mutation(async ({ ctx, input }) => {
+            const therapist = await ctx.prisma.therapist.findUniqueOrThrow({
+                where: {
+                    userId: ctx.auth.userId,
+                },
+            });
+
+            return await ctx.prisma.address.create({
+                data: {
+                    ...input,
+                    therapistId: therapist.id,
+                },
+            });
+        }),
 });
