@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import {
     KeyboardAvoidingView,
     Platform,
@@ -17,7 +18,7 @@ import { FormTextInput } from "../../components/FormTextInput";
 import { api } from "../../utils/api";
 
 const schema = z.object({
-    zip: z
+    zipCode: z
         .string({
             required_error: "Your zip code is required",
         })
@@ -31,7 +32,7 @@ const schema = z.object({
         .string({
             required_error: "Your number is required",
         })
-        .min(1, "Your number must be valid"),
+        .min(0, "Your number must be valid"),
     complement: z.string(),
     neighborhood: z
         .string({
@@ -44,7 +45,6 @@ const schema = z.object({
         })
         .min(2, "Your city must be valid"),
     state: z
-
         .string({
             required_error: "Your state is required",
         })
@@ -58,7 +58,8 @@ export default function OnboardAddressScreen() {
     const {
         control,
         handleSubmit,
-        formState: { isValid },
+        formState: { isValid, errors },
+        watch,
     } = useForm({
         defaultValues: {
             street: "",
@@ -72,7 +73,9 @@ export default function OnboardAddressScreen() {
         },
         resolver: zodResolver(schema),
     });
-    const onSubmit = handleSubmit((data) => {
+    const onSubmit = handleSubmit(async (data) => {
+        await user?.reload();
+
         mutate({
             ...data,
             street: data.street,
