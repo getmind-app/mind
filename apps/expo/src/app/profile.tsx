@@ -57,32 +57,47 @@ export default function UserProfileScreen() {
                     </View>
                 </View>
             </View>
-            <ScrollView className="pt-8" showsVerticalScrollIndicator={false}>
-                <MenuItem
-                    isFirst={true}
-                    label={t({ message: "🗣️  Personal info" })}
-                    onPress={signOut}
-                />
-                <MenuItem
-                    label={t({ message: "⚙️  Settings" })}
-                    onPress={signOut}
-                />
-
+            <View className="mt-6 flex flex-row items-center justify-between rounded-xl bg-white px-6 py-4 align-middle shadow-sm">
+                <View className="flex flex-col gap-y-1">
+                    <Text className="font-nunito-sans text-xl">
+                        {t({ message: "Your link" })}
+                    </Text>
+                    <Text className="font-nunito-sans text-slate-500">
+                        {Linking.createURL(`/psych/${therapistId}`)}
+                    </Text>
+                </View>
+                <TouchableOpacity
+                    onPress={() =>
+                        Clipboard.setStringAsync(
+                            Linking.createURL(`/psych/${therapistId}`),
+                        )
+                    }
+                >
+                    <MaterialIcons size={24} name="content-copy" />
+                </TouchableOpacity>
+            </View>
+            <ScrollView className="pt-4" showsVerticalScrollIndicator={false}>
                 {user?.publicMetadata &&
                 user.publicMetadata.role == "professional" ? (
                     <>
                         <MenuItem
-                            label={t({ message: "🕰️  Available hours" })}
+                            icon="person-outline"
+                            isFirst={true}
+                            label={t({ message: "Personal info" })}
                             onPress={() =>
-                                router.push("/settings/available-hours")
+                                router.push("/settings/personal-info")
                             }
                         />
                         <MenuItem
-                            label={t({ message: "🔗  Your link" })}
+                            icon="location-on"
+                            label={t({ message: "Address" })} // merda de icon, ficou fora do padrão
+                            onPress={() => router.push("/settings/address")}
+                        />
+                        <MenuItem
+                            icon="timer"
+                            label={t({ message: "Available hours" })}
                             onPress={() =>
-                                Clipboard.setStringAsync(
-                                    Linking.createURL(`/psych/${therapistId}`),
-                                )
+                                router.push("/settings/available-hours")
                             }
                         />
                     </>
@@ -90,13 +105,15 @@ export default function UserProfileScreen() {
 
                 {process.env.NODE_ENV === "development" ? (
                     <MenuItem
-                        label={t({ message: "❌  Reset user metadata" })}
+                        icon="refresh"
+                        label={t({ message: "Reset user metadata" })}
                         onPress={clearUserMetaData}
                     />
                 ) : null}
                 <MenuItem
                     isLast={true}
-                    label={t({ message: "🚪  Sign out" })}
+                    icon="logout"
+                    label={t({ message: "Sign out" })}
                     onPress={signOut}
                 />
             </ScrollView>
@@ -106,6 +123,7 @@ export default function UserProfileScreen() {
 
 function MenuItem(props: {
     label: string;
+    icon: string;
     isFirst?: boolean;
     isLast?: boolean;
     onPress: () => void;
@@ -117,7 +135,12 @@ function MenuItem(props: {
                     props.isFirst ? "rounded-t-xl" : ""
                 } ${props.isLast ? "rounded-b-xl" : ""}`}
             >
-                <Text className="font-nunito-sans text-xl">{props.label}</Text>
+                <View className="flex flex-row items-center gap-4 align-middle">
+                    <MaterialIcons size={20} color="gray" name={props.icon} />
+                    <Text className="font-nunito-sans text-xl">
+                        {props.label}
+                    </Text>
+                </View>
                 <MaterialIcons size={24} name="chevron-right" />
             </View>
         </TouchableOpacity>

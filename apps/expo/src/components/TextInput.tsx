@@ -53,7 +53,7 @@ export function TextInput<T extends string>({
                 )}
 
                 {unit ? (
-                    <Text className="ml-2 font-nunito-sans text-xl">
+                    <Text className="ml-2 font-nunito-sans text-xl text-slate-500">
                         {unit}
                     </Text>
                 ) : null}

@@ -48,6 +48,7 @@ export const therapistsRouter = createTRPCRouter({
             where: { userId: ctx.auth.userId },
             include: {
                 hours: true,
+                address: true,
             },
         });
     }),
@@ -139,13 +140,45 @@ export const therapistsRouter = createTRPCRouter({
                 where: {
                     userId: ctx.auth.userId,
                 },
+                include: {
+                    address: true,
+                },
             });
 
-            return await ctx.prisma.address.create({
+            return await ctx.prisma.address.update({
+                where: {
+                    id: therapist.address?.id,
+                },
                 data: {
                     ...input,
-                    therapistId: therapist.id,
                 },
+            });
+        }),
+    update: protectedProcedure
+        .input(
+            z.object({
+                name: z.string().min(1),
+                dateOfBirth: z.date(),
+                document: z.string().min(1),
+                crp: z.string().min(1),
+                phone: z.string().min(1),
+                hourlyRate: z.number().positive(),
+                yearsOfExperience: z.number().min(0),
+                about: z.string(),
+            }),
+        )
+        .mutation(async ({ ctx, input }) => {
+            const therapist = await ctx.prisma.therapist.findUniqueOrThrow({
+                where: {
+                    userId: ctx.auth.userId,
+                },
+            });
+
+            return await ctx.prisma.therapist.update({
+                where: {
+                    id: therapist.id,
+                },
+                data: input,
             });
         }),
 });

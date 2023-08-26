@@ -9,6 +9,18 @@ export default function SettingsLayout() {
                     title: "Available hours",
                 }}
             />
+            <Stack.Screen
+                name="personal-info"
+                options={{
+                    title: "Personal Info",
+                }}
+            />
+            <Stack.Screen
+                name="address"
+                options={{
+                    title: "Address",
+                }}
+            />
         </Stack>
     );
 }

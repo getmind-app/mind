@@ -14,67 +14,45 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { FormTextInput } from "../../components/FormTextInput";
+import { Header } from "../../components/Header";
+import { ProfileSkeleton } from "../../components/ProfileSkeleton";
 import { api } from "../../utils/api";
 
-const schema = z.object({
-    zipCode: z
-        .string({
-            required_error: "Your zip code is required",
-        })
-        .min(8, "Your zip code must be valid"),
-    street: z
-        .string({
-            required_error: "Your street is required",
-        })
-        .min(2, "Your street must be valid"),
-    number: z
-        .string({
-            required_error: "Your number is required",
-        })
-        .min(0, "Your number must be valid"),
-    complement: z.string(),
-    neighborhood: z
-        .string({
-            required_error: "Your neighborhood is required",
-        })
-        .min(2, "Your neighborhood must be valid"),
-    city: z
-        .string({
-            required_error: "Your city is required",
-        })
-        .min(2, "Your city must be valid"),
-    state: z
-        .string({
-            required_error: "Your state is required",
-        })
-        .min(2, "Your state must be valid"),
-});
-
-export default function OnboardAddressScreen() {
+export default function Address() {
     const { user } = useUser();
     const router = useRouter();
+
+    const { data: therapist, isLoading } =
+        api.therapists.findByUserId.useQuery();
+
+    const { mutate: updateAddress } = api.therapists.updateAddress.useMutation({
+        onSuccess: async () => {
+            await user?.reload();
+            router.push("/profile");
+        },
+    });
 
     const {
         control,
         handleSubmit,
-        formState: { isValid },
+        formState: { isValid, isDirty },
     } = useForm({
         defaultValues: {
-            street: "",
-            number: "",
-            complement: "",
-            neighborhood: "",
-            city: "",
-            state: "",
-            zipCode: "",
+            street: therapist.address.street,
+            number: therapist.address.number,
+            complement: therapist.address.complement,
+            neighborhood: therapist.address.neighborhood,
+            city: therapist.address.city,
+            state: therapist.address.state,
+            zipCode: therapist.address.zipCode,
             formValidated: "",
         },
-        resolver: zodResolver(schema),
+        resolver: zodResolver(addressSchema),
     });
     const onSubmit = handleSubmit(async (data) => {
         await user?.reload();
 
-        mutate({
+        updateAddress({
             street: data.street,
             number: data.number,
             complement: data.complement,
@@ -86,36 +64,25 @@ export default function OnboardAddressScreen() {
         });
     });
 
-    const { mutate, isLoading } = api.therapists.updateAddress.useMutation({
-        onSuccess: async () => {
-            await user?.reload();
-            router.push("/settings/available-hours");
-        },
-    });
-
-    if (isLoading) {
-        return (
-            <View className="flex h-full flex-col items-center justify-center">
-                <Text className="text-2xl">Loading...</Text>
-            </View>
-        );
+    if (!therapist || isLoading) {
+        return <ProfileSkeleton />;
     }
+
     return (
-        <KeyboardAvoidingView
-            style={{ flex: 1 }}
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
-        >
-            <View className="bg-off-white pb-4 pt-16">
-                <View className="h-full px-4 py-2">
+        <>
+            <Header />
+            <KeyboardAvoidingView
+                style={{ flex: 1 }}
+                behavior={Platform.OS === "ios" ? "padding" : "height"}
+            >
+                <View className="h-full bg-off-white px-4 pb-4 pt-4">
                     <ScrollView
-                        className="min-h-max pt-4"
+                        className="min-h-max"
                         showsVerticalScrollIndicator={false}
                     >
-                        <View className="flex flex-row items-center justify-between">
-                            <Text className="pt-12 font-nunito-sans-bold text-3xl">
-                                <Trans>Address</Trans>
-                            </Text>
-                        </View>
+                        <Text className="font-nunito-sans-bold text-3xl">
+                            <Trans>Address</Trans>
+                        </Text>
                         <FormTextInput
                             control={control}
                             name="zipCode"
@@ -169,19 +136,55 @@ export default function OnboardAddressScreen() {
                     </ScrollView>
                     <TouchableOpacity className="w-full" onPress={onSubmit}>
                         <View
-                            className={`mt-8 flex w-full items-center justify-center rounded-xl ${
-                                isValid ? "bg-blue-500" : "bg-blue-200"
+                            className={`mt-4 flex w-full items-center justify-center rounded-xl ${
+                                isValid && isDirty
+                                    ? "bg-blue-500"
+                                    : "bg-blue-200"
                             } py-2`}
                         >
                             <Text
                                 className={`font-nunito-sans-bold text-lg text-white`}
                             >
-                                <Trans>Finish</Trans>
+                                <Trans>Update</Trans>
                             </Text>
                         </View>
                     </TouchableOpacity>
                 </View>
-            </View>
-        </KeyboardAvoidingView>
+            </KeyboardAvoidingView>
+        </>
     );
 }
+
+const addressSchema = z.object({
+    zipCode: z
+        .string({
+            required_error: "Your zip code is required",
+        })
+        .min(8, "Your zip code must be valid"),
+    street: z
+        .string({
+            required_error: "Your street is required",
+        })
+        .min(2, "Your street must be valid"),
+    number: z
+        .string({
+            required_error: "Your number is required",
+        })
+        .min(1, "Your number must be valid"),
+    complement: z.string(),
+    neighborhood: z
+        .string({
+            required_error: "Your neighborhood is required",
+        })
+        .min(2, "Your neighborhood must be valid"),
+    city: z
+        .string({
+            required_error: "Your city is required",
+        })
+        .min(2, "Your city must be valid"),
+    state: z
+        .string({
+            required_error: "Your state is required",
+        })
+        .min(2, "Your state must be valid"),
+});
