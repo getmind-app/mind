@@ -15,13 +15,21 @@ export const therapistsRouter = createTRPCRouter({
                 phone: z.string().min(1),
                 hourlyRate: z.number().positive(),
                 yearsOfExperience: z.number().min(0),
+                modalities: z.array(z.enum(["ONLINE", "ON_SITE"])),
                 about: z.string(),
                 userId: z.string().min(1),
                 profilePictureUrl: z.string().min(1),
             }),
         )
         .mutation(async ({ ctx, input }) => {
-            return await ctx.prisma.therapist.create({ data: input });
+            const therapist = await ctx.prisma.therapist.create({
+                data: {
+                    ...input,
+                    modalities: {
+                        set: input.modalities,
+                    },
+                },
+            });
         }),
     findById: protectedProcedure
         .input(

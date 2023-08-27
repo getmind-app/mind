@@ -105,7 +105,7 @@ export default function OnboardAddressScreen() {
             style={{ flex: 1 }}
             behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
-            <View className="bg-off-white pb-4 pt-16">
+            <View className="bg-off-white pb-4 pt-8">
                 <View className="h-full px-4 py-2">
                     <ScrollView
                         className="min-h-max pt-4"

@@ -40,7 +40,7 @@ export function FormCurrencyInput<
                         {title}
                     </Text>
                     <CurrencyInput
-                        className="h-10 font-nunito-sans text-xl"
+                        className="h-10 px-2 font-nunito-sans text-xl"
                         value={value}
                         onChangeValue={onChange}
                         onBlur={onBlur}

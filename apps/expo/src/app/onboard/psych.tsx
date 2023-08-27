@@ -13,65 +13,27 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Trans, t } from "@lingui/macro";
 import { cpf } from "cpf-cnpj-validator";
 import { DateTime } from "luxon";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { FormCurrencyInput } from "../../components/FormCurrencyInput";
 import { FormDateInput } from "../../components/FormDateInput";
 import { FormTextInput } from "../../components/FormTextInput";
 import { api } from "../../utils/api";
-
-const schema = z.object({
-    document: z
-        .string({
-            required_error: "The document is required",
-        })
-        .min(11, "Your document must be 11 characters long")
-        .refine((value) => cpf.isValid(value), "Must be a valid CPF"),
-    name: z
-        .string({
-            required_error: "Full name is required",
-        })
-        .min(2, "Full name must be at least 2 characters"),
-    yearsOfExperience: z.string({
-        required_error: "Your years of experience is required",
-    }),
-    birthday: z
-        .date({
-            required_error: "Must provide your birthday",
-        })
-        .max(
-            DateTime.local().minus({ years: 18 }).toJSDate(),
-            "Must be older than 18",
-        )
-        .min(DateTime.local(1900).toJSDate(), "Can't be too old"),
-    hourlyRate: z
-        .number({
-            required_error: "Your hourly rate is required",
-        })
-        .min(0, "Please provide a valid hourly rate"),
-    crp: z
-        .string({
-            required_error: "Your CRP is required",
-        })
-        .min(8, "Your CRP must be valid"),
-    phone: z
-        .string({
-            required_error: "Your phone number is required",
-        })
-        .min(10, "Your phone number must be valid"),
-});
+import { type Modality } from ".prisma/client";
 
 export default function OnboardPsychScreen() {
     const { user } = useUser();
     const router = useRouter();
+    let modalities: Modality[] = [];
 
     const [showBirthdayPicker, setShowBirthdayPicker] = useState(false);
 
     const {
         control,
         handleSubmit,
-        formState: { isValid },
+        watch,
+        formState: { isValid, errors },
     } = useForm({
         defaultValues: {
             name: "",
@@ -81,6 +43,7 @@ export default function OnboardPsychScreen() {
             yearsOfExperience: "",
             hourlyRate: "",
             phone: "",
+            modalities: [],
             formValidated: "",
         },
         resolver: zodResolver(schema),
@@ -95,13 +58,20 @@ export default function OnboardPsychScreen() {
             yearsOfExperience: parseInt(data.yearsOfExperience),
             hourlyRate: parseInt(data.hourlyRate),
             phone: data.phone,
+            modalities: data.modalities,
         });
+
+        modalities = data.modalities;
     });
 
     const { mutate, isLoading } = api.therapists.create.useMutation({
         onSuccess: async () => {
             await user?.reload();
-            router.push("/onboard/address");
+            if (modalities.includes("ON_SITE")) {
+                router.push("/onboard/address");
+            } else {
+                router.push("/settings/available-hours");
+            }
         },
     });
 
@@ -117,10 +87,10 @@ export default function OnboardPsychScreen() {
             style={{ flex: 1 }}
             behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
-            <View className="bg-off-white pb-4 pt-16">
+            <View className="bg-off-white pb-4 pt-8">
                 <View className="h-full px-4 py-2">
                     <ScrollView
-                        className="min-h-max pt-4"
+                        className="pt-4"
                         showsVerticalScrollIndicator={false}
                     >
                         <View className="flex flex-row items-center justify-between">
@@ -189,10 +159,84 @@ export default function OnboardPsychScreen() {
                             control={control}
                             title={t({ message: "Hourly Rate" })}
                         />
+                        <Controller
+                            control={control}
+                            name="modalities"
+                            render={({ field: { value, onChange } }) => (
+                                <View className="gap-x-2 pb-8 pt-3">
+                                    <Text className="font-nunito-sans text-lg text-slate-700">
+                                        <Trans>
+                                            Modality (you can choose both)
+                                        </Trans>
+                                    </Text>
+                                    <View className="mt-4 flex flex-row justify-between">
+                                        <TouchableOpacity
+                                            onPress={() => {
+                                                onChange(
+                                                    value.includes("ONLINE")
+                                                        ? value.filter(
+                                                              (item) =>
+                                                                  item !==
+                                                                  "ONLINE",
+                                                          )
+                                                        : [...value, "ONLINE"],
+                                                );
+                                            }}
+                                            className={`w-[48%] rounded-lg bg-white py-3 ${
+                                                value.includes("ONLINE")
+                                                    ? "bg-blue-500"
+                                                    : ""
+                                            }`}
+                                        >
+                                            <Text
+                                                className={`text-center font-nunito-sans text-base ${
+                                                    value.includes("ONLINE")
+                                                        ? "font-nunito-sans-bold text-white"
+                                                        : ""
+                                                }`}
+                                            >
+                                                <Trans>Online</Trans>
+                                            </Text>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity
+                                            onPress={() => {
+                                                onChange(
+                                                    value.includes("ON_SITE")
+                                                        ? value.filter(
+                                                              (item) =>
+                                                                  item !==
+                                                                  "ON_SITE",
+                                                          )
+                                                        : [...value, "ON_SITE"],
+                                                );
+                                            }}
+                                            className={`w-[48%] rounded-lg bg-white py-3 ${
+                                                value.includes("ON_SITE")
+                                                    ? "bg-blue-500"
+                                                    : ""
+                                            }`}
+                                        >
+                                            <Text
+                                                className={`text-center font-nunito-sans text-base ${
+                                                    value.includes("ON_SITE")
+                                                        ? "font-nunito-sans-bold text-white"
+                                                        : ""
+                                                }`}
+                                            >
+                                                <Trans>In-person</Trans>
+                                            </Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                            )}
+                        />
                     </ScrollView>
-                    <TouchableOpacity className="w-full" onPress={onSubmit}>
+                    <TouchableOpacity
+                        className="mb-2 w-full"
+                        onPress={onSubmit}
+                    >
                         <View
-                            className={`mt-8 flex w-full items-center justify-center rounded-xl ${
+                            className={`mt-4 flex w-full items-center justify-center rounded-xl ${
                                 isValid ? "bg-blue-500" : "bg-blue-200"
                             } py-2`}
                         >
@@ -208,3 +252,50 @@ export default function OnboardPsychScreen() {
         </KeyboardAvoidingView>
     );
 }
+
+const schema = z.object({
+    document: z
+        .string({
+            required_error: "The document is required",
+        })
+        .min(11, "Your document must be 11 characters long")
+        .refine((value) => cpf.isValid(value), "Must be a valid CPF"),
+    name: z
+        .string({
+            required_error: "Full name is required",
+        })
+        .min(2, "Full name must be at least 2 characters"),
+    yearsOfExperience: z.string({
+        required_error: "Your years of experience is required",
+    }),
+    birthday: z
+        .date({
+            required_error: "Must provide your birthday",
+        })
+        .max(
+            DateTime.local().minus({ years: 18 }).toJSDate(),
+            "Must be older than 18",
+        )
+        .min(DateTime.local(1900).toJSDate(), "Can't be too old"),
+    hourlyRate: z
+        .number({
+            required_error: "Your hourly rate is required",
+        })
+        .min(0, "Please provide a valid hourly rate"),
+    crp: z
+        .string({
+            required_error: "Your CRP is required",
+        })
+        .min(8, "Your CRP must be valid"),
+    phone: z
+        .string({
+            required_error: "Your phone number is required",
+        })
+        .min(10, "Your phone number must be valid"),
+    modalities: z
+        .array(z.enum(["ONLINE", "ON_SITE"]))
+        .refine(
+            (value) => value.length > 0,
+            "You must choose at least one modality",
+        ),
+});
