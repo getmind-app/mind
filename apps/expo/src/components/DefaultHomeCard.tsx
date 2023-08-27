@@ -3,7 +3,7 @@ import * as Clipboard from "expo-clipboard";
 import * as Linking from "expo-linking";
 import { useRouter } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
-import { FontAwesome } from "@expo/vector-icons";
+import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import { Trans } from "@lingui/macro";
 
 import { api } from "../utils/api";
@@ -42,8 +42,8 @@ export default function DefaultHomeCard() {
                     }
                 >
                     <View className="mt-6 flex w-full flex-row items-center justify-center rounded-bl-xl rounded-br-xl bg-blue-500 py-3 align-middle">
-                        <FontAwesome size={16} color="white" name="link" />
-                        <Text className="ml-4 font-nunito-sans-bold text-lg text-white">
+                        <MaterialIcons size={24} color="white" name="link" />
+                        <Text className="ml-2 font-nunito-sans-bold text-lg text-white">
                             <Trans>Share your link</Trans>
                         </Text>
                     </View>
@@ -52,7 +52,7 @@ export default function DefaultHomeCard() {
                 <TouchableOpacity onPress={() => router.push("/search")}>
                     <View className="mt-6 flex w-full flex-row items-center justify-center rounded-bl-xl rounded-br-xl bg-blue-500 py-3 align-middle">
                         <FontAwesome size={16} color="white" name="search" />
-                        <Text className="ml-4 font-nunito-sans-bold text-lg text-white">
+                        <Text className="ml-2 font-nunito-sans-bold text-lg text-white">
                             <Trans>Therapists</Trans>
                         </Text>
                     </View>

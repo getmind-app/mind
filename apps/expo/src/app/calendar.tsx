@@ -15,7 +15,7 @@ import * as Clipboard from "expo-clipboard";
 import * as Linking from "expo-linking";
 import { useRouter } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
-import { Feather, FontAwesome } from "@expo/vector-icons";
+import { Feather, FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import { Trans, t } from "@lingui/macro";
 
 import { CardSkeleton } from "../components/CardSkeleton";
@@ -129,7 +129,7 @@ function EmptyState() {
             : "";
 
     return (
-        <View className="mt-4 rounded-xl bg-white">
+        <View className="mt-4 rounded-xl bg-white shadow-sm">
             <View className=" px-6 pt-6">
                 <Text className="font-nunito-sans text-lg">
                     <Trans>Your appointments will show up here</Trans>
@@ -145,7 +145,7 @@ function EmptyState() {
                 <TouchableOpacity onPress={() => router.push("/search")}>
                     <View className="mt-6 flex w-full flex-row items-center justify-center rounded-b-xl bg-blue-500 py-3 align-middle">
                         <FontAwesome size={16} color="white" name="search" />
-                        <Text className="ml-4 font-nunito-sans-bold text-lg text-white">
+                        <Text className="ml-2 font-nunito-sans-bold text-lg text-white">
                             <Trans>Therapists</Trans>
                         </Text>
                     </View>
@@ -159,8 +159,8 @@ function EmptyState() {
                     }
                 >
                     <View className="mt-6 flex w-full flex-row items-center justify-center rounded-b-xl bg-blue-500 py-3 align-middle">
-                        <FontAwesome size={16} color="white" name="link" />
-                        <Text className="ml-4 font-nunito-sans-bold text-lg text-white">
+                        <MaterialIcons size={24} color="white" name="link" />
+                        <Text className="ml-2 font-nunito-sans-bold text-lg text-white">
                             <Trans>Share your link</Trans>
                         </Text>
                     </View>

@@ -35,48 +35,48 @@ msgid "<0>{0} </0><1/><2>{1}, {2} </2><3>at </3><4>{3}:{4}</4>"
 msgstr "<0>{0} </0><1/><2>{1}, {2} </2><3>às </3><4>{3}:{4}</4>"
 
 #: src/app/profile.tsx:59
-msgid "⚙️  Settings"
-msgstr "⚙️  Configurações"
+msgid "Settings"
+msgstr "Configurações"
 
 #: src/app/profile.tsx:73
-msgid "❌  Reset user metadata"
-msgstr "❌  Resetar metadados"
+msgid "Reset user metadata"
+msgstr "Resetar metadados"
 
 #: src/app/onboard/psych.tsx:174
-msgid "💰 Hourly Rate"
-msgstr "💰 Valor hora"
+msgid "Hourly Rate"
+msgstr "Valor hora"
 
 #: src/app/onboard/psych.tsx:149
-msgid "📃 Document (CPF)"
-msgstr "📃 CPF"
+msgid "Document (CPF)"
+msgstr "CPF"
 
 #: src/app/profile.tsx:66
-msgid "🕰️  Available hours"
-msgstr "🕰️  Horas disponíveis"
+msgid "Available hours"
+msgstr "Horas disponíveis"
 
 #: src/app/onboard/psych.tsx:126
-msgid "🖋️ Full Name"
-msgstr "🖋️ Nome completo"
+msgid "Full Name"
+msgstr "Nome completo"
 
 #: src/app/profile.tsx:55
-msgid "🗣️  Personal info"
-msgstr "🗣️  Informações pessoais"
+msgid "Personal info"
+msgstr "Informações pessoais"
 
 #: src/app/onboard/psych.tsx:163
-msgid "🗣️ Experience"
-msgstr "🗣️ Experiência"
+msgid "Experience"
+msgstr "Experiência"
 
 #: src/app/onboard/psych.tsx:133
-msgid "🥳 Birthday"
-msgstr "🥳 Data de nascimento"
+msgid "Birthday"
+msgstr "Data de nascimento"
 
 #: src/app/onboard/psych.tsx:157
-msgid "🧠 CRP"
-msgstr "🧠 CRP"
+msgid "CRP"
+msgstr "CRP"
 
 #: src/app/profile.tsx:80
-msgid "🚪  Sign out"
-msgstr "🚪  Sair"
+msgid "Sign out"
+msgstr "Sair"
 
 #: src/app/psych/[id].tsx:166
 msgid "About me"
@@ -155,8 +155,8 @@ msgid "End Hour:"
 msgstr "Termina:"
 
 #: src/app/search.tsx:47
-msgid "Find your new therapist"
-msgstr "Encontre seu novo terapeuta"
+msgid "Find your therapist"
+msgstr "Encontre seu terapeuta"
 
 #: src/app/psych/payment.tsx:79
 msgid "First Appointment (10%)"
@@ -317,7 +317,7 @@ msgstr "Salvar"
 
 #: src/app/psych/[id].tsx:139
 msgid "Schedule"
-msgstr "Agenda"
+msgstr "Agendar"
 
 #: src/app/search.tsx:23
 msgid "Search"

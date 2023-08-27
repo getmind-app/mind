@@ -30,7 +30,7 @@ export default function Index() {
         utils.notes.findByUserId.invalidate();
         setTimeout(() => {
             setRefreshing(false);
-        }, 500); // Adjust the delay time as needed
+        }, 500);
     };
 
     useEffect(() => {

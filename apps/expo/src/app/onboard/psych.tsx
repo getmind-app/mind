@@ -131,14 +131,14 @@ export default function OnboardPsychScreen() {
                         <FormTextInput
                             control={control}
                             name="name"
-                            title={t({ message: "🖋️ Full Name" })}
+                            title={t({ message: "Full Name" })}
                             placeholder={t({
                                 message: "John Doe",
                                 comment: "Psych Onboard Full Name Placeholder",
                             })}
                         />
                         <FormDateInput
-                            title={t({ message: "🥳 Birthday" })}
+                            title={t({ message: "Birthday" })}
                             name="birthday"
                             control={control}
                             show={showBirthdayPicker}
@@ -154,7 +154,7 @@ export default function OnboardPsychScreen() {
                         <FormTextInput
                             control={control}
                             name="document"
-                            title={t({ message: "📃 Document (CPF)" })}
+                            title={t({ message: "Document (CPF)" })}
                             placeholder="123.456.789-01"
                             mask="999.999.999-99"
                             inputMode="numeric"
@@ -162,7 +162,7 @@ export default function OnboardPsychScreen() {
                         <FormTextInput
                             control={control}
                             name="phone"
-                            title={t({ message: "📞 Phone" })}
+                            title={t({ message: "Phone" })}
                             placeholder="(11) 91234-5678"
                             mask="(99) 99999-9999"
                             inputMode="numeric"
@@ -170,13 +170,13 @@ export default function OnboardPsychScreen() {
                         <FormTextInput
                             control={control}
                             name="crp"
-                            title={t({ message: "🧠 CRP" })}
+                            title={t({ message: "CRP" })}
                             placeholder="01/23456"
                             mask="99/999999"
                             inputMode="numeric"
                         />
                         <FormTextInput
-                            title={t({ message: "🗣️ Experience" })}
+                            title={t({ message: "Experience" })}
                             placeholder="2"
                             mask="99"
                             unit="years"
@@ -187,7 +187,7 @@ export default function OnboardPsychScreen() {
                         <FormCurrencyInput
                             name="hourlyRate"
                             control={control}
-                            title={t({ message: "💰 Hourly Rate" })}
+                            title={t({ message: "Hourly Rate" })}
                         />
                     </ScrollView>
                     <TouchableOpacity className="w-full" onPress={onSubmit}>

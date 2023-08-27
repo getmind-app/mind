@@ -39,12 +39,12 @@ export default function SearchScreen() {
                 ) : (
                     <View className="flex flex-col items-center justify-center gap-2 pt-32">
                         <Image
-                            className="h-40 w-40"
+                            className="h-48 w-48"
                             alt={`No therapists picture`}
-                            source={require("../../assets/login_mind.png")}
+                            source={require("../../assets/search.png")}
                         />
                         <Text className="font-nunito-sans-bold text-xl text-slate-500">
-                            <Trans>Find your new therapist</Trans>
+                            <Trans>Find your therapist</Trans>
                         </Text>
                     </View>
                 )}
@@ -68,7 +68,13 @@ function List({ search }: { search: string }) {
     }
 
     if (isLoading) {
-        return <ProfileSkeleton />;
+        return (
+            <>
+                <ProfileSkeleton />
+                <ProfileSkeleton />
+                <ProfileSkeleton />
+            </>
+        );
     }
 
     return data.length > 0 ? (

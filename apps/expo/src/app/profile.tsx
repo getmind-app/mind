@@ -57,29 +57,32 @@ export default function UserProfileScreen() {
                     </View>
                 </View>
             </View>
-            <View className="mt-6 flex flex-row items-center justify-between rounded-xl bg-white px-6 py-4 align-middle shadow-sm">
-                <View className="flex flex-col gap-y-1">
-                    <Text className="font-nunito-sans text-xl">
-                        {t({ message: "Your link" })}
-                    </Text>
-                    <Text className="font-nunito-sans text-slate-500">
-                        {Linking.createURL(`/psych/${therapistId}`)}
-                    </Text>
-                </View>
-                <TouchableOpacity
-                    onPress={() =>
-                        Clipboard.setStringAsync(
-                            Linking.createURL(`/psych/${therapistId}`),
-                        )
-                    }
-                >
-                    <MaterialIcons size={24} name="content-copy" />
-                </TouchableOpacity>
-            </View>
-            <ScrollView className="pt-4" showsVerticalScrollIndicator={false}>
+
+            <ScrollView showsVerticalScrollIndicator={false}>
                 {user?.publicMetadata &&
                 user.publicMetadata.role == "professional" ? (
                     <>
+                        <View className="mb-4 mt-6 flex flex-row items-center justify-between rounded-xl bg-white px-6 py-4 align-middle shadow-sm">
+                            <View className="flex flex-col gap-y-1">
+                                <Text className="font-nunito-sans text-xl">
+                                    {t({ message: "Your link" })}
+                                </Text>
+                                <Text className="w-72 font-nunito-sans text-slate-500">
+                                    {Linking.createURL(`/psych/${therapistId}`)}
+                                </Text>
+                            </View>
+                            <TouchableOpacity
+                                onPress={() =>
+                                    Clipboard.setStringAsync(
+                                        Linking.createURL(
+                                            `/psych/${therapistId}`,
+                                        ),
+                                    )
+                                }
+                            >
+                                <MaterialIcons size={24} name="content-copy" />
+                            </TouchableOpacity>
+                        </View>
                         <MenuItem
                             icon="person-outline"
                             isFirst={true}
@@ -103,19 +106,32 @@ export default function UserProfileScreen() {
                     </>
                 ) : null}
 
-                {process.env.NODE_ENV === "development" ? (
-                    <MenuItem
-                        icon="refresh"
-                        label={t({ message: "Reset user metadata" })}
-                        onPress={clearUserMetaData}
-                    />
-                ) : null}
                 <MenuItem
+                    isFirst={
+                        user?.publicMetadata.role == "professional"
+                            ? false
+                            : true
+                    }
                     isLast={true}
                     icon="logout"
                     label={t({ message: "Sign out" })}
                     onPress={signOut}
                 />
+
+                {process.env.NODE_ENV === "development" ? (
+                    <>
+                        <Text className="my-4 font-nunito-sans-bold text-2xl text-red-500">
+                            Development only
+                        </Text>
+                        <MenuItem
+                            isFirst={true}
+                            isLast={true}
+                            icon="refresh"
+                            label={t({ message: "Reset user metadata" })}
+                            onPress={clearUserMetaData}
+                        />
+                    </>
+                ) : null}
             </ScrollView>
         </View>
     );

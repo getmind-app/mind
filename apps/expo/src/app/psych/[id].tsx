@@ -60,7 +60,7 @@ export default function TherapistProfile() {
                         >
                             <Image
                                 style={{
-                                    borderRadius: 36,
+                                    borderRadius: 100,
                                     width: "100%",
                                     height: "100%",
                                 }}
@@ -88,7 +88,7 @@ export default function TherapistProfile() {
                             width: "100%",
                             paddingLeft: 12,
                             paddingRight: 12,
-                            columnGap: 24,
+                            columnGap: 12,
                             rowGap: 12,
                             paddingTop: 12,
                         }}
@@ -133,18 +133,17 @@ export default function TherapistProfile() {
                         </View>
                     </View>
                 </View>
-                <View className="pb-32 pt-8">
+                <View className="pb-32 pt-4">
                     {/* TODO: Use real data when implementend in the form */}
-                    <ContentCard
-                        title={t({ message: "About" })}
-                        emoji="👤"
-                        loadOpen
-                    >
-                        Hey there, I really enjoy helping people find peace for
-                        their minds. I believe I was born with the mission to
-                        assist anyone seeking self-awareness and personal
-                        growth.
-                    </ContentCard>
+                    {data?.about && (
+                        <ContentCard
+                            title={t({ message: "About" })}
+                            emoji="👤"
+                            loadOpen
+                        >
+                            {data?.about}
+                        </ContentCard>
+                    )}
                     {data?.modalities.includes("ON_SITE") && (
                         <ContentCard
                             title={t({ message: "Location" })}
@@ -191,19 +190,11 @@ function ContentCard({
     children,
     emoji,
     title,
-    loadOpen,
 }: {
     children: React.ReactNode;
     emoji: string;
     title: string;
-    loadOpen?: boolean;
 }) {
-    const [open, setOpen] = useState(loadOpen ? loadOpen : false);
-
-    const toggle = () => {
-        setOpen(!open);
-    };
-
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 
     return (
@@ -215,29 +206,10 @@ function ContentCard({
                         <Trans>{title}</Trans>
                     </Text>
                 </View>
-                <Pressable onPress={toggle}>
-                    {open ? (
-                        <MaterialIcons
-                            color="black"
-                            size={28}
-                            name="arrow-drop-up"
-                        />
-                    ) : (
-                        <MaterialIcons
-                            color="black"
-                            size={28}
-                            name="arrow-drop-down"
-                        />
-                    )}
-                </Pressable>
             </View>
-            {open ? (
-                <View className="pb-2 pt-4">
-                    <Text className="font-nunito-sans text-base">
-                        {children}
-                    </Text>
-                </View>
-            ) : null}
+            <View className="pb-2 pt-4">
+                <Text className="font-nunito-sans text-base">{children}</Text>
+            </View>
         </View>
     );
 }
@@ -276,7 +248,7 @@ function ScheduleBar({
                 </View>
                 <TouchableOpacity onPress={handleSchedule}>
                     <View className="rounded-xl bg-white">
-                        <View className="flex flex-row items-center px-4 py-2 align-middle">
+                        <View className="flex   flex-row items-center px-4 py-2 align-middle">
                             <Text className="font-nunito-sans-bold text-base">
                                 <Trans>Schedule</Trans>
                             </Text>
