@@ -30,6 +30,8 @@ export const therapistsRouter = createTRPCRouter({
                     },
                 },
             });
+
+            return therapist;
         }),
     findById: protectedProcedure
         .input(

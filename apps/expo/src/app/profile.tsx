@@ -21,9 +21,9 @@ export default function UserProfileScreen() {
     }
 
     // remove when we have a context provider
-    const therapistId =
+    const { data } =
         user?.publicMetadata?.role == "professional"
-            ? api.therapists.findByUserId.useQuery().data?.id
+            ? api.therapists.findByUserId.useQuery()
             : "";
 
     return (
@@ -68,15 +68,13 @@ export default function UserProfileScreen() {
                                     {t({ message: "Your link" })}
                                 </Text>
                                 <Text className="w-72 font-nunito-sans text-slate-500">
-                                    {Linking.createURL(`/psych/${therapistId}`)}
+                                    {Linking.createURL(`/psych/${data.id}`)}
                                 </Text>
                             </View>
                             <TouchableOpacity
                                 onPress={() =>
                                     Clipboard.setStringAsync(
-                                        Linking.createURL(
-                                            `/psych/${therapistId}`,
-                                        ),
+                                        Linking.createURL(`/psych/${data.id}`),
                                     )
                                 }
                             >
@@ -91,11 +89,14 @@ export default function UserProfileScreen() {
                                 router.push("/settings/personal-info")
                             }
                         />
-                        <MenuItem
-                            icon="location-on"
-                            label={t({ message: "Address" })} // merda de icon, ficou fora do padrão
-                            onPress={() => router.push("/settings/address")}
-                        />
+                        {data.address && (
+                            <MenuItem
+                                icon="location-on"
+                                label={t({ message: "Address" })} // merda de icon, ficou fora do padrão
+                                onPress={() => router.push("/settings/address")}
+                            />
+                        )}
+
                         <MenuItem
                             icon="timer"
                             label={t({ message: "Available hours" })}
