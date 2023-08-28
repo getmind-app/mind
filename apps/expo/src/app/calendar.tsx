@@ -234,7 +234,10 @@ function AppointmentCard({
                         />
                         <Text className="font-nunito-sans text-sm text-slate-500">
                             {"  "}
-                            {appointment.therapist.name}{" "}
+                            {user?.publicMetadata.role == "professional"
+                                        ? appointment.patient.name
+                                        : appointment.therapist
+                                              .name}{" "}
                             {appointment.modality === "ONLINE"
                                 ? t({ message: "via Google Meet" })
                                 : t({ message: "in person" })}
@@ -262,7 +265,7 @@ function AppointmentCard({
                             ? "00"
                             : new Date(appointment.scheduledTo).getMinutes()}
                     </Text >
-                    {appointment.status == "PENDENT" ||
+                    {appointment.status == "PENDENT" && user?.publicMetadata.role === "professional" ||
                     (appointment.status == "ACCEPTED" &&
                         isMoreThan24HoursLater(appointment.scheduledTo)) ? (
                         <Pressable onPress={() => setOpen(!open)}>
@@ -486,8 +489,6 @@ const statusMapper: {
 function Status({ status }: { status: AppointmentStatus }) {
     const textColor = statusMapper[status].color;
     const circleColor = statusMapper[status].circleColor;
-
-    console.log(textColor);
 
     return (
         <View className="flex flex-row items-center align-middle">

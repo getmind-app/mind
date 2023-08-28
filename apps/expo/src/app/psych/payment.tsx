@@ -40,8 +40,6 @@ export default function SessionPayment() {
         },
     });
 
-    console.log(data);
-
 
     const handleConfirm = async () => {
         if (!cardDetails?.complete) {
@@ -70,11 +68,6 @@ export default function SessionPayment() {
             Alert.alert(`Payment error code: ${error.code}`, error.message);
             console.log("Payment confirmation error", error.message);
         } else if (paymentIntent) {
-
-            console.log("Payment confirmed", paymentIntent);
-            
-            console.log("Updating appointment", data?.therapist.id, data?.patient.id);
-
             await updateAppointment({
                 id: String(data?.id),
                 scheduledTo: data?.scheduledTo,
