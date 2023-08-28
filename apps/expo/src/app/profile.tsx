@@ -24,7 +24,7 @@ export default function UserProfileScreen() {
     const { data } =
         user?.publicMetadata?.role == "professional"
             ? api.therapists.findByUserId.useQuery()
-            : "";
+            : { data: {} };
 
     return (
         <View className="h-full bg-off-white px-4 pt-24">
@@ -121,12 +121,11 @@ export default function UserProfileScreen() {
 
                 {process.env.NODE_ENV === "development" ? (
                     <>
-                        <Text className="my-4 font-nunito-sans-bold text-2xl text-red-500">
+                        <Text className="mt-4 font-nunito-sans-bold text-2xl text-red-500">
                             Development only
                         </Text>
                         <MenuItem
                             isFirst={true}
-                            isLast={true}
                             icon="refresh"
                             label={t({ message: "Reset user metadata" })}
                             onPress={clearUserMetaData}
@@ -149,7 +148,7 @@ function MenuItem(props: {
         <TouchableOpacity onPress={props.onPress}>
             <View
                 className={`flex flex-row items-center justify-between bg-white px-6 py-4 align-middle shadow-sm ${
-                    props.isFirst ? "rounded-t-xl" : ""
+                    props.isFirst ? "mt-6 rounded-t-xl" : ""
                 } ${props.isLast ? "rounded-b-xl" : ""}`}
             >
                 <View className="flex flex-row items-center gap-4 align-middle">

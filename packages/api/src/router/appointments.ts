@@ -87,6 +87,7 @@ export const appointmentsRouter = createTRPCRouter({
                 },
                 include: {
                     therapist: true,
+                    patient: true,
                 },
             });
         }),

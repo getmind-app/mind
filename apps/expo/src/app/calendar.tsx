@@ -78,7 +78,7 @@ export default function CalendarScreen() {
 
     return (
         <BaseLayout refreshing={refreshing} onRefresh={onRefresh}>
-            <View>
+            <View className="pb-20">
                 {appointments.map((appoinment) =>
                     user ? (
                         <AppointmentCard
@@ -104,7 +104,7 @@ function BaseLayout({
 }) {
     return (
         <ScrollView
-            className="bg-off-white px-4 pt-12"
+            className="bg-off-white px-4 pt-12 "
             showsVerticalScrollIndicator={false}
             refreshControl={
                 <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -207,14 +207,14 @@ function AppointmentCard({
                     }}
                 >
                     <Status status={appointment.status} />
-                    <Text className="font-nunito-sans text-xl">
+                    <Text className="pt-2 font-nunito-sans text-xl">
                         {new Intl.DateTimeFormat("en", {
                             weekday: "long",
                         }).format(new Date(appointment.scheduledTo))}
                         , {new Date(appointment.scheduledTo).getDate()}/
                         {new Date(appointment.scheduledTo).getMonth() + 1}
                     </Text>
-                    <View className="flex flex-row">
+                    <View className="flex flex-row pt-2">
                         <Text className="font-nunito-sans text-sm text-slate-500">
                             <Trans>with</Trans>
                             {"  "}
@@ -255,20 +255,14 @@ function AppointmentCard({
                             </View>
                         )}
                 </View>
-                <View
-                    style={{
-                        flex: 1,
-                    }}
-                >
+                <View className=" flex flex-col items-center justify-between">
                     <Text className="font-nunito-sans-bold text-xl text-blue-500 ">
                         {new Date(appointment.scheduledTo).getHours()}:
                         {new Date(appointment.scheduledTo).getMinutes() == 0
                             ? "00"
                             : new Date(appointment.scheduledTo).getMinutes()}
-                    </Text>
+                    </Text >
                     {appointment.status == "PENDENT" ||
-                    (appointment.status == "ACCEPTED" &&
-                        metadata.role == "professional") ||
                     (appointment.status == "ACCEPTED" &&
                         isMoreThan24HoursLater(appointment.scheduledTo)) ? (
                         <Pressable onPress={() => setOpen(!open)}>
@@ -290,7 +284,7 @@ function AppointmentCard({
                 </View>
             </View>
             {open ? (
-                <View className="mt-2 border-t-2 border-slate-500/10">
+                <View className="mt-4 border-t-[1px] border-slate-500/10">
                     {metadata.role == "professional" ? (
                         <TherapistOptions appointment={appointment} />
                     ) : (
@@ -309,9 +303,6 @@ function TherapistOptions({
 }) {
     return (
         <View className="flex flex-col gap-2 pl-2 pt-2">
-            {appointment.status === "ACCEPTED" ? (
-                <PaymentConfirmation appointment={appointment} />
-            ) : null}
             {appointment.status === "PENDENT" ? (
                 <SessionConfirmation appointment={appointment} />
             ) : null}
@@ -333,57 +324,6 @@ function PatientOptions({
     }
 
     return null;
-}
-
-function PaymentConfirmation({
-    appointment,
-}: {
-    appointment: Appointment & { therapist: Therapist };
-}) {
-    const utils = api.useContext();
-
-    const { mutate } = api.appointments.update.useMutation({
-        onSuccess: async () => {
-            await utils.appointments.findAll.invalidate();
-        },
-    });
-
-    const handlePaymentConfirmation = () => {
-        mutate({
-            id: appointment.id,
-            scheduledTo: appointment.scheduledTo,
-            modality: appointment.modality,
-            status: appointment.status,
-            isPaid: !appointment.isPaid,
-            therapistId: appointment.therapistId,
-            patientId: appointment.patientId,
-        });
-    };
-
-    return (
-        <View className="flex flex-row items-center pt-4 align-middle">
-            <Text className="text-base">
-                <Trans>Check as paid?</Trans>
-            </Text>
-            <View className="pl-3">
-                <TouchableOpacity
-                    onPress={() => {
-                        handlePaymentConfirmation();
-                    }}
-                >
-                    {appointment.isPaid ? (
-                        <View className="rounded-lg bg-red-400 shadow-sm">
-                            <Text className="px-3 py-1 text-white">No</Text>
-                        </View>
-                    ) : (
-                        <View className="rounded-lg bg-green-400 shadow-sm">
-                            <Text className="px-3 py-1 text-white">Yes</Text>
-                        </View>
-                    )}
-                </TouchableOpacity>
-            </View>
-        </View>
-    );
 }
 
 function SessionConfirmation({
@@ -530,15 +470,15 @@ const statusMapper: {
         circleColor: "green",
     },
     PENDENT: {
-        color: "yellow-400",
+        color: "yellow-300",
         circleColor: "yellow",
     },
     REJECTED: {
-        color: "red-400",
+        color: "red-500",
         circleColor: "red",
     },
     CANCELED: {
-        color: "red-400",
+        color: "red-500",
         circleColor: "red",
     },
 };
@@ -546,6 +486,8 @@ const statusMapper: {
 function Status({ status }: { status: AppointmentStatus }) {
     const textColor = statusMapper[status].color;
     const circleColor = statusMapper[status].circleColor;
+
+    console.log(textColor);
 
     return (
         <View className="flex flex-row items-center align-middle">

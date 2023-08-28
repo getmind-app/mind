@@ -1,3 +1,5 @@
+import { Trans } from "@lingui/macro";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import {
     Image,
@@ -9,14 +11,7 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import { useUser } from "@clerk/clerk-expo";
-import { Trans } from "@lingui/macro";
 
-import { AnimatedCard } from "../../components/Accordion";
-import { Header } from "../../components/Header";
-import geocodeAddress from "../../helpers/geocodeAddress";
-import { api } from "../../utils/api";
 import {
     type Address,
     type Appointment,
@@ -25,12 +20,16 @@ import {
     type Methodology,
     type Therapist,
 } from ".prisma/client";
+import { AnimatedCard } from "../../components/Accordion";
+import { Header } from "../../components/Header";
+import geocodeAddress from "../../helpers/geocodeAddress";
+import { api } from "../../utils/api";
+    import getDaysInCurrentMonth from "../../helpers/daysInCurrentMonth";
 
 export default function TherapistSchedule() {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 
     const router = useRouter();
-    const { user } = useUser();
     const { id } = useLocalSearchParams();
 
     const { data, isLoading, isError, error } =
@@ -358,6 +357,10 @@ function ModalityPicker({
         }
     }, [hour]);
 
+    if (therapist.modalities.length === 1) {
+        onSelect(therapist.modalities[0]);
+    }
+
     return (
         <AnimatedCard
             expanded={expanded}
@@ -451,23 +454,4 @@ function ModalityPicker({
             )}
         </AnimatedCard>
     );
-}
-
-// TODO: probably there's a better way to do this
-function getDaysInCurrentMonth() {
-    const date = new Date();
-    const year = date.getFullYear();
-    const month = date.getMonth() + 1; // Adding 1 because months are zero-based
-
-    // Set the date to the next month and day 0 (last day of the current month)
-    date.setFullYear(year, month, 0);
-
-    const daysInMonth = date.getDate();
-    const daysArray = [];
-
-    for (let day = 1; day <= daysInMonth; day++) {
-        daysArray.push(day);
-    }
-
-    return daysArray.filter((day) => day >= new Date().getDate());
 }
