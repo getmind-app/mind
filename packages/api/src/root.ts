@@ -5,6 +5,7 @@ import { patientsRouter } from "./router/patients";
 import { stripeRouter } from "./router/stripe";
 import { therapistsRouter } from "./router/therapists";
 import { usersRouter } from "./router/users";
+import { waitlistRouter } from "./router/waitlist";
 import { createTRPCRouter } from "./trpc";
 
 export const appRouter = createTRPCRouter({
@@ -15,6 +16,7 @@ export const appRouter = createTRPCRouter({
     appointments: appointmentsRouter,
     patients: patientsRouter,
     stripe: stripeRouter,
+    waitlist: waitlistRouter,
 });
 
 // export type definition of API

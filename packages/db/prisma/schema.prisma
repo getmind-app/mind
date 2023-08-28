@@ -111,6 +111,12 @@ model PaymentMethod {
     patient    Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
 }
 
+model Email {
+    id        String   @id @default(cuid())
+    email     String   @unique
+    createdAt DateTime @default(now())
+}
+
 enum Modality {
     ONLINE
     ON_SITE
