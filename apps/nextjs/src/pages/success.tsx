@@ -23,7 +23,7 @@ const Home: NextPage = () => {
     const [email, setEmail] = useState("");
     const [isValidEmail, setIsValidEmail] = useState(true);
 
-    const { mutate, isLoading } = api.waitlist.create.useMutation({
+    const { mutate } = api.waitlist.create.useMutation({
         onSuccess: async () => {
             await router.push("/success");
         },
@@ -58,55 +58,13 @@ const Home: NextPage = () => {
                             alt="Mind logo"
                         />
                         <h2 className="text-5xl font-bold">
-                            <span className="text-blue-500">
-                                Foque na conversa,{" "}
-                            </span>
-                            <br /> a gente cuida do resto!
+                            <span className="text-blue-500">Obrigado! 🙂</span>
                         </h2>
                         <p className="text-lg text-slate-500">
-                            Entre na lista de espera e seja um dos primeiros a
+                            Assim que tivermos a primeira versão do app, você
                             <br />
-                            melhorar a experiência de terapia.
+                            receberá um email com o link para download.
                         </p>
-                        <div className="flex items-center gap-6 align-middle">
-                            <input
-                                type="email"
-                                disabled={isLoading}
-                                onChange={(e) => {
-                                    setEmail(e.target.value);
-                                }}
-                                placeholder="Seu email"
-                                className={`border-b-2 bg-off-white px-4 py-2 ${
-                                    !isValidEmail ? "border-red-500" : ""
-                                }`}
-                            />
-                            <button
-                                className="rounded-lg bg-blue-500 px-4 py-2 font-bold text-white transition duration-300 hover:bg-blue-400"
-                                onClick={() => {
-                                    handleCreateEmail();
-                                }}
-                                disabled={isLoading}
-                            >
-                                <div className="group duration-200">
-                                    <div className="flex items-center gap-1">
-                                        <p>Entrar</p>
-                                        <div className="hidden items-center transition-transform duration-500 group-hover:translate-x-1 md:block">
-                                            <BsArrowRightShort size={24} />
-                                        </div>
-                                    </div>
-                                </div>
-                            </button>
-                        </div>
-                        {!isValidEmail && (
-                            <p className="text-sm text-red-500">
-                                Email inválido.
-                            </p>
-                        )}
-                        {isLoading && (
-                            <p className="text-sm text-blue-500">
-                                Carregando...
-                            </p>
-                        )}
                     </div>
                     <div className="hidden md:block">
                         <Image
