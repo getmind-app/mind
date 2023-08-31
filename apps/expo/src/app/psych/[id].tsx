@@ -1,17 +1,17 @@
-import React, { useState } from "react";
+import React from "react";
 import {
+    Alert,
     LayoutAnimation,
-    Linking,
-    Pressable,
     ScrollView,
+    Share,
     Text,
     TouchableOpacity,
     View,
 } from "react-native";
 import { type Float } from "react-native/Libraries/Types/CodegenTypes";
 import { Image } from "expo-image";
+import * as Linking from "expo-linking";
 import { useRouter, useSearchParams } from "expo-router";
-import { MaterialIcons } from "@expo/vector-icons";
 import { Trans, t } from "@lingui/macro";
 
 import { Header } from "../../components/Header";
@@ -32,8 +32,30 @@ export default function TherapistProfile() {
     }
 
     if (isLoading) {
-        return <ProfileSkeleton />;
+        return (
+            <>
+                <Header />
+                <ProfileSkeleton />
+            </>
+        );
     }
+
+    const handleShareLink = async () => {
+        await Share.share({
+            message: t({
+                message: `Hey, I'm a therapist in Mind! Check out my profile: ${Linking.createURL(
+                    `/psych/${data?.id}`,
+                )}`,
+            }),
+        }).catch((error) =>
+            Alert.alert(
+                t({
+                    message: "Error sharing link",
+                }),
+                error,
+            ),
+        );
+    };
 
     return (
         <>
@@ -42,105 +64,49 @@ export default function TherapistProfile() {
                 showsVerticalScrollIndicator={false}
                 className="h-full bg-off-white px-4 py-2"
             >
-                <View className="flex flex-col items-center justify-center">
-                    <View
-                        style={{
-                            flexDirection: "row",
-                            alignItems: "center",
-                            gap: 12,
-                        }}
-                    >
-                        <View
-                            style={{
-                                flex: 1,
-                                width: 72,
-                                height: 72,
-                                padding: 6,
-                            }}
-                        >
-                            <Image
-                                style={{
-                                    borderRadius: 100,
-                                    width: "100%",
-                                    height: "100%",
-                                }}
-                                source={data?.profilePictureUrl}
-                                contentFit="cover"
-                            />
-                        </View>
-                        <View
-                            style={{
-                                flex: 4,
-                            }}
-                        >
-                            <Text className="font-nunito-sans-bold text-3xl font-bold">
-                                {data?.name}
-                            </Text>
-                        </View>
-                    </View>
-                    <View
-                        style={{
-                            flex: 1,
-                            flexWrap: "wrap",
-                            flexDirection: "row",
-                            alignItems: "center",
-                            justifyContent: "space-between",
-                            width: "100%",
-                            paddingLeft: 12,
-                            paddingRight: 12,
-                            columnGap: 12,
-                            rowGap: 12,
-                            paddingTop: 12,
-                        }}
-                    >
+                <View className="flex flex-row items-center justify-center gap-x-6">
+                    <Image
+                        className="h-28 w-28 rounded-full"
+                        source={data?.profilePictureUrl}
+                        contentFit="cover"
+                    />
+                    <View className="gap-y-2">
+                        <Text className="font-nunito-sans-bold text-3xl font-bold">
+                            {data?.name}
+                        </Text>
                         <View className="flex flex-col">
                             <Text className="font-nunito-sans-bold text-base text-slate-500">
-                                CRP
+                                CRP{" "}
+                                <Text className="text-black">{data?.crp}</Text>
                             </Text>
-                            <Text className="font-nunito-sans-bold text-base">
-                                {data?.crp}
-                            </Text>
-                        </View>
-                        <View className="flex flex-col">
+
                             <Text className="font-nunito-sans-bold text-base text-slate-500">
-                                <Trans>Patients</Trans>
-                            </Text>
-                            <Text className="font-nunito-sans-bold text-base text-blue-500">
-                                42
-                                <Text className="font-nunito-sans-bold text-base">
+                                <Trans>Practicing for </Trans>
+                                <Text className="text-black">
                                     {" "}
-                                    <Trans
-                                        comment={
-                                            "Number of patients a therapist sees per week"
-                                        }
-                                    >
-                                        / week
-                                    </Trans>
-                                </Text>
-                            </Text>
-                        </View>
-                        <View className="flex flex-col">
-                            <Text className="font-nunito-sans-bold text-base text-slate-500">
-                                <Trans>Practicing for</Trans>
-                            </Text>
-                            <Text className="font-nunito-sans-bold text-base text-blue-500">
-                                {data?.yearsOfExperience}
-                                <Text className="font-nunito-sans-bold text-base">
-                                    {" "}
-                                    <Trans>years</Trans>
+                                    {data?.yearsOfExperience}
+                                    <Text className=" text-black">
+                                        {" "}
+                                        <Trans>years</Trans>
+                                    </Text>
                                 </Text>
                             </Text>
                         </View>
                     </View>
                 </View>
+                <View className="flex flex-row items-center justify-center pt-4">
+                    <TouchableOpacity
+                        className="rounded-md bg-blue-500 px-4 py-2"
+                        onPress={handleShareLink}
+                    >
+                        <Text className=" text-white">Share my link</Text>
+                    </TouchableOpacity>
+                </View>
+
                 <View className="pb-32 pt-4">
                     {/* TODO: Use real data when implementend in the form */}
                     {data?.about && (
-                        <ContentCard
-                            title={t({ message: "About" })}
-                            emoji="👤"
-                            loadOpen
-                        >
+                        <ContentCard title={t({ message: "About" })} emoji="👤">
                             {data?.about}
                         </ContentCard>
                     )}
@@ -207,7 +173,7 @@ function ContentCard({
                     </Text>
                 </View>
             </View>
-            <View className="pb-2 pt-4">
+            <View className="pb-1 pt-2">
                 <Text className="font-nunito-sans text-base">{children}</Text>
             </View>
         </View>

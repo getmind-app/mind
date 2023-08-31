@@ -1,5 +1,12 @@
-import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
-import * as Clipboard from "expo-clipboard";
+import {
+    Alert,
+    Image,
+    ScrollView,
+    Share,
+    Text,
+    TouchableOpacity,
+    View,
+} from "react-native";
 import * as Linking from "expo-linking";
 import { useRouter } from "expo-router";
 import { useClerk } from "@clerk/clerk-expo";
@@ -25,6 +32,23 @@ export default function UserProfileScreen() {
         user?.publicMetadata?.role == "professional"
             ? api.therapists.findByUserId.useQuery()
             : { data: {} };
+
+    const handleShareLink = async () => {
+        await Share.share({
+            message: t({
+                message: `Hey, I'm a therapist in Mind! Check out my profile: ${Linking.createURL(
+                    `/psych/${data?.id}`,
+                )}`,
+            }),
+        }).catch((error) =>
+            Alert.alert(
+                t({
+                    message: "Error sharing link",
+                }),
+                error,
+            ),
+        );
+    };
 
     return (
         <View className="h-full bg-off-white px-4 pt-24">
@@ -62,25 +86,6 @@ export default function UserProfileScreen() {
                 {user?.publicMetadata &&
                 user.publicMetadata.role == "professional" ? (
                     <>
-                        <View className="mb-4 mt-6 flex flex-row items-center justify-between rounded-xl bg-white px-6 py-4 align-middle shadow-sm">
-                            <View className="flex flex-col gap-y-1">
-                                <Text className="font-nunito-sans text-xl">
-                                    {t({ message: "Your link" })}
-                                </Text>
-                                <Text className="w-72 font-nunito-sans text-slate-500">
-                                    {Linking.createURL(`/psych/${data.id}`)}
-                                </Text>
-                            </View>
-                            <TouchableOpacity
-                                onPress={() =>
-                                    Clipboard.setStringAsync(
-                                        Linking.createURL(`/psych/${data.id}`),
-                                    )
-                                }
-                            >
-                                <MaterialIcons size={24} name="content-copy" />
-                            </TouchableOpacity>
-                        </View>
                         <MenuItem
                             icon="person-outline"
                             isFirst={true}
@@ -89,7 +94,7 @@ export default function UserProfileScreen() {
                                 router.push("/settings/personal-info")
                             }
                         />
-                        {data.address && (
+                        {data?.address && (
                             <MenuItem
                                 icon="location-on"
                                 label={t({ message: "Address" })} // merda de icon, ficou fora do padrão
@@ -104,12 +109,18 @@ export default function UserProfileScreen() {
                                 router.push("/settings/available-hours")
                             }
                         />
+
+                        <MenuItem
+                            icon="share"
+                            label={t({ message: "Share your link" })}
+                            onPress={handleShareLink}
+                        />
                     </>
                 ) : null}
 
                 <MenuItem
                     isFirst={
-                        user?.publicMetadata.role == "professional"
+                        user?.publicMetadata.role === "professional"
                             ? false
                             : true
                     }
@@ -126,6 +137,7 @@ export default function UserProfileScreen() {
                         </Text>
                         <MenuItem
                             isFirst={true}
+                            isLast={true}
                             icon="refresh"
                             label={t({ message: "Reset user metadata" })}
                             onPress={clearUserMetaData}

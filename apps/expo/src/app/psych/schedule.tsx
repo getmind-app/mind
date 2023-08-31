@@ -1,5 +1,3 @@
-import { Trans } from "@lingui/macro";
-import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import {
     Image,
@@ -11,7 +9,14 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { Trans } from "@lingui/macro";
 
+import { AnimatedCard } from "../../components/Accordion";
+import { Header } from "../../components/Header";
+import geocodeAddress from "../../helpers/geocodeAddress";
+import getNext30Days from "../../helpers/next30Days";
+import { api } from "../../utils/api";
 import {
     type Address,
     type Appointment,
@@ -20,11 +25,6 @@ import {
     type Methodology,
     type Therapist,
 } from ".prisma/client";
-import { AnimatedCard } from "../../components/Accordion";
-import { Header } from "../../components/Header";
-import geocodeAddress from "../../helpers/geocodeAddress";
-import { api } from "../../utils/api";
-    import getDaysInCurrentMonth from "../../helpers/daysInCurrentMonth";
 
 export default function TherapistSchedule() {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -150,29 +150,55 @@ export default function TherapistSchedule() {
 const Calendar = ({ onSelect }: { onSelect: (n: Date) => void }) => {
     const [selectedDate, setSelectedDate] = useState<Date>();
 
+    const [currentMonthData, nextMonthData] = getNext30Days();
+
     return (
         <View className="rounded-lg bg-white pt-4">
-            <Text className="relative left-3 w-full pb-3 font-nunito-sans-bold text-xl">
-                {new Date().toLocaleString("en-US", { month: "long" })}
-            </Text>
-            <ScrollView horizontal={true}>
-                {getDaysInCurrentMonth().map((day) => (
-                    <Day
-                        number={day}
-                        isSelected={day === selectedDate?.getDate()}
-                        onPress={(n: number) => {
-                            const date = new Date();
-                            date.setDate(n);
-                            date.setMonth(new Date().getMonth());
-                            date.setFullYear(new Date().getFullYear());
+            {currentMonthData && currentMonthData.dates.length > 0 && (
+                <View>
+                    <Text className="relative left-1 w-full pb-3 font-nunito-sans-bold text-xl">
+                        {currentMonthData.monthName.split(" ").at(0)}
+                    </Text>
+                    <ScrollView horizontal={true}>
+                        {currentMonthData.dates.map((day) => (
+                            <Day
+                                date={day}
+                                isSelected={
+                                    day.getDate() === selectedDate?.getDate()
+                                }
+                                onPress={(day) => {
+                                    setSelectedDate(day);
+                                    onSelect(day);
+                                }}
+                                key={day.getDate()}
+                            />
+                        ))}
+                    </ScrollView>
+                </View>
+            )}
 
-                            setSelectedDate(date);
-                            onSelect(date);
-                        }}
-                        key={day}
-                    />
-                ))}
-            </ScrollView>
+            {nextMonthData && nextMonthData.dates.length > 0 && (
+                <View className="pt-4">
+                    <Text className="relative left-1 w-full pb-3 font-nunito-sans-bold text-xl">
+                        {nextMonthData.monthName.split(" ").at(0)}
+                    </Text>
+                    <ScrollView horizontal={true}>
+                        {nextMonthData.dates.map((day) => (
+                            <Day
+                                date={day}
+                                isSelected={
+                                    day.getDate() === selectedDate?.getDate()
+                                }
+                                onPress={(day) => {
+                                    setSelectedDate(day);
+                                    onSelect(day);
+                                }}
+                                key={day.getDate()}
+                            />
+                        ))}
+                    </ScrollView>
+                </View>
+            )}
         </View>
     );
 };
@@ -277,27 +303,27 @@ function HourPicker({
 }
 
 function Day({
-    number,
+    date,
     isSelected,
     onPress,
 }: {
-    number: number;
+    date: Date;
     isSelected: boolean;
-    onPress: (x: number) => void;
+    onPress: (x: Date) => void;
 }) {
     return (
         <TouchableOpacity
             className={`mr-2 flex w-16 rounded-lg ${
                 isSelected ? "bg-[#2185EE]" : "bg-off-white"
             }`}
-            onPress={() => onPress(number)}
+            onPress={() => onPress(date)}
         >
             <Text
                 className={`p-3 text-center font-nunito-sans text-sm ${
                     isSelected ? "font-nunito-sans-bold text-white" : ""
                 }`}
             >
-                {number}
+                {date.getDate()}
             </Text>
         </TouchableOpacity>
     );

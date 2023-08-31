@@ -1,12 +1,8 @@
-import { useState } from "react";
 import type { NextPage } from "next";
 import { Nunito_Sans } from "next/font/google";
 import Head from "next/head";
 import Image from "next/image";
-import { useRouter } from "next/router";
-import { BsArrowRightShort } from "react-icons/bs";
 
-import { api } from "~/utils/api";
 import AppStore from "../../assets/app_store.png";
 import PlayStore from "../../assets/google_play.png";
 import Icon from "../../assets/icon.png";
@@ -19,27 +15,6 @@ const nunitoSans = Nunito_Sans({
 });
 
 const Home: NextPage = () => {
-    const router = useRouter();
-    const [email, setEmail] = useState("");
-    const [isValidEmail, setIsValidEmail] = useState(true);
-
-    const { mutate } = api.waitlist.create.useMutation({
-        onSuccess: async () => {
-            await router.push("/success");
-        },
-    });
-
-    const handleCreateEmail = () => {
-        const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-
-        if (!email.includes("@") || !emailPattern.test(email)) {
-            setIsValidEmail(false);
-            return;
-        }
-
-        mutate({ email });
-    };
-
     return (
         <>
             <Head>
