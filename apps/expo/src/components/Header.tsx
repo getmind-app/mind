@@ -1,12 +1,14 @@
-import { Text, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import { Stack, useRouter } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
 
 type HeaderProps = {
     title?: string;
+    share?: boolean;
+    onShare?: () => void;
 };
 
-export const Header = ({ title }: HeaderProps) => {
+export const Header = ({ title, share, onShare }: HeaderProps) => {
     const router = useRouter();
 
     return (
@@ -19,6 +21,14 @@ export const Header = ({ title }: HeaderProps) => {
                         onPress={() => router.back()}
                     />
                 ),
+                headerRight: () =>
+                    share && (
+                        <View className="pr-4">
+                            <TouchableOpacity onPress={() => onShare?.()}>
+                                <MaterialIcons size={24} name="ios-share" />
+                            </TouchableOpacity>
+                        </View>
+                    ),
                 headerTitle: () => (
                     <Text className="font-nunito-sans text-base capitalize">
                         {title}

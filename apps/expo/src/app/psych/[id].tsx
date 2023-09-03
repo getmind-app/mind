@@ -43,9 +43,9 @@ export default function TherapistProfile() {
     const handleShareLink = async () => {
         await Share.share({
             message: t({
-                message: `Hey, I'm a therapist in Mind! Check out my profile: ${Linking.createURL(
-                    `/psych/${data?.id}`,
-                )}`,
+                message: `Hey! Check ${
+                    data?.name
+                }'s profile: ${Linking.createURL(`/psych/${data?.id}`)}`,
             }),
         }).catch((error) =>
             Alert.alert(
@@ -59,12 +59,12 @@ export default function TherapistProfile() {
 
     return (
         <>
-            <Header />
+            <Header share onShare={handleShareLink} />
             <ScrollView
                 showsVerticalScrollIndicator={false}
                 className="h-full bg-off-white px-4 py-2"
             >
-                <View className="flex flex-row items-center justify-center gap-x-6">
+                <View className="flex flex-row items-center gap-x-6">
                     <Image
                         className="h-28 w-28 rounded-full"
                         source={data?.profilePictureUrl}
@@ -94,17 +94,7 @@ export default function TherapistProfile() {
                         </View>
                     </View>
                 </View>
-                <View className="flex flex-row items-center justify-center pt-4">
-                    <TouchableOpacity
-                        className="rounded-md bg-blue-500 px-4 py-2"
-                        onPress={handleShareLink}
-                    >
-                        <Text className=" text-white">Share my link</Text>
-                    </TouchableOpacity>
-                </View>
-
                 <View className="pb-32 pt-4">
-                    {/* TODO: Use real data when implementend in the form */}
                     {data?.about && (
                         <ContentCard title={t({ message: "About" })} emoji="👤">
                             {data?.about}
