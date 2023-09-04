@@ -32,8 +32,7 @@ export default function OnboardPsychScreen() {
     const {
         control,
         handleSubmit,
-        watch,
-        formState: { isValid, errors },
+        formState: { isValid },
     } = useForm({
         defaultValues: {
             name: "",
@@ -57,7 +56,12 @@ export default function OnboardPsychScreen() {
             dateOfBirth: data.birthday,
             yearsOfExperience: parseInt(data.yearsOfExperience),
             hourlyRate: parseInt(data.hourlyRate),
-            phone: data.phone,
+            crp: data.crp.replaceAll("/", ""),
+            document: data.document.replaceAll("-", "").replaceAll(".", ""),
+            phone: data.phone
+                .replaceAll("(", "")
+                .replaceAll(")", "")
+                .replaceAll("-", ""),
             modalities: data.modalities,
         });
 

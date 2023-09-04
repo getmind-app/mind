@@ -90,25 +90,13 @@ model Hour {
 }
 
 model Patient {
-    id                String          @id @default(cuid())
-    createdAt         DateTime        @default(now())
+    id                String        @id @default(cuid())
+    createdAt         DateTime      @default(now())
     name              String
-    email             String          @unique
+    email             String        @unique
     profilePictureUrl String
-    userId            String          @unique
+    userId            String        @unique
     appointments      Appointment[]
-    paymentMethods    PaymentMethod[]
-}
-
-model PaymentMethod {
-    id         String  @id @default(cuid())
-    cardNumber String
-    brand      String
-    expMonth   Int
-    expYear    Int
-    cvc        String // TODO: dont know if we should store this
-    patientId  String  @unique
-    patient    Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
 }
 
 model Email {

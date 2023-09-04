@@ -4,7 +4,13 @@ import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import { BsArrowRightShort } from "react-icons/bs";
-import { HiCalendar, HiCash, HiOutlineCash } from "react-icons/hi";
+import {
+    HiCalendar,
+    HiCash,
+    HiOutlineCalendar,
+    HiOutlineCash,
+    HiSearch,
+} from "react-icons/hi";
 
 import AppStore from "../../assets/app_store.png";
 import PlayStore from "../../assets/google_play.png";
@@ -28,7 +34,7 @@ const Home: NextPage = () => {
             <main
                 className={`${nunitoSans.variable} flex flex-col items-center justify-center px-8 py-24 align-middle font-nunito-sans text-black md:px-32`}
             >
-                <div className="flex flex-col gap-12">
+                <div className="flex flex-col items-center justify-center gap-y-12 align-middle">
                     <div className="flex items-center justify-center gap-24 align-middle">
                         <div className="mb-8 flex flex-col gap-6">
                             <Image
@@ -36,12 +42,12 @@ const Home: NextPage = () => {
                                 src={Icon}
                                 alt="Mind logo"
                             />
-                            <h2 className="text-5xl font-bold">
+                            <h1 className="text-5xl font-bold">
                                 Therapy made easy, <br />{" "}
                                 <span className="text-blue-500">
                                     for everyone
                                 </span>
-                            </h2>
+                            </h1>
                             <p className="text-lg text-slate-500">
                                 Mind helps you to find the best therapist,
                                 schedule
@@ -73,48 +79,34 @@ const Home: NextPage = () => {
                             />
                         </div>
                     </div>
-                    <div className="flex items-center justify-center gap-24 align-middle">
-                        <div className="hidden md:block">
-                            <Image
-                                className="w-[36rem]"
-                                src={Mockup}
-                                alt="Mind app mockups"
-                            />
-                        </div>
-                        <div className="mb-8 flex flex-col gap-6">
-                            <div className="flex items-center gap-4 align-middle">
-                                <HiCalendar size={32} color="#3b82f6" />
+                    <div className="flex items-center justify-center gap-4">
+                        <div className="flex w-[23rem] flex-col gap-6">
+                            <HiSearch size={40} color="#3b82f6" />
 
-                                <h2 className="text-5xl font-bold">
-                                    Scheduling
-                                </h2>
-                            </div>
-                            <p className="text-lg text-slate-500">
-                                See all of your appointments in one place.
-                                <br />
-                                You can schedule, reschedule and cancel like a
+                            <h2 className="text-3xl font-bold">Searching</h2>
+                            <p className="w-[18rem] text-lg text-slate-500">
+                                We know that finding a therapist can be hard.
+                                Here you can filter by price, location and more.
+                            </p>
+                        </div>
+                        <div className="flex w-[23rem] flex-col gap-6">
+                            <HiOutlineCalendar size={40} color="#3b82f6" />
+
+                            <h2 className="text-3xl font-bold">Scheduling</h2>
+                            <p className="w-[18rem] text-lg text-slate-500">
+                                See all of your appointments in one place. You
+                                can schedule, reschedule and cancel like a
                                 breeze.
                             </p>
                         </div>
-                    </div>
-                    <div className="flex items-center justify-center gap-24 align-middle">
-                        <div className="mb-8 flex flex-col gap-6">
-                            <div className="flex items-center gap-4 align-middle">
-                                <HiCash size={40} color="#3b82f6" />
-                                <h2 className="text-5xl font-bold">Payment</h2>
-                            </div>
-                            <p className="text-lg text-slate-500">
+                        <div className="flex w-[23rem] flex-col gap-6">
+                            <HiOutlineCash size={40} color="#3b82f6" />
+                            <h2 className="text-3xl font-bold">Payment</h2>
+                            <p className="w-[18rem] text-lg text-slate-500">
                                 Still paying after every session? <br />
                                 Just add your card and we will take care of the
                                 rest.
                             </p>
-                        </div>
-                        <div className="hidden md:block">
-                            <Image
-                                className="w-[36rem]"
-                                src={Mockup}
-                                alt="Mind app mockups"
-                            />
                         </div>
                     </div>
                 </div>

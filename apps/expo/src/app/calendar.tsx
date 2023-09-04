@@ -235,9 +235,8 @@ function AppointmentCard({
                         <Text className="font-nunito-sans text-sm text-slate-500">
                             {"  "}
                             {user?.publicMetadata.role == "professional"
-                                        ? appointment.patient.name
-                                        : appointment.therapist
-                                              .name}{" "}
+                                ? appointment.patient.name
+                                : appointment.therapist.name}{" "}
                             {appointment.modality === "ONLINE"
                                 ? t({ message: "via Google Meet" })
                                 : t({ message: "in person" })}
@@ -264,11 +263,12 @@ function AppointmentCard({
                         {new Date(appointment.scheduledTo).getMinutes() == 0
                             ? "00"
                             : new Date(appointment.scheduledTo).getMinutes()}
-                    </Text >
-                    {appointment.status == "PENDENT" && user?.publicMetadata.role === "professional" ||
+                    </Text>
+                    {(appointment.status == "PENDENT" &&
+                        user?.publicMetadata.role === "professional") ||
                     (appointment.status == "ACCEPTED" &&
                         isMoreThan24HoursLater(appointment.scheduledTo)) ? (
-                        <Pressable onPress={() => setOpen(!open)}>
+                        <TouchableOpacity onPress={() => setOpen(!open)}>
                             {open ? (
                                 <Feather
                                     size={24}
@@ -282,7 +282,7 @@ function AppointmentCard({
                                     name="chevron-down"
                                 />
                             )}
-                        </Pressable>
+                        </TouchableOpacity>
                     ) : null}
                 </View>
             </View>

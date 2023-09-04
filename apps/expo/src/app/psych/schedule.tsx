@@ -128,7 +128,7 @@ export default function TherapistSchedule() {
                     }
                 />
                 <View className="mb-28 mt-5 flex w-min flex-row justify-center">
-                    <Pressable
+                    <TouchableOpacity
                         className={`rounded-lg bg-[#2185EE] px-16 py-3 ${
                             allPicked ? "" : "opacity-30"
                         }`}
@@ -140,7 +140,7 @@ export default function TherapistSchedule() {
                         >
                             <Trans>Confirm appointment</Trans>
                         </Text>
-                    </Pressable>
+                    </TouchableOpacity>
                 </View>
             </ScrollView>
         </>
@@ -157,21 +157,39 @@ const Calendar = ({ onSelect }: { onSelect: (n: Date) => void }) => {
             {currentMonthData && currentMonthData.dates.length > 0 && (
                 <View>
                     <Text className="relative left-1 w-full pb-3 font-nunito-sans-bold text-xl">
-                        {currentMonthData.monthName.split(" ").at(0)}
+                        <Trans>
+                            {currentMonthData.monthName.split(" ").at(0)}
+                        </Trans>
                     </Text>
                     <ScrollView horizontal={true}>
                         {currentMonthData.dates.map((day) => (
-                            <Day
-                                date={day}
-                                isSelected={
-                                    day.getDate() === selectedDate?.getDate()
-                                }
-                                onPress={(day) => {
-                                    setSelectedDate(day);
-                                    onSelect(day);
-                                }}
+                            <TouchableOpacity
                                 key={day.getDate()}
-                            />
+                                className={`mr-2 flex w-16 rounded-lg ${
+                                    day.getMonth() ===
+                                        selectedDate?.getMonth() &&
+                                    day.getDate() === selectedDate?.getDate()
+                                        ? "bg-[#2185EE]"
+                                        : "bg-off-white"
+                                }`}
+                                onPress={() => {
+                                    onSelect(day);
+                                    setSelectedDate(day);
+                                }}
+                            >
+                                <Text
+                                    className={`p-3 text-center font-nunito-sans text-sm ${
+                                        day.getMonth() ===
+                                            selectedDate?.getMonth() &&
+                                        day.getDate() ===
+                                            selectedDate?.getDate()
+                                            ? "font-nunito-sans-bold text-white"
+                                            : ""
+                                    }`}
+                                >
+                                    {day.getDate()}
+                                </Text>
+                            </TouchableOpacity>
                         ))}
                     </ScrollView>
                 </View>
@@ -180,21 +198,39 @@ const Calendar = ({ onSelect }: { onSelect: (n: Date) => void }) => {
             {nextMonthData && nextMonthData.dates.length > 0 && (
                 <View className="pt-4">
                     <Text className="relative left-1 w-full pb-3 font-nunito-sans-bold text-xl">
-                        {nextMonthData.monthName.split(" ").at(0)}
+                        <Trans>
+                            {nextMonthData.monthName.split(" ").at(0)}
+                        </Trans>
                     </Text>
                     <ScrollView horizontal={true}>
                         {nextMonthData.dates.map((day) => (
-                            <Day
-                                date={day}
-                                isSelected={
-                                    day.getDate() === selectedDate?.getDate()
-                                }
-                                onPress={(day) => {
-                                    setSelectedDate(day);
-                                    onSelect(day);
-                                }}
+                            <TouchableOpacity
                                 key={day.getDate()}
-                            />
+                                className={`mr-2 flex w-16 rounded-lg ${
+                                    day.getMonth() ===
+                                        selectedDate?.getMonth() &&
+                                    day.getDate() === selectedDate?.getDate()
+                                        ? "bg-[#2185EE]"
+                                        : "bg-off-white"
+                                }`}
+                                onPress={() => {
+                                    onSelect(day);
+                                    setSelectedDate(day);
+                                }}
+                            >
+                                <Text
+                                    className={`p-3 text-center font-nunito-sans text-sm ${
+                                        day.getMonth() ===
+                                            selectedDate?.getMonth() &&
+                                        day.getDate() ===
+                                            selectedDate?.getDate()
+                                            ? "font-nunito-sans-bold text-white"
+                                            : ""
+                                    }`}
+                                >
+                                    {day.getDate()}
+                                </Text>
+                            </TouchableOpacity>
                         ))}
                     </ScrollView>
                 </View>
@@ -299,33 +335,6 @@ function HourPicker({
                 </View>
             </ScrollView>
         </AnimatedCard>
-    );
-}
-
-function Day({
-    date,
-    isSelected,
-    onPress,
-}: {
-    date: Date;
-    isSelected: boolean;
-    onPress: (x: Date) => void;
-}) {
-    return (
-        <TouchableOpacity
-            className={`mr-2 flex w-16 rounded-lg ${
-                isSelected ? "bg-[#2185EE]" : "bg-off-white"
-            }`}
-            onPress={() => onPress(date)}
-        >
-            <Text
-                className={`p-3 text-center font-nunito-sans text-sm ${
-                    isSelected ? "font-nunito-sans-bold text-white" : ""
-                }`}
-            >
-                {date.getDate()}
-            </Text>
-        </TouchableOpacity>
     );
 }
 

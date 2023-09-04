@@ -28,18 +28,15 @@ export default function SessionPayment() {
     const { mutateAsync: payment } =
         api.stripe.createPaymentIntent.useMutation();
 
-    const { mutateAsync: updateAppointment } = api.appointments.update.useMutation({
-        onSuccess: () => {
-
-            console.log("Appointment updated");
-
-            router.push({
-                pathname: "psych/finish",
-                params: { appointmentId: appointmentId },
-            });
-        },
-    });
-
+    const { mutateAsync: updateAppointment } =
+        api.appointments.update.useMutation({
+            onSuccess: () => {
+                router.push({
+                    pathname: "psych/finish",
+                    params: { appointmentId: appointmentId },
+                });
+            },
+        });
 
     const handleConfirm = async () => {
         if (!cardDetails?.complete) {
@@ -76,9 +73,11 @@ export default function SessionPayment() {
                 isPaid: true,
                 therapistId: data?.therapist.id,
                 patientId: data?.patient.id,
-            })
+            });
         }
     };
+
+    console.log(data);
 
     if (isLoading) {
         return (
@@ -104,53 +103,48 @@ export default function SessionPayment() {
                 className="min-h-screen bg-off-white px-4 pt-4"
                 showsVerticalScrollIndicator={false}
                 overScrollMode="never"
-                
             >
                 <View className="rounded-2xl bg-white px-4 py-6 shadow-sm">
                     <Text className="font-nunito-sans-bold text-2xl">
                         <Trans>Your appointment</Trans>
                     </Text>
-                            <Text className="pt-2 font-nunito-sans text-sm">
-                                <Trans>Details</Trans>
+                    <Text className="pl-0.5 pt-2 font-nunito-sans text-sm">
+                        <Trans>Details</Trans>
+                    </Text>
+                    <Text className="pl-3 pt-2 font-nunito-sans text-[#666666]">
+                        <Trans>Appointments with {data?.therapist.name}</Trans>
+                    </Text>
+                    <View>
+                        <View className="flex flex-row justify-between pl-6 pt-2">
+                            <Text className="font-nunito-sans text-[#666666]">
+                                {data?.scheduledTo.getDate()} -{" "}
+                                {data?.scheduledTo.getHours()}:
+                                {data?.scheduledTo.getMinutes() == 0
+                                    ? "00"
+                                    : data?.scheduledTo.getMinutes()}{" "}
+                                -{" "}
+                                {handleMode(
+                                    data?.modality ? data?.modality : "",
+                                )}
                             </Text>
-                            <Text className="pt-2 pl-3 font-nunito-sans text-[#666666]">
-                                <Trans>
-                                    Appointments with {data?.therapist.name}
-                                </Trans>
-                            </Text>
-                            <View>
-                                <View className="pl-6 pt-2 flex flex-row justify-between">
-                                    <Text className="font-nunito-sans text-[#666666]">
-                                        {data?.scheduledTo.getDate()} -{" "}
-                                        {data?.scheduledTo.getHours()}:
-                                        {data?.scheduledTo.getMinutes() == 0
-                                            ? "00"
-                                            : data?.scheduledTo.getMinutes()}{" "}
-                                        -{" "}
-                                        {handleMode(
-                                            data?.modality
-                                                ? data?.modality
-                                                : "",
-                                        )}
-                                    </Text>
-                                    <Text className=" font-nunito-sans text-[#666666]">
-                                        {t({ message: "US$" })}{" "}
-                                        {data?.therapist.hourlyRate}
-                                    </Text>
-                                </View>
-                            </View>
-                        <View className="flex flex-row justify-between pt-4">
-                            <Text className="font-nunito-sans">
-                                <Trans>Total</Trans>
-                            </Text>
-                            <Text className="font-nunito-sans">
-                                {data?.therapist && data?.therapist.hourlyRate
-                                    ? t({ message: "US$ " }) +
-                                      data.therapist.hourlyRate
-                                    : "N/A"}
+                            <Text className=" font-nunito-sans text-[#666666]">
+                                {t({ message: "US$" })}{" "}
+                                {data?.therapist.hourlyRate}
                             </Text>
                         </View>
-                        <View>
+                    </View>
+                    <View className="flex flex-row justify-between pt-4">
+                        <Text className="pl-0.5 font-nunito-sans">
+                            <Trans>Total</Trans>
+                        </Text>
+                        <Text className="font-nunito-sans">
+                            {data?.therapist && data?.therapist.hourlyRate
+                                ? t({ message: "US$ " }) +
+                                  data.therapist.hourlyRate
+                                : "N/A"}
+                        </Text>
+                    </View>
+                    <View>
                         <Text className="pt-8 font-nunito-sans-bold text-2xl">
                             <Trans>Payment method</Trans>
                         </Text>
@@ -172,14 +166,24 @@ export default function SessionPayment() {
                                 setCardDetails(cardDetails);
                             }}
                         />
+
                         <TouchableOpacity
-                        disabled={loading || !cardDetails?.complete}
-                        onPress={handleConfirm}
-                        className={`${loading || !cardDetails?.complete ? "bg-blue-300" : "bg-blue-500"} rounded-lg py-2 mt-2`}>
-                        <Text className={"text-center font-nunito-sans-bold text-base text-white"}>
-                            <Trans>Confirm</Trans>
-                        </Text>
-                    </TouchableOpacity>
+                            disabled={loading || !cardDetails?.complete}
+                            onPress={handleConfirm}
+                            className={`${
+                                loading || !cardDetails?.complete
+                                    ? "bg-blue-300"
+                                    : "bg-blue-500"
+                            } mt-2 rounded-lg py-2`}
+                        >
+                            <Text
+                                className={
+                                    "text-center font-nunito-sans-bold text-base text-white"
+                                }
+                            >
+                                <Trans>Confirm</Trans>
+                            </Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
             </ScrollView>

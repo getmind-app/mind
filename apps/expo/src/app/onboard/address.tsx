@@ -81,7 +81,7 @@ export default function OnboardAddressScreen() {
             neighborhood: data.neighborhood,
             city: data.city,
             state: data.state,
-            zipCode: data.zipCode,
+            zipCode: data.zipCode.replaceAll("-", "").replaceAll(".", ""),
             country: "BR",
         });
     });

@@ -30,7 +30,7 @@ export const appointmentsRouter = createTRPCRouter({
                         gte: new Date(),
                     },
                     status: {
-                        not: "CANCELED" || "REJECTED" || "PENDENT",
+                        notIn: ["CANCELED", "REJECTED", "PENDENT"],
                     },
                 },
                 include: {
@@ -56,7 +56,7 @@ export const appointmentsRouter = createTRPCRouter({
                         gte: new Date(),
                     },
                     status: {
-                        not: "CANCELED" || "REJECTED" || "PENDENT",
+                        notIn: ["CANCELED", "REJECTED", "PENDENT"],
                     },
                 },
                 include: {
