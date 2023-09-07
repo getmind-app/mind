@@ -16,7 +16,7 @@ const defineConfig = (): ExpoConfig => ({
     icon: "./assets/icon.png",
     userInterfaceStyle: "light",
     splash: {
-        image: "./assets/splash_screen.png",
+        image: "./assets/splash.png",
         resizeMode: "contain",
         backgroundColor: "#fff",
     },
@@ -33,7 +33,7 @@ const defineConfig = (): ExpoConfig => ({
     },
     android: {
         adaptiveIcon: {
-            foregroundImage: "./assets/icon.png",
+            foregroundImage: "./assets/adaptive-icon.png",
             backgroundColor: "#fff",
         },
         package: "app.getmind",
