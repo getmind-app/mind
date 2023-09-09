@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import {
+    Image,
+    Text,
+    TouchableOpacity,
+    View,
+    type ImageSourcePropType,
+} from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import Constants from "expo-constants";
 import { loadAsync } from "expo-font";
@@ -13,7 +19,6 @@ import {
     SignedIn,
     SignedOut,
     useClerk,
-    useOAuth,
 } from "@clerk/clerk-expo";
 import {
     NunitoSans_400Regular,
@@ -34,9 +39,11 @@ import { LogoSvg } from "../components/LogoSvg";
 import useAuthProviders from "../helpers/authProviders";
 import { TRPCProvider } from "../utils/api";
 
+type Messages = Record<string, string>;
+
 i18n.load({
-    en: enMessages,
-    pt: ptMessages,
+    en: enMessages as Messages,
+    pt: ptMessages as Messages,
 });
 i18n.activate(getLocales()[0]?.languageCode as string);
 
@@ -86,6 +93,7 @@ const RootLayout = () => {
     });
 
     Notifications.setNotificationHandler({
+        // eslint-disable-next-line @typescript-eslint/require-await
         handleNotification: async () => ({
             shouldShowAlert: true,
             shouldPlaySound: true,
@@ -94,7 +102,7 @@ const RootLayout = () => {
     });
 
     useEffect(() => {
-        (async function loadResourcesAndDataAsync() {
+        void (async function loadResourcesAndDataAsync() {
             try {
                 SplashScreen.preventAutoHideAsync();
                 const iconsFont = [
@@ -267,6 +275,9 @@ function TabsRouter() {
     );
 }
 
+const LoginImage =
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    require("../../assets/login_mind.png") as ImageSourcePropType;
 function SignInScreen() {
     const { onApplePress, onGooglePress } = useAuthProviders();
 
@@ -285,12 +296,15 @@ function SignInScreen() {
                 <View className="flex items-center justify-center pt-8">
                     <Image
                         alt=""
-                        source={require("../../assets/login_mind.png")}
+                        source={LoginImage}
                         style={{ width: 200, height: 200 }}
                         resizeMode="contain"
                     />
                 </View>
-                <TouchableOpacity onPress={onGooglePress} className="w-full">
+                <TouchableOpacity
+                    onPress={void onGooglePress}
+                    className="w-full"
+                >
                     <View className="mt-8  flex w-full flex-row items-center justify-center rounded-xl bg-blue-500 px-8 py-4 font-bold shadow-sm">
                         <FontAwesome color="white" size={22} name="google" />
                         <Text className="ml-4 font-nunito-sans text-xl text-white">
@@ -301,7 +315,10 @@ function SignInScreen() {
                         </Text>
                     </View>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={onApplePress} className="w-full">
+                <TouchableOpacity
+                    onPress={void onApplePress}
+                    className="w-full"
+                >
                     <View className="flex w-full flex-row items-center justify-center rounded-xl bg-white px-8 py-4 font-bold shadow-sm">
                         <FontAwesome size={22} name="apple" />
                         <Text className="ml-4 font-nunito-sans text-xl">
