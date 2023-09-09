@@ -13,6 +13,8 @@ SplashScreen.preventAutoHideAsync();
 export function App() {
     const ctx = require.context("./src/app");
 
+    // @ts-expect-error isso é um erro do expo-router com o webpack,
+    // não temos como resolver
     return <ExpoRoot context={ctx} />;
 }
 

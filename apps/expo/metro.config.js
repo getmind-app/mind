@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Learn more: https://docs.expo.dev/guides/monorepos/
 const { getDefaultConfig } = require("@expo/metro-config");
 const path = require("path");
@@ -7,6 +8,14 @@ const workspaceRoot = path.resolve(projectRoot, "../..");
 
 // Create the default Metro config
 const config = getDefaultConfig(projectRoot);
+
+if (!config.resolver) {
+    throw new Error("Cannot find resolver config");
+}
+
+if (!config.resolver.sourceExts) {
+    throw new Error("Cannot find resolver config");
+}
 
 // Add the additional `cjs` extension to the resolver
 config.resolver.sourceExts.push("cjs");
