@@ -139,7 +139,7 @@ export const therapistsRouter = createTRPCRouter({
             z.object({
                 street: z.string().min(1),
                 number: z.string().min(1),
-                complement: z.string().min(1),
+                complement: z.string().nullable(),
                 neighborhood: z.string().min(1),
                 city: z.string().min(1),
                 state: z.string().min(1),

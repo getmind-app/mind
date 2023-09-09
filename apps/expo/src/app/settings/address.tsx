@@ -17,6 +17,7 @@ import { FormTextInput } from "../../components/FormTextInput";
 import { Header } from "../../components/Header";
 import { ProfileSkeleton } from "../../components/ProfileSkeleton";
 import { api } from "../../utils/api";
+import { type Address } from ".prisma/client";
 
 export default function Address() {
     const { user } = useUser();
@@ -36,17 +37,27 @@ export default function Address() {
         control,
         handleSubmit,
         formState: { isValid, isDirty },
-    } = useForm({
-        defaultValues: {
-            street: therapist.address.street,
-            number: therapist.address.number,
-            complement: therapist.address.complement,
-            neighborhood: therapist.address.neighborhood,
-            city: therapist.address.city,
-            state: therapist.address.state,
-            zipCode: therapist.address.zipCode,
-            formValidated: "",
-        },
+    } = useForm<Address>({
+        defaultValues:
+            therapist && therapist.address
+                ? {
+                      street: therapist.address.street,
+                      number: therapist.address.number,
+                      complement: therapist.address.complement,
+                      neighborhood: therapist.address.neighborhood,
+                      city: therapist.address.city,
+                      state: therapist.address.state,
+                      zipCode: therapist.address.zipCode,
+                  }
+                : {
+                      street: "",
+                      number: "",
+                      complement: "",
+                      neighborhood: "",
+                      city: "",
+                      state: "",
+                      zipCode: "",
+                  },
         resolver: zodResolver(addressSchema),
     });
     const onSubmit = handleSubmit(async (data) => {
