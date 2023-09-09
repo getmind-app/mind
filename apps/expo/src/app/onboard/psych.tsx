@@ -33,7 +33,16 @@ export default function OnboardPsychScreen() {
         control,
         handleSubmit,
         formState: { isValid },
-    } = useForm({
+    } = useForm<{
+        name: string;
+        birthday: Date;
+        document: string;
+        crp: string;
+        yearsOfExperience: string;
+        hourlyRate: string;
+        phone: string;
+        modalities: Modality[];
+    }>({
         defaultValues: {
             name: "",
             birthday: DateTime.local().minus({ years: 18 }).toJSDate(),
@@ -43,7 +52,6 @@ export default function OnboardPsychScreen() {
             hourlyRate: "",
             phone: "",
             modalities: [],
-            formValidated: "",
         },
         resolver: zodResolver(schema),
     });
