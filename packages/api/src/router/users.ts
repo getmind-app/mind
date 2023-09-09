@@ -39,6 +39,27 @@ export const usersRouter = createTRPCRouter({
     clearMetadata: protectedProcedure.mutation(async ({ ctx }) => {
         try {
             console.log("clearMetadata");
+            await Promise.all([
+                ctx.prisma.patient.deleteMany({
+                    where: {
+                        OR: [
+                            {
+                                userId: ctx.auth.userId,
+                            },
+                            {
+                                email: ctx.auth.user?.emailAddresses[0]
+                                    ?.emailAddress,
+                            },
+                        ],
+                    },
+                }),
+                ctx.prisma.therapist.delete({
+                    where: {
+                        userId: ctx.auth.userId,
+                    },
+                }),
+            ]);
+
             const user = await clerk.users.updateUserMetadata(ctx.auth.userId, {
                 publicMetadata: {
                     role: null,
