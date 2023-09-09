@@ -176,7 +176,7 @@ export const therapistsRouter = createTRPCRouter({
                 phone: z.string().min(1),
                 hourlyRate: z.number().positive(),
                 yearsOfExperience: z.number().min(0),
-                about: z.string(),
+                about: z.string().nullable(),
             }),
         )
         .mutation(async ({ ctx, input }) => {

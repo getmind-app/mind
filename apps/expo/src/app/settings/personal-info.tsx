@@ -62,36 +62,49 @@ function TherapistOptions() {
         },
     });
 
+    // eventuamente devemos não deixar o cara alterar tudo,
+    // coisas como nome, data de nascimento, documento e crp
+    // imagino que devem ser imutáveis
     const {
         control,
         handleSubmit,
         formState: { isValid, isDirty },
-    } = useForm({
-        defaultValues: {
-            name: therapist?.name,
-            dateOfBirth: therapist?.dateOfBirth,
-            document: therapist?.document,
-            crp: therapist?.crp,
-            yearsOfExperience: String(therapist?.yearsOfExperience),
-            hourlyRate: therapist?.hourlyRate,
-            phone: therapist?.phone,
-            about: therapist?.about,
-            formValidated: "",
-        },
+    } = useForm<NonNullable<typeof therapist>>({
+        defaultValues: therapist
+            ? {
+                  name: therapist.name,
+                  dateOfBirth: therapist.dateOfBirth,
+                  document: therapist.document,
+                  crp: therapist.crp,
+                  yearsOfExperience: therapist.yearsOfExperience,
+                  hourlyRate: therapist.hourlyRate,
+                  phone: therapist.phone,
+                  about: therapist.about,
+              }
+            : {
+                  name: "",
+                  dateOfBirth: DateTime.local().toJSDate(),
+                  document: "",
+                  crp: "",
+                  yearsOfExperience: 0,
+                  hourlyRate: 100,
+                  phone: "",
+                  about: "",
+              },
         resolver: zodResolver(therapistSchema),
     });
-    const onSubmit = handleSubmit(async (data) => {
+    const onSubmit = handleSubmit(async (formData) => {
         await user?.reload();
 
         updateTherapist({
-            name: data.name,
-            dateOfBirth: data.dateOfBirth,
-            document: data.document,
-            crp: data.crp,
-            yearsOfExperience: parseInt(data.yearsOfExperience),
-            hourlyRate: parseInt(data.hourlyRate),
-            phone: data.phone,
-            about: data.about,
+            name: formData.name,
+            dateOfBirth: formData.dateOfBirth,
+            document: formData.document,
+            crp: formData.crp,
+            yearsOfExperience: formData.yearsOfExperience,
+            hourlyRate: formData.hourlyRate,
+            phone: formData.phone,
+            about: formData.about,
         });
     });
 
