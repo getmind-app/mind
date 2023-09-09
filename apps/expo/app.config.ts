@@ -56,6 +56,7 @@ const defineConfig = (): ExpoConfig => ({
                 enableGooglePay: true,
             },
         ],
+        "expo-router",
     ],
 });
 
