@@ -56,7 +56,7 @@ export const therapistsRouter = createTRPCRouter({
     findByUserId: protectedProcedure.query(async ({ ctx }) => {
         console.log("ctx.auth");
 
-        return await ctx.prisma.therapist.findFirst({
+        return await ctx.prisma.therapist.findFirstOrThrow({
             where: { userId: ctx.auth.userId },
             include: {
                 hours: true,

@@ -11,6 +11,7 @@ import * as Linking from "expo-linking";
 import { useRouter } from "expo-router";
 import { useClerk } from "@clerk/clerk-expo";
 import { MaterialIcons } from "@expo/vector-icons";
+import { type Icon } from "@expo/vector-icons/build/createIconSet";
 import { t } from "@lingui/macro";
 
 import { api } from "../utils/api";
@@ -28,27 +29,7 @@ export default function UserProfileScreen() {
     }
 
     // remove when we have a context provider
-    const { data } =
-        user?.publicMetadata?.role == "professional"
-            ? api.therapists.findByUserId.useQuery()
-            : { data: {} };
-
-    const handleShareLink = async () => {
-        await Share.share({
-            message: t({
-                message: `Hey, I'm a therapist in Mind! Check out my profile: ${Linking.createURL(
-                    `/psych/${data?.id}`,
-                )}`,
-            }),
-        }).catch((error) =>
-            Alert.alert(
-                t({
-                    message: "Error sharing link",
-                }),
-                error,
-            ),
-        );
-    };
+    const isProfessional = user?.publicMetadata?.role === "professional";
 
     return (
         <View className="h-full bg-off-white px-4 pt-24">
@@ -83,47 +64,10 @@ export default function UserProfileScreen() {
             </View>
 
             <ScrollView showsVerticalScrollIndicator={false}>
-                {user?.publicMetadata &&
-                user.publicMetadata.role == "professional" ? (
-                    <>
-                        <MenuItem
-                            icon="person-outline"
-                            isFirst={true}
-                            label={t({ message: "Personal info" })}
-                            onPress={() =>
-                                router.push("/settings/personal-info")
-                            }
-                        />
-                        {data?.address && (
-                            <MenuItem
-                                icon="location-on"
-                                label={t({ message: "Address" })} // merda de icon, ficou fora do padrão
-                                onPress={() => router.push("/settings/address")}
-                            />
-                        )}
-
-                        <MenuItem
-                            icon="timer"
-                            label={t({ message: "Available hours" })}
-                            onPress={() =>
-                                router.push("/settings/available-hours")
-                            }
-                        />
-
-                        <MenuItem
-                            icon="share"
-                            label={t({ message: "Share your link" })}
-                            onPress={handleShareLink}
-                        />
-                    </>
-                ) : null}
+                {isProfessional ? <ProfessionalMenuItems /> : null}
 
                 <MenuItem
-                    isFirst={
-                        user?.publicMetadata.role === "professional"
-                            ? false
-                            : true
-                    }
+                    isFirst={!isProfessional}
                     isLast={true}
                     icon="logout"
                     label={t({ message: "Sign out" })}
@@ -149,9 +93,62 @@ export default function UserProfileScreen() {
     );
 }
 
+function ProfessionalMenuItems() {
+    const router = useRouter();
+    const { data } = api.therapists.findByUserId.useQuery();
+
+    if (!data) return null;
+
+    const handleShareLink = async () => {
+        const therapistUrl = Linking.createURL(`/psych/${data.id}`);
+
+        await Share.share({
+            message: t({
+                message: `Hey, I'm a therapist in Mind! Check out my profile: ${therapistUrl}`,
+            }),
+        }).catch((error) =>
+            Alert.alert(
+                t({
+                    message: "Error sharing link",
+                }),
+                error,
+            ),
+        );
+    };
+
+    return (
+        <>
+            <MenuItem
+                icon="person-outline"
+                isFirst={true}
+                label={t({ message: "Personal info" })}
+                onPress={() => router.push("/settings/personal-info")}
+            />
+            {data.modalities.includes("ON_SITE") && (
+                <MenuItem
+                    icon="location-on"
+                    label={t({ message: "Address" })} // merda de icon, ficou fora do padrão
+                    onPress={() => router.push("/settings/address")}
+                />
+            )}
+            <MenuItem
+                icon="timer"
+                label={t({ message: "Available hours" })}
+                onPress={() => router.push("/settings/available-hours")}
+            />
+
+            <ShareLinkMenuItem handleShareLink={handleShareLink} />
+        </>
+    );
+}
+
+type PossibleMaterialIcons = typeof MaterialIcons extends Icon<infer K, string>
+    ? K
+    : never;
+
 function MenuItem(props: {
     label: string;
-    icon: string;
+    icon: PossibleMaterialIcons;
     isFirst?: boolean;
     isLast?: boolean;
     onPress: () => void;
@@ -172,5 +169,19 @@ function MenuItem(props: {
                 <MaterialIcons size={24} name="chevron-right" />
             </View>
         </TouchableOpacity>
+    );
+}
+
+function ShareLinkMenuItem({
+    handleShareLink,
+}: {
+    handleShareLink: () => void;
+}) {
+    return (
+        <MenuItem
+            icon="share"
+            label={t({ message: "Share your link" })}
+            onPress={handleShareLink}
+        />
     );
 }
