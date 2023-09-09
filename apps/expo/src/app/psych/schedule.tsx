@@ -3,7 +3,6 @@ import {
     Image,
     LayoutAnimation,
     Linking,
-    Pressable,
     ScrollView,
     Text,
     TouchableOpacity,
@@ -11,6 +10,7 @@ import {
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Trans } from "@lingui/macro";
+import { atom, useAtom } from "jotai";
 
 import { AnimatedCard } from "../../components/Accordion";
 import { Header } from "../../components/Header";
@@ -23,12 +23,24 @@ import {
     type Education,
     type Hour,
     type Methodology,
+    type Modality,
     type Therapist,
 } from ".prisma/client";
+
+const appointmentAtom = atom<{
+    date: Date | null;
+    hour: string | null;
+    modality: Modality | null;
+}>({
+    date: null,
+    hour: null,
+    modality: null,
+});
 
 export default function TherapistSchedule() {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 
+    const [appointment, setAppointment] = useAtom(appointmentAtom);
     const router = useRouter();
     const { id } = useLocalSearchParams();
 
@@ -41,41 +53,35 @@ export default function TherapistSchedule() {
         onSuccess: (appointment) => {
             router.push({
                 pathname: "/psych/payment",
-                params: { appointmentId: appointment?.id },
+                params: { appointmentId: appointment.id },
             });
         },
     });
 
-    /* TODO: trocar esse implementacao por um context, redux, zustand, jotai */
-    const [selectedDate, setSelectedDate] = useState<Date>();
-    const [selectedHour, setSelectedHour] = useState<string>();
-    const [selectedMode, setSelectedMode] = useState<"ON_SITE" | "ONLINE">();
-
     const { data: patient } = api.patients.findByUserId.useQuery();
 
     const allPicked = useMemo(() => {
-        return selectedDate && selectedMode && selectedHour;
-    }, [selectedHour, selectedMode, selectedDate]);
+        return Boolean(
+            appointment.date && appointment.modality && appointment.hour,
+        );
+    }, [appointment]);
 
     function handleConfirm() {
-        if (!selectedDate || !selectedHour || !selectedMode) {
+        if (!appointment.date || !appointment.hour || !appointment.modality) {
             throw new Error("Missing form data");
         }
 
-        if (data?.modalities.length === 1) {
-            setSelectedMode(data?.modalities[0]);
-        }
+        const [hour, minutes] = appointment.hour.split(":");
 
         mutate({
             scheduledTo: new Date(
-                selectedDate.getFullYear(),
-                selectedDate.getMonth(),
-                selectedDate.getDate(),
-                parseInt(selectedHour.split(":")[0] ?? "1"),
-                parseInt(selectedHour.split(":")[1] ?? "0"),
+                appointment.date.getFullYear(),
+                appointment.date.getMonth(),
+                appointment.date.getDate(),
+                parseInt(String(hour)),
+                parseInt(String(minutes)),
             ),
-            // depois que tivermos uma solução de formulários não vai precisar do type casting
-            modality: selectedMode,
+            modality: appointment.modality,
             therapistId: String(id),
             patientId: String(patient?.id),
         });
@@ -110,21 +116,30 @@ export default function TherapistSchedule() {
                             Pick the date that you would like to meet:
                         </Trans>
                     </Text>
-                    <Calendar onSelect={setSelectedDate} />
+                    <Calendar
+                        onSelect={(newDate) =>
+                            setAppointment({ ...appointment, date: newDate })
+                        }
+                    />
                 </View>
                 <HourPicker
-                    hour={selectedHour ?? ""}
-                    date={selectedDate ?? null}
-                    therapistAppointments={data.appointments} // acredito que n seja o ideal trazer todas as sessões
-                    therapistHours={data.hours} // não sei pq isso
-                    onSelect={setSelectedHour}
+                    hour={appointment.hour}
+                    date={appointment.date}
+                    therapistAppointments={data.appointments}
+                    therapistHours={data.hours}
+                    onSelect={(newHour) =>
+                        setAppointment({ ...appointment, hour: newHour })
+                    }
                 />
                 <ModalityPicker
                     therapist={data}
-                    hour={selectedHour}
-                    mode={selectedMode ?? ""}
-                    onSelect={(pickedModality) =>
-                        setSelectedMode(pickedModality)
+                    hour={appointment.hour}
+                    mode={appointment.modality}
+                    onSelect={(newModality) =>
+                        setAppointment({
+                            ...appointment,
+                            modality: newModality,
+                        })
                     }
                 />
                 <View className="mb-28 mt-5 flex w-min flex-row justify-center">
@@ -241,7 +256,7 @@ const Calendar = ({ onSelect }: { onSelect: (n: Date) => void }) => {
 
 type HourPickerProps = {
     date: Date | null;
-    hour: string;
+    hour: string | null;
     therapistHours: Hour[];
     therapistAppointments: Appointment[];
     onSelect: (n: string) => void;
@@ -367,21 +382,29 @@ function HourComponent({
     );
 }
 
+type ModalityPickerProps = {
+    therapist: Therapist & {
+        address: Address | null;
+    } & {
+        methodologies: Methodology[];
+    } & {
+        education: Education[];
+    } & {
+        appointments: Appointment[];
+    } & {
+        hours: Hour[];
+    };
+    mode: Modality | null;
+    onSelect: (pickedModality: "ONLINE" | "ON_SITE") => void;
+    hour: string | null;
+};
+
 function ModalityPicker({
     therapist,
     mode,
     onSelect,
     hour,
-}: {
-    therapist: Therapist & { address: Address | null } & {
-        methodologies: Methodology[];
-    } & { education: Education[] } & { appointments: Appointment[] } & {
-        hours: Hour[];
-    };
-    mode: string;
-    onSelect: (pickedModality: "ONLINE" | "ON_SITE") => void;
-    hour?: string;
-}) {
+}: ModalityPickerProps) {
     const [expanded, setExpanded] = useState(false);
 
     useEffect(() => {
@@ -392,7 +415,7 @@ function ModalityPicker({
         }
     }, [hour]);
 
-    if (therapist.modalities.length === 1) {
+    if (therapist.modalities.length === 1 && therapist.modalities[0]) {
         onSelect(therapist.modalities[0]);
     }
 
@@ -407,7 +430,7 @@ function ModalityPicker({
                         <Trans>Meet</Trans>
                     </Text>
                     <Text className={"font-nunito-sans text-xl capitalize"}>
-                        {mode == "ON_SITE" ? "On site" : "Online"}
+                        {mode == "ON_SITE" ? "Onsite" : "Online"}
                     </Text>
                 </View>
             }
@@ -419,7 +442,7 @@ function ModalityPicker({
                             therapist.address ? therapist.address : null,
                         );
 
-                        Linking.openURL(
+                        await Linking.openURL(
                             mapsLink
                                 ? mapsLink
                                 : "https://www.google.com/maps/search/?api=1&query=google",
@@ -482,7 +505,7 @@ function ModalityPicker({
                                     : ""
                             }`}
                         >
-                            <Trans>In-person</Trans>
+                            <Trans>Onsite</Trans>
                         </Text>
                     </TouchableOpacity>
                 </View>
