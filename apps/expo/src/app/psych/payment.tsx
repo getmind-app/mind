@@ -44,15 +44,25 @@ export default function SessionPayment() {
             return;
         }
 
+        if (!data) {
+            Alert.alert("Missing appointment data");
+            return;
+        }
+
         const billingDetails = {
             email: user?.emailAddresses[0]?.emailAddress,
         };
 
         const { clientSecret } = await payment({
-            amount: data?.therapist.hourlyRate * 100,
+            amount: data.therapist.hourlyRate * 100,
             currency: "brl",
             payment_method_types: ["card"],
         });
+
+        if (!clientSecret) {
+            Alert.alert("Missing stripe's client secret");
+            return;
+        }
 
         const { error, paymentIntent } = await confirmPayment(clientSecret, {
             paymentMethodType: "Card",
@@ -77,8 +87,6 @@ export default function SessionPayment() {
         }
     };
 
-    console.log(data);
-
     if (isLoading) {
         return (
             <>
@@ -94,6 +102,10 @@ export default function SessionPayment() {
                 </ScrollView>
             </>
         );
+    }
+
+    if (!data) {
+        return <Text>Impossible scenario, missing session data</Text>;
     }
 
     return (
