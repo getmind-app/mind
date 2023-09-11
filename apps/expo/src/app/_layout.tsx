@@ -301,10 +301,7 @@ function SignInScreen() {
                         resizeMode="contain"
                     />
                 </View>
-                <TouchableOpacity
-                    onPress={void onGooglePress}
-                    className="w-full"
-                >
+                <TouchableOpacity onPress={onGooglePress} className="w-full">
                     <View className="mt-8  flex w-full flex-row items-center justify-center rounded-xl bg-blue-500 px-8 py-4 font-bold shadow-sm">
                         <FontAwesome color="white" size={22} name="google" />
                         <Text className="ml-4 font-nunito-sans text-xl text-white">
@@ -315,10 +312,7 @@ function SignInScreen() {
                         </Text>
                     </View>
                 </TouchableOpacity>
-                <TouchableOpacity
-                    onPress={void onApplePress}
-                    className="w-full"
-                >
+                <TouchableOpacity onPress={onApplePress} className="w-full">
                     <View className="flex w-full flex-row items-center justify-center rounded-xl bg-white px-8 py-4 font-bold shadow-sm">
                         <FontAwesome size={22} name="apple" />
                         <Text className="ml-4 font-nunito-sans text-xl">
