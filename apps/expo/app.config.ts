@@ -26,7 +26,7 @@ const defineConfig = (): ExpoConfig => ({
     assetBundlePatterns: ["**/*", "assets/*"],
     ios: {
         supportsTablet: true,
-        bundleIdentifier: "your.bundle.identifier",
+        bundleIdentifier: "app.getmind",
         infoPlist: {
             LSApplicationQueriesSchemes: ["mind"],
         },
