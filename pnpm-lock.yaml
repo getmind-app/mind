@@ -254,6 +254,9 @@ importers:
       react-native-linear-gradient:
         specifier: ^2.7.2
         version: 2.7.2(react-native@0.72.4)(react@18.2.0)
+      react-native-maps:
+        specifier: 1.7.1
+        version: 1.7.1(react-native-web@0.18.12)(react-native@0.72.4)(react@18.2.0)
       react-native-mask-text:
         specifier: ^0.14.2
         version: 0.14.2(react-native@0.72.4)(react@18.2.0)
@@ -4754,6 +4757,10 @@ packages:
       '@types/express-serve-static-core': 4.17.35
       '@types/qs': 6.9.8
       '@types/serve-static': 1.15.2
+    dev: false
+
+  /@types/geojson@7946.0.10:
+    resolution: {integrity: sha512-Nmh0K3iWQJzniTuPRcJn5hxXkfB1T1pgB89SBig5PlJQU5yocazeu4jATJlaA0GYFKWMqDdvYemoSnF2pXgLVA==}
     dev: false
 
   /@types/glob@7.2.0:
@@ -12909,6 +12916,22 @@ packages:
     dependencies:
       react: 18.2.0
       react-native: 0.72.4(@babel/core@7.22.10)(@babel/preset-env@7.21.4)(react@18.2.0)
+    dev: false
+
+  /react-native-maps@1.7.1(react-native-web@0.18.12)(react-native@0.72.4)(react@18.2.0):
+    resolution: {integrity: sha512-CHVLzL+Q2jiUGgbt4/vosxVI1SukWyaLGjD62VLgR/wZpnH4Umi9ql1bmKDPWcfj2C1QZwMU0Yc7rXTbvZUIiw==}
+    peerDependencies:
+      react: '>= 17.0.1'
+      react-native: '>= 0.64.3'
+      react-native-web: '>= 0.11'
+    peerDependenciesMeta:
+      react-native-web:
+        optional: true
+    dependencies:
+      '@types/geojson': 7946.0.10
+      react: 18.2.0
+      react-native: 0.72.4(@babel/core@7.22.10)(@babel/preset-env@7.21.4)(react@18.2.0)
+      react-native-web: 0.18.12(react-dom@18.2.0)(react@18.2.0)
     dev: false
 
   /react-native-mask-text@0.14.2(react-native@0.72.4)(react@18.2.0):

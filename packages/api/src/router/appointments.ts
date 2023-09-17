@@ -47,31 +47,31 @@ export const appointmentsRouter = createTRPCRouter({
         } else {
             const patient = await ctx.prisma.patient.findFirst({
                 where: { userId: ctx.auth.userId },
+            });
+
+            foundAppointment = await ctx.prisma.appointment.findFirst({
+                where: {
+                    patientId: patient?.id,
+                    scheduledTo: {
+                        gte: new Date(),
+                    },
+                    status: {
+                        notIn: ["CANCELED", "REJECTED", "PENDENT"],
+                    },
+                },
                 include: {
-                    appointments: {
-                        where: {
-                            scheduledTo: {
-                                gte: new Date(),
-                            },
-                            status: {
-                                notIn: ["CANCELED", "REJECTED", "PENDENT"],
-                            },
-                        },
+                    therapist: {
                         include: {
-                            therapist: {
-                                include: {
-                                    address: true,
-                                },
-                            },
-                        },
-                        orderBy: {
-                            scheduledTo: "desc",
+                            address: true,
                         },
                     },
                 },
+                orderBy: {
+                    scheduledTo: "desc",
+                },
             });
 
-            return patient ? patient.appointments[0] : [];
+            return foundAppointment;
         }
     }),
     findById: protectedProcedure
