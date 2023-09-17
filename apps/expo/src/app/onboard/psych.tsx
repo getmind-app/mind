@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
     KeyboardAvoidingView,
-    Linking,
     Platform,
     ScrollView,
     Text,
@@ -27,18 +26,6 @@ export default function OnboardPsychScreen() {
     const { user } = useUser();
     const router = useRouter();
     let modalities: Modality[] = [];
-    const accountLink = api.stripe.createAccountLink.useMutation();
-
-    useEffect(() => {
-        (async function () {
-            const data = await accountLink.mutate({
-                refresh_url: String(await Linking.getInitialURL()),
-                return_url: String(await Linking.getInitialURL()),
-            });
-            console.log("opening stripe");
-            await Linking.openURL(data.accountLink.url);
-        })();
-    }, []);
 
     const [showBirthdayPicker, setShowBirthdayPicker] = useState(false);
 
