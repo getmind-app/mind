@@ -49,4 +49,32 @@ export const stripeRouter = createTRPCRouter({
                 clientSecret: paymentIntent.client_secret,
             };
         }),
+    createAccountLink: protectedProcedure
+        .input(
+            z.object({
+                return_url: z.string(),
+                refresh_url: z.string(),
+            }),
+        )
+        .mutation(async ({ input }) => {
+            console.log("create account link");
+
+            const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+                apiVersion: "2023-08-16",
+            });
+            console.log("stripe", input.return_url);
+            const accountLink = await stripe.accountLinks.create({
+                account: "acct_1NgDQEDtBWZzYd58",
+                type: "account_onboarding",
+                return_url: "https://example.com",
+                refresh_url: "https://example.com",
+            });
+
+            console.log(accountLink);
+            console.log(2);
+
+            return {
+                accountLink,
+            };
+        }),
 });
