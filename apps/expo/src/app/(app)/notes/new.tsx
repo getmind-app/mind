@@ -11,8 +11,8 @@ import {
 import { useRouter } from "expo-router";
 import { Trans, t } from "@lingui/macro";
 
-import { Header } from "../../components/Header";
-import { api } from "../../utils/api";
+import { Header } from "../../../components/Header";
+import { api } from "../../../utils/api";
 
 export default function NewNote() {
     const router = useRouter();

@@ -9,8 +9,8 @@ import {
 import { useRouter, useSearchParams } from "expo-router";
 import { Trans } from "@lingui/macro";
 
-import { Header } from "../../components/Header";
-import { api } from "../../utils/api";
+import { Header } from "../../../components/Header";
+import { api } from "../../../utils/api";
 
 // TODO: no futuro precisamos deixar editar a nota
 export default function Note() {

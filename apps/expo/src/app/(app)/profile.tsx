@@ -14,7 +14,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { type Icon } from "@expo/vector-icons/build/createIconSet";
 import { t } from "@lingui/macro";
 
-import { api } from "../utils/api";
+import { api } from "../../utils/api";
 
 export default function UserProfileScreen() {
     const router = useRouter();
@@ -25,7 +25,7 @@ export default function UserProfileScreen() {
         console.log("Clearing user metadata");
         await mutateAsync();
         await user?.reload();
-        router.push("/onboard");
+        router.replace("/onboard");
     }
 
     // remove when we have a context provider

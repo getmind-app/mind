@@ -5,10 +5,10 @@ import { groupBy } from "lodash-es";
 import { DateTime } from "luxon";
 import { useForm } from "react-hook-form";
 
-import { CardSkeleton } from "../../components/CardSkeleton";
-import { FormDateInput } from "../../components/FormDateInput";
-import { Header } from "../../components/Header";
-import { api } from "../../utils/api";
+import { CardSkeleton } from "../../../components/CardSkeleton";
+import { FormDateInput } from "../../../components/FormDateInput";
+import { Header } from "../../../components/Header";
+import { api } from "../../../utils/api";
 import { type Hour, type WeekDay } from ".prisma/client";
 
 function getHourFromISO(date: Date): string {

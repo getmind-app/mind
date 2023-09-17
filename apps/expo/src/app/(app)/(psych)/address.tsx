@@ -13,87 +13,109 @@ import { Trans, t } from "@lingui/macro";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { FormTextInput } from "../../components/FormTextInput";
-import { Header } from "../../components/Header";
-import { ProfileSkeleton } from "../../components/ProfileSkeleton";
-import { api } from "../../utils/api";
-import { type Address } from ".prisma/client";
+import { FormTextInput } from "../../../components/FormTextInput";
+import { api } from "../../../utils/api";
 
-export default function Address() {
+const schema = z.object({
+    zipCode: z
+        .string({
+            required_error: "Your zip code is required",
+        })
+        .min(8, "Your zip code must be valid"),
+    street: z
+        .string({
+            required_error: "Your street is required",
+        })
+        .min(2, "Your street must be valid"),
+    number: z
+        .string({
+            required_error: "Your number is required",
+        })
+        .min(0, "Your number must be valid"),
+    complement: z.string(),
+    neighborhood: z
+        .string({
+            required_error: "Your neighborhood is required",
+        })
+        .min(2, "Your neighborhood must be valid"),
+    city: z
+        .string({
+            required_error: "Your city is required",
+        })
+        .min(2, "Your city must be valid"),
+    state: z
+        .string({
+            required_error: "Your state is required",
+        })
+        .min(2, "Your state must be valid"),
+});
+
+export default function OnboardAddressScreen() {
     const { user } = useUser();
     const router = useRouter();
-
-    const { data: therapist, isLoading } =
-        api.therapists.findByUserId.useQuery();
-
-    const { mutate: updateAddress } = api.therapists.updateAddress.useMutation({
-        onSuccess: async () => {
-            await user?.reload();
-            router.push("/profile");
-        },
-    });
 
     const {
         control,
         handleSubmit,
-        formState: { isValid, isDirty },
-    } = useForm<Address>({
-        defaultValues:
-            therapist && therapist.address
-                ? {
-                      street: therapist.address.street,
-                      number: therapist.address.number,
-                      complement: therapist.address.complement,
-                      neighborhood: therapist.address.neighborhood,
-                      city: therapist.address.city,
-                      state: therapist.address.state,
-                      zipCode: therapist.address.zipCode,
-                  }
-                : {
-                      street: "",
-                      number: "",
-                      complement: "",
-                      neighborhood: "",
-                      city: "",
-                      state: "",
-                      zipCode: "",
-                  },
-        resolver: zodResolver(addressSchema),
+        formState: { isValid },
+    } = useForm({
+        defaultValues: {
+            street: "",
+            number: "",
+            complement: "",
+            neighborhood: "",
+            city: "",
+            state: "",
+            zipCode: "",
+            formValidated: "",
+        },
+        resolver: zodResolver(schema),
     });
     const onSubmit = handleSubmit(async (data) => {
         await user?.reload();
 
-        updateAddress({
+        mutate({
             street: data.street,
             number: data.number,
             complement: data.complement,
             neighborhood: data.neighborhood,
             city: data.city,
             state: data.state,
-            zipCode: data.zipCode,
+            zipCode: data.zipCode.replaceAll("-", "").replaceAll(".", ""),
             country: "BR",
         });
     });
 
-    if (!therapist || isLoading) {
-        return <ProfileSkeleton />;
-    }
+    const { mutate, isLoading } = api.therapists.updateAddress.useMutation({
+        onSuccess: async () => {
+            await user?.reload();
+            router.push("/settings/available-hours");
+        },
+    });
 
+    if (isLoading) {
+        return (
+            <View className="flex h-full flex-col items-center justify-center">
+                <Text className="text-2xl">Loading...</Text>
+            </View>
+        );
+    }
     return (
-        <>
-            <Header />
-            <KeyboardAvoidingView
-                style={{ flex: 1 }}
-                behavior={Platform.OS === "ios" ? "padding" : "height"}
-            >
-                <View className="h-full bg-off-white px-4 pb-4 pt-4">
+        <KeyboardAvoidingView
+            style={{ flex: 1 }}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+        >
+            <View className="bg-off-white pb-4 pt-8">
+                <View className="h-full px-4 py-2">
                     <ScrollView
-                        className="min-h-max"
+                        className="min-h-max pt-4"
                         showsVerticalScrollIndicator={false}
                     >
-                        <Text className="font-nunito-sans-bold text-3xl">
-                            <Trans>Address</Trans>
-                        </Text>
+                        <View className="flex flex-row items-center justify-between">
+                            <Text className="pt-12 font-nunito-sans-bold text-3xl">
+                                <Trans>Address</Trans>
+                            </Text>
+                        </View>
                         <FormTextInput
                             control={control}
                             name="zipCode"
@@ -147,55 +169,19 @@ export default function Address() {
                     </ScrollView>
                     <TouchableOpacity className="w-full" onPress={onSubmit}>
                         <View
-                            className={`mt-4 flex w-full items-center justify-center rounded-xl ${
-                                isValid && isDirty
-                                    ? "bg-blue-500"
-                                    : "bg-blue-200"
+                            className={`mt-8 flex w-full items-center justify-center rounded-xl ${
+                                isValid ? "bg-blue-500" : "bg-blue-200"
                             } py-2`}
                         >
                             <Text
                                 className={`font-nunito-sans-bold text-lg text-white`}
                             >
-                                <Trans>Update</Trans>
+                                <Trans>Finish</Trans>
                             </Text>
                         </View>
                     </TouchableOpacity>
                 </View>
-            </KeyboardAvoidingView>
-        </>
+            </View>
+        </KeyboardAvoidingView>
     );
 }
-
-const addressSchema = z.object({
-    zipCode: z
-        .string({
-            required_error: "Your zip code is required",
-        })
-        .min(8, "Your zip code must be valid"),
-    street: z
-        .string({
-            required_error: "Your street is required",
-        })
-        .min(2, "Your street must be valid"),
-    number: z
-        .string({
-            required_error: "Your number is required",
-        })
-        .min(1, "Your number must be valid"),
-    complement: z.string(),
-    neighborhood: z
-        .string({
-            required_error: "Your neighborhood is required",
-        })
-        .min(2, "Your neighborhood must be valid"),
-    city: z
-        .string({
-            required_error: "Your city is required",
-        })
-        .min(2, "Your city must be valid"),
-    state: z
-        .string({
-            required_error: "Your state is required",
-        })
-        .min(2, "Your state must be valid"),
-});

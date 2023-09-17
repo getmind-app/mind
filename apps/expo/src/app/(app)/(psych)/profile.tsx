@@ -16,13 +16,13 @@ import { DateTime } from "luxon";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { FormCurrencyInput } from "../../components/FormCurrencyInput";
-import { FormDateInput } from "../../components/FormDateInput";
-import { FormTextInput } from "../../components/FormTextInput";
-import { api } from "../../utils/api";
+import { FormCurrencyInput } from "../../../components/FormCurrencyInput";
+import { FormDateInput } from "../../../components/FormDateInput";
+import { FormTextInput } from "../../../components/FormTextInput";
+import { api } from "../../../utils/api";
 import { type Modality } from ".prisma/client";
 
-export default function OnboardPsychScreen() {
+export default function EditPsychProfile() {
     const { user } = useUser();
     const router = useRouter();
     let modalities: Modality[] = [];
@@ -80,9 +80,9 @@ export default function OnboardPsychScreen() {
         onSuccess: async () => {
             await user?.reload();
             if (modalities.includes("ON_SITE")) {
-                router.push("/onboard/address");
+                router.push("/(psych)/address");
             } else {
-                router.push("/settings/available-hours");
+                router.push("/(psych)/available-hours");
             }
         },
     });

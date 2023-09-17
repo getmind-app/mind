@@ -4,7 +4,7 @@ import { useRouter, useSearchParams } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Trans } from "@lingui/macro";
 
-import { api } from "../../utils/api";
+import { api } from "../../../utils/api";
 
 export default function SessionFinishAppointment() {
     const router = useRouter();
@@ -20,7 +20,7 @@ export default function SessionFinishAppointment() {
                 <View className="flex items-center justify-center">
                     <Image
                         alt=""
-                        source={require("../../../assets/success.png")}
+                        source={require("../../../../assets/success.png")}
                         style={{ width: 200, height: 200 }}
                         resizeMode="contain"
                     />

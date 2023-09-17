@@ -12,11 +12,11 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { Trans } from "@lingui/macro";
 import { atom, useAtom } from "jotai";
 
-import { AnimatedCard } from "../../components/Accordion";
-import { Header } from "../../components/Header";
-import geocodeAddress from "../../helpers/geocodeAddress";
-import getNext30Days from "../../helpers/next30Days";
-import { api } from "../../utils/api";
+import { AnimatedCard } from "../../../components/Accordion";
+import { Header } from "../../../components/Header";
+import geocodeAddress from "../../../helpers/geocodeAddress";
+import getNext30Days from "../../../helpers/next30Days";
+import { api } from "../../../utils/api";
 import {
     type Address,
     type Appointment,

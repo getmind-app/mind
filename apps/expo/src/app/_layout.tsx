@@ -1,25 +1,14 @@
 import React, { useEffect, useState } from "react";
-import {
-    Image,
-    Text,
-    TouchableOpacity,
-    View,
-    type ImageSourcePropType,
-} from "react-native";
+import { Text } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import Constants from "expo-constants";
 import { loadAsync } from "expo-font";
 import { getLocales } from "expo-localization";
 import * as Notifications from "expo-notifications";
-import { Redirect, SplashScreen, Tabs } from "expo-router";
+import { Slot, SplashScreen, usePathname } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { StatusBar } from "expo-status-bar";
-import {
-    ClerkProvider,
-    SignedIn,
-    SignedOut,
-    useClerk,
-} from "@clerk/clerk-expo";
+import { ClerkProvider, SignedIn, SignedOut } from "@clerk/clerk-expo";
 import {
     NunitoSans_400Regular,
     NunitoSans_700Bold,
@@ -29,14 +18,11 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { i18n } from "@lingui/core";
-import { Trans } from "@lingui/macro";
 import { I18nProvider } from "@lingui/react";
 import { StripeProvider } from "@stripe/stripe-react-native";
 
 import { messages as enMessages } from "../../src/locales/en/messages";
 import { messages as ptMessages } from "../../src/locales/pt/messages";
-import { LogoSvg } from "../components/LogoSvg";
-import useAuthProviders from "../helpers/authProviders";
 import { TRPCProvider } from "../utils/api";
 
 type Messages = Record<string, string>;
@@ -64,29 +50,10 @@ const tokenCache = {
     },
 };
 
-const tabBarActiveTintColor = "#2563eb"; // blue 600
-const tabBarInactiveTintColor = "black";
-
-function TabBarIconWrapper({
-    children,
-    focused,
-}: {
-    children: React.ReactNode;
-    focused: boolean;
-}) {
-    return (
-        <View
-            className={`${focused ? "bg-blue-100" : "bg-none"} rounded-lg p-1`}
-        >
-            {children}
-        </View>
-    );
-}
-
-const RootLayout = () => {
+export default function RootLayout() {
     // https://docs.expo.dev/archive/classic-updates/preloading-and-caching-assets/#pre-loading-and-caching-assets
     const [appIsReady, setAppIsReady] = useState(false);
-
+    const path = usePathname();
     const [fontsLoaded] = useFonts({
         "Nunito-Sans": NunitoSans_400Regular,
         "Nunito-Sans-Bold": NunitoSans_700Bold,
@@ -125,199 +92,41 @@ const RootLayout = () => {
         return null;
     }
 
+    if (!Constants.expoConfig?.extra?.CLERK_PUBLISHABLE_KEY) {
+        throw new Error("Missing CLERK_PUBLISHABLE_KEY");
+    }
+
+    if (!Constants.expoConfig?.extra?.STRIPE_PUBLISHABLE_KEY) {
+        throw new Error("Missing STRIPE_PUBLISHABLE_KEY");
+    }
+
+    const clerkPublishableKey = String(
+        Constants.expoConfig.extra.CLERK_PUBLISHABLE_KEY,
+    );
+    const stripePublishableKey = String(
+        Constants.expoConfig.extra.STRIPE_PUBLISHABLE_KEY,
+    );
+
     return (
         <ClerkProvider
-            publishableKey={
-                Constants.expoConfig?.extra?.CLERK_PUBLISHABLE_KEY as string
-            }
+            publishableKey={clerkPublishableKey}
             tokenCache={tokenCache}
         >
             <TRPCProvider>
-                <StripeProvider
-                    publishableKey={
-                        Constants.expoConfig?.extra
-                            ?.STRIPE_PUBLISHABLE_KEY as string
-                    }
-                >
+                <StripeProvider publishableKey={stripePublishableKey}>
                     <SafeAreaProvider>
                         <I18nProvider i18n={i18n}>
                             <SignedIn>
-                                <TabsRouter />
+                                <Slot />
                                 <StatusBar translucent />
                             </SignedIn>
                             <SignedOut>
-                                <SignInScreen />
+                                <Slot />
                             </SignedOut>
                         </I18nProvider>
                     </SafeAreaProvider>
                 </StripeProvider>
             </TRPCProvider>
         </ClerkProvider>
-    );
-};
-
-export default RootLayout;
-
-function TabsRouter() {
-    const { user } = useClerk();
-
-    if (user?.publicMetadata?.role) {
-        return <Redirect href={"/onboard"} />;
-    }
-
-    return (
-        <Tabs
-            screenOptions={{
-                tabBarStyle: {
-                    paddingHorizontal: 16,
-                },
-                headerShown: false,
-                tabBarShowLabel: false,
-                tabBarActiveTintColor,
-                tabBarInactiveTintColor,
-            }}
-        >
-            <Tabs.Screen
-                name="index"
-                options={{
-                    title: "Home",
-                    tabBarIcon: (props) => (
-                        <TabBarIconWrapper focused={props.focused}>
-                            <AntDesign name="home" {...props} />
-                        </TabBarIconWrapper>
-                    ),
-                }}
-            />
-            <Tabs.Screen
-                name="search"
-                options={{
-                    title: "Search",
-                    href:
-                        user?.publicMetadata?.role === "professional"
-                            ? null
-                            : "/search",
-                    tabBarIcon: (props) => (
-                        <TabBarIconWrapper focused={props.focused}>
-                            <AntDesign name="search1" {...props} />
-                        </TabBarIconWrapper>
-                    ),
-                }}
-            />
-            <Tabs.Screen
-                name="calendar"
-                options={{
-                    title: "Calendar",
-                    tabBarIcon: (props) => (
-                        <TabBarIconWrapper focused={props.focused}>
-                            <AntDesign name="calendar" {...props} />
-                        </TabBarIconWrapper>
-                    ),
-                }}
-            />
-            <Tabs.Screen
-                name="profile"
-                options={{
-                    title: "User Profile",
-                    tabBarIcon: (props) => (
-                        <TabBarIconWrapper focused={props.focused}>
-                            <Image
-                                className="rounded-full"
-                                alt={`${user?.firstName} profile picture`}
-                                source={{
-                                    uri: user?.profileImageUrl,
-                                    width: 30,
-                                    height: 30,
-                                }}
-                            />
-                        </TabBarIconWrapper>
-                    ),
-                }}
-            />
-            <Tabs.Screen
-                name="psych"
-                options={{
-                    title: "Psych Profile",
-                    href: null,
-                    tabBarStyle: {
-                        maxHeight: 0,
-                    },
-                }}
-            />
-            <Tabs.Screen
-                name="onboard"
-                options={{
-                    title: "Choose role",
-                    href: null,
-                    tabBarStyle: {
-                        maxHeight: 0,
-                    },
-                }}
-            />
-            <Tabs.Screen
-                name="notes"
-                options={{
-                    title: "Notes",
-                    href: null,
-                }}
-            />
-            <Tabs.Screen
-                name="settings"
-                options={{
-                    title: "Settings",
-                    href: null,
-                }}
-            />
-        </Tabs>
-    );
-}
-
-const LoginImage =
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    require("../../assets/login_mind.png") as ImageSourcePropType;
-function SignInScreen() {
-    const { onApplePress, onGooglePress } = useAuthProviders();
-
-    return (
-        <View className="flex h-full w-full items-center justify-center bg-off-white">
-            <View className="relative bottom-12 right-4">
-                <LogoSvg />
-            </View>
-            <Text className="pt-4 font-nunito-sans text-3xl">
-                <Trans>Welcome</Trans>
-            </Text>
-            <Text className="font-nunito-sans text-base text-gray-500">
-                <Trans>Let us help. Focus on connecting.</Trans>
-            </Text>
-            <View className="flex w-full gap-y-4 px-8">
-                <View className="flex items-center justify-center pt-8">
-                    <Image
-                        alt=""
-                        source={LoginImage}
-                        style={{ width: 200, height: 200 }}
-                        resizeMode="contain"
-                    />
-                </View>
-                <TouchableOpacity onPress={onGooglePress} className="w-full">
-                    <View className="mt-8  flex w-full flex-row items-center justify-center rounded-xl bg-blue-500 px-8 py-4 font-bold shadow-sm">
-                        <FontAwesome color="white" size={22} name="google" />
-                        <Text className="ml-4 font-nunito-sans text-xl text-white">
-                            <Trans>Sign in with</Trans>{" "}
-                        </Text>
-                        <Text className="font-nunito-sans-bold text-xl text-white">
-                            Google
-                        </Text>
-                    </View>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={onApplePress} className="w-full">
-                    <View className="flex w-full flex-row items-center justify-center rounded-xl bg-white px-8 py-4 font-bold shadow-sm">
-                        <FontAwesome size={22} name="apple" />
-                        <Text className="ml-4 font-nunito-sans text-xl">
-                            <Trans>Sign in with</Trans>{" "}
-                        </Text>
-                        <Text className="font-nunito-sans text-xl">Apple</Text>
-                    </View>
-                </TouchableOpacity>
-            </View>
-        </View>
     );
 }

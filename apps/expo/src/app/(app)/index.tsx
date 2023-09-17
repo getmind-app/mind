@@ -13,10 +13,10 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import { Trans, t } from "@lingui/macro";
 
-import { CardSkeleton } from "../components/CardSkeleton";
-import DefaultHomeCard from "../components/DefaultHomeCard";
-import geocodeAddress from "../helpers/geocodeAddress";
-import { api } from "../utils/api";
+import { CardSkeleton } from "../../components/CardSkeleton";
+import DefaultHomeCard from "../../components/DefaultHomeCard";
+import geocodeAddress from "../../helpers/geocodeAddress";
+import { api } from "../../utils/api";
 
 export default function Index() {
     const router = useRouter();

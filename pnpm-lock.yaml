@@ -244,7 +244,7 @@ importers:
         version: 7.45.2(react@18.2.0)
       react-intl:
         specifier: ^6.4.4
-        version: 6.4.4(react@18.2.0)(typescript@4.9.5)
+        version: 6.4.4(react@18.2.0)(typescript@5.1.3)
       react-native:
         specifier: 0.72.4
         version: 0.72.4(@babel/core@7.22.10)(@babel/preset-env@7.21.4)(react@18.2.0)
@@ -304,14 +304,14 @@ importers:
         specifier: ^7.21.0
         version: 7.21.0
       '@expo/config-plugins':
-        specifier: ^6.0.1
-        version: 6.0.1
+        specifier: ~7.2.2
+        version: 7.2.5
       '@lingui/cli':
         specifier: ^4.3.0
-        version: 4.4.0(typescript@4.9.5)
+        version: 4.4.0(typescript@5.1.3)
       '@lingui/macro':
         specifier: ^4.3.0
-        version: 4.4.0(@lingui/react@4.4.0)(babel-plugin-macros@3.1.0)(typescript@4.9.5)
+        version: 4.4.0(@lingui/react@4.4.0)(babel-plugin-macros@3.1.0)(typescript@5.1.3)
       '@types/babel__core':
         specifier: ^7.20.0
         version: 7.20.0
@@ -334,8 +334,8 @@ importers:
         specifier: ^3.2.2
         version: 3.3.1(postcss@8.4.21)
       typescript:
-        specifier: ^4.9.5
-        version: 4.9.5
+        specifier: ^5.1.3
+        version: 5.1.3
 
   apps/nextjs:
     dependencies:
@@ -2746,6 +2746,7 @@ packages:
       xml2js: 0.4.23
     transitivePeerDependencies:
       - supports-color
+    dev: false
 
   /@expo/config-plugins@7.2.5:
     resolution: {integrity: sha512-w+5ccu1IxBHgyQk9CPFKLZOk8yZQEyTjbJwOzESK1eR7QwosbcsLkN1c1WWUZYiCXwORu3UTwJYll4+X2xxJhQ==}
@@ -2767,7 +2768,6 @@ packages:
       xml2js: 0.6.0
     transitivePeerDependencies:
       - supports-color
-    dev: false
 
   /@expo/config-types@44.0.0:
     resolution: {integrity: sha512-d+gpdKOAhqaD5RmcMzGgKzNtvE1w+GCqpFQNSXLliYlXjj+Tv0eL8EPeAdPtvke0vowpPFwd5McXLA90dgY6Jg==}
@@ -2775,10 +2775,10 @@ packages:
 
   /@expo/config-types@48.0.0:
     resolution: {integrity: sha512-DwyV4jTy/+cLzXGAo1xftS6mVlSiLIWZjl9DjTCLPFVgNYQxnh7htPilRv4rBhiNs7KaznWqKU70+4zQoKVT9A==}
+    dev: false
 
   /@expo/config-types@49.0.0:
     resolution: {integrity: sha512-8eyREVi+K2acnMBe/rTIu1dOfyR2+AMnTLHlut+YpMV9OZPdeKV0Bs9BxAewGqBA2slslbQ9N39IS2CuTKpXkA==}
-    dev: false
 
   /@expo/config@6.0.20:
     resolution: {integrity: sha512-m2T1/hB4TyLkQElOUwOajn/7gBcPaGyfVwoVsuJMEh0yrNvNFtXP+nl87Cm53g5q+VyfwJUgbewPQ3j/UXkI6Q==}
@@ -3260,24 +3260,6 @@ packages:
       tslib: 2.6.0
     dev: false
 
-  /@formatjs/intl@2.9.0(typescript@4.9.5):
-    resolution: {integrity: sha512-Ym0trUoC/VO6wQu4YHa0H1VR2tEixFRmwZgADkDLm7nD+vv1Ob+/88mUAoT0pwvirFqYKgUKEwp1tFepqyqvVA==}
-    peerDependencies:
-      typescript: ^4.7 || 5
-    peerDependenciesMeta:
-      typescript:
-        optional: true
-    dependencies:
-      '@formatjs/ecma402-abstract': 1.17.0
-      '@formatjs/fast-memoize': 2.2.0
-      '@formatjs/icu-messageformat-parser': 2.6.0
-      '@formatjs/intl-displaynames': 6.5.0
-      '@formatjs/intl-listformat': 7.4.0
-      intl-messageformat: 10.5.0
-      tslib: 2.6.0
-      typescript: 4.9.5
-    dev: false
-
   /@formatjs/intl@2.9.0(typescript@5.0.3):
     resolution: {integrity: sha512-Ym0trUoC/VO6wQu4YHa0H1VR2tEixFRmwZgADkDLm7nD+vv1Ob+/88mUAoT0pwvirFqYKgUKEwp1tFepqyqvVA==}
     peerDependencies:
@@ -3294,6 +3276,24 @@ packages:
       intl-messageformat: 10.5.0
       tslib: 2.6.0
       typescript: 5.0.3
+    dev: false
+
+  /@formatjs/intl@2.9.0(typescript@5.1.3):
+    resolution: {integrity: sha512-Ym0trUoC/VO6wQu4YHa0H1VR2tEixFRmwZgADkDLm7nD+vv1Ob+/88mUAoT0pwvirFqYKgUKEwp1tFepqyqvVA==}
+    peerDependencies:
+      typescript: ^4.7 || 5
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+    dependencies:
+      '@formatjs/ecma402-abstract': 1.17.0
+      '@formatjs/fast-memoize': 2.2.0
+      '@formatjs/icu-messageformat-parser': 2.6.0
+      '@formatjs/intl-displaynames': 6.5.0
+      '@formatjs/intl-listformat': 7.4.0
+      intl-messageformat: 10.5.0
+      tslib: 2.6.0
+      typescript: 5.1.3
     dev: false
 
   /@gar/promisify@1.1.3:
@@ -3518,45 +3518,6 @@ packages:
     engines: {node: '>=16.0.0'}
     dev: true
 
-  /@lingui/cli@4.4.0(typescript@4.9.5):
-    resolution: {integrity: sha512-9mamvFfzXoaa7kSyshfCrHdK54oAhGB3P7S5M8QjHxUINaQn8naRhZ1AEFoW6rw8Jy2I27XplJsuQrdgxkd+Zw==}
-    engines: {node: '>=16.0.0'}
-    hasBin: true
-    dependencies:
-      '@babel/core': 7.22.10
-      '@babel/generator': 7.22.10
-      '@babel/parser': 7.22.10
-      '@babel/runtime': 7.21.0
-      '@babel/types': 7.22.10
-      '@lingui/babel-plugin-extract-messages': 4.4.0
-      '@lingui/conf': 4.4.0(typescript@4.9.5)
-      '@lingui/core': 4.4.0
-      '@lingui/format-po': 4.4.0(typescript@4.9.5)
-      '@lingui/message-utils': 4.4.0
-      babel-plugin-macros: 3.1.0
-      chalk: 4.1.2
-      chokidar: 3.5.1
-      cli-table: 0.3.6
-      commander: 10.0.1
-      convert-source-map: 2.0.0
-      date-fns: 2.30.0
-      esbuild: 0.17.19
-      glob: 7.2.3
-      inquirer: 7.3.3
-      micromatch: 4.0.2
-      normalize-path: 3.0.0
-      ora: 5.4.1
-      pathe: 1.1.1
-      pkg-up: 3.1.0
-      pofile: 1.1.4
-      pseudolocale: 2.0.0
-      ramda: 0.27.2
-      source-map: 0.8.0-beta.0
-    transitivePeerDependencies:
-      - supports-color
-      - typescript
-    dev: true
-
   /@lingui/cli@4.4.0(typescript@5.0.3):
     resolution: {integrity: sha512-9mamvFfzXoaa7kSyshfCrHdK54oAhGB3P7S5M8QjHxUINaQn8naRhZ1AEFoW6rw8Jy2I27XplJsuQrdgxkd+Zw==}
     engines: {node: '>=16.0.0'}
@@ -3596,17 +3557,42 @@ packages:
       - typescript
     dev: true
 
-  /@lingui/conf@4.4.0(typescript@4.9.5):
-    resolution: {integrity: sha512-mIAGh5eeWJm5jYM/ag4lbktxlS/73iANOahMM3q5OlEfIVvBzoinwSONRQEVsIgLT1SI6ULbqvVaI42VF5WrAw==}
+  /@lingui/cli@4.4.0(typescript@5.1.3):
+    resolution: {integrity: sha512-9mamvFfzXoaa7kSyshfCrHdK54oAhGB3P7S5M8QjHxUINaQn8naRhZ1AEFoW6rw8Jy2I27XplJsuQrdgxkd+Zw==}
     engines: {node: '>=16.0.0'}
+    hasBin: true
     dependencies:
+      '@babel/core': 7.22.10
+      '@babel/generator': 7.22.10
+      '@babel/parser': 7.22.10
       '@babel/runtime': 7.21.0
+      '@babel/types': 7.22.10
+      '@lingui/babel-plugin-extract-messages': 4.4.0
+      '@lingui/conf': 4.4.0(typescript@5.1.3)
+      '@lingui/core': 4.4.0
+      '@lingui/format-po': 4.4.0(typescript@5.1.3)
+      '@lingui/message-utils': 4.4.0
+      babel-plugin-macros: 3.1.0
       chalk: 4.1.2
-      cosmiconfig: 8.3.5(typescript@4.9.5)
-      jest-validate: 29.6.1
-      jiti: 1.19.1
-      lodash.get: 4.4.2
+      chokidar: 3.5.1
+      cli-table: 0.3.6
+      commander: 10.0.1
+      convert-source-map: 2.0.0
+      date-fns: 2.30.0
+      esbuild: 0.17.19
+      glob: 7.2.3
+      inquirer: 7.3.3
+      micromatch: 4.0.2
+      normalize-path: 3.0.0
+      ora: 5.4.1
+      pathe: 1.1.1
+      pkg-up: 3.1.0
+      pofile: 1.1.4
+      pseudolocale: 2.0.0
+      ramda: 0.27.2
+      source-map: 0.8.0-beta.0
     transitivePeerDependencies:
+      - supports-color
       - typescript
     dev: true
 
@@ -3624,6 +3610,20 @@ packages:
       - typescript
     dev: true
 
+  /@lingui/conf@4.4.0(typescript@5.1.3):
+    resolution: {integrity: sha512-mIAGh5eeWJm5jYM/ag4lbktxlS/73iANOahMM3q5OlEfIVvBzoinwSONRQEVsIgLT1SI6ULbqvVaI42VF5WrAw==}
+    engines: {node: '>=16.0.0'}
+    dependencies:
+      '@babel/runtime': 7.21.0
+      chalk: 4.1.2
+      cosmiconfig: 8.3.5(typescript@5.1.3)
+      jest-validate: 29.6.1
+      jiti: 1.19.1
+      lodash.get: 4.4.2
+    transitivePeerDependencies:
+      - typescript
+    dev: true
+
   /@lingui/core@4.4.0:
     resolution: {integrity: sha512-0ngEP+g4bt6f3cNqEzkU5796VkEEamxNXF/JD/QV9Ftxp8QBw91WqAoHjNYs3aYZOctCsRBR7FlvRQ6o2fDWDg==}
     engines: {node: '>=16.0.0'}
@@ -3631,18 +3631,6 @@ packages:
       '@babel/runtime': 7.21.0
       '@lingui/message-utils': 4.4.0
       unraw: 2.0.1
-
-  /@lingui/format-po@4.4.0(typescript@4.9.5):
-    resolution: {integrity: sha512-FRk9HD199Klknv+zccytddHfnSJwns6Fv3ZHvm8hoB9VLKnO0RBMR2f3mqw+MYPvSYGtTIxVQXLGISva7nFG4A==}
-    engines: {node: '>=16.0.0'}
-    dependencies:
-      '@lingui/conf': 4.4.0(typescript@4.9.5)
-      '@lingui/message-utils': 4.4.0
-      date-fns: 2.30.0
-      pofile: 1.1.4
-    transitivePeerDependencies:
-      - typescript
-    dev: true
 
   /@lingui/format-po@4.4.0(typescript@5.0.3):
     resolution: {integrity: sha512-FRk9HD199Klknv+zccytddHfnSJwns6Fv3ZHvm8hoB9VLKnO0RBMR2f3mqw+MYPvSYGtTIxVQXLGISva7nFG4A==}
@@ -3656,20 +3644,14 @@ packages:
       - typescript
     dev: true
 
-  /@lingui/macro@4.4.0(@lingui/react@4.4.0)(babel-plugin-macros@3.1.0)(typescript@4.9.5):
-    resolution: {integrity: sha512-EMe5eFZYSF1ECuumSmy2OIsusUV/eXcpz7b9E3A/3Wype34+IjYhs1SiD7Fg5Erwz6wDePHEU4ux0Y8jtov0Yw==}
+  /@lingui/format-po@4.4.0(typescript@5.1.3):
+    resolution: {integrity: sha512-FRk9HD199Klknv+zccytddHfnSJwns6Fv3ZHvm8hoB9VLKnO0RBMR2f3mqw+MYPvSYGtTIxVQXLGISva7nFG4A==}
     engines: {node: '>=16.0.0'}
-    peerDependencies:
-      '@lingui/react': ^4.0.0
-      babel-plugin-macros: 2 || 3
     dependencies:
-      '@babel/runtime': 7.21.0
-      '@babel/types': 7.22.10
-      '@lingui/conf': 4.4.0(typescript@4.9.5)
-      '@lingui/core': 4.4.0
+      '@lingui/conf': 4.4.0(typescript@5.1.3)
       '@lingui/message-utils': 4.4.0
-      '@lingui/react': 4.4.0(react@18.2.0)
-      babel-plugin-macros: 3.1.0
+      date-fns: 2.30.0
+      pofile: 1.1.4
     transitivePeerDependencies:
       - typescript
     dev: true
@@ -3684,6 +3666,24 @@ packages:
       '@babel/runtime': 7.21.0
       '@babel/types': 7.22.10
       '@lingui/conf': 4.4.0(typescript@5.0.3)
+      '@lingui/core': 4.4.0
+      '@lingui/message-utils': 4.4.0
+      '@lingui/react': 4.4.0(react@18.2.0)
+      babel-plugin-macros: 3.1.0
+    transitivePeerDependencies:
+      - typescript
+    dev: true
+
+  /@lingui/macro@4.4.0(@lingui/react@4.4.0)(babel-plugin-macros@3.1.0)(typescript@5.1.3):
+    resolution: {integrity: sha512-EMe5eFZYSF1ECuumSmy2OIsusUV/eXcpz7b9E3A/3Wype34+IjYhs1SiD7Fg5Erwz6wDePHEU4ux0Y8jtov0Yw==}
+    engines: {node: '>=16.0.0'}
+    peerDependencies:
+      '@lingui/react': ^4.0.0
+      babel-plugin-macros: 2 || 3
+    dependencies:
+      '@babel/runtime': 7.21.0
+      '@babel/types': 7.22.10
+      '@lingui/conf': 4.4.0(typescript@5.1.3)
       '@lingui/core': 4.4.0
       '@lingui/message-utils': 4.4.0
       '@lingui/react': 4.4.0(react@18.2.0)
@@ -6582,22 +6582,6 @@ packages:
       path-type: 4.0.0
       yaml: 1.10.2
 
-  /cosmiconfig@8.3.5(typescript@4.9.5):
-    resolution: {integrity: sha512-A5Xry3xfS96wy2qbiLkQLAg4JUrR2wvfybxj6yqLmrUfMAvhS3MZxIP2oQn0grgYIvJqzpeTEWu4vK0t+12NNw==}
-    engines: {node: '>=14'}
-    peerDependencies:
-      typescript: '>=4.9.5'
-    peerDependenciesMeta:
-      typescript:
-        optional: true
-    dependencies:
-      import-fresh: 3.3.0
-      js-yaml: 4.1.0
-      parse-json: 5.2.0
-      path-type: 4.0.0
-      typescript: 4.9.5
-    dev: true
-
   /cosmiconfig@8.3.5(typescript@5.0.3):
     resolution: {integrity: sha512-A5Xry3xfS96wy2qbiLkQLAg4JUrR2wvfybxj6yqLmrUfMAvhS3MZxIP2oQn0grgYIvJqzpeTEWu4vK0t+12NNw==}
     engines: {node: '>=14'}
@@ -6612,6 +6596,22 @@ packages:
       parse-json: 5.2.0
       path-type: 4.0.0
       typescript: 5.0.3
+    dev: true
+
+  /cosmiconfig@8.3.5(typescript@5.1.3):
+    resolution: {integrity: sha512-A5Xry3xfS96wy2qbiLkQLAg4JUrR2wvfybxj6yqLmrUfMAvhS3MZxIP2oQn0grgYIvJqzpeTEWu4vK0t+12NNw==}
+    engines: {node: '>=14'}
+    peerDependencies:
+      typescript: '>=4.9.5'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+    dependencies:
+      import-fresh: 3.3.0
+      js-yaml: 4.1.0
+      parse-json: 5.2.0
+      path-type: 4.0.0
+      typescript: 5.1.3
     dev: true
 
   /cpf-cnpj-validator@1.0.3:
@@ -12819,29 +12819,6 @@ packages:
       react: 18.2.0
     dev: false
 
-  /react-intl@6.4.4(react@18.2.0)(typescript@4.9.5):
-    resolution: {integrity: sha512-/C9Sl/5//ohfkNG6AWlJuf4BhTXsbzyk93K62A4zRhSPANyOGpKZ+fWhN+TLfFd5YjDUHy+exU/09y0w1bO4Xw==}
-    peerDependencies:
-      react: ^16.6.0 || 17 || 18
-      typescript: ^4.7 || 5
-    peerDependenciesMeta:
-      typescript:
-        optional: true
-    dependencies:
-      '@formatjs/ecma402-abstract': 1.17.0
-      '@formatjs/icu-messageformat-parser': 2.6.0
-      '@formatjs/intl': 2.9.0(typescript@4.9.5)
-      '@formatjs/intl-displaynames': 6.5.0
-      '@formatjs/intl-listformat': 7.4.0
-      '@types/hoist-non-react-statics': 3.3.1
-      '@types/react': 18.0.33
-      hoist-non-react-statics: 3.3.2
-      intl-messageformat: 10.5.0
-      react: 18.2.0
-      tslib: 2.6.0
-      typescript: 4.9.5
-    dev: false
-
   /react-intl@6.4.4(react@18.2.0)(typescript@5.0.3):
     resolution: {integrity: sha512-/C9Sl/5//ohfkNG6AWlJuf4BhTXsbzyk93K62A4zRhSPANyOGpKZ+fWhN+TLfFd5YjDUHy+exU/09y0w1bO4Xw==}
     peerDependencies:
@@ -12863,6 +12840,29 @@ packages:
       react: 18.2.0
       tslib: 2.6.0
       typescript: 5.0.3
+    dev: false
+
+  /react-intl@6.4.4(react@18.2.0)(typescript@5.1.3):
+    resolution: {integrity: sha512-/C9Sl/5//ohfkNG6AWlJuf4BhTXsbzyk93K62A4zRhSPANyOGpKZ+fWhN+TLfFd5YjDUHy+exU/09y0w1bO4Xw==}
+    peerDependencies:
+      react: ^16.6.0 || 17 || 18
+      typescript: ^4.7 || 5
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+    dependencies:
+      '@formatjs/ecma402-abstract': 1.17.0
+      '@formatjs/icu-messageformat-parser': 2.6.0
+      '@formatjs/intl': 2.9.0(typescript@5.1.3)
+      '@formatjs/intl-displaynames': 6.5.0
+      '@formatjs/intl-listformat': 7.4.0
+      '@types/hoist-non-react-statics': 3.3.1
+      '@types/react': 18.0.33
+      hoist-non-react-statics: 3.3.2
+      intl-messageformat: 10.5.0
+      react: 18.2.0
+      tslib: 2.6.0
+      typescript: 5.1.3
     dev: false
 
   /react-is@16.13.1:
@@ -14660,14 +14660,14 @@ packages:
       is-typed-array: 1.1.12
     dev: false
 
-  /typescript@4.9.5:
-    resolution: {integrity: sha512-1FXk9E2Hm+QzZQ7z+McJiHL4NW1F2EzMu9Nq9i3zAaGqibafqYwCVU6WyWAuyQRRzOlxou8xZSyXLEN8oKj24g==}
-    engines: {node: '>=4.2.0'}
-    hasBin: true
-
   /typescript@5.0.3:
     resolution: {integrity: sha512-xv8mOEDnigb/tN9PSMTwSEqAnUvkoXMQlicOb0IUVDBSQCgBSaAAROUZYy2IcUy5qU6XajK5jjjO7TMWqBTKZA==}
     engines: {node: '>=12.20'}
+    hasBin: true
+
+  /typescript@5.1.3:
+    resolution: {integrity: sha512-XH627E9vkeqhlZFQuL+UsyAXEnibT0kWR2FWONlr4sTjvxyJYnyefgrkyECLzM5NenmKzRAy2rR/OlYLA1HkZw==}
+    engines: {node: '>=14.17'}
     hasBin: true
 
   /ua-parser-js@1.0.35:
@@ -15249,6 +15249,7 @@ packages:
     dependencies:
       sax: 1.2.4
       xmlbuilder: 11.0.1
+    dev: false
 
   /xml2js@0.6.0:
     resolution: {integrity: sha512-eLTh0kA8uHceqesPqSE+VvO1CDDJWMwlQfB6LuN6T8w6MaDJ8Txm8P7s5cHD0miF0V+GGTZrDQfxPZQVsur33w==}
@@ -15256,7 +15257,6 @@ packages:
     dependencies:
       sax: 1.2.4
       xmlbuilder: 11.0.1
-    dev: false
 
   /xmlbuilder@11.0.1:
     resolution: {integrity: sha512-fDlsI/kFEx7gLvbecc0/ohLG50fugQp8ryHzMTuW9vSa1GJ0XYWKnhsUx7oie3G98+r56aTQIUB4kht42R3JvA==}

@@ -18,8 +18,8 @@ import { useUser } from "@clerk/clerk-expo";
 import { Feather, FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import { Trans, t } from "@lingui/macro";
 
-import { CardSkeleton } from "../components/CardSkeleton";
-import { api } from "../utils/api";
+import { CardSkeleton } from "../../components/CardSkeleton";
+import { api } from "../../utils/api";
 import {
     type Appointment,
     type AppointmentStatus,

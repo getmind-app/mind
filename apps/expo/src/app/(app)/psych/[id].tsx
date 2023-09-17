@@ -14,11 +14,11 @@ import * as Linking from "expo-linking";
 import { useRouter, useSearchParams } from "expo-router";
 import { Trans, t } from "@lingui/macro";
 
-import { Header } from "../../components/Header";
-import { ProfileSkeleton } from "../../components/ProfileSkeleton";
-import formatModality from "../../helpers/formatModality";
-import geocodeAddress from "../../helpers/geocodeAddress";
-import { api } from "../../utils/api";
+import { Header } from "../../../components/Header";
+import { ProfileSkeleton } from "../../../components/ProfileSkeleton";
+import formatModality from "../../../helpers/formatModality";
+import geocodeAddress from "../../../helpers/geocodeAddress";
+import { api } from "../../../utils/api";
 import { type Modality } from ".prisma/client";
 
 export default function TherapistProfile() {

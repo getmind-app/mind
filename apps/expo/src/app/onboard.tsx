@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { Image, Pressable, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useRouter } from "expo-router";
+import { Tabs, useRouter } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
 import { Trans } from "@lingui/macro";
 
-import { api } from "../../utils/api";
+import { api } from "../utils/api";
 
-export default function ChooseRole() {
+export default function Onboard() {
     const { user } = useUser();
     const router = useRouter();
     const [selectedRole, setSelectedRole] = useState<
@@ -31,7 +31,7 @@ export default function ChooseRole() {
 
             selectedRole === "patient"
                 ? router.push("/")
-                : router.push("/onboard/psych");
+                : router.push("/(psych)/profile");
         },
     });
 
@@ -79,7 +79,7 @@ export default function ChooseRole() {
                             </View>
                             <Image
                                 alt="Patient with a plant"
-                                source={require("../../../assets/profissional_2.png")}
+                                source={require("../../assets/profissional_2.png")}
                                 className="absolute -bottom-2 right-4 h-36 w-36"
                                 resizeMode="contain"
                             />
@@ -102,7 +102,7 @@ export default function ChooseRole() {
                         >
                             <Image
                                 alt="Psychologist reading a book"
-                                source={require("../../../assets/paciente.png")}
+                                source={require("../../assets/paciente.png")}
                                 className="absolute -bottom-2 left-6 h-36 w-36"
                                 resizeMode="contain"
                             />

@@ -13,7 +13,7 @@ export default function useAuthProviders() {
         try {
             const { createdSessionId, setActive } = await googleOAuthFlow({});
             if (createdSessionId && setActive) {
-                setActive({ session: createdSessionId });
+                return setActive({ session: createdSessionId });
             } else {
                 throw new Error(
                     "There are unmet requirements, modifiy this else to handle them",
@@ -29,7 +29,7 @@ export default function useAuthProviders() {
         try {
             const { createdSessionId, setActive } = await appleOAuthFlow({});
             if (createdSessionId && setActive) {
-                setActive({ session: createdSessionId });
+                return setActive({ session: createdSessionId });
             } else {
                 throw new Error(
                     "There are unmet requirements, modifiy this else to handle them",

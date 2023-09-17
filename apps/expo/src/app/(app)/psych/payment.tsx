@@ -6,9 +6,9 @@ import { Trans, t } from "@lingui/macro";
 import { CardField, useConfirmPayment } from "@stripe/stripe-react-native";
 import { type Details } from "@stripe/stripe-react-native/lib/typescript/src/types/components/CardFieldInput";
 
-import { Header } from "../../components/Header";
-import { ProfileSkeleton } from "../../components/ProfileSkeleton";
-import { api } from "../../utils/api";
+import { Header } from "../../../components/Header";
+import { ProfileSkeleton } from "../../../components/ProfileSkeleton";
+import { api } from "../../../utils/api";
 
 function handleMode(x: string) {
     if (x === "ONLINE") return t({ message: "Online" });

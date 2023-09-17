@@ -16,12 +16,12 @@ import { DateTime } from "luxon";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { FormCurrencyInput } from "../../components/FormCurrencyInput";
-import { FormDateInput } from "../../components/FormDateInput";
-import { FormTextInput } from "../../components/FormTextInput";
-import { Header } from "../../components/Header";
-import { ProfileSkeleton } from "../../components/ProfileSkeleton";
-import { api } from "../../utils/api";
+import { FormCurrencyInput } from "../../../components/FormCurrencyInput";
+import { FormDateInput } from "../../../components/FormDateInput";
+import { FormTextInput } from "../../../components/FormTextInput";
+import { Header } from "../../../components/Header";
+import { ProfileSkeleton } from "../../../components/ProfileSkeleton";
+import { api } from "../../../utils/api";
 
 export default function PersonalInfo() {
     const { user } = useUser();
