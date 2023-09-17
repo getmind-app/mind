@@ -1,11 +1,10 @@
 import { Text, TouchableOpacity, View } from "react-native";
-import * as Clipboard from "expo-clipboard";
-import * as Linking from "expo-linking";
 import { useRouter } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import { Trans } from "@lingui/macro";
 
+import { getShareLink } from "../helpers/getShareLink";
 import { api } from "../utils/api";
 
 export default function DefaultHomeCard() {
@@ -36,9 +35,10 @@ export default function DefaultHomeCard() {
             {user?.publicMetadata?.role === "professional" ? (
                 <TouchableOpacity
                     onPress={() =>
-                        Clipboard.setStringAsync(
-                            Linking.createURL(`/psych/${therapistId}`),
-                        )
+                        void getShareLink({
+                            id: therapistId,
+                            name: user?.firstName ?? "",
+                        })
                     }
                 >
                     <View className="mt-6 flex w-full flex-row items-center justify-center rounded-bl-xl rounded-br-xl bg-blue-500 py-3 align-middle">

@@ -46,7 +46,7 @@ export default function Onboard() {
     }
 
     return (
-        <SafeAreaView className="flex-1 flex-wrap items-center justify-center">
+        <SafeAreaView className="flex-1 flex-wrap items-center justify-center bg-off-white">
             <View className="flex w-full gap-y-4 px-4">
                 <Text className="mb-2 px-4 font-nunito-sans text-3xl">
                     <Trans>Who are you?</Trans>
@@ -59,7 +59,7 @@ export default function Onboard() {
                         } relative overflow-hidden`}
                     >
                         <View
-                            className={`flex w-full flex-row rounded-xl border-2 bg-white shadow-sm ${
+                            className={`flex w-full flex-row rounded-xl border-2 bg-white ${
                                 selectedRole === "patient"
                                     ? "border-blue-500"
                                     : "border-white"
@@ -94,7 +94,7 @@ export default function Onboard() {
                         } relative overflow-hidden`}
                     >
                         <View
-                            className={`flex w-full flex-row justify-end rounded-xl border-2 bg-white shadow-sm ${
+                            className={`flex w-full flex-row justify-end rounded-xl border-2 bg-white ${
                                 selectedRole === "professional"
                                     ? "border-blue-500"
                                     : "border-white"

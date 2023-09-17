@@ -112,6 +112,26 @@ export default function AppRouter() {
                 }}
             />
             <Tabs.Screen
+                name="(psych)"
+                options={{
+                    title: "Psych Settings",
+                    href: null,
+                    tabBarStyle: {
+                        maxHeight: 0,
+                    },
+                }}
+            />
+            <Tabs.Screen
+                name="settings"
+                options={{
+                    title: "Settings",
+                    href: null,
+                    tabBarStyle: {
+                        maxHeight: 0,
+                    },
+                }}
+            />
+            <Tabs.Screen
                 name="notes"
                 options={{
                     title: "Notes",

@@ -320,10 +320,10 @@ function HourPicker({
             }
             expanded={expanded}
             setExpanded={setExpanded}
-            maxHeight={60}
+            maxHeight={date ? 60 : 30}
         >
             <ScrollView horizontal={true}>
-                <View className="mt-2 flex flex-row">
+                <View className="flex flex-col pt-2">
                     {!date && (
                         <Text className="font-nunito-sans text-[#666666]">
                             <Trans>Please select a date</Trans>
@@ -336,17 +336,18 @@ function HourPicker({
                             </Trans>
                         </Text>
                     )}
-                    {availableHours.map((n, i) => (
-                        <HourComponent
-                            key={i}
-                            number={`${n}:00`}
-                            onPress={(v) => {
-                                onSelect(v);
-                                setExpanded(false);
-                            }}
-                            isSelected={hour === `${n}:00`}
-                        />
-                    ))}
+                    {date &&
+                        availableHours.map((n, i) => (
+                            <HourComponent
+                                key={i}
+                                number={`${n}:00`}
+                                onPress={(v) => {
+                                    onSelect(v);
+                                    setExpanded(false);
+                                }}
+                                isSelected={hour === `${n}:00`}
+                            />
+                        ))}
                 </View>
             </ScrollView>
         </AnimatedCard>
@@ -469,7 +470,7 @@ function ModalityPicker({
             )}
 
             {therapist.modalities.length > 1 && (
-                <View className="mt-3 flex flex-row justify-between">
+                <View className="flex flex-row justify-between pt-3">
                     <TouchableOpacity
                         onPress={() => {
                             onSelect("ONLINE");

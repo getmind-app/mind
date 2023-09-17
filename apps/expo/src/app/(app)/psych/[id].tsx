@@ -1,9 +1,7 @@
 import React from "react";
 import {
-    Alert,
     LayoutAnimation,
     ScrollView,
-    Share,
     Text,
     TouchableOpacity,
     View,
@@ -11,18 +9,19 @@ import {
 import { type Float } from "react-native/Libraries/Types/CodegenTypes";
 import { Image } from "expo-image";
 import * as Linking from "expo-linking";
-import { useRouter, useSearchParams } from "expo-router";
+import { useGlobalSearchParams, useRouter, useSearchParams } from "expo-router";
 import { Trans, t } from "@lingui/macro";
 
 import { Header } from "../../../components/Header";
 import { ProfileSkeleton } from "../../../components/ProfileSkeleton";
 import formatModality from "../../../helpers/formatModality";
 import geocodeAddress from "../../../helpers/geocodeAddress";
+import { getShareLink } from "../../../helpers/getShareLink";
 import { api } from "../../../utils/api";
 import { type Modality } from ".prisma/client";
 
 export default function TherapistProfile() {
-    const params = useSearchParams();
+    const params = useGlobalSearchParams();
     const { data, isLoading, isError } = api.therapists.findById.useQuery({
         id: params.id as string,
     });
@@ -40,32 +39,21 @@ export default function TherapistProfile() {
         );
     }
 
-    const handleShareLink = async () => {
-        await Share.share({
-            message: t({
-                message: `Hey! Check ${
-                    data?.name
-                }'s profile: ${Linking.createURL(`/psych/${data?.id}`)}`,
-            }),
-        }).catch((error) =>
-            Alert.alert(
-                t({
-                    message: "Error sharing link",
-                }),
-                error,
-            ),
-        );
-    };
-
     return (
         <>
-            <Header share onShare={handleShareLink} />
+            <Header
+                share
+                onShare={() =>
+                    void getShareLink({ id: data?.id, name: data?.name })
+                }
+            />
             <ScrollView
                 showsVerticalScrollIndicator={false}
                 className="h-full bg-off-white px-4 py-2"
             >
                 <View className="flex flex-row items-center gap-x-6">
                     <Image
+                        alt="Profile picture"
                         className="h-28 w-28 rounded-full"
                         source={data?.profilePictureUrl}
                         contentFit="cover"

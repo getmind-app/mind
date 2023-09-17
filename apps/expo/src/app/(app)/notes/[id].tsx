@@ -6,7 +6,7 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
-import { useRouter, useSearchParams } from "expo-router";
+import { useGlobalSearchParams, useRouter } from "expo-router";
 import { Trans } from "@lingui/macro";
 
 import { Header } from "../../../components/Header";
@@ -15,17 +15,18 @@ import { api } from "../../../utils/api";
 // TODO: no futuro precisamos deixar editar a nota
 export default function Note() {
     const router = useRouter();
-    const params = useSearchParams();
+    const utils = api.useContext();
+    const params = useGlobalSearchParams();
 
     const { data, isLoading, isError, error } = api.notes.findById.useQuery({
         id: String(params.id),
     });
 
     const { mutate } = api.notes.delete.useMutation({
-        onSuccess: () => {
+        onSuccess: async () => {
+            await utils.notes.findByUserId.invalidate();
             router.push({
                 pathname: "/",
-                params: { deletedNote: true },
             });
         },
     });

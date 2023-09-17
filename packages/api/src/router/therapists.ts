@@ -157,14 +157,23 @@ export const therapistsRouter = createTRPCRouter({
                 },
             });
 
-            return await ctx.prisma.address.update({
-                where: {
-                    id: therapist.address?.id,
-                },
-                data: {
-                    ...input,
-                },
-            });
+            if (therapist.address) {
+                return await ctx.prisma.address.update({
+                    where: {
+                        id: therapist.address?.id,
+                    },
+                    data: {
+                        ...input,
+                    },
+                });
+            } else {
+                return await ctx.prisma.address.create({
+                    data: {
+                        ...input,
+                        therapistId: therapist.id,
+                    },
+                });
+            }
         }),
     update: protectedProcedure
         .input(

@@ -25,7 +25,7 @@ import { type Modality } from ".prisma/client";
 export default function EditPsychProfile() {
     const { user } = useUser();
     const router = useRouter();
-    let modalities: Modality[] = [];
+    const [modalities, setModalities] = useState<Modality[]>([]);
 
     const [showBirthdayPicker, setShowBirthdayPicker] = useState(false);
 
@@ -56,6 +56,8 @@ export default function EditPsychProfile() {
         resolver: zodResolver(schema),
     });
     const onSubmit = handleSubmit((data) => {
+        setModalities(data.modalities);
+
         mutate({
             ...data,
             userId: String(user?.id),
@@ -72,8 +74,6 @@ export default function EditPsychProfile() {
                 .replaceAll("-", ""),
             modalities: data.modalities,
         });
-
-        modalities = data.modalities;
     });
 
     const { mutate, isLoading } = api.therapists.create.useMutation({
