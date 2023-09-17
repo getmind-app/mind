@@ -30,6 +30,12 @@ export default function PsychLayout() {
                     headerShown: false,
                 }}
             />
+            <Stack.Screen
+                name="available-hours"
+                options={{
+                    title: "Available hours",
+                }}
+            />
         </Stack>
     );
 }

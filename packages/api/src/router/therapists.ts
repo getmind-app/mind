@@ -54,8 +54,6 @@ export const therapistsRouter = createTRPCRouter({
             });
         }),
     findByUserId: protectedProcedure.query(async ({ ctx }) => {
-        console.log("ctx.auth");
-
         return await ctx.prisma.therapist.findFirstOrThrow({
             where: { userId: ctx.auth.userId },
             include: {
@@ -114,10 +112,8 @@ export const therapistsRouter = createTRPCRouter({
             for (let i = 0; i < input.days.length; i++) {
                 await ctx.prisma.hour.deleteMany({
                     where: {
-                        AND: {
-                            therapistId: ctx.auth.userId,
-                            weekDay: input.days[i],
-                        },
+                        weekDay: input.days[i] as WeekDay,
+                        therapistId: therapist.id,
                     },
                 });
 

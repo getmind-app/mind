@@ -8,7 +8,7 @@ import {
     View,
 } from "react-native";
 import * as Linking from "expo-linking";
-import { useRouter } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import { useClerk } from "@clerk/clerk-expo";
 import { MaterialIcons } from "@expo/vector-icons";
 import { type Icon } from "@expo/vector-icons/build/createIconSet";
@@ -136,7 +136,6 @@ function ProfessionalMenuItems() {
                 label={t({ message: "Available hours" })}
                 onPress={() => router.push("/(psych)/available-hours")}
             />
-
             <ShareLinkMenuItem handleShareLink={handleShareLink} />
         </>
     );

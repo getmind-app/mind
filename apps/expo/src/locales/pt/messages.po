@@ -87,8 +87,8 @@ msgid "Accept the session?"
 msgstr "Aceitar sessão?"
 
 #: src/app/settings/available-hours.tsx:61
-msgid "Add Hours"
-msgstr "Adicionar horas"
+msgid "Update hours"
+msgstr "Atualizar horas"
 
 #: src/app/psych/payment.tsx:46
 msgid "Appointments with {0}"
