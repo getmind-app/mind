@@ -11,7 +11,7 @@ import Constants from "expo-constants";
 import { loadAsync } from "expo-font";
 import { getLocales } from "expo-localization";
 import * as Notifications from "expo-notifications";
-import { SplashScreen, Tabs, useRouter } from "expo-router";
+import { Redirect, SplashScreen, Tabs } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { StatusBar } from "expo-status-bar";
 import {
@@ -160,14 +160,10 @@ export default RootLayout;
 
 function TabsRouter() {
     const { user } = useClerk();
-    const router = useRouter();
 
-    // Se user não escolheu role, vai para tela de escolha
-    useEffect(() => {
-        if (!user?.publicMetadata?.role) {
-            router.push("/onboard");
-        }
-    }, [user]);
+    if (user?.publicMetadata?.role) {
+        return <Redirect href={"/onboard"} />;
+    }
 
     return (
         <Tabs
