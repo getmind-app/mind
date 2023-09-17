@@ -48,9 +48,7 @@ export default function Index() {
                     <Text className=" font-nunito-sans-bold text-3xl">
                         <Trans>Last notes</Trans>
                     </Text>
-                    <TouchableOpacity
-                        onPress={() => router.push("/(psych)/address")}
-                    >
+                    <TouchableOpacity onPress={() => router.push("/notes/new")}>
                         <View className="rounded-lg bg-blue-500 px-3 py-1 shadow-sm">
                             <Text className="text-center font-nunito-sans-bold text-base text-white">
                                 <Trans>New</Trans>
