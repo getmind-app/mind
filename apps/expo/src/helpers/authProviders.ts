@@ -1,4 +1,5 @@
 import React from "react";
+import { router } from "expo-router";
 import { useOAuth } from "@clerk/clerk-expo";
 
 export default function useAuthProviders() {
@@ -13,7 +14,9 @@ export default function useAuthProviders() {
         try {
             const { createdSessionId, setActive } = await googleOAuthFlow({});
             if (createdSessionId && setActive) {
-                return setActive({ session: createdSessionId });
+                await setActive({ session: createdSessionId });
+
+                return router.replace("/");
             } else {
                 throw new Error(
                     "There are unmet requirements, modifiy this else to handle them",
@@ -29,7 +32,9 @@ export default function useAuthProviders() {
         try {
             const { createdSessionId, setActive } = await appleOAuthFlow({});
             if (createdSessionId && setActive) {
-                return setActive({ session: createdSessionId });
+                await setActive({ session: createdSessionId });
+
+                return router.replace("/");
             } else {
                 throw new Error(
                     "There are unmet requirements, modifiy this else to handle them",

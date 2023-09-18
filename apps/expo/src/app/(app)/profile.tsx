@@ -8,7 +8,7 @@ import {
     View,
 } from "react-native";
 import * as Linking from "expo-linking";
-import { useRouter } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import { useClerk } from "@clerk/clerk-expo";
 import { MaterialIcons } from "@expo/vector-icons";
 import { type Icon } from "@expo/vector-icons/build/createIconSet";
@@ -122,7 +122,7 @@ function ProfessionalMenuItems() {
                 icon="person-outline"
                 isFirst={true}
                 label={t({ message: "Personal info" })}
-                onPress={() => router.push("/settings/personal-info")}
+                onPress={() => router.push("/(psych)/personal-info")}
             />
             {data.modalities.includes("ON_SITE") && (
                 <MenuItem
@@ -134,9 +134,8 @@ function ProfessionalMenuItems() {
             <MenuItem
                 icon="timer"
                 label={t({ message: "Available hours" })}
-                onPress={() => router.push("/settings/available-hours")}
+                onPress={() => router.push("/(psych)/available-hours")}
             />
-
             <ShareLinkMenuItem handleShareLink={handleShareLink} />
         </>
     );

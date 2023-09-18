@@ -21,7 +21,7 @@ export default function NewNote() {
 
     const { mutate, isLoading } = api.notes.create.useMutation({
         onSuccess: async () => {
-            await utils.notes.findByUserId.refetch();
+            await utils.notes.findByUserId.invalidate();
             router.push({
                 pathname: "/",
             });

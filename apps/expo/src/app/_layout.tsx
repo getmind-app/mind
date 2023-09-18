@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Text } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import Constants from "expo-constants";
 import { loadAsync } from "expo-font";
@@ -53,7 +52,6 @@ const tokenCache = {
 export default function RootLayout() {
     // https://docs.expo.dev/archive/classic-updates/preloading-and-caching-assets/#pre-loading-and-caching-assets
     const [appIsReady, setAppIsReady] = useState(false);
-    const path = usePathname();
     const [fontsLoaded] = useFonts({
         "Nunito-Sans": NunitoSans_400Regular,
         "Nunito-Sans-Bold": NunitoSans_700Bold,

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
     Image,
     Linking,
@@ -8,8 +8,7 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
-import * as Location from "expo-location";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import { Trans, t } from "@lingui/macro";
 
@@ -20,7 +19,6 @@ import { api } from "../../utils/api";
 
 export default function Index() {
     const router = useRouter();
-    const { newNote, deletedNote } = useLocalSearchParams();
     const [refreshing, setRefreshing] = useState(false);
     const utils = api.useContext();
 
@@ -32,12 +30,6 @@ export default function Index() {
             setRefreshing(false);
         }, 500);
     };
-
-    useEffect(() => {
-        if (newNote || deletedNote) {
-            onRefresh();
-        }
-    }, [newNote, deletedNote]);
 
     return (
         <ScrollView
@@ -76,29 +68,6 @@ function NextAppointment() {
     const { data, isLoading } =
         api.appointments.findNextUserAppointment.useQuery();
 
-    const geocode = async () => {
-        const { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== "granted") {
-            return;
-        }
-
-        const address = data?.therapist.address;
-
-        const location = await Location.geocodeAsync(
-            address?.street +
-                ", " +
-                address?.number +
-                ", " +
-                address?.city +
-                ", " +
-                address?.state +
-                ", " +
-                address?.country,
-        );
-
-        return `https://www.google.com/maps/search/?api=1&query=${location[0]?.latitude},${location[0]?.longitude}`;
-    };
-
     if (isLoading) return <CardSkeleton />;
 
     return (
@@ -130,7 +99,9 @@ function NextAppointment() {
                                         in person at{" "}
                                         <TouchableOpacity
                                             onPress={() =>
-                                                geocode().then((link) =>
+                                                geocodeAddress(
+                                                    data?.therapist?.address,
+                                                ).then((link) =>
                                                     Linking.openURL(
                                                         link ? link : "",
                                                     ),
@@ -224,7 +195,6 @@ function LastNotes() {
 
     const { data, isLoading } = api.notes.findByUserId.useQuery();
 
-    // TODO: achar uma forma de refazer a query quando o usuário criar/delete uma nota
     if (isLoading) return <CardSkeleton />;
 
     return (

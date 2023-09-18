@@ -1,11 +1,16 @@
+import { useEffect, useState } from "react";
 import {
+    Alert,
     KeyboardAvoidingView,
+    LayoutAnimation,
     Platform,
     ScrollView,
     Text,
     TouchableOpacity,
     View,
 } from "react-native";
+import MapView, { Marker } from "react-native-maps";
+import * as Location from "expo-location";
 import { useRouter } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -15,6 +20,7 @@ import { z } from "zod";
 
 import { FormTextInput } from "../../../components/FormTextInput";
 import { api } from "../../../utils/api";
+import { type Address } from ".prisma/client";
 
 const schema = z.object({
     zipCode: z
@@ -53,11 +59,16 @@ const schema = z.object({
 export default function OnboardAddressScreen() {
     const { user } = useUser();
     const router = useRouter();
+    const [latitude, setLatitude] = useState(0);
+    const [longitude, setLongitude] = useState(0);
+
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 
     const {
         control,
         handleSubmit,
         formState: { isValid },
+        getValues,
     } = useForm({
         defaultValues: {
             street: "",
@@ -82,14 +93,60 @@ export default function OnboardAddressScreen() {
             city: data.city,
             state: data.state,
             zipCode: data.zipCode.replaceAll("-", "").replaceAll(".", ""),
-            country: "BR",
+            country: "Brazil",
         });
     });
+
+    const geocode = async (address: Address) => {
+        const location = await Location.geocodeAsync(
+            address?.street +
+                ", " +
+                address?.number +
+                ", " +
+                address?.city +
+                ", " +
+                address?.state +
+                ", " +
+                address?.country,
+        );
+
+        return location;
+    };
+
+    useEffect(() => {
+        if (isValid) {
+            (async () => {
+                const address = {
+                    street: getValues("street"),
+                    number: getValues("number"),
+                    complement: getValues("complement"),
+                    neighborhood: getValues("neighborhood"),
+                    city: getValues("city"),
+                    state: getValues("state"),
+                    zipCode: getValues("zipCode").replaceAll("-", ""),
+                    country: "Brazil",
+                    id: "",
+                    therapistId: "",
+                };
+
+                try {
+                    const location = await geocode(address);
+
+                    if (location && location.length > 0) {
+                        setLatitude(location[0]?.latitude ?? 0);
+                        setLongitude(location[0]?.longitude ?? 0);
+                    }
+                } catch (error) {
+                    console.log(error);
+                }
+            })();
+        }
+    }, [isValid]);
 
     const { mutate, isLoading } = api.therapists.updateAddress.useMutation({
         onSuccess: async () => {
             await user?.reload();
-            router.push("/settings/available-hours");
+            router.push("/(psych)/available-hours");
         },
     });
 
@@ -100,6 +157,7 @@ export default function OnboardAddressScreen() {
             </View>
         );
     }
+
     return (
         <KeyboardAvoidingView
             style={{ flex: 1 }}
@@ -166,6 +224,39 @@ export default function OnboardAddressScreen() {
                             placeholder="PR"
                             inputMode="text"
                         />
+                        <View className="gap-3 py-3 pb-6">
+                            <Text className="font-nunito-sans text-lg text-slate-700">
+                                <Trans>Is that right?</Trans>
+                            </Text>
+                            <View>
+                                <MapView
+                                    style={{
+                                        alignContent: "center",
+                                        alignSelf: "center",
+                                        borderRadius: 10,
+                                        height: 120,
+                                        width: 350,
+                                    }}
+                                    camera={{
+                                        center: {
+                                            latitude: latitude,
+                                            longitude: longitude,
+                                        },
+                                        pitch: 0,
+                                        heading: 0,
+                                        altitude: 1000,
+                                        zoom: 15,
+                                    }}
+                                >
+                                    <Marker
+                                        coordinate={{
+                                            latitude: latitude,
+                                            longitude: longitude,
+                                        }}
+                                    />
+                                </MapView>
+                            </View>
+                        </View>
                     </ScrollView>
                     <TouchableOpacity className="w-full" onPress={onSubmit}>
                         <View

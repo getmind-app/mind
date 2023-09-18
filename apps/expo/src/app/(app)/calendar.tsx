@@ -19,6 +19,7 @@ import { Feather, FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import { Trans, t } from "@lingui/macro";
 
 import { CardSkeleton } from "../../components/CardSkeleton";
+import { getShareLink } from "../../helpers/getShareLink";
 import { api } from "../../utils/api";
 import {
     type Appointment,
@@ -153,9 +154,10 @@ function EmptyState() {
             ) : (
                 <TouchableOpacity
                     onPress={() =>
-                        Clipboard.setStringAsync(
-                            Linking.createURL(`/psych/${therapistId}`),
-                        )
+                        void getShareLink({
+                            id: therapistId,
+                            name: user?.firstName ?? "",
+                        })
                     }
                 >
                     <View className="mt-6 flex w-full flex-row items-center justify-center rounded-b-xl bg-blue-500 py-3 align-middle">
@@ -267,7 +269,8 @@ function AppointmentCard({
                     {(appointment.status == "PENDENT" &&
                         user?.publicMetadata.role === "professional") ||
                     (appointment.status == "ACCEPTED" &&
-                        isMoreThan24HoursLater(appointment.scheduledTo)) ? (
+                        isMoreThan24HoursLater(appointment.scheduledTo) &&
+                        user?.publicMetadata.role === "patient") ? (
                         <TouchableOpacity onPress={() => setOpen(!open)}>
                             {open ? (
                                 <Feather
