@@ -299,7 +299,9 @@ function HourPicker({
                         appointment.scheduledTo.getMonth() ===
                             date?.getMonth() &&
                         appointment.scheduledTo.getFullYear() ===
-                            date?.getFullYear()
+                            date?.getFullYear() &&
+                        appointment.status !== "CANCELED" &&
+                        appointment.status != "REJECTED"
                     );
                 },
             );
