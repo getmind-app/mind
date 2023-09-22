@@ -1,0 +1,12 @@
+[
+    {
+        "relation": ["delegate_permission/common.handle_all_urls"],
+        "target": {
+            "namespace": "android_app",
+            "package_name": "app.getmind",
+            "sha256_cert_fingerprints": [
+                "44:CE:7F:3A:8F:59:42:EF:6A:E1:79:42:55:40:08:2F:5F:11:A9:9A:FF:03:7B:CE:27:3F:B3:33:D6:F6:A8:43"
+            ]
+        }
+    }
+]
