@@ -11,6 +11,9 @@
             },
             "env": {
                 "REACT_NATIVE_NODE_MODULES_DIR": "../../node_modules"
+            },
+            "android": {
+                "buildType": "app-bundle"
             }
         },
         "preview": {
