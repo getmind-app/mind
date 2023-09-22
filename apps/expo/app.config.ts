@@ -38,6 +38,20 @@ const defineConfig = (): ExpoConfig => ({
         },
         package: "app.getmind",
         googleServicesFile: "./google-services.json",
+        intentFilters: [
+            {
+                action: "VIEW",
+                autoVerify: true,
+                data: [
+                    {
+                        scheme: "https",
+                        host: "*.getmind.app",
+                        pathPrefix: "/records",
+                    },
+                ],
+                category: ["BROWSABLE", "DEFAULT"],
+            },
+        ],
     },
     extra: {
         eas: {
