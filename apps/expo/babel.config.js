@@ -10,8 +10,8 @@ module.exports = function (api) {
         plugins: [
             "nativewind/babel",
             require.resolve("expo-router/babel"),
-            "react-native-reanimated/plugin",
             "macros",
+            "react-native-reanimated/plugin",
         ],
         presets: ["babel-preset-expo"],
     };

@@ -186,14 +186,14 @@ importers:
         specifier: ~14.4.2
         version: 14.4.2(expo@49.0.9)
       expo-dev-client:
-        specifier: ~2.4.8
-        version: 2.4.8(expo@49.0.9)
+        specifier: ~2.4.10
+        version: 2.4.10(expo@49.0.9)
       expo-font:
         specifier: ~11.4.0
         version: 11.4.0(expo@49.0.9)
       expo-image:
-        specifier: ~1.3.2
-        version: 1.3.2(expo@49.0.9)
+        specifier: ~1.3.3
+        version: 1.3.3(expo@49.0.9)
       expo-linear-gradient:
         specifier: ~12.3.0
         version: 12.3.0(expo@49.0.9)
@@ -2721,7 +2721,7 @@ packages:
       getenv: 1.0.0
       glob: 7.1.6
       resolve-from: 5.0.0
-      semver: 7.3.8
+      semver: 7.5.4
       slash: 3.0.0
       xcode: 3.0.1
       xml2js: 0.4.23
@@ -7922,14 +7922,14 @@ packages:
       expo-updates-interface: 0.9.3(expo@49.0.9)
     dev: false
 
-  /expo-dev-client@2.4.8(expo@49.0.9):
-    resolution: {integrity: sha512-1rcqSjEe5Wn08n5UwXhc2VS+6OKu4BSQBSu8+GgTq0l/2wY49v2d6E6KNprFQa3xlt7TRNm27f0lQS1t+BrsnA==}
+  /expo-dev-client@2.4.10(expo@49.0.9):
+    resolution: {integrity: sha512-45nyJAufsVRunKw2XOAn/RG0mG5PoV5eKFR4C9RpuUi0VvHKhdzeF5epRFrYR44zmhe3KwG4ggut5KB4YcsdeA==}
     peerDependencies:
       expo: '*'
     dependencies:
       expo: 49.0.9(@babel/core@7.22.10)
-      expo-dev-launcher: 2.4.10(expo@49.0.9)
-      expo-dev-menu: 3.1.10(expo@49.0.9)
+      expo-dev-launcher: 2.4.12(expo@49.0.9)
+      expo-dev-menu: 3.2.0(expo@49.0.9)
       expo-dev-menu-interface: 1.3.0(expo@49.0.9)
       expo-manifests: 0.7.2
       expo-updates-interface: 0.10.1(expo@49.0.9)
@@ -7946,13 +7946,13 @@ packages:
       semver: 7.5.4
     dev: false
 
-  /expo-dev-launcher@2.4.10(expo@49.0.9):
-    resolution: {integrity: sha512-45d+IC+iAYEZFs42sNGi8gNGHkR9GwKe3BZd8aj1hFFcz+axiYTKdUvcvt4TTb+ouvUGYoJ480dio+9Hp4u2qA==}
+  /expo-dev-launcher@2.4.12(expo@49.0.9):
+    resolution: {integrity: sha512-r561CgR4fNIn5f4I16vxSD9b2Za3QCIfez0OwcRt90dY612tk1Ifkl5DQMLEL3Rm/maB7wfH3bXf0cZa5RGtog==}
     peerDependencies:
       expo: '*'
     dependencies:
       expo: 49.0.9(@babel/core@7.22.10)
-      expo-dev-menu: 3.1.10(expo@49.0.9)
+      expo-dev-menu: 3.2.0(expo@49.0.9)
       resolve-from: 5.0.0
       semver: 7.5.4
     dev: false
@@ -7983,8 +7983,8 @@ packages:
       semver: 7.5.4
     dev: false
 
-  /expo-dev-menu@3.1.10(expo@49.0.9):
-    resolution: {integrity: sha512-3uRU0Cq35dwdN20HqOZl5yv6NS+Xb1WebMifASpT0q9P89M/s0IuewdLw/xL9NEYj4XI2uCGfI0Jy+UGISyizg==}
+  /expo-dev-menu@3.2.0(expo@49.0.9):
+    resolution: {integrity: sha512-oMhfNI2aU2HOVYLkFz3krj+L+GwJDHTPjnJWMBG5AsmWJDp70yFGZhSEjcNFG1ekscRndrvfdHlocKO6JTeQcw==}
     peerDependencies:
       expo: '*'
     dependencies:
@@ -8046,8 +8046,8 @@ packages:
       - react-dom
     dev: false
 
-  /expo-image@1.3.2(expo@49.0.9):
-    resolution: {integrity: sha512-5Dm6kPfAOptMpQSJZDaA1M+AGjRJT0b1eLjtWLLpf6Z7gG1SMAFPUNUKaQV4p9H57psqvloDNb5nPIjSdIA1HQ==}
+  /expo-image@1.3.3(expo@49.0.9):
+    resolution: {integrity: sha512-H/w/4XGPRrOv8PsBnoVrctLKtsLYhavrhTK/SkizF3F5u81aHItBACgV8HVrh1qzPXbP40hp/Oyua/ttz61zMQ==}
     peerDependencies:
       expo: '*'
     dependencies:

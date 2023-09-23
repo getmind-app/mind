@@ -46,3 +46,7 @@ yarn-error.log*
 
 # turbo
 .turbo
+
+# android builds
+*.apk
+*.aab
