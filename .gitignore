@@ -49,3 +49,4 @@ yarn-error.log*
 
 # android builds
 *.apk
+*.aab
