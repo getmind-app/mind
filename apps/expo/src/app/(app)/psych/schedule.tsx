@@ -142,9 +142,10 @@ export default function TherapistSchedule() {
                         })
                     }
                 />
+
                 <View className="mb-28 mt-5 flex w-min flex-row justify-center">
                     <TouchableOpacity
-                        className={`rounded-lg bg-[#2185EE] px-16 py-3 ${
+                        className={`w-full rounded-lg bg-[#2185EE] px-16 py-3 ${
                             allPicked ? "" : "opacity-30"
                         }`}
                         disabled={!allPicked}
@@ -418,9 +419,15 @@ function ModalityPicker({
         }
     }, [hour]);
 
-    if (therapist.modalities.length === 1 && therapist.modalities[0]) {
-        onSelect(therapist.modalities[0]);
-    }
+    useEffect(() => {
+        if (
+            !mode &&
+            therapist.modalities.length === 1 &&
+            therapist.modalities[0]
+        ) {
+            onSelect(therapist.modalities[0]);
+        }
+    }, []);
 
     return (
         <AnimatedCard
