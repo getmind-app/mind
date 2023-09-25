@@ -110,13 +110,14 @@ export default function TherapistProfile() {
                         </ContentCard>
                     )}
                     <ContentCard title={t({ message: "Education" })} emoji="🎓">
-                        Cognitive Psychology - Stanford University
+                        Psicologia Cognitiva - Universidade Federal do Paraná
                     </ContentCard>
                     <ContentCard
                         title={t({ message: "Methodologies" })}
                         emoji="📚"
                     >
-                        Cognitive Behavioral Therapy, Mindfulness, Psychodynamic
+                        Terapia Cognitiva Comportamental, Mindfulness, Terapia
+                        Psicodinâmica
                     </ContentCard>
                 </View>
             </ScrollView>
