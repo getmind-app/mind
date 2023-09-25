@@ -1,5 +1,6 @@
 import { Text, View } from "react-native";
 import CurrencyInput from "react-native-currency-input";
+import { t } from "@lingui/macro";
 import {
     Controller,
     type Control,
@@ -44,12 +45,12 @@ export function FormCurrencyInput<
                         value={value}
                         onChangeValue={onChange}
                         onBlur={onBlur}
-                        prefix="US$ "
+                        prefix={t({ message: "US$ " })}
                         delimiter=","
                         separator="."
                         maxValue={1000}
                         precision={2}
-                        placeholder="100.00 USD"
+                        placeholder={t({ message: "100.00 USD" })}
                         inputMode="numeric"
                     />
                 </View>

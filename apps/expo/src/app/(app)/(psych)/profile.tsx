@@ -161,7 +161,7 @@ export default function EditPsychProfile() {
                             title={t({ message: "Experience" })}
                             placeholder="2"
                             mask="99"
-                            unit="years"
+                            unit={t({ message: "years" })}
                             control={control}
                             name="yearsOfExperience"
                             inputMode="numeric"
