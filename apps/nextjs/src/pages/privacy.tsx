@@ -3,7 +3,6 @@ import { Nunito_Sans } from "next/font/google";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
-import { BsArrowRightShort } from "react-icons/bs";
 
 import Icon from "../../assets/icon.png";
 

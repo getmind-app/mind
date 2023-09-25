@@ -27,6 +27,7 @@
             }
         },
         "production": {
+            "distribution": "store",
             "ios": {
                 "resourceClass": "m-medium"
             },
@@ -36,6 +37,14 @@
         }
     },
     "submit": {
-        "production": {}
+        "production": {
+            "ios": {
+                "appleId": "gustavo_fior@outlook.com", // should use dev@getmind.app?
+                "ascAppId": "6467673373",
+                "appleTeamId": "4LA8VSXPQZ",
+                "sku": "app.getmind.mind",
+                "language": "pt-BR"
+            }
+        }
     }
 }
