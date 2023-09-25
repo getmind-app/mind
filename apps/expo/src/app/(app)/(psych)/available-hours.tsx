@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import {
     LayoutAnimation,
+    Pressable,
     RefreshControl,
     ScrollView,
     Text,
@@ -207,7 +208,7 @@ function DaySelector({
     }
 
     return (
-        <View className="flex flex-row justify-center gap-4 py-4">
+        <View className="flex flex-row justify-between gap-4  py-4">
             <DayToSelect
                 day={"MONDAY"}
                 selected={selectedDays.includes("MONDAY")}
@@ -247,14 +248,16 @@ function DayToSelect({
     onPress: (day: WeekDay) => () => void;
 }) {
     return (
-        <Text
+        <Pressable
             onPress={onPress(day)}
             className={`max-h-12 max-w-[64px] rounded-lg px-5 py-3 ${
-                selected ? "bg-blue-500 text-white" : "bg-off-white"
+                selected ? "bg-blue-500" : "bg-off-white"
             }`}
         >
-            {day.slice(0, 1).toUpperCase()}
-        </Text>
+            <Text className={selected ? "text-white" : "text-black"}>
+                {day.slice(0, 1).toUpperCase()}
+            </Text>
+        </Pressable>
     );
 }
 
