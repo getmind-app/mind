@@ -2,7 +2,7 @@ import { Text, TouchableOpacity, View } from "react-native";
 import { useRouter } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
-import { Trans } from "@lingui/macro";
+import { Trans, t } from "@lingui/macro";
 
 import { getShareLink } from "../helpers/getShareLink";
 import { api } from "../utils/api";
@@ -24,11 +24,12 @@ export default function DefaultHomeCard() {
                     <Trans>Nothing for now!</Trans>
                 </Text>
                 <Text className="font-nunito-sans text-sm text-slate-500">
-                    <Trans>
-                        {user?.publicMetadata?.role === "professional"
-                            ? "Share your profile with your patients to get some appointments."
-                            : "Search for your therapist!"}
-                    </Trans>
+                    {user?.publicMetadata?.role === "professional"
+                        ? t({
+                              message:
+                                  "Share your profile with your patients to get some appointments.",
+                          })
+                        : t({ message: "Search for your therapist!" })}
                 </Text>
             </View>
 

@@ -8,7 +8,9 @@
         "dev:ios": "expo start --ios --go",
         "lint": "eslint .",
         "lint:fix": "pnpm lint --fix",
-        "type-check": "tsc --noEmit"
+        "type-check": "tsc --noEmit",
+        "extract": "lingui extract",
+        "compile": "lingui compile"
     },
     "dependencies": {
         "@clerk/clerk-expo": "^0.16.4",
