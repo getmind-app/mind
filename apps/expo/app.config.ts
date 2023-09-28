@@ -71,6 +71,13 @@ const defineConfig = (): ExpoConfig => ({
             },
         ],
         "expo-router",
+        [
+            "expo-location",
+            {
+                locationAlwaysAndWhenInUsePermission:
+                    "Allow $(PRODUCT_NAME) to use your location.",
+            },
+        ],
     ],
 });
 
