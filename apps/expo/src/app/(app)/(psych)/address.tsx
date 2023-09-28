@@ -69,6 +69,8 @@ export default function OnboardAddressScreen() {
         handleSubmit,
         formState: { isValid },
         getValues,
+        watch,
+        reset,
     } = useForm({
         defaultValues: {
             street: "",
@@ -96,6 +98,12 @@ export default function OnboardAddressScreen() {
             country: "Brazil",
         });
     });
+
+    useEffect(() => {
+        if (getValues("zipCode").replaceAll("-", "").length >= 8) {
+            lookupAddress();
+        }
+    }, [watch("zipCode")]);
 
     const geocode = async (address: Address) => {
         const location = await Location.geocodeAsync(
@@ -157,6 +165,35 @@ export default function OnboardAddressScreen() {
             </View>
         );
     }
+
+    const lookupAddress = () => {
+        fetch(
+            `https://viacep.com.br/ws/${getValues("zipCode").replaceAll(
+                "-",
+                "",
+            )}/json/`,
+        )
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return response.json();
+            })
+            .then((data) => {
+                reset({
+                    street: data.logradouro,
+                    number: "",
+                    complement: data.complemento,
+                    neighborhood: data.bairro,
+                    city: data.localidade,
+                    state: data.uf,
+                    zipCode: data.cep,
+                });
+            })
+            .catch((error) => {
+                console.error("Error fetching address data:", error);
+            });
+    };
 
     return (
         <KeyboardAvoidingView
