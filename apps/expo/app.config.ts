@@ -7,7 +7,7 @@ const STRIPE_PUBLISHABLE_KEY =
     "pk_test_51NgDQEDtBWZzYd58qQAuw01NR3d2NOT0rC0FxVuMAsFVfQtzA2yjCij7qYcfQcse05pzm0pYGWirTW7mtZMb7oSa00IM1kPSO5";
 
 const defineConfig = (): ExpoConfig => ({
-    name: "expo",
+    name: "Mind",
     slug: "mind",
     scheme: "mind",
     version: "1.0.0",
@@ -71,6 +71,13 @@ const defineConfig = (): ExpoConfig => ({
             },
         ],
         "expo-router",
+        [
+            "expo-location",
+            {
+                locationAlwaysAndWhenInUsePermission:
+                    "Allow $(PRODUCT_NAME) to use your location.",
+            },
+        ],
     ],
 });
 
