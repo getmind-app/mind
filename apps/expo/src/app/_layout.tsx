@@ -1,21 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import Constants from "expo-constants";
-import { loadAsync } from "expo-font";
 import { getLocales } from "expo-localization";
-import * as Notifications from "expo-notifications";
-import { Slot, SplashScreen, usePathname } from "expo-router";
+import { Slot } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { StatusBar } from "expo-status-bar";
 import { ClerkProvider, SignedIn, SignedOut } from "@clerk/clerk-expo";
-import {
-    NunitoSans_400Regular,
-    NunitoSans_700Bold,
-    useFonts,
-} from "@expo-google-fonts/nunito-sans";
-import AntDesign from "@expo/vector-icons/AntDesign";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
 import { StripeProvider } from "@stripe/stripe-react-native";
@@ -50,46 +40,6 @@ const tokenCache = {
 };
 
 export default function RootLayout() {
-    // https://docs.expo.dev/archive/classic-updates/preloading-and-caching-assets/#pre-loading-and-caching-assets
-    const [appIsReady, setAppIsReady] = useState(false);
-    const [fontsLoaded] = useFonts({
-        "Nunito-Sans": NunitoSans_400Regular,
-        "Nunito-Sans-Bold": NunitoSans_700Bold,
-    });
-
-    Notifications.setNotificationHandler({
-        // eslint-disable-next-line @typescript-eslint/require-await
-        handleNotification: async () => ({
-            shouldShowAlert: true,
-            shouldPlaySound: true,
-            shouldSetBadge: true,
-        }),
-    });
-
-    useEffect(() => {
-        void (async function loadResourcesAndDataAsync() {
-            try {
-                SplashScreen.preventAutoHideAsync();
-                const iconsFont = [
-                    loadAsync(AntDesign.font),
-                    loadAsync(FontAwesome.font),
-                    loadAsync(MaterialIcons.font),
-                ];
-
-                await Promise.all([...iconsFont]);
-            } catch (e) {
-                console.warn(e);
-            } finally {
-                setAppIsReady(true);
-                SplashScreen.hideAsync();
-            }
-        })();
-    }, []);
-
-    if (!fontsLoaded || !appIsReady) {
-        return null;
-    }
-
     if (!Constants.expoConfig?.extra?.CLERK_PUBLISHABLE_KEY) {
         throw new Error("Missing CLERK_PUBLISHABLE_KEY");
     }
