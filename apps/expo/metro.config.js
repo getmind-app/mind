@@ -20,6 +20,9 @@ if (!config.resolver.sourceExts) {
 // Add the additional `cjs` extension to the resolver
 config.resolver.sourceExts.push("cjs");
 
+// https://github.com/expo/expo/issues/21568
+config.resolver.assetExts = [...config.resolver.assetExts, "ttf", "otf"];
+
 // 1. Watch all files within the monorepo
 config.watchFolders = [workspaceRoot];
 // 2. Let Metro know where to resolve packages and in what order
