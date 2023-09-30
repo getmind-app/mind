@@ -4,7 +4,7 @@ import Constants from "expo-constants";
 import { loadAsync } from "expo-font";
 import { getLocales } from "expo-localization";
 import * as Notifications from "expo-notifications";
-import { Slot, SplashScreen, usePathname } from "expo-router";
+import { Slot, SplashScreen } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { StatusBar } from "expo-status-bar";
 import { ClerkProvider, SignedIn, SignedOut } from "@clerk/clerk-expo";
@@ -25,6 +25,14 @@ import { messages as ptMessages } from "../../src/locales/pt/messages";
 import { TRPCProvider } from "../utils/api";
 
 type Messages = Record<string, string>;
+
+Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldPlaySound: true,
+        shouldSetBadge: true,
+    }),
+});
 
 i18n.load({
     en: enMessages as Messages,
