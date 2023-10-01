@@ -148,7 +148,7 @@ export default function OnboardAddressScreen() {
                 }
             })();
         }
-    }, [isValid]);
+    }, [isValid, watch()]);
 
     const { mutate, isLoading } = api.therapists.updateAddress.useMutation({
         onSuccess: async () => {
