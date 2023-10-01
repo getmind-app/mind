@@ -31,11 +31,13 @@ export default function AvailableHours() {
             </View>
         );
 
-    const onRefresh = () => {
+    const onRefresh = async () => {
         setRefreshing(true);
-        setTimeout(() => {
+        try {
+            await refetch();
+        } finally {
             setRefreshing(false);
-        }, 500);
+        }
     };
 
     const onCreateAccount = async () => {
@@ -103,6 +105,8 @@ export default function AvailableHours() {
                                     "/?",
                                 )}`,
                             );
+                        } else {
+                            throw new Error("No payment account id");
                         }
                     }}
                 >
