@@ -7,9 +7,7 @@ import "@formatjs/intl-pluralrules/polyfill";
 import "@formatjs/intl-pluralrules/locale-data/en";
 import "@formatjs/intl-getcanonicallocales/polyfill";
 import "intl-pluralrules";
-import { useEffect, useState } from "react";
 import { registerRootComponent } from "expo";
-import * as Notifications from "expo-notifications";
 import { ExpoRoot } from "expo-router";
 import {
     NunitoSans_400Regular,
