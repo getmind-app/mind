@@ -7,7 +7,8 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
-import { useRouter } from "expo-router";
+import * as Linking from "expo-linking";
+import * as WebBrowser from "expo-web-browser";
 import { FontAwesome } from "@expo/vector-icons";
 import { Trans } from "@lingui/macro";
 
@@ -19,8 +20,9 @@ export default function AvailableHours() {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 
     const [refreshing, setRefreshing] = useState(false);
-    const router = useRouter();
-    const { data, isLoading } = api.therapists.findByUserId.useQuery();
+    const { data, isLoading, refetch } = api.therapists.findByUserId.useQuery();
+    const createAccount = api.stripe.createAccount.useMutation();
+    const linkAccount = api.stripe.linkAccount.useMutation();
 
     if (!data || isLoading)
         return (
@@ -34,6 +36,11 @@ export default function AvailableHours() {
         setTimeout(() => {
             setRefreshing(false);
         }, 500);
+    };
+
+    const onCreateAccount = async () => {
+        await createAccount.mutate();
+        await refetch();
     };
 
     return (
@@ -54,16 +61,62 @@ export default function AvailableHours() {
                         payments via Mind you have to setup an account.
                     </Trans>
                 </Text>
-                <TouchableOpacity onPress={() => router.push("/search")}>
+                <TouchableOpacity
+                    onPress={onCreateAccount}
+                    disabled={!!data.paymentAccountId}
+                >
                     <View
                         style={{
                             elevation: 2,
                         }}
-                        className="mt-6 flex w-full flex-row items-center justify-center rounded-xl bg-blue-500 py-3 align-middle shadow-md"
+                        className={`mt-6 flex w-full flex-row items-center justify-center rounded-xl ${
+                            data.paymentAccountId
+                                ? "bg-gray-200"
+                                : "bg-blue-500"
+                        } py-3 align-middle shadow-md`}
                     >
                         <FontAwesome size={16} color="white" name="search" />
-                        <Text className="ml-2 font-nunito-sans-bold text-lg text-white">
-                            <Trans>Create Stripe Account</Trans>
+                        <Text
+                            className={`ml-2 font-nunito-sans-bold text-lg ${
+                                data.paymentAccountId
+                                    ? "text-black"
+                                    : "text-white"
+                            }`}
+                        >
+                            <Trans>
+                                {data.paymentAccountId
+                                    ? "You already have an account"
+                                    : "Create Stripe Account"}
+                            </Trans>
+                        </Text>
+                    </View>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    onPress={async () => {
+                        if (data.paymentAccountId) {
+                            const res = await linkAccount.mutateAsync({
+                                therapistPaymentAccountId:
+                                    data.paymentAccountId,
+                            });
+                            await WebBrowser.openAuthSessionAsync(
+                                `${res.url}?linkingUri=${Linking.createURL(
+                                    "/?",
+                                )}`,
+                            );
+                        }
+                    }}
+                >
+                    <View
+                        style={{
+                            elevation: 2,
+                        }}
+                        className={`mt-6 flex w-full flex-row items-center justify-center rounded-xl bg-blue-500 py-3 align-middle shadow-md`}
+                    >
+                        <FontAwesome size={16} color="white" name="search" />
+                        <Text
+                            className={`ml-2 font-nunito-sans-bold text-lg text-white`}
+                        >
+                            <Trans>Link Accounts</Trans>
                         </Text>
                     </View>
                 </TouchableOpacity>

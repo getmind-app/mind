@@ -49,4 +49,44 @@ export const stripeRouter = createTRPCRouter({
                 clientSecret: paymentIntent.client_secret,
             };
         }),
+    createAccount: protectedProcedure.mutation(async ({ ctx }) => {
+        const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+            apiVersion: "2023-08-16",
+        });
+
+        const newAccountData = await stripe.accounts.create({
+            type: "express",
+        });
+
+        const therapist = await ctx.prisma.therapist.update({
+            where: {
+                userId: ctx.auth.userId,
+            },
+            data: {
+                paymentAccountId: newAccountData.id,
+            },
+        });
+
+        return therapist;
+    }),
+    linkAccount: protectedProcedure
+        .input(
+            z.object({
+                therapistPaymentAccountId: z.string(),
+            }),
+        )
+        .mutation(async ({ input }) => {
+            const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+                apiVersion: "2023-08-16",
+            });
+
+            const accountLink = await stripe.accountLinks.create({
+                account: input.therapistPaymentAccountId,
+                refresh_url: "http://localhost:3000/refresh",
+                return_url: "http://localhost:3000/return",
+                type: "account_onboarding",
+            });
+
+            return accountLink;
+        }),
 });

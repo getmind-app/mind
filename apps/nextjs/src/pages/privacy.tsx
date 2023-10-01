@@ -35,22 +35,24 @@ const Home: NextPage = () => {
                                 POLÍTICA DE PRIVACIDADE DA MIND
                             </h1>
                             <small className="text-slate-700">
-                                Última atualização: 23/09/2023
+                                Última atualização: 213/09/2023
                             </small>
                             <h2 className="justify-start text-left text-xl text-slate-800">
                                 1. INTRODUÇÃO
                             </h2>
                             <p className="text-lg text-slate-500">
-                                O aplicativo Mind ("nós", "nosso") respeita a
-                                privacidade de seus usuários ("você", "seu") e
-                                se compromete a proteger suas informações
-                                pessoais. Esta Política de Privacidade explica
-                                como coletamos, usamos, compartilhamos e
-                                protegemos suas informações pessoais quando você
-                                usa nosso aplicativo. Ao usar nosso aplicativo,
-                                você concorda com a coleta, uso e
-                                compartilhamento de suas informações pessoais
-                                conforme descrito nesta Política de Privacidade.
+                                O aplicativo Mind (&ldquo;nós&rdquo;,
+                                &ldquo;nosso&rdquo;) respeita a privacidade de
+                                seus usuários (&ldquo;você&rdquo;,
+                                &ldquo;seu&rdquo;) e se compromete a proteger
+                                suas informações pessoais. Esta Política de
+                                Privacidade explica como coletamos, usamos,
+                                compartilhamos e protegemos suas informações
+                                pessoais quando você usa nosso aplicativo. Ao
+                                usar nosso aplicativo, você concorda com a
+                                coleta, uso e compartilhamento de suas
+                                informações pessoais conforme descrito nesta
+                                Política de Privacidade.
                             </p>
                             <h2 className="text-xl text-slate-800">
                                 2. COLETA DE INFORMAÇÕES
