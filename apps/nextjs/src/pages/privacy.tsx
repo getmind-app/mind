@@ -35,7 +35,7 @@ const Home: NextPage = () => {
                                 POLÍTICA DE PRIVACIDADE DA MIND
                             </h1>
                             <small className="text-slate-700">
-                                Última atualização: 23/09/2023
+                                Última atualização: 213/09/2023
                             </small>
                             <h2 className="justify-start text-left text-xl text-slate-800">
                                 1. INTRODUÇÃO

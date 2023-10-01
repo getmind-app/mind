@@ -1,10 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import * as Linking from "expo-linking";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useClerk } from "@clerk/clerk-expo";
 import { Trans, t } from "@lingui/macro";
-import { CardField, useConfirmPayment } from "@stripe/stripe-react-native";
-import { type Details } from "@stripe/stripe-react-native/lib/typescript/src/types/components/CardFieldInput";
+import { usePaymentSheet } from "@stripe/stripe-react-native";
 
 import { Header } from "../../../components/Header";
 import { ProfileSkeleton } from "../../../components/ProfileSkeleton";
@@ -17,73 +16,76 @@ function handleMode(x: string) {
 
 export default function SessionPayment() {
     const router = useRouter();
-    const { user } = useClerk();
     const { appointmentId } = useLocalSearchParams();
-    const [cardDetails, setCardDetails] = useState<Details>();
-    const { confirmPayment, loading } = useConfirmPayment();
+    const [ready, setReady] = useState(false);
+    const {
+        initPaymentSheet,
+        presentPaymentSheet,
+        loading: loadingPaymentSheet,
+    } = usePaymentSheet();
     const { data, isLoading } = api.appointments.findById.useQuery({
         id: String(appointmentId),
     });
 
-    const { mutateAsync: payment } =
-        api.stripe.createPaymentIntent.useMutation();
-
-    const { mutateAsync: updateAppointment } =
-        api.appointments.update.useMutation({
-            onSuccess: () => {
-                router.push({
-                    pathname: "psych/finish",
-                    params: { appointmentId: appointmentId },
-                });
-            },
-        });
-
-    const handleConfirm = async () => {
-        if (!cardDetails?.complete) {
-            Alert.alert("Please enter complete card details");
-            return;
+    useEffect(() => {
+        if (data) {
+            initialisePaymentSheet();
         }
+    }, [data]);
 
+    async function initialisePaymentSheet() {
         if (!data) {
             Alert.alert("Missing appointment data");
             return;
         }
 
-        const billingDetails = {
-            email: user?.emailAddresses[0]?.emailAddress,
-        };
+        if (!data.therapist.paymentAccountId) {
+            Alert.alert("Missing therapist payment account id");
+            return;
+        }
 
-        const { clientSecret } = await payment({
-            amount: data.therapist.hourlyRate * 100,
-            currency: "brl",
-            payment_method_types: ["card"],
-        });
+        const { paymentIntent, ephemeralKey, customer } =
+            await createPaymentIntent.mutateAsync({
+                amount: data.therapist.hourlyRate * 100,
+                currency: "brl",
+                payment_method_types: ["card"],
+                therapistPaymentAccountId: data.therapist.paymentAccountId,
+            });
 
-        if (!clientSecret) {
+        if (!paymentIntent.client_secret) {
             Alert.alert("Missing stripe's client secret");
             return;
         }
 
-        const { error, paymentIntent } = await confirmPayment(clientSecret, {
-            paymentMethodType: "Card",
-            paymentMethodData: {
-                billingDetails,
-            },
+        const { error } = await initPaymentSheet({
+            customerId: customer.id,
+            customerEphemeralKeySecret: ephemeralKey.secret,
+            paymentIntentClientSecret: paymentIntent.client_secret,
+            merchantDisplayName: "Mind",
+            allowsDelayedPaymentMethods: true,
+            returnURL: Linking.createURL("/"),
         });
 
         if (error) {
-            Alert.alert(`Payment error code: ${error.code}`, error.message);
-            console.log("Payment confirmation error", error.message);
-        } else if (paymentIntent) {
-            await updateAppointment({
-                id: String(data?.id),
-                scheduledTo: data?.scheduledTo,
-                modality: data?.modality,
-                status: data?.status,
-                isPaid: true,
-                therapistId: data?.therapist.id,
-                patientId: data?.patient.id,
+            Alert.alert("Error", error.message);
+        } else {
+            setReady(true);
+        }
+    }
+
+    const createPaymentIntent = api.stripe.createPaymentIntent.useMutation();
+
+    const handleConfirm = async () => {
+        const { error } = await presentPaymentSheet();
+
+        if (error) {
+            Alert.alert("Error", error.message);
+        } else {
+            router.push({
+                pathname: "psych/finish",
+                params: { appointmentId: appointmentId },
             });
+            setReady(false);
         }
     };
 
@@ -160,30 +162,12 @@ export default function SessionPayment() {
                         <Text className="pt-8 font-nunito-sans-bold text-2xl">
                             <Trans>Payment method</Trans>
                         </Text>
-                        <CardField
-                            style={{
-                                width: "90%",
-                                height: 50,
-                                marginVertical: 8,
-                            }}
-                            cardStyle={{
-                                backgroundColor: "#FFFFFF",
-                                textColor: "#000000",
-                                fontFamily: "Nunito Sans",
-                                fontSize: 16,
-                            }}
-                            postalCodeEnabled={false}
-                            placeholders={{ number: "4242424242424242" }}
-                            onCardChange={(cardDetails) => {
-                                setCardDetails(cardDetails);
-                            }}
-                        />
 
                         <TouchableOpacity
-                            disabled={loading || !cardDetails?.complete}
+                            disabled={loadingPaymentSheet || !ready}
                             onPress={handleConfirm}
                             className={`${
-                                loading || !cardDetails?.complete
+                                loadingPaymentSheet
                                     ? "bg-blue-300"
                                     : "bg-blue-500"
                             } mt-2 rounded-lg py-2`}

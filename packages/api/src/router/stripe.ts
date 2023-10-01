@@ -30,23 +30,79 @@ export const stripeRouter = createTRPCRouter({
                 amount: z.number(),
                 currency: z.string(),
                 payment_method_types: z.array(z.string()),
+                therapistPaymentAccountId: z.string(),
             }),
         )
-        .mutation(async ({ input }) => {
+        .mutation(async ({ input, ctx }) => {
             console.log("createPaymentIntent");
 
             const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
                 apiVersion: "2023-08-16",
             });
 
+            const customer = await stripe.customers.create({
+                email: ctx.auth.user?.emailAddresses[0]?.emailAddress,
+                name: `${ctx.auth.user?.firstName} ${ctx.auth.user?.lastName}`,
+            });
+
+            const ephemeralKey = await stripe.ephemeralKeys.create(
+                { customer: customer.id },
+                { apiVersion: "2022-08-01" },
+            );
+            const FIXED_APPLICATION_FEE = 0.1;
+
             const paymentIntent = await stripe.paymentIntents.create({
                 amount: input.amount,
                 currency: input.currency,
-                payment_method_types: input.payment_method_types,
+                automatic_payment_methods: {
+                    enabled: true,
+                },
+                transfer_data: {
+                    destination: input.therapistPaymentAccountId,
+                },
+                application_fee_amount: input.amount * FIXED_APPLICATION_FEE,
             });
 
-            return {
-                clientSecret: paymentIntent.client_secret,
-            };
+            return { paymentIntent, ephemeralKey, customer };
+        }),
+    createAccount: protectedProcedure.mutation(async ({ ctx }) => {
+        const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+            apiVersion: "2023-08-16",
+        });
+
+        const newAccountData = await stripe.accounts.create({
+            type: "express",
+        });
+
+        const therapist = await ctx.prisma.therapist.update({
+            where: {
+                userId: ctx.auth.userId,
+            },
+            data: {
+                paymentAccountId: newAccountData.id,
+            },
+        });
+
+        return therapist;
+    }),
+    linkAccount: protectedProcedure
+        .input(
+            z.object({
+                therapistPaymentAccountId: z.string(),
+            }),
+        )
+        .mutation(async ({ input }) => {
+            const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+                apiVersion: "2023-08-16",
+            });
+
+            const accountLink = await stripe.accountLinks.create({
+                account: input.therapistPaymentAccountId,
+                refresh_url: "http://localhost:3000/refresh",
+                return_url: "http://localhost:3000/return",
+                type: "account_onboarding",
+            });
+
+            return accountLink;
         }),
 });

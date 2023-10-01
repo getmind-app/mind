@@ -34,7 +34,7 @@ export default function Onboard() {
 
     const { mutate: createPatient } = api.patients.create.useMutation({});
 
-    const { mutate, isLoading } = api.users.setMetadata.useMutation({
+    const { mutateAsync, isLoading } = api.users.setMetadata.useMutation({
         onSuccess: async function () {
             await user?.reload();
 
@@ -53,14 +53,19 @@ export default function Onboard() {
         },
     });
 
-    function handleNext() {
+    async function handleNext() {
         if (selectedRole) {
-            mutate({
-                metadata: {
-                    role: selectedRole,
-                    expoPushToken: expoPushToken?.data,
-                },
-            });
+            try {
+                await mutateAsync({
+                    metadata: {
+                        role: selectedRole,
+                        expoPushToken: expoPushToken?.data,
+                    },
+                });
+            } catch (e) {
+                console.error("error setting metadata");
+                console.error(e);
+            }
         } else {
             throw new Error("No role selected");
         }
