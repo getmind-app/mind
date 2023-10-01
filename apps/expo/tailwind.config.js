@@ -17,8 +17,8 @@ const config = {
                 "off-white": "#f8f8f8",
             },
             fontFamily: {
-                "nunito-sans": ["Nunito-Sans"],
-                "nunito-sans-bold": ["Nunito-Sans-Bold"],
+                "nunito-sans": ["NunitoSans_400Regular"],
+                "nunito-sans-bold": ["NunitoSans_700Bold"],
             },
         },
     },
