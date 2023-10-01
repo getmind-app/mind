@@ -53,7 +53,7 @@ export default function PaymentsSetup() {
             }
         >
             <Header />
-            <View className="p-4 pb-12">
+            <View className="p-6 pb-12">
                 <Text className="font-nunito-sans-bold text-3xl">
                     <Trans>Payments Setup</Trans>
                 </Text>
