@@ -2,7 +2,8 @@ import React from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import Constants from "expo-constants";
 import { getLocales } from "expo-localization";
-import { Slot } from "expo-router";
+import * as Notifications from "expo-notifications";
+import { Slot, SplashScreen } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { StatusBar } from "expo-status-bar";
 import { ClerkProvider, SignedIn, SignedOut } from "@clerk/clerk-expo";
@@ -15,6 +16,14 @@ import { messages as ptMessages } from "../../src/locales/pt/messages";
 import { TRPCProvider } from "../utils/api";
 
 type Messages = Record<string, string>;
+
+Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldPlaySound: true,
+        shouldSetBadge: true,
+    }),
+});
 
 i18n.load({
     en: enMessages as Messages,

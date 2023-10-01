@@ -1,13 +1,17 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
     Image,
     Linking,
+    Platform,
     RefreshControl,
     ScrollView,
     Text,
     TouchableOpacity,
     View,
 } from "react-native";
+import Constants from "expo-constants";
+import * as Device from "expo-device";
+import * as Notifications from "expo-notifications";
 import { useRouter } from "expo-router";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import { Trans, t } from "@lingui/macro";
