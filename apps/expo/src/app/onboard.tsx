@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Image, Pressable, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Tabs, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
 import { Trans } from "@lingui/macro";
 

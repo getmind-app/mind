@@ -19,6 +19,7 @@ if (!config.resolver.sourceExts) {
 
 // Add the additional `cjs` extension to the resolver
 config.resolver.sourceExts.push("cjs");
+config.resolver.assetExts = [...config.resolver.assetExts, "ttf", "otf"];
 
 // 1. Watch all files within the monorepo
 config.watchFolders = [workspaceRoot];
