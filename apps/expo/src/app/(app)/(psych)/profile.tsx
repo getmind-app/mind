@@ -20,7 +20,7 @@ import { FormCurrencyInput } from "../../../components/FormCurrencyInput";
 import { FormDateInput } from "../../../components/FormDateInput";
 import { FormTextInput } from "../../../components/FormTextInput";
 import { api } from "../../../utils/api";
-import { type Modality } from ".prisma/client";
+import { type Gender, type Modality } from ".prisma/client";
 
 export default function EditPsychProfile() {
     const { user } = useUser();
@@ -38,7 +38,7 @@ export default function EditPsychProfile() {
         birthday: Date;
         document: string;
         crp: string;
-        yearsOfExperience: string;
+        gender: Gender;
         hourlyRate: string;
         phone: string;
         modalities: Modality[];
@@ -48,13 +48,14 @@ export default function EditPsychProfile() {
             birthday: DateTime.local().minus({ years: 18 }).toJSDate(),
             document: "",
             crp: "",
-            yearsOfExperience: "",
+            gender: "MALE",
             hourlyRate: "",
             phone: "",
             modalities: [],
         },
         resolver: zodResolver(schema),
     });
+
     const onSubmit = handleSubmit((data) => {
         setModalities(data.modalities);
 
@@ -62,9 +63,8 @@ export default function EditPsychProfile() {
             ...data,
             userId: String(user?.id),
             profilePictureUrl: String(user?.profileImageUrl),
-            about: "",
             dateOfBirth: data.birthday,
-            yearsOfExperience: parseInt(data.yearsOfExperience),
+            gender: data.gender,
             hourlyRate: parseInt(data.hourlyRate),
             crp: data.crp.replaceAll("/", ""),
             document: data.document.replaceAll("-", "").replaceAll(".", ""),
@@ -74,6 +74,7 @@ export default function EditPsychProfile() {
                 .replaceAll("-", ""),
             modalities: data.modalities,
         });
+        4;
     });
 
     const { mutate, isLoading } = api.therapists.create.useMutation({
@@ -82,7 +83,7 @@ export default function EditPsychProfile() {
             if (modalities.includes("ON_SITE")) {
                 router.push("/(psych)/address");
             } else {
-                router.push("/(psych)/available-hours");
+                router.push("/");
             }
         },
     });
@@ -157,25 +158,16 @@ export default function EditPsychProfile() {
                             mask="99/999999"
                             inputMode="numeric"
                         />
-                        <FormTextInput
-                            title={t({ message: "Experience" })}
-                            placeholder="2"
-                            mask="99"
-                            unit={t({ message: "years" })}
-                            control={control}
-                            name="yearsOfExperience"
-                            inputMode="numeric"
-                        />
                         <FormCurrencyInput
                             name="hourlyRate"
                             control={control}
-                            title={t({ message: "Hourly Rate" })}
+                            title={t({ message: "Hourly rate" })}
                         />
                         <Controller
                             control={control}
                             name="modalities"
                             render={({ field: { value, onChange } }) => (
-                                <View className="gap-x-2 pb-8 pt-3">
+                                <View className="gap-x-2 pt-3">
                                     <Text className="font-nunito-sans text-lg text-slate-700">
                                         <Trans>
                                             Modality (you can choose both)
@@ -242,9 +234,62 @@ export default function EditPsychProfile() {
                                 </View>
                             )}
                         />
+                        <Controller
+                            control={control}
+                            name="gender"
+                            render={({ field: { value, onChange } }) => (
+                                <View className="gap-x-2 pb-8 pt-3">
+                                    <Text className="font-nunito-sans text-lg text-slate-700">
+                                        <Trans>Gender</Trans>
+                                    </Text>
+                                    <View className="mt-4 flex flex-row justify-between">
+                                        <TouchableOpacity
+                                            onPress={() => {
+                                                onChange("MALE");
+                                            }}
+                                            className={`w-[48%] rounded-lg bg-white py-3 ${
+                                                value === "MALE"
+                                                    ? "bg-blue-500"
+                                                    : ""
+                                            }`}
+                                        >
+                                            <Text
+                                                className={`text-center font-nunito-sans text-base ${
+                                                    value === "MALE"
+                                                        ? "font-nunito-sans-bold text-white"
+                                                        : ""
+                                                }`}
+                                            >
+                                                <Trans>Male</Trans>
+                                            </Text>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity
+                                            onPress={() => {
+                                                onChange("FEMALE");
+                                            }}
+                                            className={`w-[48%] rounded-lg bg-white py-3 ${
+                                                value === "FEMALE"
+                                                    ? "bg-blue-500"
+                                                    : ""
+                                            }`}
+                                        >
+                                            <Text
+                                                className={`text-center font-nunito-sans text-base ${
+                                                    value === "FEMALE"
+                                                        ? "font-nunito-sans-bold text-white"
+                                                        : ""
+                                                }`}
+                                            >
+                                                <Trans>Female</Trans>
+                                            </Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                            )}
+                        />
                     </ScrollView>
                     <TouchableOpacity
-                        className="mb-2 w-full"
+                        className="mb-4 w-full"
                         onPress={onSubmit}
                     >
                         <View
@@ -277,9 +322,7 @@ const schema = z.object({
             required_error: "Full name is required",
         })
         .min(2, "Full name must be at least 2 characters"),
-    yearsOfExperience: z.string({
-        required_error: "Your years of experience is required",
-    }),
+    gender: z.enum(["MALE", "FEMALE"]),
     birthday: z
         .date({
             required_error: "Must provide your birthday",

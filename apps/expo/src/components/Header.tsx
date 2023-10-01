@@ -5,6 +5,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 type HeaderProps = {
     title?: string;
     share?: boolean;
+    goBack?: boolean;
     onShare?: () => void;
 };
 

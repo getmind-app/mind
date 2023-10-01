@@ -1,105 +1,75 @@
 import { useEffect, useState } from "react";
 import {
-    LayoutAnimation,
     Pressable,
-    RefreshControl,
     ScrollView,
     Text,
     TouchableOpacity,
     View,
 } from "react-native";
 import { Trans, t } from "@lingui/macro";
+import { type Address } from "@stripe/stripe-react-native";
 import { groupBy } from "lodash-es";
 import { DateTime } from "luxon";
 import { useForm } from "react-hook-form";
 
-import { CardSkeleton } from "../../../components/CardSkeleton";
-import { FormDateInput } from "../../../components/FormDateInput";
-import { Header } from "../../../components/Header";
-import { api } from "../../../utils/api";
-import { type Hour, type WeekDay } from ".prisma/client";
+import { api } from "../utils/api";
+import { FormDateInput } from "./FormDateInput";
+import { type Hour, type Therapist, type WeekDay } from ".prisma/client";
 
 function getHourFromISO(date: Date): string {
     return DateTime.fromISO(date.toISOString()).toFormat("HH");
 }
 
-export default function AvailableHours() {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-
-    const [addHours, setAddHours] = useState(false);
-    const [refreshing, setRefreshing] = useState(false);
-
-    const { data, isLoading } = api.therapists.findByUserId.useQuery();
-
-    if (!data || isLoading)
-        return (
-            <View className="mx-4 mt-12">
-                <CardSkeleton />
-            </View>
-        );
-
-    const onRefresh = () => {
-        setRefreshing(true);
-        setTimeout(() => {
-            setRefreshing(false);
-        }, 500);
+export const AvailableHoursPicker = ({
+    data,
+}: {
+    data: Therapist & {
+        address: Address | null;
+        hours: Hour[];
     };
-
+}) => {
+    const [addHours, setAddHours] = useState(false);
     const groupedHours = groupBy(data.hours, "weekDay");
 
     return (
-        <ScrollView
-            className="bg-off-white"
-            refreshControl={
-                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
-        >
-            <Header />
-            <View className="p-4 pb-12">
-                <Text className="font-nunito-sans-bold text-3xl">
-                    <Trans>Available hours</Trans>
-                </Text>
-                <Text className="pb-4 font-nunito-sans text-base text-slate-500">
-                    <Trans>Set available hours for your appointments.</Trans>
-                </Text>
-                <TouchableOpacity
-                    onPress={() => {
-                        setAddHours(!addHours);
-                    }}
+        <>
+            <TouchableOpacity
+                onPress={() => {
+                    setAddHours(!addHours);
+                }}
+            >
+                <View
+                    className={`rounded-lg ${
+                        addHours ? "mb-2 bg-gray-200" : "mb-4 bg-blue-500"
+                    } shadow-sm" px-3 py-2`}
                 >
-                    <View
-                        className={`rounded-lg ${
-                            addHours ? "mb-2 bg-gray-200" : "mb-4 bg-blue-500"
-                        } shadow-sm" px-3 py-2`}
+                    <Text
+                        className={`text-center font-nunito-sans-bold text-base ${
+                            addHours ? "text-black" : "text-white"
+                        }`}
                     >
-                        <Text
-                            className={`text-center font-nunito-sans-bold text-base ${
-                                addHours ? "text-black" : "text-white"
-                            }`}
-                        >
-                            <Trans>Update hours</Trans>
-                        </Text>
+                        <Trans>Update hours</Trans>
+                    </Text>
+                </View>
+            </TouchableOpacity>
+            {addHours && <AddHours setVisible={setAddHours} />}
+            {Object.entries(groupedHours).map(([weekDay, hours]) => (
+                <View key={weekDay} className="gap-2 pb-4">
+                    <Text className="font-nunito-sans text-xl">
+                        {capitalizeWeekDay(weekDay)}
+                    </Text>
+                    <View className="flex flex-row rounded-xl bg-white p-4 align-middle shadow-sm">
+                        <ScrollView horizontal={true}>
+                            {hours.map((hour: Hour) => (
+                                <HourButton key={hour.id} {...hour} />
+                            ))}
+                        </ScrollView>
                     </View>
-                </TouchableOpacity>
-                {addHours && <AddHours setVisible={setAddHours} />}
-                {Object.entries(groupedHours).map(([weekDay, hours]) => (
-                    <View key={weekDay} className="gap-2 pb-4">
-                        <Text className="font-nunito-sans text-xl">
-                            {capitalizeWeekDay(weekDay)}
-                        </Text>
-                        <View className="flex flex-row rounded-xl bg-white p-4 align-middle shadow-sm">
-                            <ScrollView horizontal={true}>
-                                {hours.map((hour: Hour) => (
-                                    <HourButton key={hour.id} {...hour} />
-                                ))}
-                            </ScrollView>
-                        </View>
-                    </View>
-                ))}
-            </View>
-        </ScrollView>
+                </View>
+            ))}
+        </>
     );
-}
+};
 
 function AddHours({ setVisible }: { setVisible: (visible: boolean) => void }) {
     const utils = api.useContext();
@@ -208,7 +178,7 @@ function DaySelector({
     }
 
     return (
-        <View className="flex flex-row justify-between gap-4  py-4">
+        <View className="flex flex-row justify-between py-2">
             <DayToSelect
                 day={"MONDAY"}
                 selected={selectedDays.includes("MONDAY")}

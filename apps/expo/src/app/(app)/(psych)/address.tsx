@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import {
-    Alert,
     KeyboardAvoidingView,
     LayoutAnimation,
     Platform,
@@ -149,12 +148,12 @@ export default function OnboardAddressScreen() {
                 }
             })();
         }
-    }, [isValid]);
+    }, [isValid, watch()]);
 
     const { mutate, isLoading } = api.therapists.updateAddress.useMutation({
         onSuccess: async () => {
             await user?.reload();
-            router.push("/(psych)/available-hours");
+            router.push({ pathname: "/" });
         },
     });
 
@@ -297,7 +296,7 @@ export default function OnboardAddressScreen() {
                     </ScrollView>
                     <TouchableOpacity className="w-full" onPress={onSubmit}>
                         <View
-                            className={`mt-8 flex w-full items-center justify-center rounded-xl ${
+                            className={`mb-4 mt-8 flex w-full items-center justify-center rounded-xl ${
                                 isValid ? "bg-blue-500" : "bg-blue-200"
                             } py-2`}
                         >

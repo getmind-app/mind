@@ -23,8 +23,9 @@ model Therapist {
     phone             String
     crp               String
     about             String?
+    gender            Gender        @default(MALE)
     hourlyRate        Float
-    yearsOfExperience Int
+    yearsOfExperience Int?
     profilePictureUrl String
     userId            String        @unique
     paymentAccountId  String?
@@ -109,6 +110,11 @@ model Email {
 enum Modality {
     ONLINE
     ON_SITE
+}
+
+enum Gender {
+    FEMALE
+    MALE
 }
 
 enum AppointmentStatus {

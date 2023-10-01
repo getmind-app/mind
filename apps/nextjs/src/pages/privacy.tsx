@@ -41,11 +41,11 @@ const Home: NextPage = () => {
                                 1. INTRODUÇÃO
                             </h2>
                             <p className="text-lg text-slate-500">
-                                O aplicativo Mind (&ldquo;nós&rdquo;,
-                                &ldquo;nosso&rdquo;) respeita a privacidade de
-                                seus usuários (&ldquo;você&rdquo;,
-                                &ldquo;seu&rdquo;) e se compromete a proteger
-                                suas informações pessoais. Esta Política de
+                                O aplicativo Mind (&quot;nós&quot;,
+                                &quot;nosso&quot;) respeita a privacidade de
+                                seus usuários (&quot;você&quot;,
+                                &quot;seu&quot;) e se compromete a proteger suas
+                                informações pessoais. Esta Política de
                                 Privacidade explica como coletamos, usamos,
                                 compartilhamos e protegemos suas informações
                                 pessoais quando você usa nosso aplicativo. Ao
