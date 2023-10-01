@@ -101,7 +101,7 @@ function TherapistOptions() {
             dateOfBirth: formData.dateOfBirth,
             document: formData.document,
             crp: formData.crp,
-            yearsOfExperience: formData.yearsOfExperience,
+            yearsOfExperience: formData.yearsOfExperience ?? 0,
             hourlyRate: formData.hourlyRate,
             phone: formData.phone,
             about: formData.about,

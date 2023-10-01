@@ -134,7 +134,7 @@ function ProfessionalMenuItems() {
             <MenuItem
                 icon="timer"
                 label={t({ message: "Available hours" })}
-                onPress={() => router.push("/(psych)/available-hours")}
+                onPress={() => router.push("/settings/available-hours")}
             />
             <ShareLinkMenuItem handleShareLink={handleShareLink} />
         </>
