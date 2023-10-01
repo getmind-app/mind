@@ -16,7 +16,7 @@ import { CardSkeleton } from "../../../components/CardSkeleton";
 import { Header } from "../../../components/Header";
 import { api } from "../../../utils/api";
 
-export default function AvailableHours() {
+export default function PaymentsSetup() {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 
     const [refreshing, setRefreshing] = useState(false);
@@ -77,7 +77,7 @@ export default function AvailableHours() {
                                 : "bg-blue-500"
                         } py-3 align-middle shadow-md`}
                     >
-                        <FontAwesome size={16} color="white" name="search" />
+                        <FontAwesome size={16} color="green" name="check" />
                         <Text
                             className={`ml-2 font-nunito-sans-bold text-lg ${
                                 data.paymentAccountId
@@ -116,7 +116,7 @@ export default function AvailableHours() {
                         }}
                         className={`mt-6 flex w-full flex-row items-center justify-center rounded-xl bg-blue-500 py-3 align-middle shadow-md`}
                     >
-                        <FontAwesome size={16} color="white" name="search" />
+                        <FontAwesome size={16} color="white" name="link" />
                         <Text
                             className={`ml-2 font-nunito-sans-bold text-lg text-white`}
                         >
