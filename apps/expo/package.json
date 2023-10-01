@@ -5,7 +5,7 @@
     "scripts": {
         "clean": "git clean -xdf .expo .turbo node_modules",
         "dev:android": "expo start --android --go",
-        "dev:ios": "expo start --ios",
+        "dev:ios": "expo start --ios --go",
         "lint": "eslint .",
         "lint:fix": "pnpm lint --fix",
         "type-check": "tsc --noEmit",

@@ -1,5 +1,8 @@
+import type * as Notification from "expo-notifications";
+import clerk from "@clerk/clerk-sdk-node";
 import { z } from "zod";
 
+import { sendPushNotification } from "../helpers/sendPushNotification";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const appointmentsRouter = createTRPCRouter({
@@ -13,6 +16,31 @@ export const appointmentsRouter = createTRPCRouter({
             }),
         )
         .mutation(async ({ ctx, input }) => {
+            const [therapist, patient] = await Promise.all([
+                ctx.prisma.therapist.findUnique({
+                    where: {
+                        id: input.therapistId,
+                    },
+                }),
+
+                ctx.prisma.patient.findUnique({
+                    where: {
+                        id: input.patientId,
+                    },
+                }),
+            ]);
+
+            const therapistUser = await clerk.users.getUser(
+                therapist?.userId ?? "",
+            );
+
+            await sendPushNotification({
+                expoPushToken: therapistUser.publicMetadata
+                    .expoPushToken as Notification.ExpoPushToken,
+                title: "New appointment! 🎉",
+                body: `${patient?.name} requested an appointment with you.`,
+            });
+
             return await ctx.prisma.appointment.create({ data: input });
         }),
     findNextUserAppointment: protectedProcedure.query(async ({ ctx }) => {
@@ -153,6 +181,37 @@ export const appointmentsRouter = createTRPCRouter({
             }),
         )
         .mutation(async ({ ctx, input }) => {
+            if (input.status === "ACCEPTED" || input.status === "REJECTED") {
+                const patient = await ctx.prisma.patient.findUnique({
+                    where: {
+                        id: input.patientId,
+                    },
+                });
+
+                const therapist = await ctx.prisma.therapist.findUnique({
+                    where: {
+                        id: input.therapistId,
+                    },
+                });
+
+                const patientUser = await clerk.users.getUser(
+                    patient?.userId ?? "",
+                );
+
+                await sendPushNotification({
+                    expoPushToken: patientUser.publicMetadata
+                        .expoPushToken as Notification.ExpoPushToken,
+                    title:
+                        input.status === "ACCEPTED"
+                            ? "Appointment accepted! 🎉"
+                            : "Appointment rejected ❌",
+                    body:
+                        input.status === "ACCEPTED"
+                            ? `${therapist?.name} accepted your appointment request.`
+                            : `${therapist?.name} rejected your appointment request.`,
+                });
+            }
+
             return await ctx.prisma.appointment.update({
                 where: {
                     id: input.id,

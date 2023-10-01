@@ -26,14 +26,6 @@ export default function Index() {
     const [refreshing, setRefreshing] = useState(false);
     const utils = api.useContext();
 
-    const [expoPushToken, setExpoPushToken] =
-        useState<Notifications.ExpoPushToken | null>(null);
-    const [notification, setNotification] = useState<
-        Notifications.Notification | boolean
-    >(false);
-    const notificationListener = useRef<Notifications.Subscription>();
-    const responseListener = useRef<Notifications.Subscription>();
-
     const onRefresh = () => {
         setRefreshing(true);
         utils.appointments.findNextUserAppointment.invalidate();
@@ -43,33 +35,6 @@ export default function Index() {
         }, 500);
     };
 
-    useEffect(() => {
-        registerForPushNotificationsAsync().then((token) =>
-            setExpoPushToken(token ?? null),
-        );
-
-        notificationListener.current =
-            Notifications.addNotificationReceivedListener((notification) => {
-                setNotification(notification);
-            });
-
-        responseListener.current =
-            Notifications.addNotificationResponseReceivedListener(
-                (response) => {
-                    console.log(response);
-                },
-            );
-
-        return () => {
-            Notifications.removeNotificationSubscription(
-                notificationListener.current as Notifications.Subscription,
-            );
-            Notifications.removeNotificationSubscription(
-                responseListener.current as Notifications.Subscription,
-            );
-        };
-    }, []);
-
     return (
         <ScrollView
             className="bg-off-white px-4 pt-12"
@@ -78,12 +43,6 @@ export default function Index() {
                 <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }
         >
-            <TouchableOpacity
-                onPress={() => sendPushNotification(expoPushToken)}
-            >
-                <Text>Send notification</Text>
-            </TouchableOpacity>
-
             <View className="h-full">
                 <Text className="pt-12 font-nunito-sans-bold text-3xl">
                     <Trans>Next session</Trans>
@@ -314,60 +273,4 @@ function LastNotes() {
             )}
         </>
     );
-}
-
-async function registerForPushNotificationsAsync() {
-    let token;
-    if (Device.isDevice) {
-        const { status: existingStatus } =
-            await Notifications.getPermissionsAsync();
-        let finalStatus = existingStatus;
-        if (existingStatus !== "granted") {
-            const { status } = await Notifications.requestPermissionsAsync();
-            finalStatus = status;
-        }
-        if (finalStatus !== "granted") {
-            alert("Failed to get push token for push notification!");
-            return;
-        }
-        token = await Notifications.getExpoPushTokenAsync({
-            projectId: Constants.expoConfig?.extra?.eas.projectId,
-        });
-        console.log(token);
-    } else {
-        alert("Must use physical device for Push Notifications");
-    }
-
-    if (Platform.OS === "android") {
-        Notifications.setNotificationChannelAsync("default", {
-            name: "default",
-            importance: Notifications.AndroidImportance.MAX,
-            vibrationPattern: [0, 250, 250, 250],
-            lightColor: "#FF231F7C",
-        });
-    }
-
-    return token;
-}
-
-async function sendPushNotification(
-    expoPushToken: Notifications.ExpoPushToken | null,
-) {
-    const message = {
-        to: expoPushToken,
-        sound: "default",
-        title: "Original Title",
-        body: "And here is the body!",
-        data: { someData: "goes here" },
-    };
-
-    await fetch("https://exp.host/--/api/v2/push/send", {
-        method: "POST",
-        headers: {
-            Accept: "application/json",
-            "Accept-encoding": "gzip, deflate",
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(message),
-    });
 }

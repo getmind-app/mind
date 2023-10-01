@@ -208,7 +208,7 @@ function DaySelector({
     }
 
     return (
-        <View className="flex flex-row justify-between gap-4  py-4">
+        <View className="flex flex-row justify-between py-4">
             <DayToSelect
                 day={"MONDAY"}
                 selected={selectedDays.includes("MONDAY")}

@@ -122,7 +122,7 @@ function ProfessionalMenuItems() {
                 icon="person-outline"
                 isFirst={true}
                 label={t({ message: "Personal info" })}
-                onPress={() => router.push("/(psych)/personal-info")}
+                onPress={() => router.push("/settings/personal-info")}
             />
             {data.modalities.includes("ON_SITE") && (
                 <MenuItem
