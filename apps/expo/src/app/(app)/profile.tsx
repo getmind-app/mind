@@ -136,6 +136,11 @@ function ProfessionalMenuItems() {
                 label={t({ message: "Available hours" })}
                 onPress={() => router.push("/(psych)/available-hours")}
             />
+            <MenuItem
+                icon="attach-money"
+                label={t({ message: "Setup Payments" })}
+                onPress={() => router.push("/(psych)/payments-setup")}
+            />
             <ShareLinkMenuItem handleShareLink={handleShareLink} />
         </>
     );
