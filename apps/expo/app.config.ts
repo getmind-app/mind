@@ -25,6 +25,7 @@ const defineConfig = (): ExpoConfig => ({
     },
     assetBundlePatterns: ["**/*", "assets/*"],
     ios: {
+        buildNumber: "2",
         supportsTablet: true,
         bundleIdentifier: "app.getmind",
         infoPlist: {
@@ -35,6 +36,7 @@ const defineConfig = (): ExpoConfig => ({
                 "This app uses your location to help you find nearby therapists.",
             NSLocationWhenInUseUsageDescription:
                 "This app uses your location to help you find nearby therapists.",
+            ITSAppUsesNonExemptEncryption: false,
         },
     },
     android: {
