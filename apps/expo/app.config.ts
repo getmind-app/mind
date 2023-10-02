@@ -29,6 +29,12 @@ const defineConfig = (): ExpoConfig => ({
         bundleIdentifier: "app.getmind",
         infoPlist: {
             LSApplicationQueriesSchemes: ["mind"],
+            NSCameraUsageDescription:
+                "This app uses your camera to take photos for your profile.",
+            NSLocationAlwaysAndWhenInUseUsageDescription:
+                "This app uses your location to help you find nearby therapists.",
+            NSLocationWhenInUseUsageDescription:
+                "This app uses your location to help you find nearby therapists.",
         },
     },
     android: {
