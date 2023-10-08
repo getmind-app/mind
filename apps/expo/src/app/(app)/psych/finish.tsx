@@ -20,7 +20,7 @@ export default function SessionFinishAppointment() {
                 <View className="flex items-center justify-center">
                     <Image
                         alt=""
-                        source={require("../../../../assets/success.png")}
+                        source={require("../../../../assets/images/success.png")}
                         style={{ width: 200, height: 200 }}
                         resizeMode="contain"
                     />

@@ -41,7 +41,7 @@ export default function SearchScreen() {
                         <Image
                             className="h-48 w-48"
                             alt={`No therapists picture`}
-                            source={require("../../../assets/search.png")}
+                            source={require("../../../assets/images/search.png")}
                         />
                         <Text className="font-nunito-sans-bold text-xl text-slate-500">
                             <Trans>Find your therapist</Trans>
@@ -111,7 +111,7 @@ function List({ search }: { search: string }) {
             <Image
                 className="h-40 w-40"
                 alt={`No therapists picture`}
-                source={require("../../../assets/login_mind.png")}
+                source={require("../../../assets/images/login_mind.png")}
             />
             <Text className="font-nunito-sans-bold text-xl text-slate-500">
                 <Trans>No therapists found!</Trans>

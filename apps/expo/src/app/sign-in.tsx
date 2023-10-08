@@ -16,7 +16,7 @@ import useAuthProviders from "../helpers/authProviders";
 
 const LoginImage =
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    require("../../assets/login_mind.png") as ImageSourcePropType;
+    require("../../assets/images/login_mind.png") as ImageSourcePropType;
 
 export default function SignInScreen() {
     const { onApplePress, onGooglePress } = useAuthProviders();
