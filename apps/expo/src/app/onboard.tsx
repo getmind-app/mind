@@ -132,7 +132,7 @@ export default function Onboard() {
                             </View>
                             <Image
                                 alt="Patient with a plant"
-                                source={require("../../assets/images/profissional_2.png")}
+                                source={require("../../assets/images/girl_flower.png")}
                                 className="absolute -bottom-2 right-4 h-36 w-36"
                                 resizeMode="contain"
                             />
@@ -155,7 +155,7 @@ export default function Onboard() {
                         >
                             <Image
                                 alt="Psychologist reading a book"
-                                source={require("../../assets/images/paciente.png")}
+                                source={require("../../assets/images/girl_book.png")}
                                 className="absolute -bottom-2 left-6 h-36 w-36"
                                 resizeMode="contain"
                             />
