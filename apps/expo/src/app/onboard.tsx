@@ -12,6 +12,7 @@ import Constants from "expo-constants";
 import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
 import { useRouter } from "expo-router";
+import { requestTrackingPermissionsAsync } from "expo-tracking-transparency";
 import { useUser } from "@clerk/clerk-expo";
 import { Trans } from "@lingui/macro";
 
@@ -72,6 +73,8 @@ export default function Onboard() {
     }
 
     useEffect(() => {
+        requestTrackingPermissionsAsync();
+
         registerForPushNotificationsAsync().then((token) =>
             setExpoPushToken(token ?? null),
         );

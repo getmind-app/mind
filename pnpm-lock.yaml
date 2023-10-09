@@ -227,6 +227,9 @@ importers:
       expo-status-bar:
         specifier: ~1.6.0
         version: 1.6.0
+      expo-tracking-transparency:
+        specifier: ~3.1.0
+        version: 3.1.0(expo@49.0.9)
       expo-web-browser:
         specifier: ~12.3.2
         version: 12.3.2(expo@49.0.9)
@@ -7733,6 +7736,14 @@ packages:
 
   /expo-status-bar@1.6.0:
     resolution: {integrity: sha512-e//Oi2WPdomMlMDD3skE4+1ZarKCJ/suvcB4Jo/nO427niKug5oppcPNYO+csR6y3ZglGuypS+3pp/hJ+Xp6fQ==}
+    dev: false
+
+  /expo-tracking-transparency@3.1.0(expo@49.0.9):
+    resolution: {integrity: sha512-3945pmJNZ450DHoaeKzsMMK0S8ZO/4GkfaaFRRjWf0UGydgAYkTrB/Xh3MbU4UuyioJogLyf9AKLy6fsPgbVZw==}
+    peerDependencies:
+      expo: '*'
+    dependencies:
+      expo: 49.0.9(@babel/core@7.22.10)
     dev: false
 
   /expo-updates-interface@0.10.1(expo@49.0.9):

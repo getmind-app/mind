@@ -25,7 +25,7 @@ const defineConfig = (): ExpoConfig => ({
     },
     assetBundlePatterns: ["**/*", "assets/*"],
     ios: {
-        buildNumber: "3",
+        buildNumber: "4",
         supportsTablet: true,
         bundleIdentifier: "app.getmind",
         infoPlist: {
@@ -85,6 +85,13 @@ const defineConfig = (): ExpoConfig => ({
             {
                 locationAlwaysAndWhenInUsePermission:
                     "Allow $(PRODUCT_NAME) to use your location.",
+            },
+        ],
+        [
+            "expo-tracking-transparency",
+            {
+                userTrackingPermission:
+                    "This identifier will be used to deliver personalized ads to you.",
             },
         ],
     ],
