@@ -36,6 +36,8 @@ const defineConfig = (): ExpoConfig => ({
                 "This app uses your location to help you find nearby therapists.",
             NSLocationWhenInUseUsageDescription:
                 "This app uses your location to help you find nearby therapists.",
+            NSUserTrackingUsageDescription:
+                "This identifier will be used to create a better experience for you.",
             ITSAppUsesNonExemptEncryption: false,
         },
     },

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import {
+    Alert,
     Image,
     Platform,
     Pressable,
@@ -73,11 +74,27 @@ export default function Onboard() {
     }
 
     useEffect(() => {
-        requestTrackingPermissionsAsync();
+        (async () => {
+            const { status } = await requestTrackingPermissionsAsync();
+            if (status !== "granted") {
+                Alert.alert(
+                    "Permission required",
+                    "You need to grant permission to track your data in order to use this app.",
+                    [
+                        {
+                            text: "OK",
+                            onPress: async () => {
+                                await requestTrackingPermissionsAsync();
+                            },
+                        },
+                    ],
+                );
+            }
 
-        registerForPushNotificationsAsync().then((token) =>
-            setExpoPushToken(token ?? null),
-        );
+            registerForPushNotificationsAsync().then((token) =>
+                setExpoPushToken(token ?? null),
+            );
+        })();
 
         notificationListener.current =
             Notifications.addNotificationReceivedListener((notification) => {
