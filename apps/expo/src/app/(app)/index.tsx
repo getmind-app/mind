@@ -12,8 +12,11 @@ import { useRouter } from "expo-router";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import { Trans, t } from "@lingui/macro";
 
+import { Card } from "../../components/Card";
 import { CardSkeleton } from "../../components/CardSkeleton";
 import DefaultHomeCard from "../../components/DefaultHomeCard";
+import { ScreenWrapper } from "../../components/ScreenWrapper";
+import { Title } from "../../components/Title";
 import geocodeAddress from "../../helpers/geocodeAddress";
 import { api } from "../../utils/api";
 
@@ -32,22 +35,22 @@ export default function Index() {
     };
 
     return (
-        <ScrollView
-            className="bg-off-white px-4 pt-12"
-            showsVerticalScrollIndicator={false}
-            refreshControl={
-                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
-        >
-            <View className="h-full">
-                <Text className="pt-12 font-nunito-sans-bold text-3xl">
-                    <Trans>Next session</Trans>
-                </Text>
+        <ScreenWrapper>
+            <ScrollView
+                showsVerticalScrollIndicator={false}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                    />
+                }
+            >
+                <Title title={t({ message: "Next session" })} />
+
                 <NextAppointment />
                 <View className="mb-2 flex flex-row items-center justify-between pt-8 align-middle">
-                    <Text className=" font-nunito-sans-bold text-3xl">
-                        <Trans>Last notes</Trans>
-                    </Text>
+                    <Title title={t({ message: "Last notes" })} />
+
                     <TouchableOpacity onPress={() => router.push("/notes/new")}>
                         <View className="rounded-lg bg-blue-500 px-3 py-1 shadow-sm">
                             <Text className="text-center font-nunito-sans-bold text-base text-white">
@@ -57,8 +60,8 @@ export default function Index() {
                     </TouchableOpacity>
                 </View>
                 <LastNotes />
-            </View>
-        </ScrollView>
+            </ScrollView>
+        </ScreenWrapper>
     );
 }
 
@@ -210,11 +213,8 @@ function LastNotes() {
                         content: string;
                         createdAt: Date;
                     }) => (
-                        <View
-                            key={id}
-                            className="my-2 rounded-xl bg-white shadow-sm"
-                        >
-                            <View className="flex w-full flex-row items-center justify-between px-6 py-4 align-middle">
+                        <Card key={id}>
+                            <View className="flex w-full flex-row items-center justify-between align-middle">
                                 <View className="flex w-64 flex-col">
                                     <Text className="font-nunito-sans-bold text-xl text-slate-500">
                                         <Text className="text-blue-500">
@@ -238,17 +238,17 @@ function LastNotes() {
                                     />
                                 </TouchableOpacity>
                             </View>
-                        </View>
+                        </Card>
                     ),
                 )
             ) : (
-                <View className="mt-4 rounded-xl bg-white shadow-sm">
-                    <View className="flex w-full flex-row items-center justify-between px-6 py-4 align-middle">
+                <Card>
+                    <View className="flex w-full flex-row items-center justify-between align-middle">
                         <View className="flex flex-col">
                             <Text className="font-nunito-sans-bold text-xl text-slate-500">
                                 <Trans>You have no notes</Trans>
                             </Text>
-                            <Text className="pt-2 font-nunito-sans text-base">
+                            <Text className="w-72 pt-2 font-nunito-sans text-base">
                                 <Trans>
                                     Notes are a tool for helping you track your
                                     progress
@@ -265,7 +265,7 @@ function LastNotes() {
                             />
                         </TouchableOpacity>
                     </View>
-                </View>
+                </Card>
             )}
         </>
     );

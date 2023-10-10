@@ -8,12 +8,13 @@ import {
     View,
 } from "react-native";
 import * as Linking from "expo-linking";
-import { Link, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { useClerk } from "@clerk/clerk-expo";
 import { MaterialIcons } from "@expo/vector-icons";
 import { type Icon } from "@expo/vector-icons/build/createIconSet";
 import { t } from "@lingui/macro";
 
+import { ScreenWrapper } from "../../components/ScreenWrapper";
 import { api } from "../../utils/api";
 
 export default function UserProfileScreen() {
@@ -32,7 +33,7 @@ export default function UserProfileScreen() {
     const isProfessional = user?.publicMetadata?.role === "professional";
 
     return (
-        <View className="h-full bg-off-white px-4 pt-24">
+        <ScreenWrapper>
             <View className="flex flex-row items-center gap-x-4 pt-4 align-middle">
                 <Image
                     className="rounded-full"
@@ -89,7 +90,7 @@ export default function UserProfileScreen() {
                     </>
                 ) : null}
             </ScrollView>
-        </View>
+        </ScreenWrapper>
     );
 }
 

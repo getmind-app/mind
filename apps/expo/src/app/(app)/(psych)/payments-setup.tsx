@@ -10,10 +10,11 @@ import {
 import * as Linking from "expo-linking";
 import * as WebBrowser from "expo-web-browser";
 import { FontAwesome } from "@expo/vector-icons";
-import { Trans } from "@lingui/macro";
+import { Trans, t } from "@lingui/macro";
 
 import { CardSkeleton } from "../../../components/CardSkeleton";
 import { Header } from "../../../components/Header";
+import { Title } from "../../../components/Title";
 import { api } from "../../../utils/api";
 
 export default function PaymentsSetup() {
@@ -54,9 +55,7 @@ export default function PaymentsSetup() {
         >
             <Header />
             <View className="p-6 pb-12">
-                <Text className="font-nunito-sans-bold text-3xl">
-                    <Trans>Payments Setup</Trans>
-                </Text>
+                <Title title={t({ message: "Payments Setup" })} />
                 <Text className="pb-4 font-nunito-sans text-base text-slate-500">
                     <Trans>
                         We use Stripe as our payment provider, to receive
@@ -75,7 +74,7 @@ export default function PaymentsSetup() {
                             data.paymentAccountId
                                 ? "bg-gray-200"
                                 : "bg-blue-500"
-                        } py-3 align-middle shadow-md`}
+                        } py-3 align-middle shadow-sm`}
                     >
                         <FontAwesome size={16} color="green" name="check" />
                         <Text
@@ -114,7 +113,7 @@ export default function PaymentsSetup() {
                         style={{
                             elevation: 2,
                         }}
-                        className={`mt-6 flex w-full flex-row items-center justify-center rounded-xl bg-blue-500 py-3 align-middle shadow-md`}
+                        className={`mt-6 flex w-full flex-row items-center justify-center rounded-xl bg-blue-500 py-3 align-middle shadow-sm`}
                     >
                         <FontAwesome size={16} color="white" name="link" />
                         <Text

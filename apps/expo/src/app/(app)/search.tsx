@@ -11,27 +11,25 @@ import { useRouter } from "expo-router";
 import { Trans, t } from "@lingui/macro";
 
 import { ProfileSkeleton } from "../../components/ProfileSkeleton";
+import { ScreenWrapper } from "../../components/ScreenWrapper";
+import { Title } from "../../components/Title";
 import { api } from "../../utils/api";
 
 export default function SearchScreen() {
     const [search, setSearch] = useState("");
 
     return (
-        <View className="h-full bg-off-white px-4 pt-12">
-            <View className="flex flex-col">
-                <Text className="pt-12 font-nunito-sans-bold text-3xl">
-                    <Trans>Search</Trans>
-                </Text>
+        <ScreenWrapper>
+            <Title title={t({ message: "Search" })} />
 
-                <View className="flex flex-row items-center justify-between pt-2 align-middle">
-                    <TextInput
-                        onChangeText={setSearch}
-                        autoFocus={false}
-                        value={search}
-                        placeholder={t({ message: "Looking for a therapist?" })}
-                        className="font-nunito-sans text-lg"
-                    />
-                </View>
+            <View className="flex flex-row items-center justify-between pt-2 align-middle">
+                <TextInput
+                    onChangeText={setSearch}
+                    autoFocus={false}
+                    value={search}
+                    placeholder={t({ message: "Looking for a therapist?" })}
+                    className="font-nunito-sans text-lg"
+                />
             </View>
             <ScrollView className="w-full" showsVerticalScrollIndicator={false}>
                 {search.length > 0 ? (
@@ -49,7 +47,7 @@ export default function SearchScreen() {
                     </View>
                 )}
             </ScrollView>
-        </View>
+        </ScreenWrapper>
     );
 }
 

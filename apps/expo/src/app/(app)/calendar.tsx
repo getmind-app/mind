@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import {
     Image,
-    LayoutAnimation,
     Modal,
     Pressable,
     RefreshControl,
@@ -11,14 +10,15 @@ import {
     TouchableWithoutFeedback,
     View,
 } from "react-native";
-import * as Clipboard from "expo-clipboard";
-import * as Linking from "expo-linking";
 import { useRouter } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
 import { Feather, FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import { Trans, t } from "@lingui/macro";
 
+import { Card } from "../../components/Card";
 import { CardSkeleton } from "../../components/CardSkeleton";
+import { ScreenWrapper } from "../../components/ScreenWrapper";
+import { Title } from "../../components/Title";
 import { getShareLink } from "../../helpers/getShareLink";
 import { api } from "../../utils/api";
 import {
@@ -31,7 +31,6 @@ import {
 export default function CalendarScreen() {
     const [refreshing, setRefreshing] = useState(false);
     const { user } = useUser();
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 
     const {
         data: appointments,
@@ -104,18 +103,20 @@ function BaseLayout({
     children: React.ReactNode;
 }) {
     return (
-        <ScrollView
-            className="bg-off-white px-4 pt-12 "
-            showsVerticalScrollIndicator={false}
-            refreshControl={
-                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
-        >
-            <Text className="pt-12 font-nunito-sans-bold text-3xl">
-                <Trans>Calendar</Trans>
-            </Text>
-            {children}
-        </ScrollView>
+        <ScreenWrapper>
+            <ScrollView
+                showsVerticalScrollIndicator={false}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                    />
+                }
+            >
+                <Title title={t({ message: "Calendar" })} />
+                {children}
+            </ScrollView>
+        </ScreenWrapper>
     );
 }
 
@@ -193,10 +194,7 @@ function AppointmentCard({
     const { user } = useUser();
 
     return (
-        <View
-            key={appointment.id}
-            className="my-2 rounded-xl bg-white p-6 shadow-sm"
-        >
+        <Card key={appointment.id}>
             <View
                 style={{
                     flexDirection: "row",
@@ -298,7 +296,7 @@ function AppointmentCard({
                     )}
                 </View>
             ) : null}
-        </View>
+        </Card>
     );
 }
 

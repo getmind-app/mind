@@ -1,4 +1,5 @@
 import React from "react";
+import { LayoutAnimation } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import Constants from "expo-constants";
 import { getLocales } from "expo-localization";
@@ -63,6 +64,8 @@ export default function RootLayout() {
     const stripePublishableKey = String(
         Constants.expoConfig.extra.STRIPE_PUBLISHABLE_KEY,
     );
+
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 
     return (
         <ClerkProvider

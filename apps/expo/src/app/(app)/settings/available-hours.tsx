@@ -1,11 +1,5 @@
 import { useState } from "react";
-import {
-    LayoutAnimation,
-    RefreshControl,
-    ScrollView,
-    Text,
-    View,
-} from "react-native";
+import { RefreshControl, ScrollView, Text, View } from "react-native";
 import { Trans } from "@lingui/macro";
 
 import { AvailableHoursPicker } from "../../../components/AvailableHoursPicker";
@@ -14,8 +8,6 @@ import { Header } from "../../../components/Header";
 import { api } from "../../../utils/api";
 
 export default function AvailableHours() {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-
     const [refreshing, setRefreshing] = useState(false);
     const { data, isLoading } = api.therapists.findByUserId.useQuery();
 
