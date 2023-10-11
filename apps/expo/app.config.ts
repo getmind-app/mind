@@ -1,10 +1,25 @@
 import type { ExpoConfig } from "@expo/config";
 
-const CLERK_PUBLISHABLE_KEY =
-    "pk_test_ZmFtb3VzLWh5ZW5hLTU1LmNsZXJrLmFjY291bnRzLmRldiQ";
+type Profile = "dev" | "production";
 
-const STRIPE_PUBLISHABLE_KEY =
-    "pk_test_51NgDQEDtBWZzYd58qQAuw01NR3d2NOT0rC0FxVuMAsFVfQtzA2yjCij7qYcfQcse05pzm0pYGWirTW7mtZMb7oSa00IM1kPSO5";
+const profileConstants: {
+    [key in Profile]: {
+        CLERK_PUBLISHABLE_KEY: string;
+        STRIPE_PUBLISHABLE_KEY: string;
+    };
+} = {
+    dev: {
+        CLERK_PUBLISHABLE_KEY:
+            "pk_test_ZmFtb3VzLWh5ZW5hLTU1LmNsZXJrLmFjY291bnRzLmRldiQ",
+        STRIPE_PUBLISHABLE_KEY:
+            "pk_test_51NgDQEDtBWZzYd58qQAuw01NR3d2NOT0rC0FxVuMAsFVfQtzA2yjCij7qYcfQcse05pzm0pYGWirTW7mtZMb7oSa00IM1kPSO5",
+    },
+    production: {
+        CLERK_PUBLISHABLE_KEY: "pk_live_Y2xlcmsuZ2V0bWluZC5hcHAk",
+        STRIPE_PUBLISHABLE_KEY:
+            "pk_live_51NgDQEDtBWZzYd58BDrce2MWbzF0a869k4MQsUb4Ug5akV20BfhVZzT6lmq6TVeclWJObRm3CSDGIj5C3cFUJ8BA00yDM5jp3S",
+    },
+};
 
 const defineConfig = (): ExpoConfig => ({
     name: "Mind",
@@ -66,8 +81,7 @@ const defineConfig = (): ExpoConfig => ({
         eas: {
             projectId: "99018e7e-9e9a-4064-82d0-dc3cfa6457d5",
         },
-        CLERK_PUBLISHABLE_KEY,
-        STRIPE_PUBLISHABLE_KEY,
+        ...profileConstants[process.env.PROFILE as Profile],
     },
     plugins: [
         "./expo-plugins/with-modify-gradle.js",

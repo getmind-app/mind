@@ -10,7 +10,8 @@
                 "resourceClass": "m-medium"
             },
             "env": {
-                "REACT_NATIVE_NODE_MODULES_DIR": "../../../node_modules"
+                "REACT_NATIVE_NODE_MODULES_DIR": "../../../node_modules",
+                "PROFILE": "dev"
             },
             "android": {
                 "buildType": "apk"
@@ -23,7 +24,8 @@
                 "resourceClass": "m-medium"
             },
             "env": {
-                "REACT_NATIVE_NODE_MODULES_DIR": "../../../node_modules"
+                "REACT_NATIVE_NODE_MODULES_DIR": "../../../node_modules",
+                "PROFILE": "dev"
             }
         },
         "production": {
@@ -32,7 +34,8 @@
                 "resourceClass": "m-medium"
             },
             "env": {
-                "REACT_NATIVE_NODE_MODULES_DIR": "../../../node_modules"
+                "REACT_NATIVE_NODE_MODULES_DIR": "../../../node_modules",
+                "PROFILE": "production"
             }
         }
     },
