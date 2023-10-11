@@ -11,5 +11,12 @@ export function Card({
 }) {
     if (isLoading) return <CardSkeleton />;
 
-    return <View className="my-2 rounded-xl bg-white p-6 shadow-sm"></View>;
+    return (
+        <View
+            className="my-2 rounded-xl bg-white p-6 shadow-sm"
+            style={{ elevation: 2 }}
+        >
+            {children}
+        </View>
+    );
 }

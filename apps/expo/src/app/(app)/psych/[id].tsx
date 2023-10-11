@@ -1,11 +1,5 @@
 import React from "react";
-import {
-    LayoutAnimation,
-    ScrollView,
-    Text,
-    TouchableOpacity,
-    View,
-} from "react-native";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { type Float } from "react-native/Libraries/Types/CodegenTypes";
 import { Image } from "expo-image";
 import * as Linking from "expo-linking";
@@ -140,8 +134,6 @@ function ContentCard({
     emoji: string;
     title: string;
 }) {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-
     return (
         <View className="mt-4 rounded-xl bg-white px-6 py-4 shadow-sm">
             <View className="flex flex-row items-center justify-between align-middle">

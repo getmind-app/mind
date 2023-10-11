@@ -7,6 +7,7 @@ import "@formatjs/intl-pluralrules/polyfill";
 import "@formatjs/intl-pluralrules/locale-data/en";
 import "@formatjs/intl-getcanonicallocales/polyfill";
 import "intl-pluralrules";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { registerRootComponent } from "expo";
 import { ExpoRoot } from "expo-router";
 import {
@@ -37,9 +38,12 @@ export function App() {
         return null;
     }
 
-    // @ts-expect-error isso é um erro do expo-router com o webpack,
-    // não temos como resolver
-    return <ExpoRoot context={ctx} />;
+    return (
+        <GestureHandlerRootView style={{ flex: 1 }}>
+            {/* @ts-expect-error isso é um erro do expo-router com o webpack, não temos como resolver */}
+            <ExpoRoot context={ctx} />
+        </GestureHandlerRootView>
+    );
 }
 
 registerRootComponent(App);

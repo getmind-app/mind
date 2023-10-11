@@ -76,6 +76,10 @@ const Home: NextPage = () => {
                                         Psicologia)
                                     </li>
                                     <li>
+                                        Dados bancários para recebimento de
+                                        pagamentos
+                                    </li>
+                                    <li>
                                         Endereço para atendimento pessoal (se
                                         aplicável)
                                     </li>
@@ -88,7 +92,9 @@ const Home: NextPage = () => {
                                 Para pacientes que utilizam os provedores de
                                 autenticação da Apple e Google, coletamos as
                                 informações fornecidas por esses provedores,
-                                como nome e e-mail.
+                                como nome e e-mail. Além disso, coletamos as
+                                informações de cartão de crédito, que serão
+                                enviadas para o processador de pagamentos.
                             </p>
                             <h2 className="text-xl text-slate-800">
                                 3. USO DE INFORMAÇÕES

@@ -61,8 +61,6 @@ export default function OnboardAddressScreen() {
     const [latitude, setLatitude] = useState(0);
     const [longitude, setLongitude] = useState(0);
 
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-
     const {
         control,
         handleSubmit,

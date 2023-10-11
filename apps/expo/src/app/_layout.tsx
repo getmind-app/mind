@@ -1,9 +1,10 @@
 import React from "react";
+import { LayoutAnimation } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import Constants from "expo-constants";
 import { getLocales } from "expo-localization";
 import * as Notifications from "expo-notifications";
-import { Slot, SplashScreen } from "expo-router";
+import { Slot } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { StatusBar } from "expo-status-bar";
 import { ClerkProvider, SignedIn, SignedOut } from "@clerk/clerk-expo";
@@ -63,6 +64,8 @@ export default function RootLayout() {
     const stripePublishableKey = String(
         Constants.expoConfig.extra.STRIPE_PUBLISHABLE_KEY,
     );
+
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 
     return (
         <ClerkProvider

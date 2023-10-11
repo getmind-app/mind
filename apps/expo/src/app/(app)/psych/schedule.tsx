@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import {
     Image,
-    LayoutAnimation,
     Linking,
     ScrollView,
     Text,
@@ -38,8 +37,6 @@ const appointmentAtom = atom<{
 });
 
 export default function TherapistSchedule() {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-
     const [appointment, setAppointment] = useAtom(appointmentAtom);
     const router = useRouter();
     const { id } = useLocalSearchParams();
