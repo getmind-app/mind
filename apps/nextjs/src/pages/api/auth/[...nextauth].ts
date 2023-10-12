@@ -1,5 +1,5 @@
-import NextAuth from "next-auth";
+import NextAuth, { type AuthOptions } from "next-auth";
 
 import { authOptions } from "@acme/auth";
 
-export default NextAuth(authOptions);
+export default NextAuth(authOptions as AuthOptions);

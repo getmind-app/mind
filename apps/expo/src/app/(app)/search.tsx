@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
     Image,
     ScrollView,
@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import { Trans, t } from "@lingui/macro";
+import { useDebounce } from "usehooks-ts";
 
 import { ProfileSkeleton } from "../../components/ProfileSkeleton";
 import { ScreenWrapper } from "../../components/ScreenWrapper";
@@ -17,6 +18,7 @@ import { api } from "../../utils/api";
 
 export default function SearchScreen() {
     const [search, setSearch] = useState("");
+    const debouncedValue = useDebounce<string>(search, 500);
 
     return (
         <ScreenWrapper>
@@ -32,8 +34,8 @@ export default function SearchScreen() {
                 />
             </View>
             <ScrollView className="w-full" showsVerticalScrollIndicator={false}>
-                {search.length > 0 ? (
-                    <List search={search} />
+                {search.length > 1 ? (
+                    <List search={debouncedValue} />
                 ) : (
                     <View className="flex flex-col items-center justify-center gap-2 pt-32">
                         <Image
@@ -54,12 +56,11 @@ export default function SearchScreen() {
 function List({ search }: { search: string }) {
     const { data, isLoading, isError, error } =
         api.therapists.findByNameLike.useQuery({ name: search });
-
     const router = useRouter();
 
     if (isError) {
         return (
-            <View className="flex  items-center justify-center">
+            <View className="flex items-center justify-center">
                 <Text>{JSON.stringify(error)}</Text>
             </View>
         );
