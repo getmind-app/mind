@@ -1,4 +1,3 @@
-import React from "react";
 import { LayoutAnimation } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import Constants from "expo-constants";
