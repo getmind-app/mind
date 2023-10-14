@@ -62,7 +62,10 @@ export default function SignInScreen() {
                     <View className="mt-8  flex w-full flex-row items-center justify-center rounded-xl bg-blue-500 px-8 py-4 font-bold shadow-sm">
                         <FontAwesome color="white" size={22} name="google" />
                         <Text className="ml-4 font-nunito-sans text-xl text-white">
-                            <Trans>Sign in with Google</Trans>
+                            <Trans>Sign in with</Trans>{" "}
+                        </Text>
+                        <Text className="font-nunito-sans-bold text-xl text-white">
+                            Google
                         </Text>
                     </View>
                 </TouchableOpacity>
@@ -70,9 +73,11 @@ export default function SignInScreen() {
                     <View className="flex w-full flex-row items-center justify-center rounded-xl bg-white px-8 py-4 font-bold shadow-sm">
                         <FontAwesome size={22} name="apple" />
                         <Text className="ml-4 font-nunito-sans text-xl">
-                            <Trans>Sign in with</Trans>
+                            <Trans>Sign in with</Trans>{" "}
                         </Text>
-                        <Text className="font-nunito-sans text-xl">Apple</Text>
+                        <Text className="font-nunito-sans-bold text-xl">
+                            Apple
+                        </Text>
                     </View>
                 </TouchableOpacity>
             </View>
