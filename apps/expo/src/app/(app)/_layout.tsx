@@ -23,13 +23,9 @@ function TabBarIconWrapper({
 }
 
 export default function AppRouter() {
-    const { user, loaded } = useClerk();
+    const { user } = useClerk();
 
-    if (!user && loaded) {
-        return <Redirect href={"/sign-in"} />;
-    }
-
-    if (!user?.publicMetadata?.role && loaded) {
+    if (!user?.publicMetadata?.role) {
         return <Redirect href={"/onboard"} />;
     }
 
