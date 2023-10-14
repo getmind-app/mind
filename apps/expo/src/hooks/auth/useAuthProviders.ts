@@ -1,8 +1,9 @@
 import React from "react";
-import { router } from "expo-router";
+import * as Linking from "expo-linking";
 import { useOAuth } from "@clerk/clerk-expo";
 
 export function useAuthProviders() {
+    const redirectUrl = Linking.createURL("/(app)/");
     const { startOAuthFlow: googleOAuthFlow } = useOAuth({
         strategy: "oauth_google",
     });
@@ -12,11 +13,12 @@ export function useAuthProviders() {
 
     const onGooglePress = React.useCallback(async () => {
         try {
-            const { createdSessionId, setActive } = await googleOAuthFlow({});
+            const { createdSessionId, setActive, signIn } =
+                await googleOAuthFlow({
+                    redirectUrl,
+                });
             if (createdSessionId && setActive) {
-                await setActive({ session: createdSessionId });
-
-                return router.replace("/");
+                setActive({ session: createdSessionId });
             } else {
                 throw new Error(
                     "There are unmet requirements, modifiy this else to handle them",
@@ -30,11 +32,11 @@ export function useAuthProviders() {
 
     const onApplePress = React.useCallback(async () => {
         try {
-            const { createdSessionId, setActive } = await appleOAuthFlow({});
+            const { createdSessionId, setActive } = await appleOAuthFlow({
+                redirectUrl,
+            });
             if (createdSessionId && setActive) {
-                await setActive({ session: createdSessionId });
-
-                return router.replace("/");
+                setActive({ session: createdSessionId });
             } else {
                 throw new Error(
                     "There are unmet requirements, modifiy this else to handle them",
