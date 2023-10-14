@@ -17,7 +17,8 @@ import { requestTrackingPermissionsAsync } from "expo-tracking-transparency";
 import { useUser } from "@clerk/clerk-expo";
 import { Trans } from "@lingui/macro";
 
-import { api } from "../utils/api";
+import { usePatientMutations } from "../hooks/patient/usePatientMutations";
+import { useUserMutations } from "../hooks/user/useUserMutations";
 
 export default function Onboard() {
     const { user } = useUser();
@@ -25,7 +26,8 @@ export default function Onboard() {
     const [selectedRole, setSelectedRole] = useState<
         "patient" | "professional"
     >();
-
+    const { createPatient } = usePatientMutations();
+    const { setMetadata } = useUserMutations();
     const [expoPushToken, setExpoPushToken] =
         useState<Notifications.ExpoPushToken | null>(null);
     const [notification, setNotification] = useState<
@@ -34,36 +36,31 @@ export default function Onboard() {
     const notificationListener = useRef<Notifications.Subscription>();
     const responseListener = useRef<Notifications.Subscription>();
 
-    const { mutate: createPatient } = api.patients.create.useMutation({});
-
-    const { mutateAsync, isLoading } = api.users.setMetadata.useMutation({
-        onSuccess: async function () {
-            await user?.reload();
-
-            if (selectedRole === "patient" && user) {
-                createPatient({
-                    name: String(user.fullName),
-                    email: String(user.emailAddresses[0]?.emailAddress),
-                    profilePictureUrl: user.profileImageUrl,
-                    userId: user.id,
-                });
-            }
-
-            selectedRole === "patient"
-                ? router.push("/")
-                : router.push("/(psych)/profile");
-        },
-    });
-
     async function handleNext() {
         if (selectedRole) {
             try {
-                await mutateAsync({
+                await setMetadata.mutateAsync({
                     metadata: {
                         role: selectedRole,
                         expoPushToken: expoPushToken?.data,
                     },
                 });
+                await user?.reload();
+
+                if (selectedRole === "patient" && user) {
+                    await createPatient.mutateAsync({
+                        name: String(user.fullName),
+                        email: String(user.emailAddresses[0]?.emailAddress),
+                        profilePictureUrl: user.profileImageUrl,
+                        userId: user.id,
+                    });
+                }
+
+                if (selectedRole === "patient") {
+                    router.push("/");
+                } else {
+                    router.push("/(psych)/profile");
+                }
             } catch (e) {
                 console.error("error setting metadata");
                 console.error(e);
@@ -128,7 +125,7 @@ export default function Onboard() {
                     <Pressable
                         onPress={() => setSelectedRole("patient")}
                         className={`w-full ${
-                            isLoading ? "opacity-30" : ""
+                            setMetadata.isLoading ? "opacity-30" : ""
                         } relative overflow-hidden`}
                     >
                         <View
@@ -163,7 +160,7 @@ export default function Onboard() {
                     <Pressable
                         onPress={() => setSelectedRole("professional")}
                         className={`w-full ${
-                            isLoading ? "opacity-30" : ""
+                            setMetadata.isLoading ? "opacity-30" : ""
                         } relative overflow-hidden`}
                     >
                         <View
@@ -237,7 +234,6 @@ async function registerForPushNotificationsAsync() {
         token = await Notifications.getExpoPushTokenAsync({
             projectId: Constants.expoConfig?.extra?.eas.projectId,
         });
-        console.log(token);
     } else {
         alert("Must use physical device for Push Notifications");
     }
