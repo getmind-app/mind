@@ -60,8 +60,12 @@ function List({ search }: { search: string }) {
 
     if (isError) {
         return (
-            <View className="flex items-center justify-center">
-                <Text>{JSON.stringify(error)}</Text>
+            <View className="flex  items-center justify-center">
+                <Text>
+                    <Trans>
+                        There was an error when searching for therapists
+                    </Trans>
+                </Text>
             </View>
         );
     }
@@ -80,7 +84,7 @@ function List({ search }: { search: string }) {
         <View className="flex w-full flex-col items-start justify-center gap-y-4 pt-2">
             {data.map(({ name, profilePictureUrl, id, crp }) => (
                 <TouchableOpacity
-                    className="flex flex-row items-center gap-4 align-middle"
+                    className="flex w-full flex-row items-center gap-4 align-middle"
                     key={id}
                     onPress={() => router.push(`/psych/${id}`)}
                 >
