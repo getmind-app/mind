@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import {
     Alert,
     Image,
+    StyleSheet,
     Text,
     TouchableOpacity,
     View,
@@ -11,8 +12,9 @@ import * as Location from "expo-location";
 import { FontAwesome } from "@expo/vector-icons";
 import { Trans } from "@lingui/macro";
 
+import { Button } from "../components/Button";
 import { LogoSvg } from "../components/LogoSvg";
-import useAuthProviders from "../helpers/authProviders";
+import { useAuthProviders } from "../hooks/auth/useAuthProviders";
 
 const LoginImage =
     // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -38,8 +40,8 @@ export default function SignInScreen() {
     };
 
     return (
-        <View className="flex h-full w-full items-center justify-center bg-off-white">
-            <View className="relative bottom-12 right-4">
+        <View style={styles.container}>
+            <View style={styles.logo}>
                 <LogoSvg />
             </View>
             <Text className="pt-4 font-nunito-sans text-3xl">
@@ -60,12 +62,7 @@ export default function SignInScreen() {
                 <TouchableOpacity onPress={onGooglePress} className="w-full">
                     <View className="mt-8  flex w-full flex-row items-center justify-center rounded-xl bg-blue-500 px-8 py-4 font-bold shadow-sm">
                         <FontAwesome color="white" size={22} name="google" />
-                        <Text className="ml-4 font-nunito-sans text-xl text-white">
-                            <Trans>Sign in with</Trans>{" "}
-                        </Text>
-                        <Text className="font-nunito-sans-bold text-xl text-white">
-                            Google
-                        </Text>
+                        <Text>Sign in with Google</Text>
                     </View>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={onApplePress} className="w-full">
@@ -81,3 +78,26 @@ export default function SignInScreen() {
         </View>
     );
 }
+
+const styles = StyleSheet.create({
+    buttonText: {
+        color: "white",
+        fontSize: 22,
+        fontWeight: "bold",
+    },
+    container: {
+        flex: 1,
+        backgroundColor: "#f8f8f8",
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    logo: {
+        position: "relative",
+        padding: 12,
+        width: 32,
+        height: 32,
+        bottom: 48,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+});
