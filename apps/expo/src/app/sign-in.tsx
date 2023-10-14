@@ -12,7 +12,6 @@ import * as Location from "expo-location";
 import { FontAwesome } from "@expo/vector-icons";
 import { Trans } from "@lingui/macro";
 
-import { Button } from "../components/Button";
 import { LogoSvg } from "../components/LogoSvg";
 import { useAuthProviders } from "../hooks/auth/useAuthProviders";
 
@@ -62,14 +61,16 @@ export default function SignInScreen() {
                 <TouchableOpacity onPress={onGooglePress} className="w-full">
                     <View className="mt-8  flex w-full flex-row items-center justify-center rounded-xl bg-blue-500 px-8 py-4 font-bold shadow-sm">
                         <FontAwesome color="white" size={22} name="google" />
-                        <Text>Sign in with Google</Text>
+                        <Text className="ml-4 font-nunito-sans text-xl text-white">
+                            <Trans>Sign in with Google</Trans>
+                        </Text>
                     </View>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={onApplePress} className="w-full">
                     <View className="flex w-full flex-row items-center justify-center rounded-xl bg-white px-8 py-4 font-bold shadow-sm">
                         <FontAwesome size={22} name="apple" />
                         <Text className="ml-4 font-nunito-sans text-xl">
-                            <Trans>Sign in with</Trans>{" "}
+                            <Trans>Sign in with</Trans>
                         </Text>
                         <Text className="font-nunito-sans text-xl">Apple</Text>
                     </View>
