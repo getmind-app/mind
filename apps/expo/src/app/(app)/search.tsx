@@ -9,16 +9,16 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import { Trans, t } from "@lingui/macro";
-import { useDebounce } from "usehooks-ts";
 
 import { ProfileSkeleton } from "../../components/ProfileSkeleton";
 import { ScreenWrapper } from "../../components/ScreenWrapper";
 import { Title } from "../../components/Title";
+import { useDebounce } from "../../hooks/util/useDebounce";
 import { api } from "../../utils/api";
 
 export default function SearchScreen() {
     const [search, setSearch] = useState("");
-    const debouncedValue = useDebounce<string>(search, 500);
+    const debouncedValue = useDebounce(search, 500);
 
     return (
         <ScreenWrapper>
