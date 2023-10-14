@@ -55,6 +55,9 @@ const defineConfig = (): ExpoConfig => ({
                 "This identifier will be used to create a better experience for you.",
             ITSAppUsesNonExemptEncryption: false,
         },
+        entitlements: {
+            "com.apple.developer.applesignin": ["Default"],
+        },
     },
     android: {
         adaptiveIcon: {
