@@ -3,6 +3,9 @@ import { Redirect, Tabs } from "expo-router";
 import { useClerk } from "@clerk/clerk-expo";
 import { AntDesign } from "@expo/vector-icons";
 
+import { Loading } from "../../components/Loading";
+import { api } from "../../utils/api";
+
 const tabBarActiveTintColor = "#2563eb"; // blue 600
 const tabBarInactiveTintColor = "black";
 
@@ -24,6 +27,17 @@ function TabBarIconWrapper({
 
 export default function AppRouter() {
     const { user } = useClerk();
+    const userHasImage = api.users.userHasProfileImage.useQuery(
+        {
+            userId: String(user?.id),
+        },
+        {
+            staleTime: Infinity,
+            refetchOnWindowFocus: false,
+            refetchOnMount: false,
+            refetchOnReconnect: false,
+        },
+    );
 
     if (!user?.publicMetadata?.role) {
         return <Redirect href={"/onboard"} />;
@@ -84,15 +98,21 @@ export default function AppRouter() {
                     title: "User Profile",
                     tabBarIcon: (props) => (
                         <TabBarIconWrapper focused={props.focused}>
-                            <Image
-                                className="rounded-full"
-                                alt={`${user?.firstName} profile picture`}
-                                source={{
-                                    uri: user?.profileImageUrl,
-                                    width: 30,
-                                    height: 30,
-                                }}
-                            />
+                            {userHasImage.isLoading ? (
+                                <Loading size={"small"} />
+                            ) : userHasImage.data ? (
+                                <Image
+                                    className="rounded-full"
+                                    alt={`${user?.firstName} profile picture`}
+                                    source={{
+                                        uri: user?.imageUrl,
+                                        width: 30,
+                                        height: 30,
+                                    }}
+                                />
+                            ) : (
+                                <AntDesign name="user" {...props} />
+                            )}
                         </TabBarIconWrapper>
                     ),
                 }}
