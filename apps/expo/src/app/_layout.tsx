@@ -14,6 +14,7 @@ import { StripeProvider } from "@stripe/stripe-react-native";
 import { messages as enMessages } from "../../src/locales/en/messages";
 import { messages as ptMessages } from "../../src/locales/pt/messages";
 import { TRPCProvider } from "../utils/api";
+import SignIn from "./sign-in";
 
 type Messages = Record<string, string>;
 
@@ -80,7 +81,7 @@ export default function RootLayout() {
                                 <StatusBar translucent />
                             </SignedIn>
                             <SignedOut>
-                                <Slot />
+                                <SignIn />
                             </SignedOut>
                         </I18nProvider>
                     </SafeAreaProvider>
