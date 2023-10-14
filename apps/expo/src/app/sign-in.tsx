@@ -50,7 +50,7 @@ export default function SignInScreen() {
                         </Text>
                     </View>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={onApplePress} className="w-full">
+                {/* <TouchableOpacity onPress={onApplePress} className="w-full">
                     <View className="flex w-full flex-row items-center justify-center rounded-xl bg-white px-8 py-4 font-bold shadow-sm">
                         <FontAwesome size={22} name="apple" />
                         <Text className="ml-4 font-nunito-sans text-xl">
@@ -60,7 +60,7 @@ export default function SignInScreen() {
                             Apple
                         </Text>
                     </View>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
             </View>
         </View>
     );

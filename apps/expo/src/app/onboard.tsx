@@ -84,6 +84,8 @@ export default function Onboard() {
             }
         };
 
+        getLocation();
+
         (async () => {
             const { status } = await requestTrackingPermissionsAsync();
             if (status !== "granted") {
