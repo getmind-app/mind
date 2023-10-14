@@ -37,6 +37,13 @@ export const usersRouter = createTRPCRouter({
                 console.timeEnd("updateUserMetadata");
             }
         }),
+    userHasProfileImage: protectedProcedure
+        .input(z.object({ userId: z.string() }))
+        .query(async ({ input }) => {
+            const user = await clerk.users.getUser(input.userId);
+            const { ok } = await fetch(user.profileImageUrl);
+            return ok;
+        }),
     clearMetadata: protectedProcedure.mutation(async ({ ctx }) => {
         try {
             console.log("clearMetadata", ctx.auth.userId);
