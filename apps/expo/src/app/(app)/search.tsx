@@ -30,7 +30,7 @@ export default function SearchScreen() {
                     autoFocus={false}
                     value={search}
                     placeholder={t({ message: "Looking for a therapist?" })}
-                    className="font-nunito-sans text-lg"
+                    className="w-full font-nunito-sans text-lg"
                 />
             </View>
             <ScrollView className="w-full" showsVerticalScrollIndicator={false}>

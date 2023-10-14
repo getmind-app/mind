@@ -1,6 +1,4 @@
-import { useEffect } from "react";
 import {
-    Alert,
     Image,
     StyleSheet,
     Text,
@@ -8,7 +6,6 @@ import {
     View,
     type ImageSourcePropType,
 } from "react-native";
-import * as Location from "expo-location";
 import { FontAwesome } from "@expo/vector-icons";
 import { Trans } from "@lingui/macro";
 
@@ -21,22 +18,6 @@ const LoginImage =
 
 export default function SignInScreen() {
     const { onApplePress, onGooglePress } = useAuthProviders();
-
-    // ask for location permission
-    useEffect(() => {
-        getLocation();
-    }, []);
-
-    const getLocation = async () => {
-        const { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== "granted") {
-            Alert.alert(
-                "Permission",
-                "Sorry, we need location permissions to make this work!",
-                [{ text: "OK", onPress: () => {} }],
-            );
-        }
-    };
 
     return (
         <View style={styles.container}>

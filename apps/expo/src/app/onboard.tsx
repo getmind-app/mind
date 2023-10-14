@@ -11,6 +11,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import Constants from "expo-constants";
 import * as Device from "expo-device";
+import * as Location from "expo-location";
 import * as Notifications from "expo-notifications";
 import { useRouter } from "expo-router";
 import { requestTrackingPermissionsAsync } from "expo-tracking-transparency";
@@ -71,6 +72,18 @@ export default function Onboard() {
     }
 
     useEffect(() => {
+        const getLocation = async () => {
+            const { status } =
+                await Location.requestForegroundPermissionsAsync();
+            if (status !== "granted") {
+                Alert.alert(
+                    "Permission",
+                    "Sorry, we need location permissions to make this work!",
+                    [{ text: "OK", onPress: () => {} }],
+                );
+            }
+        };
+
         (async () => {
             const { status } = await requestTrackingPermissionsAsync();
             if (status !== "granted") {
