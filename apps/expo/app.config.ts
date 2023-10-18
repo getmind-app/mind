@@ -40,13 +40,15 @@ const defineConfig = (): ExpoConfig => ({
     },
     assetBundlePatterns: ["**/*", "assets/*"],
     ios: {
-        buildNumber: "5",
+        buildNumber: "6",
         supportsTablet: true,
         bundleIdentifier: "app.getmind",
         infoPlist: {
             LSApplicationQueriesSchemes: ["mind"],
             NSCameraUsageDescription:
                 "This app uses your camera to take photos for your profile.",
+            NSPhotoLibraryUsageDescription:
+                "This app uses your photos for your profile.",
             NSLocationAlwaysAndWhenInUseUsageDescription:
                 "This app uses your location to help you find nearby therapists.",
             NSLocationWhenInUseUsageDescription:
@@ -111,6 +113,12 @@ const defineConfig = (): ExpoConfig => ({
             {
                 userTrackingPermission:
                     "This identifier will be used to deliver personalized ads to you.",
+            },
+        ],
+        [
+            "expo-image-picker",
+            {
+                photosPermission: "This app uses your photos for your profile.",
             },
         ],
     ],

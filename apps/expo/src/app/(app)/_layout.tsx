@@ -138,6 +138,16 @@ export default function AppRouter() {
                 }}
             />
             <Tabs.Screen
+                name="(patient)"
+                options={{
+                    title: "Patient Settings",
+                    href: null,
+                    tabBarStyle: {
+                        maxHeight: 0,
+                    },
+                }}
+            />
+            <Tabs.Screen
                 name="settings"
                 options={{
                     title: "Settings",

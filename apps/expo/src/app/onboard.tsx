@@ -18,7 +18,6 @@ import { requestTrackingPermissionsAsync } from "expo-tracking-transparency";
 import { useUser } from "@clerk/clerk-expo";
 import { Trans } from "@lingui/macro";
 
-import { usePatientMutations } from "../hooks/patient/usePatientMutations";
 import { useUserMutations } from "../hooks/user/useUserMutations";
 
 export default function Onboard() {
@@ -27,7 +26,6 @@ export default function Onboard() {
     const [selectedRole, setSelectedRole] = useState<
         "patient" | "professional"
     >();
-    const { createPatient } = usePatientMutations();
     const { setMetadata } = useUserMutations();
     const [expoPushToken, setExpoPushToken] =
         useState<Notifications.ExpoPushToken | null>(null);
@@ -48,17 +46,8 @@ export default function Onboard() {
                 });
                 await user?.reload();
 
-                if (selectedRole === "patient" && user) {
-                    await createPatient.mutateAsync({
-                        name: String(user.fullName),
-                        email: String(user.emailAddresses[0]?.emailAddress),
-                        profilePictureUrl: user.profileImageUrl,
-                        userId: user.id,
-                    });
-                }
-
                 if (selectedRole === "patient") {
-                    router.push("/");
+                    router.push("/(patient)/profile");
                 } else {
                     router.push("/(psych)/profile");
                 }
@@ -72,7 +61,11 @@ export default function Onboard() {
     }
 
     useEffect(() => {
-        const getLocation = async () => {
+        async () => {};
+
+        (async () => {
+            await requestTrackingPermissionsAsync();
+
             const { status } =
                 await Location.requestForegroundPermissionsAsync();
             if (status !== "granted") {
@@ -80,26 +73,6 @@ export default function Onboard() {
                     "Permission",
                     "Sorry, we need location permissions to make this work!",
                     [{ text: "OK", onPress: () => {} }],
-                );
-            }
-        };
-
-        getLocation();
-
-        (async () => {
-            const { status } = await requestTrackingPermissionsAsync();
-            if (status !== "granted") {
-                Alert.alert(
-                    "Permission required",
-                    "You need to grant permission to track your data in order to use this app.",
-                    [
-                        {
-                            text: "OK",
-                            onPress: async () => {
-                                await requestTrackingPermissionsAsync();
-                            },
-                        },
-                    ],
                 );
             }
 
