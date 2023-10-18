@@ -50,7 +50,7 @@ export function FormCurrencyInput<
                         separator="."
                         maxValue={1000}
                         precision={2}
-                        placeholder={t({ message: "100.00 USD" })}
+                        placeholder={t({ message: "100.00" })}
                         inputMode="numeric"
                     />
                 </View>

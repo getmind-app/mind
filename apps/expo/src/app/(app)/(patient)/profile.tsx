@@ -83,12 +83,7 @@ export default function EditPatientProfile() {
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
         });
 
-        if (!result.canceled) {
-            setSelectedImage(result.assets[0] ?? null);
-        } else {
-            alert("You have cancelled the image picker.");
-            console.log(user?.imageUrl ?? "");
-        }
+        if (!result.canceled) setSelectedImage(result.assets[0] ?? null);
     };
 
     if (createPatient.isLoading || !user) {
@@ -105,6 +100,9 @@ export default function EditPatientProfile() {
         >
             <ScreenWrapper>
                 <Title title={t({ message: "Onboard" })} />
+                <Text className="mt-4 font-nunito-sans text-lg text-slate-700">
+                    Profile picture
+                </Text>
                 <View className="flex flex-row items-center justify-center">
                     <TouchableOpacity
                         onPress={pickImageAsync}
