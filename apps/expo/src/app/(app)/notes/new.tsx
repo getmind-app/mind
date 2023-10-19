@@ -1,5 +1,6 @@
 import { useState } from "react";
 import {
+    ActivityIndicator,
     KeyboardAvoidingView,
     Platform,
     ScrollView,
@@ -34,8 +35,6 @@ export default function NewNote() {
         });
     }
 
-    if (isLoading) return <View className="h-full bg-off-white"></View>;
-
     return (
         <KeyboardAvoidingView
             style={{ flex: 1 }}
@@ -53,11 +52,16 @@ export default function NewNote() {
                                 <Trans>New note</Trans>
                             </Text>
                             <TouchableOpacity onPress={handleNewNote}>
-                                <View className="rounded-xl bg-blue-500">
-                                    <View className="flex flex-row items-center px-4 py-2 align-middle">
+                                <View
+                                    className={`rounded-xl bg-blue-500 ${
+                                        isLoading && "opacity-75"
+                                    }`}
+                                >
+                                    <View className="flex flex-row items-center gap-2 px-4 py-2 align-middle">
                                         <Text className="font-nunito-sans-bold text-base text-white">
                                             <Trans>Create</Trans>
                                         </Text>
+                                        {isLoading && <ActivityIndicator />}
                                     </View>
                                 </View>
                             </TouchableOpacity>
