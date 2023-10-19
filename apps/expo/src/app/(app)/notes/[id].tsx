@@ -10,6 +10,7 @@ import { useGlobalSearchParams, useRouter } from "expo-router";
 import { Trans } from "@lingui/macro";
 
 import { Header } from "../../../components/Header";
+import { Loading } from "../../../components/Loading";
 import { api } from "../../../utils/api";
 
 // TODO: no futuro precisamos deixar editar a nota
@@ -35,7 +36,12 @@ export default function Note() {
         mutate({ id: String(params.id) });
     }
 
-    if (isLoading) return <View className="h-full bg-off-white"></View>;
+    if (isLoading)
+        return (
+            <View className="flex h-full items-center justify-center bg-off-white">
+                <Loading size={"large"} />
+            </View>
+        );
 
     if (isError) return <Text>Error: {JSON.stringify(error)}</Text>;
 
@@ -46,7 +52,7 @@ export default function Note() {
             style={{ flex: 1 }}
             behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
-            <Header />
+            <Header onBack={() => router.push("/")} />
             <View className="bg-off-white pb-4 pt-6">
                 <View className="h-full px-8 py-2">
                     <ScrollView

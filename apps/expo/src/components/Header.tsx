@@ -7,10 +7,19 @@ type HeaderProps = {
     share?: boolean;
     goBack?: boolean;
     onShare?: () => void;
+    onBack?: () => void;
 };
 
-export const Header = ({ title, share, onShare }: HeaderProps) => {
+export const Header = ({ title, share, onShare, onBack }: HeaderProps) => {
     const router = useRouter();
+
+    function handleBack() {
+        if (onBack) {
+            onBack();
+        } else {
+            router.back();
+        }
+    }
 
     return (
         <Stack.Screen
@@ -19,7 +28,7 @@ export const Header = ({ title, share, onShare }: HeaderProps) => {
                     <MaterialIcons
                         size={32}
                         name="chevron-left"
-                        onPress={() => router.back()}
+                        onPress={handleBack}
                     />
                 ),
                 headerRight: () =>
