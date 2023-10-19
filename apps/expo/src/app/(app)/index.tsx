@@ -243,8 +243,8 @@ function LastNotes() {
                 )
             ) : (
                 <Card>
-                    <View className="flex w-full flex-row items-center justify-between align-middle">
-                        <View className="flex flex-col">
+                    <View className="flex w-full flex-row items-center justify-between gap-2 align-middle">
+                        <View className="flex w-64 flex-col">
                             <Text className="font-nunito-sans-bold text-xl text-slate-500">
                                 <Trans>You have no notes</Trans>
                             </Text>
