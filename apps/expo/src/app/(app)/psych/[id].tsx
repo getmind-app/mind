@@ -3,7 +3,11 @@ import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { type Float } from "react-native/Libraries/Types/CodegenTypes";
 import { Image } from "expo-image";
 import * as Linking from "expo-linking";
-import { useGlobalSearchParams, useRouter, useSearchParams } from "expo-router";
+import {
+    useGlobalSearchParams,
+    useRouter,
+    useSearchParams,
+} from "expo-router";
 import { Trans, t } from "@lingui/macro";
 
 import { Header } from "../../../components/Header";
@@ -16,6 +20,7 @@ import { type Modality } from ".prisma/client";
 
 export default function TherapistProfile() {
     const params = useGlobalSearchParams();
+    const router = useRouter();
     const { data, isLoading, isError } = api.therapists.findById.useQuery({
         id: params.id as string,
     });
@@ -40,6 +45,7 @@ export default function TherapistProfile() {
                 onShare={() =>
                     void getShareLink({ id: data?.id, name: data?.name })
                 }
+                onBack={() => router.push({ pathname: "/search" })}
             />
             <ScrollView
                 showsVerticalScrollIndicator={false}
