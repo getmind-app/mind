@@ -14,7 +14,7 @@
                 "PROFILE": "dev"
             },
             "android": {
-                "buildType": "apk"
+                "buildType": "app-bundle"
             }
         },
         "preview": {
