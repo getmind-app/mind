@@ -23,7 +23,7 @@ export default function Note() {
         id: String(params.id),
     });
 
-    const { mutate } = api.notes.delete.useMutation({
+    const deleteNote = api.notes.delete.useMutation({
         onSuccess: async () => {
             await utils.notes.findByUserId.invalidate();
             router.push({
@@ -32,8 +32,8 @@ export default function Note() {
         },
     });
 
-    function handleDelete() {
-        mutate({ id: String(params.id) });
+    async function handleDelete() {
+        deleteNote.mutateAsync({ id: String(params.id) });
     }
 
     if (isLoading)
@@ -69,11 +69,18 @@ export default function Note() {
                                 })}
                             </Text>
                             <TouchableOpacity onPress={handleDelete}>
-                                <View className="rounded-xl bg-red-500">
-                                    <View className="flex flex-row items-center px-4 py-2 align-middle">
+                                <View
+                                    className={`rounded-xl bg-red-500 ${
+                                        deleteNote.isLoading && "opacity-75"
+                                    }`}
+                                >
+                                    <View className="flex flex-row items-center gap-2 px-4 py-2 align-middle">
                                         <Text className="font-nunito-sans-bold text-base text-white">
                                             <Trans>Delete</Trans>
                                         </Text>
+                                        {deleteNote.isLoading && (
+                                            <Loading color={"#fff"} />
+                                        )}
                                     </View>
                                 </View>
                             </TouchableOpacity>
