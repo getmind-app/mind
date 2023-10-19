@@ -19,6 +19,8 @@ export default function NewNote() {
     const router = useRouter();
     const [content, setContent] = useState("");
     const utils = api.useContext();
+    // todo: dont use junky solution
+    const isValid = content && content.length > 1;
 
     const { mutate, isLoading } = api.notes.create.useMutation({
         onSuccess: async () => {
@@ -30,9 +32,11 @@ export default function NewNote() {
     });
 
     function handleNewNote() {
-        mutate({
-            content: content,
-        });
+        if (isValid) {
+            mutate({
+                content: content,
+            });
+        }
     }
 
     return (
@@ -54,7 +58,7 @@ export default function NewNote() {
                             <TouchableOpacity onPress={handleNewNote}>
                                 <View
                                     className={`rounded-xl bg-blue-500 ${
-                                        isLoading && "opacity-75"
+                                        (isLoading || !isValid) && "opacity-75"
                                     }`}
                                 >
                                     <View className="flex flex-row items-center gap-2 px-4 py-2 align-middle">
