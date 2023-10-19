@@ -322,8 +322,8 @@ function HourPicker({
             setExpanded={setExpanded}
             maxHeight={date ? 60 : 30}
         >
-            <ScrollView horizontal={true}>
-                <View className="flex flex-col pt-2">
+            <ScrollView className="w-full" horizontal={true}>
+                <View className="flex w-full flex-row pt-2">
                     {!date && (
                         <Text className="font-nunito-sans text-[#666666]">
                             <Trans>Please select a date</Trans>
