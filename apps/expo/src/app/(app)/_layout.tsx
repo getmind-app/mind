@@ -1,5 +1,5 @@
 import { Image, View } from "react-native";
-import { Redirect, Tabs } from "expo-router";
+import { Redirect, Tabs, useRootNavigationState } from "expo-router";
 import { useClerk } from "@clerk/clerk-expo";
 import { AntDesign } from "@expo/vector-icons";
 
@@ -27,6 +27,8 @@ function TabBarIconWrapper({
 
 export default function AppRouter() {
     const { user } = useClerk();
+    const rootNavigationState = useRootNavigationState();
+
     const userHasImage = api.users.userHasProfileImage.useQuery(
         {
             userId: String(user?.id),
@@ -38,6 +40,21 @@ export default function AppRouter() {
             refetchOnReconnect: false,
         },
     );
+
+    // https://github.com/expo/router/issues/740
+    if (!rootNavigationState.key) {
+        return (
+            <View
+                style={{
+                    flex: 1,
+                    justifyContent: "center",
+                    alignItems: "center",
+                }}
+            >
+                <Loading size={"large"} />
+            </View>
+        );
+    }
 
     if (!user?.publicMetadata?.role) {
         return <Redirect href={"/onboard"} />;
