@@ -20,6 +20,7 @@ import { FormTextInput } from "../../../components/FormTextInput";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
 import { Title } from "../../../components/Title";
 import { usePatientMutations } from "../../../hooks/patient/usePatientMutations";
+import { Loading } from "../../../components/Loading";
 
 export default function EditPatientProfile() {
     const { user } = useUser();
@@ -88,8 +89,14 @@ export default function EditPatientProfile() {
 
     if (createPatient.isLoading || !user) {
         return (
-            <View className="flex h-full flex-col items-center justify-center">
-                <Text className="text-2xl">Loading...</Text>
+            <View
+                style={{
+                    flex: 1,
+                    justifyContent: "center",
+                    alignItems: "center",
+                }}
+            >
+                <Loading size={"large"} />
             </View>
         );
     }
@@ -101,7 +108,7 @@ export default function EditPatientProfile() {
             <ScreenWrapper>
                 <Title title={t({ message: "Onboard" })} />
                 <Text className="mt-4 font-nunito-sans text-lg text-slate-700">
-                    Profile picture
+                    <Trans>Profile picture</Trans>
                 </Text>
                 <View className="flex flex-row items-center justify-center">
                     <TouchableOpacity
