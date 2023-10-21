@@ -68,7 +68,7 @@ const defineConfig = (): ExpoConfig => ({
         },
         package: "app.getmind",
         googleServicesFile: "./google-services.json",
-        versionCode: 4,
+        versionCode: 5,
         intentFilters: [
             {
                 action: "VIEW",
