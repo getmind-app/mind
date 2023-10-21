@@ -13,8 +13,9 @@ export function useAuthProviders() {
 
     const onGooglePress = React.useCallback(async () => {
         try {
-            const { createdSessionId, setActive, signIn } =
-                await googleOAuthFlow();
+            const { createdSessionId, setActive } = await googleOAuthFlow({
+                redirectUrl,
+            });
 
             if (createdSessionId && setActive) {
                 setActive({ session: createdSessionId });
@@ -31,7 +32,9 @@ export function useAuthProviders() {
 
     const onApplePress = React.useCallback(async () => {
         try {
-            const { createdSessionId, setActive } = await appleOAuthFlow();
+            const { createdSessionId, setActive } = await appleOAuthFlow({
+                redirectUrl,
+            });
             if (createdSessionId && setActive) {
                 setActive({ session: createdSessionId });
             } else {
