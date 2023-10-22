@@ -82,10 +82,17 @@ export default function UserProfileScreen() {
                         </Text>
                         <MenuItem
                             isFirst={true}
-                            isLast={true}
                             icon="refresh"
                             label={t({ message: "Reset user metadata" })}
                             onPress={clearUserMetaData}
+                        />
+                        <MenuItem
+                            isLast={true}
+                            icon="person"
+                            label={"Patient Profile"}
+                            onPress={() => {
+                                router.push("/(patient)/profile");
+                            }}
                         />
                     </>
                 ) : null}
