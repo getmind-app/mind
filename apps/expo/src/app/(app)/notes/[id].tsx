@@ -11,6 +11,7 @@ import { Trans } from "@lingui/macro";
 
 import { Header } from "../../../components/Header";
 import { Loading } from "../../../components/Loading";
+import { ScreenWrapper } from "../../../components/ScreenWrapper";
 import { api } from "../../../utils/api";
 
 // TODO: no futuro precisamos deixar editar a nota
@@ -52,45 +53,43 @@ export default function Note() {
             style={{ flex: 1 }}
             behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
-            <Header onBack={() => router.push("/")} />
-            <View className="bg-off-white pb-4 pt-6">
-                <View className="h-full px-8 py-2">
-                    <ScrollView
-                        className="min-h-max"
-                        showsVerticalScrollIndicator={false}
-                    >
-                        <View className="flex flex-row items-center justify-between">
-                            <Text className="font-nunito-sans-bold text-3xl ">
-                                <Text className="text-blue-500">
-                                    {data.createdAt.getDate()}
-                                </Text>{" "}
-                                {data.createdAt.toLocaleString("en", {
-                                    month: "long",
-                                })}
-                            </Text>
-                            <TouchableOpacity onPress={handleDelete}>
-                                <View
-                                    className={`rounded-xl bg-red-500 ${
-                                        deleteNote.isLoading && "opacity-75"
-                                    }`}
-                                >
-                                    <View className="flex flex-row items-center gap-2 px-4 py-2 align-middle">
-                                        <Text className="font-nunito-sans-bold text-base text-white">
-                                            <Trans>Delete</Trans>
-                                        </Text>
-                                        {deleteNote.isLoading && (
-                                            <Loading color={"#fff"} />
-                                        )}
-                                    </View>
-                                </View>
-                            </TouchableOpacity>
-                        </View>
-                        <Text className="w-full py-4 font-nunito-sans text-lg">
-                            {data.content}
+            <ScreenWrapper>
+                <Header onBack={() => router.push("/")} />
+                <ScrollView
+                    className="min-h-max"
+                    showsVerticalScrollIndicator={false}
+                >
+                    <View className="flex flex-row items-center justify-between">
+                        <Text className="font-nunito-sans-bold text-3xl ">
+                            <Text className="text-blue-500">
+                                {data.createdAt.getDate()}
+                            </Text>{" "}
+                            {data.createdAt.toLocaleString("en", {
+                                month: "long",
+                            })}
                         </Text>
-                    </ScrollView>
-                </View>
-            </View>
+                        <TouchableOpacity onPress={handleDelete}>
+                            <View
+                                className={`rounded-xl bg-red-500 ${
+                                    deleteNote.isLoading && "opacity-75"
+                                }`}
+                            >
+                                <View className="flex flex-row items-center gap-2 px-4 py-2 align-middle">
+                                    <Text className="font-nunito-sans-bold text-base text-white">
+                                        <Trans>Delete</Trans>
+                                    </Text>
+                                    {deleteNote.isLoading && (
+                                        <Loading color={"#fff"} />
+                                    )}
+                                </View>
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+                    <Text className="w-full py-4 font-nunito-sans text-lg">
+                        {data.content}
+                    </Text>
+                </ScrollView>
+            </ScreenWrapper>
         </KeyboardAvoidingView>
     );
 }
