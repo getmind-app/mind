@@ -17,10 +17,11 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { FormTextInput } from "../../../components/FormTextInput";
+import { LargeButton } from "../../../components/LargeButton";
+import { Loading } from "../../../components/Loading";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
 import { Title } from "../../../components/Title";
 import { usePatientMutations } from "../../../hooks/patient/usePatientMutations";
-import { Loading } from "../../../components/Loading";
 
 export default function EditPatientProfile() {
     const { user } = useUser();
@@ -87,7 +88,7 @@ export default function EditPatientProfile() {
         if (!result.canceled) setSelectedImage(result.assets[0] ?? null);
     };
 
-    if (createPatient.isLoading || !user) {
+    if (!user) {
         return (
             <View
                 style={{
@@ -110,49 +111,58 @@ export default function EditPatientProfile() {
                 <Text className="mt-4 font-nunito-sans text-lg text-slate-700">
                     <Trans>Profile picture</Trans>
                 </Text>
-                <View className="flex flex-row items-center justify-center">
-                    <TouchableOpacity
-                        onPress={pickImageAsync}
-                        className="mb-2 mt-4 flex h-24 w-24 flex-row items-center justify-center rounded-full bg-gray-200"
-                    >
-                        {selectedImage || user?.imageUrl ? (
-                            <Image
-                                className="rounded-full"
-                                alt={`${user?.firstName} profile picture`}
-                                source={{
-                                    uri:
-                                        selectedImage?.uri ??
-                                        user?.imageUrl ??
-                                        "",
-                                    width: 96,
-                                    height: 96,
-                                }}
-                            />
-                        ) : (
-                            <AntDesign name="user" size={24} color="black" />
-                        )}
-                    </TouchableOpacity>
-                </View>
-                <FormTextInput
-                    control={control}
-                    name="name"
-                    title={t({ message: "Name" })}
-                    placeholder="John Doe"
-                    inputMode="text"
-                />
-                <TouchableOpacity className="mb-4 w-full" onPress={onSubmit}>
-                    <View
-                        className={`mt-4 flex w-full items-center justify-center rounded-xl ${
-                            isValid ? "bg-blue-500" : "bg-blue-200"
-                        } py-2`}
-                    >
-                        <Text
-                            className={`font-nunito-sans-bold text-lg text-white`}
-                        >
-                            <Trans>Next</Trans>
-                        </Text>
+                <View
+                    style={{
+                        flex: 1,
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        marginBottom: 24,
+                    }}
+                >
+                    <View>
+                        <View className="flex flex-row items-center justify-center">
+                            <TouchableOpacity
+                                onPress={pickImageAsync}
+                                className="mb-2 mt-4 flex h-24 w-24 flex-row items-center justify-center rounded-full bg-gray-200"
+                            >
+                                {selectedImage || user?.imageUrl ? (
+                                    <Image
+                                        className="rounded-full"
+                                        alt={`${user?.firstName} profile picture`}
+                                        source={{
+                                            uri:
+                                                selectedImage?.uri ??
+                                                user?.imageUrl ??
+                                                "",
+                                            width: 96,
+                                            height: 96,
+                                        }}
+                                    />
+                                ) : (
+                                    <AntDesign
+                                        name="user"
+                                        size={24}
+                                        color="black"
+                                    />
+                                )}
+                            </TouchableOpacity>
+                        </View>
+                        <FormTextInput
+                            control={control}
+                            name="name"
+                            title={t({ message: "Name" })}
+                            placeholder="John Doe"
+                            inputMode="text"
+                        />
                     </View>
-                </TouchableOpacity>
+                    <LargeButton
+                        disabled={!isValid}
+                        loading={createPatient.isLoading}
+                        onPress={onSubmit}
+                    >
+                        <Trans>Next</Trans>
+                    </LargeButton>
+                </View>
             </ScreenWrapper>
         </KeyboardAvoidingView>
     );
@@ -170,29 +180,3 @@ const schema = z.object({
         })
         .min(2, "Profile picture must be at least 2 characters"),
 });
-
-// function that converts base64 string to BlobPart[]
-const imageToBlob = (imageSelected: ImagePicker.ImagePickerAsset | null) => {
-    if (!imageSelected) {
-        return null;
-    }
-
-    const byteCharacters = atob(imageSelected.base64 ?? "");
-    const byteArrays = [];
-
-    for (let offset = 0; offset < byteCharacters.length; offset += 512) {
-        const slice = byteCharacters.slice(offset, offset + 512);
-
-        const byteNumbers = new Array(slice.length);
-        for (let i = 0; i < slice.length; i++) {
-            byteNumbers[i] = slice.charCodeAt(i);
-        }
-
-        const byteArray = new Uint8Array(byteNumbers);
-        byteArrays.push(byteArray);
-    }
-
-    return new Blob(byteArrays, {
-        type: `image/${imageSelected.uri.split(".")[1]}`,
-    });
-};
