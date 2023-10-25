@@ -35,32 +35,27 @@ export default function Index() {
     };
 
     return (
-        <ScreenWrapper>
-            <ScrollView
-                showsVerticalScrollIndicator={false}
-                refreshControl={
-                    <RefreshControl
-                        refreshing={refreshing}
-                        onRefresh={onRefresh}
-                    />
-                }
-            >
-                <Title title={t({ message: "Next session" })} />
+        <ScreenWrapper
+            showsVerticalScrollIndicator={false}
+            refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+        >
+            <Title title={t({ message: "Next session" })} />
 
-                <NextAppointment />
-                <View className="mb-2 flex flex-row items-center justify-between pt-8 align-middle">
-                    <Title title={t({ message: "Last notes" })} />
+            <NextAppointment />
+            <View className="mb-2 flex flex-row items-center justify-between pt-8 align-middle">
+                <Title title={t({ message: "Last notes" })} />
 
-                    <TouchableOpacity onPress={() => router.push("/notes/new")}>
-                        <View className="rounded-lg bg-blue-500 px-3 py-1 shadow-sm">
-                            <Text className="text-center font-nunito-sans-bold text-base text-white">
-                                <Trans>New</Trans>
-                            </Text>
-                        </View>
-                    </TouchableOpacity>
-                </View>
-                <LastNotes />
-            </ScrollView>
+                <TouchableOpacity onPress={() => router.push("/notes/new")}>
+                    <View className="rounded-lg bg-blue-500 px-3 py-1 shadow-sm">
+                        <Text className="text-center font-nunito-sans-bold text-base text-white">
+                            <Trans>New</Trans>
+                        </Text>
+                    </View>
+                </TouchableOpacity>
+            </View>
+            <LastNotes />
         </ScreenWrapper>
     );
 }
