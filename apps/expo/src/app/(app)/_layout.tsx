@@ -4,7 +4,7 @@ import { useClerk } from "@clerk/clerk-expo";
 import { AntDesign } from "@expo/vector-icons";
 
 import { Loading } from "../../components/Loading";
-import { api } from "../../utils/api";
+import { useUserHasProfileImage } from "../../hooks/user/useUserHasProfileImage";
 
 const tabBarActiveTintColor = "#2563eb"; // blue 600
 const tabBarInactiveTintColor = "black";
@@ -28,18 +28,7 @@ function TabBarIconWrapper({
 export default function AppRouter() {
     const { user } = useClerk();
     const rootNavigationState = useRootNavigationState();
-
-    const userHasImage = api.users.userHasProfileImage.useQuery(
-        {
-            userId: String(user?.id),
-        },
-        {
-            staleTime: Infinity,
-            refetchOnWindowFocus: false,
-            refetchOnMount: false,
-            refetchOnReconnect: false,
-        },
-    );
+    const userHasImage = useUserHasProfileImage();
 
     // https://github.com/expo/router/issues/740
     if (!rootNavigationState.key) {
