@@ -17,7 +17,7 @@ export function LargeButton({
                 width: "100%",
                 backgroundColor:
                     props.disabled || props.loading ? "#bfdbfe" : "#3b82f6",
-                borderRadius: 8,
+                borderRadius: 10,
                 paddingVertical: 8,
                 alignItems: "center",
                 justifyContent: "center",
@@ -31,12 +31,14 @@ export function LargeButton({
                     justifyContent: "center",
                 }}
             >
-                <Loading
-                    style={{
-                        position: "absolute",
-                        left: -24,
-                    }}
-                />
+                {props.loading && (
+                    <Loading
+                        style={{
+                            position: "absolute",
+                            left: -24,
+                        }}
+                    />
+                )}
                 <Text
                     className={`relative font-nunito-sans-bold text-lg text-white`}
                 >
