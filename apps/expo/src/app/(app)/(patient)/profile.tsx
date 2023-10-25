@@ -78,6 +78,7 @@ export default function EditPatientProfile() {
             profilePictureUrl: image?.publicUrl ?? user?.imageUrl ?? "",
             userId: String(user?.id),
         });
+        userHasProfileImage.remove();
     });
 
     const pickImageAsync = async () => {
