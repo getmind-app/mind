@@ -22,10 +22,12 @@ import { Loading } from "../../../components/Loading";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
 import { Title } from "../../../components/Title";
 import { usePatientMutations } from "../../../hooks/patient/usePatientMutations";
+import { useUserHasProfileImage } from "../../../hooks/user/useUserHasProfileImage";
 
 export default function EditPatientProfile() {
     const { user } = useUser();
     const router = useRouter();
+    const userHasProfileImage = useUserHasProfileImage();
     const [selectedImage, setSelectedImage] =
         useState<ImagePicker.ImagePickerAsset | null>(null);
     const { createPatient } = usePatientMutations({
@@ -63,9 +65,10 @@ export default function EditPatientProfile() {
         }
 
         if (data.name !== user?.fullName) {
+            const [firstName, lastName] = data.name.split(" ");
             await user?.update({
-                firstName: data.name.split(" ")[0],
-                lastName: data.name.split(" ")[1],
+                firstName,
+                lastName,
             });
         }
 
@@ -116,7 +119,6 @@ export default function EditPatientProfile() {
                         flex: 1,
                         justifyContent: "space-between",
                         alignItems: "center",
-                        marginBottom: 24,
                     }}
                 >
                     <View>
@@ -125,7 +127,7 @@ export default function EditPatientProfile() {
                                 onPress={pickImageAsync}
                                 className="mb-2 mt-4 flex h-24 w-24 flex-row items-center justify-center rounded-full bg-gray-200"
                             >
-                                {selectedImage || user?.imageUrl ? (
+                                {userHasProfileImage.data || selectedImage ? (
                                     <Image
                                         className="rounded-full"
                                         alt={`${user?.firstName} profile picture`}
