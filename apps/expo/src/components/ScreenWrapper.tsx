@@ -1,10 +1,11 @@
-import { SafeAreaView, View } from "react-native";
+import { SafeAreaView, ScrollView } from "react-native";
+
+type ScreenWrapperProps = ConstructorParameters<typeof ScrollView>[0];
 
 export const ScreenWrapper = ({
     children,
-}: {
-    children: React.ReactNode;
-}): JSX.Element => {
+    ...rest
+}: ScreenWrapperProps): JSX.Element => {
     return (
         <SafeAreaView
             style={{
@@ -12,16 +13,16 @@ export const ScreenWrapper = ({
                 backgroundColor: "#f8f8f8",
             }}
         >
-            <View
+            <ScrollView
                 style={{
                     flex: 1,
-                    padding: 30,
                     paddingHorizontal: 16,
-                    paddingTop: 48,
+                    paddingTop: 64,
                 }}
+                {...rest}
             >
                 {children}
-            </View>
+            </ScrollView>
         </SafeAreaView>
     );
 };
