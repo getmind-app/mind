@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
     Image,
+    RefreshControl,
     ScrollView,
     Text,
     TextInput,
@@ -13,15 +14,33 @@ import { Trans, t } from "@lingui/macro";
 import { ProfileSkeleton } from "../../components/ProfileSkeleton";
 import { ScreenWrapper } from "../../components/ScreenWrapper";
 import { Title } from "../../components/Title";
+import { useSearchTherapistByName } from "../../hooks/search/useSearchTherapistByName";
 import { useDebounce } from "../../hooks/util/useDebounce";
 import { api } from "../../utils/api";
 
 export default function SearchScreen() {
     const [search, setSearch] = useState("");
+    const [refreshing, setRefreshing] = useState(false);
     const debouncedValue = useDebounce(search, 500);
+    const utils = api.useContext();
+
+    function onRefresh() {
+        setRefreshing(true);
+        utils.therapists.findByNameLike.invalidate({
+            name: debouncedValue,
+        });
+        setTimeout(() => {
+            setRefreshing(false);
+        }, 500);
+    }
 
     return (
-        <ScreenWrapper>
+        <ScreenWrapper
+            showsVerticalScrollIndicator={false}
+            refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+        >
             <Title title={t({ message: "Search" })} />
 
             <View className="flex flex-row items-center justify-between pt-2 align-middle">
@@ -54,8 +73,9 @@ export default function SearchScreen() {
 }
 
 function List({ search }: { search: string }) {
-    const { data, isLoading, isError, error } =
-        api.therapists.findByNameLike.useQuery({ name: search });
+    const { data, isLoading, isError } = useSearchTherapistByName({
+        name: search,
+    });
     const router = useRouter();
 
     if (isError) {
