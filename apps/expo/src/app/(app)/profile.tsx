@@ -37,7 +37,7 @@ export default function UserProfileScreen() {
     return (
         <ScreenWrapper>
             <View className="flex flex-row items-center gap-x-4 pt-4 align-middle">
-                {userHasProfileImage.data && false ? (
+                {userHasProfileImage.data ? (
                     <Image
                         className="rounded-full"
                         alt={`${user?.firstName}'s profile picture`}
