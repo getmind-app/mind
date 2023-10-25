@@ -10,17 +10,19 @@ import {
 import * as Linking from "expo-linking";
 import { useRouter } from "expo-router";
 import { useClerk } from "@clerk/clerk-expo";
-import { MaterialIcons } from "@expo/vector-icons";
+import { AntDesign, MaterialIcons } from "@expo/vector-icons";
 import { type Icon } from "@expo/vector-icons/build/createIconSet";
 import { t } from "@lingui/macro";
 
 import { ScreenWrapper } from "../../components/ScreenWrapper";
+import { useUserHasProfileImage } from "../../hooks/user/useUserHasProfileImage";
 import { api } from "../../utils/api";
 
 export default function UserProfileScreen() {
     const router = useRouter();
     const { user, signOut } = useClerk();
     const { mutateAsync } = api.users.clearMetadata.useMutation({});
+    const userHasProfileImage = useUserHasProfileImage();
 
     async function clearUserMetaData(): Promise<void> {
         console.log("Clearing user metadata");
@@ -35,15 +37,27 @@ export default function UserProfileScreen() {
     return (
         <ScreenWrapper>
             <View className="flex flex-row items-center gap-x-4 pt-4 align-middle">
-                <Image
-                    className="rounded-full"
-                    alt={`${user?.firstName}'s profile picture`}
-                    source={{
-                        uri: user?.profileImageUrl,
-                        width: 72,
-                        height: 72,
-                    }}
-                />
+                {userHasProfileImage.data && false ? (
+                    <Image
+                        className="rounded-full"
+                        alt={`${user?.firstName}'s profile picture`}
+                        source={{
+                            uri: user?.profileImageUrl,
+                            width: 72,
+                            height: 72,
+                        }}
+                    />
+                ) : (
+                    <View
+                        style={{
+                            backgroundColor: "#e5e7eb",
+                            padding: 24,
+                            borderRadius: 100,
+                        }}
+                    >
+                        <AntDesign name="user" size={24} color="black" />
+                    </View>
+                )}
                 <View className="flex flex-col">
                     <View>
                         {user?.firstName && (
