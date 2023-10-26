@@ -1,9 +1,27 @@
-import { View } from "react-native";
+import { SafeAreaView, View } from "react-native";
 
+type ScreenWrapperProps = ConstructorParameters<typeof View>[0];
 export const ScreenWrapper = ({
     children,
-}: {
-    children: React.ReactNode;
-}): JSX.Element => {
-    return <View className="h-full bg-off-white px-4 pt-24">{children}</View>;
+    ...rest
+}: ScreenWrapperProps): JSX.Element => {
+    return (
+        <SafeAreaView
+            style={{
+                flex: 1,
+                backgroundColor: "#f8f8f8",
+            }}
+        >
+            <View
+                style={{
+                    flex: 1,
+                    paddingHorizontal: 16,
+                    paddingTop: 64,
+                }}
+                {...rest}
+            >
+                {children}
+            </View>
+        </SafeAreaView>
+    );
 };
