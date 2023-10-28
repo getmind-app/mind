@@ -152,7 +152,7 @@ export default function SessionPayment() {
                                 )}
                             </Text>
                             <Text className=" font-nunito-sans text-[#666666]">
-                                {t({ message: "US$" })}{" "}
+                                {"R$ "}
                                 {data?.therapist.hourlyRate}
                             </Text>
                         </View>
@@ -163,8 +163,7 @@ export default function SessionPayment() {
                         </Text>
                         <Text className="font-nunito-sans">
                             {data?.therapist && data?.therapist.hourlyRate
-                                ? t({ message: "US$ " }) +
-                                  data.therapist.hourlyRate
+                                ? "R$ " + data.therapist.hourlyRate
                                 : "N/A"}
                         </Text>
                     </View>

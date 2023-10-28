@@ -176,7 +176,7 @@ function ScheduleBar({
             <View className="flex flex-row items-center justify-between ">
                 <View className="flex flex-col">
                     <Text className="font-nunito-sans-bold text-base text-white shadow-sm">
-                        $ {hourlyRate}
+                        R$ {hourlyRate}
                     </Text>
                     <Text className="font-nunito-sans text-base text-white">
                         {modalities.length === 1 ? (
