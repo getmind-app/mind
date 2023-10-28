@@ -6,6 +6,8 @@ import Link from "next/link";
 import { BsArrowRightShort } from "react-icons/bs";
 import { HiOutlineCalendar, HiOutlineCash, HiSearch } from "react-icons/hi";
 
+import AppStore from "../../assets/app_store.png";
+import PlayStore from "../../assets/google_play.png";
 import Icon from "../../assets/icon.png";
 import Mockup from "../../assets/render.png";
 
@@ -71,7 +73,7 @@ const Home: NextPage = () => {
                             />
                         </div>
                     </div>
-                    <div className="flex items-center justify-center gap-4">
+                    {/* <div className="flex items-center justify-center gap-4">
                         <div className="flex w-[23rem] flex-col gap-6">
                             <HiSearch size={40} color="#3b82f6" />
 
@@ -100,27 +102,32 @@ const Home: NextPage = () => {
                                 rest.
                             </p>
                         </div>
+                    </div> */}
+                </div>
+                <div className="hidden md:block">
+                    <p className="text-center text-lg md:pb-2">Available on</p>
+                    <div className="flex items-center gap-2">
+                        <Link href="https://apps.apple.com/us/app/mind/id6467673373">
+                            <div className="transition duration-300 hover:opacity-70">
+                                <Image
+                                    className="w-24 md:w-36"
+                                    src={AppStore}
+                                    alt="App store"
+                                />
+                            </div>
+                        </Link>
+                        <Link href="https://play.google.com/store/apps/details?id=app.getmind">
+                            <div className="transition duration-300 hover:opacity-70">
+                                {" "}
+                                <Image
+                                    className="w-28 md:w-40"
+                                    src={PlayStore}
+                                    alt="Play store"
+                                />
+                            </div>
+                        </Link>
                     </div>
                 </div>
-                {/* <div className="hidden md:block">
-                    <p className="text-center text-lg md:pb-2">Soon on</p>
-                    <div className="flex items-center gap-2">
-                        <div>
-                            <Image
-                                className="w-24 md:w-36"
-                                src={AppStore}
-                                alt="App store"
-                            />
-                        </div>
-                        <div>
-                            <Image
-                                className="w-28 md:w-40"
-                                src={PlayStore}
-                                alt="Play store"
-                            />
-                        </div>
-                    </div>
-                </div> */}
             </main>
         </>
     );
