@@ -40,6 +40,7 @@ export default function TherapistSchedule() {
     const [appointment, setAppointment] = useAtom(appointmentAtom);
     const router = useRouter();
     const { id } = useLocalSearchParams();
+    const { data: patient } = api.patients.findByUserId.useQuery();
 
     const { data, isLoading, isError, error } =
         api.therapists.findById.useQuery({
@@ -55,7 +56,13 @@ export default function TherapistSchedule() {
         },
     });
 
-    const { data: patient } = api.patients.findByUserId.useQuery();
+    const availableTherapistHours =
+        api.therapists.getAvailableDatesAndHours.useQuery({
+            therapistId: String(id),
+        });
+
+    console.log(availableTherapistHours.data?.at(0));
+    console.log(availableTherapistHours.data?.at(0)?.dates);
 
     const allPicked = useMemo(() => {
         return Boolean(

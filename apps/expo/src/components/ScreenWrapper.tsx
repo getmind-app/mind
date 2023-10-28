@@ -16,7 +16,7 @@ export const ScreenWrapper = ({
                 style={{
                     flex: 1,
                     paddingHorizontal: 16,
-                    paddingTop: 64,
+                    paddingTop: 32,
                 }}
                 {...rest}
             >

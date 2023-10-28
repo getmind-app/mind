@@ -3,11 +3,7 @@ import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { type Float } from "react-native/Libraries/Types/CodegenTypes";
 import { Image } from "expo-image";
 import * as Linking from "expo-linking";
-import {
-    useGlobalSearchParams,
-    useRouter,
-    useSearchParams,
-} from "expo-router";
+import { useGlobalSearchParams, useRouter, useSearchParams } from "expo-router";
 import { Trans, t } from "@lingui/macro";
 
 import { Header } from "../../../components/Header";
@@ -109,7 +105,7 @@ export default function TherapistProfile() {
                             </TouchableOpacity>
                         </ContentCard>
                     )}
-                    <ContentCard title={t({ message: "Education" })} emoji="🎓">
+                    {/* <ContentCard title={t({ message: "Education" })} emoji="🎓">
                         Psicologia Cognitiva - Universidade Federal do Paraná
                     </ContentCard>
                     <ContentCard
@@ -118,7 +114,8 @@ export default function TherapistProfile() {
                     >
                         Terapia Cognitiva Comportamental, Mindfulness, Terapia
                         Psicodinâmica
-                    </ContentCard>
+                    </ContentCard> */}
+                    {/* COMENTADO ENQUANTO NÃO TEMOS INPUT DO TERAPEUTA */}
                 </View>
             </ScrollView>
             {data && (

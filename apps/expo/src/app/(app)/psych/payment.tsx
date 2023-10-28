@@ -17,6 +17,7 @@ function handleMode(x: string) {
 export default function SessionPayment() {
     const router = useRouter();
     const { appointmentId } = useLocalSearchParams();
+    const updateAppointment = api.appointments.update.useMutation();
     const [ready, setReady] = useState(false);
     const {
         initPaymentSheet,
@@ -70,6 +71,15 @@ export default function SessionPayment() {
             Alert.alert("Error", error.message);
         } else {
             setReady(true);
+            updateAppointment.mutate({
+                id: String(appointmentId),
+                isPaid: true,
+                modality: data.modality,
+                patientId: data.patient.id,
+                scheduledTo: data.scheduledTo,
+                status: data.status,
+                therapistId: data.therapist.id,
+            });
         }
     }
 

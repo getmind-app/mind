@@ -25,7 +25,7 @@ const defineConfig = (): ExpoConfig => ({
     name: "Mind",
     slug: "mind",
     scheme: "mind",
-    version: "1.0.0",
+    version: "1.0.1",
     orientation: "portrait",
     owner: "mind-therapy",
     icon: "./assets/icon.png",
@@ -40,7 +40,7 @@ const defineConfig = (): ExpoConfig => ({
     },
     assetBundlePatterns: ["**/*", "assets/*"],
     ios: {
-        buildNumber: "7",
+        buildNumber: "9",
         supportsTablet: true,
         bundleIdentifier: "app.getmind",
         infoPlist: {

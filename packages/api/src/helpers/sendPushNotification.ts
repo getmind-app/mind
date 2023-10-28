@@ -14,7 +14,6 @@ export async function sendPushNotification({
         sound: "default",
         title: title,
         body: body,
-        data: { someData: "goes here" },
     };
 
     await fetch("https://exp.host/--/api/v2/push/send", {

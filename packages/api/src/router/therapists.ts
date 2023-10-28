@@ -197,4 +197,119 @@ export const therapistsRouter = createTRPCRouter({
                 data: input,
             });
         }),
+    getAvailableDatesAndHours: protectedProcedure
+        .input(
+            z.object({
+                therapistId: z.string().min(1),
+            }),
+        )
+        .query(async ({ ctx, input }) => {
+            const therapist = await ctx.prisma.therapist.findUniqueOrThrow({
+                where: {
+                    id: input.therapistId,
+                },
+                include: {
+                    hours: true,
+                    appointments: true,
+                },
+            });
+
+            const weekDayMap: Record<WeekDay, number> = {
+                MONDAY: 1,
+                TUESDAY: 2,
+                WEDNESDAY: 3,
+                THURSDAY: 4,
+                FRIDAY: 5,
+            };
+
+            const availableDatesAndHoursInCurrentAndNextMonth: {
+                monthIndex: number;
+                dates: {
+                    date: Date;
+                    hours: number[];
+                }[];
+            }[] = [];
+
+            const currentDate = new Date();
+            const thirtyDaysFromNow = new Date(currentDate);
+            thirtyDaysFromNow.setDate(currentDate.getDate() + 30);
+
+            const currentDateCopy = new Date(currentDate);
+
+            const availableDatesAndHoursForCurrentMonth = [];
+            const availableDatesAndHoursForNextMonth = [];
+
+            while (currentDateCopy <= thirtyDaysFromNow) {
+                if (
+                    currentDateCopy.getDay() !== 0 && // Sunday
+                    currentDateCopy.getDay() !== 6 && // Saturday
+                    therapist.hours.some(
+                        // Therapist works on this day
+                        (hour) =>
+                            weekDayMap[hour.weekDay] ===
+                            currentDateCopy.getDay(),
+                    )
+                ) {
+                    // The hours that this therapist works on this day
+                    const hours = therapist.hours
+                        .filter(
+                            (hour) =>
+                                weekDayMap[hour.weekDay] ===
+                                currentDateCopy.getDay(),
+                        )
+                        .map((hour) => hour.startAt);
+
+                    // Check every hour if there is an appointment
+                    // If there is, remove it from the available hours
+
+                    for (let i = 0; i < therapist.appointments.length; i++) {
+                        const appointment = therapist.appointments[i];
+
+                        if (
+                            appointment?.scheduledTo.getDate() ===
+                                currentDateCopy.getDate() &&
+                            appointment?.scheduledTo.getMonth() ===
+                                currentDateCopy.getMonth() &&
+                            appointment.scheduledTo.getFullYear() ===
+                                currentDateCopy.getFullYear() &&
+                            appointment.status === "ACCEPTED"
+                        ) {
+                            const appointmentHour =
+                                appointment.scheduledTo.getHours();
+
+                            const index = hours.indexOf(appointmentHour);
+
+                            if (index > -1) {
+                                hours.splice(index, 1);
+                            }
+                        }
+                    }
+
+                    if (currentDateCopy.getMonth() === currentDate.getMonth()) {
+                        availableDatesAndHoursForCurrentMonth.push({
+                            date: new Date(currentDateCopy),
+                            hours,
+                        });
+                    } else {
+                        availableDatesAndHoursForNextMonth.push({
+                            date: new Date(currentDateCopy),
+                            hours,
+                        });
+                    }
+                }
+                currentDateCopy.setDate(currentDateCopy.getDate() + 1);
+            }
+
+            availableDatesAndHoursInCurrentAndNextMonth.push({
+                monthIndex: currentDate.getMonth(),
+                dates: availableDatesAndHoursForCurrentMonth,
+            });
+
+            availableDatesAndHoursInCurrentAndNextMonth.push({
+                monthIndex: thirtyDaysFromNow.getMonth(),
+                dates: availableDatesAndHoursForCurrentMonth,
+            });
+
+            return availableDatesAndHoursInCurrentAndNextMonth;
+        }),
 });

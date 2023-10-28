@@ -8,8 +8,8 @@
  */
 
 import type {
-  SignedInAuthObject,
-  SignedOutAuthObject,
+    SignedInAuthObject,
+    SignedOutAuthObject,
 } from "@clerk/nextjs/api";
 import { getAuth } from "@clerk/nextjs/server";
 import { TRPCError, initTRPC, type inferAsyncReturnType } from "@trpc/server";
@@ -30,14 +30,14 @@ import { prisma } from "@acme/db";
  *
  */
 type AuthContextProps = {
-  auth: SignedInAuthObject | SignedOutAuthObject;
+    auth: SignedInAuthObject | SignedOutAuthObject;
 };
 
 export const createContextInner = async ({ auth }: AuthContextProps) => {
-  return {
-    auth,
-    prisma,
-  };
+    return {
+        auth,
+        prisma,
+    };
 };
 
 /**
@@ -45,7 +45,7 @@ export const createContextInner = async ({ auth }: AuthContextProps) => {
  * @link https://trpc.io/docs/context
  **/
 export const createContext = async (opts: CreateNextContextOptions) => {
-  return await createContextInner({ auth: getAuth(opts.req) });
+    return await createContextInner({ auth: getAuth(opts.req) });
 };
 
 /**
@@ -55,24 +55,25 @@ export const createContext = async (opts: CreateNextContextOptions) => {
  * transformer
  */
 const t = initTRPC
-  .context<inferAsyncReturnType<typeof createContext>>()
-  .create({
-    transformer: superjson,
-    errorFormatter(opts) {
-      const { shape, error } = opts;
+    .context<inferAsyncReturnType<typeof createContext>>()
+    .create({
+        transformer: superjson,
+        errorFormatter(opts) {
+            const { shape, error } = opts;
 
-      return {
-        ...shape,
-        data: {
-          ...shape.data,
-          zodError:
-            error.code === "BAD_REQUEST" && error.cause instanceof ZodError
-              ? error.cause.flatten()
-              : null,
+            return {
+                ...shape,
+                data: {
+                    ...shape.data,
+                    zodError:
+                        error.code === "BAD_REQUEST" &&
+                        error.cause instanceof ZodError
+                            ? error.cause.flatten()
+                            : null,
+                },
+            };
         },
-      };
-    },
-  });
+    });
 
 /**
  * 3. ROUTER & PROCEDURE (THE IMPORTANT BIT)
@@ -101,14 +102,17 @@ export const publicProcedure = t.procedure;
  * procedure
  */
 const isAuthed = t.middleware(({ next, ctx }) => {
-  if (!ctx.auth.userId) {
-    throw new TRPCError({ code: "UNAUTHORIZED", message: "Not authenticated" });
-  }
-  return next({
-    ctx: {
-      auth: ctx.auth,
-    },
-  });
+    if (!ctx.auth.userId) {
+        throw new TRPCError({
+            code: "UNAUTHORIZED",
+            message: "Not authenticated",
+        });
+    }
+    return next({
+        ctx: {
+            auth: ctx.auth,
+        },
+    });
 });
 
 /**
