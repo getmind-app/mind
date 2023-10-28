@@ -142,12 +142,6 @@ function NextAppointment() {
                                     {data.therapist.name}
                                 </Text>
                             </View>
-                            <MaterialIcons
-                                style={{ paddingRight: 12 }}
-                                color="black"
-                                size={24}
-                                name="add"
-                            />
                         </View>
                     </View>
                     <TouchableOpacity
