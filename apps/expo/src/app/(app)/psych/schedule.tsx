@@ -56,13 +56,10 @@ export default function TherapistSchedule() {
         },
     });
 
-    const availableTherapistHours =
+    const { data: availableDates } =
         api.therapists.getAvailableDatesAndHours.useQuery({
             therapistId: String(id),
         });
-
-    console.log(availableTherapistHours.data?.at(0));
-    console.log(availableTherapistHours.data?.at(0)?.dates);
 
     const allPicked = useMemo(() => {
         return Boolean(
@@ -121,6 +118,7 @@ export default function TherapistSchedule() {
                         </Trans>
                     </Text>
                     <Calendar
+                        availableDates={availableDates}
                         onSelect={(newDate) =>
                             setAppointment({ ...appointment, date: newDate })
                         }
@@ -167,94 +165,68 @@ export default function TherapistSchedule() {
     );
 }
 
-const Calendar = ({ onSelect }: { onSelect: (n: Date) => void }) => {
+const Calendar = ({
+    onSelect,
+    availableDates,
+}: {
+    onSelect: (n: Date) => void;
+    availableDates:
+        | {
+              month: string;
+              dates: {
+                  date: Date;
+                  hours: number[];
+              }[];
+          }[]
+        | undefined;
+}) => {
     const [selectedDate, setSelectedDate] = useState<Date>();
 
-    const [currentMonthData, nextMonthData] = getNext30Days();
+    console.log(availableDates);
 
     return (
         <View className="rounded-lg bg-white pt-4">
-            {currentMonthData && currentMonthData.dates.length > 0 && (
-                <View>
-                    <Text className="relative left-1 w-full pb-3 font-nunito-sans-bold text-xl">
-                        <Trans>
-                            {currentMonthData.monthName.split(" ").at(0)}
-                        </Trans>
-                    </Text>
-                    <ScrollView horizontal={true}>
-                        {currentMonthData.dates.map((day) => (
-                            <TouchableOpacity
-                                key={day.getDate()}
-                                className={`mr-2 flex w-16 rounded-lg ${
-                                    day.getMonth() ===
-                                        selectedDate?.getMonth() &&
-                                    day.getDate() === selectedDate?.getDate()
-                                        ? "bg-[#2185EE]"
-                                        : "bg-off-white"
-                                }`}
-                                onPress={() => {
-                                    onSelect(day);
-                                    setSelectedDate(day);
-                                }}
-                            >
-                                <Text
-                                    className={`p-3 text-center font-nunito-sans text-sm ${
-                                        day.getMonth() ===
+            {availableDates &&
+                availableDates.length > 0 &&
+                availableDates.map((month) => (
+                    <View key={month.month}>
+                        <Text className="relative left-1 w-full pb-3 font-nunito-sans-bold text-xl">
+                            <Trans>{month.month}</Trans>
+                        </Text>
+                        <ScrollView horizontal={true}>
+                            {month.dates.map((day) => (
+                                <TouchableOpacity
+                                    key={day.date.getDate()}
+                                    className={`mr-2 flex w-16 rounded-lg ${
+                                        day.date.getMonth() ===
                                             selectedDate?.getMonth() &&
-                                        day.getDate() ===
+                                        day.date.getDate() ===
                                             selectedDate?.getDate()
-                                            ? "font-nunito-sans-bold text-white"
-                                            : ""
+                                            ? "bg-[#2185EE]"
+                                            : "bg-off-white"
                                     }`}
+                                    onPress={() => {
+                                        onSelect(day.date);
+                                        setSelectedDate(day.date);
+                                    }}
                                 >
-                                    {day.getDate()}
-                                </Text>
-                            </TouchableOpacity>
-                        ))}
-                    </ScrollView>
-                </View>
-            )}
-
-            {nextMonthData && nextMonthData.dates.length > 0 && (
-                <View className="pt-4">
-                    <Text className="relative left-1 w-full pb-3 font-nunito-sans-bold text-xl">
-                        <Trans>
-                            {nextMonthData.monthName.split(" ").at(0)}
-                        </Trans>
-                    </Text>
-                    <ScrollView horizontal={true}>
-                        {nextMonthData.dates.map((day) => (
-                            <TouchableOpacity
-                                key={day.getDate()}
-                                className={`mr-2 flex w-16 rounded-lg ${
-                                    day.getMonth() ===
-                                        selectedDate?.getMonth() &&
-                                    day.getDate() === selectedDate?.getDate()
-                                        ? "bg-[#2185EE]"
-                                        : "bg-off-white"
-                                }`}
-                                onPress={() => {
-                                    onSelect(day);
-                                    setSelectedDate(day);
-                                }}
-                            >
-                                <Text
-                                    className={`p-3 text-center font-nunito-sans text-sm ${
-                                        day.getMonth() ===
-                                            selectedDate?.getMonth() &&
-                                        day.getDate() ===
-                                            selectedDate?.getDate()
-                                            ? "font-nunito-sans-bold text-white"
-                                            : ""
-                                    }`}
-                                >
-                                    {day.getDate()}
-                                </Text>
-                            </TouchableOpacity>
-                        ))}
-                    </ScrollView>
-                </View>
-            )}
+                                    <Text
+                                        className={`p-3 text-center font-nunito-sans text-sm ${
+                                            day.date.getMonth() ===
+                                                selectedDate?.getMonth() &&
+                                            day.date.getDate() ===
+                                                selectedDate?.getDate()
+                                                ? "font-nunito-sans-bold text-white"
+                                                : ""
+                                        }`}
+                                    >
+                                        {day.date.getDate()}
+                                    </Text>
+                                </TouchableOpacity>
+                            ))}
+                        </ScrollView>
+                    </View>
+                ))}
         </View>
     );
 };

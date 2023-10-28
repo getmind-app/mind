@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { type WeekDay } from "@acme/db";
+import { type Therapist, type WeekDay } from "@acme/db";
 
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
@@ -214,102 +214,113 @@ export const therapistsRouter = createTRPCRouter({
                 },
             });
 
-            const weekDayMap: Record<WeekDay, number> = {
-                MONDAY: 1,
-                TUESDAY: 2,
-                WEDNESDAY: 3,
-                THURSDAY: 4,
-                FRIDAY: 5,
-            };
-
-            const availableDatesAndHoursInCurrentAndNextMonth: {
-                monthIndex: number;
-                dates: {
-                    date: Date;
-                    hours: number[];
-                }[];
-            }[] = [];
-
-            const currentDate = new Date();
-            const thirtyDaysFromNow = new Date(currentDate);
-            thirtyDaysFromNow.setDate(currentDate.getDate() + 30);
-
-            const currentDateCopy = new Date(currentDate);
-
-            const availableDatesAndHoursForCurrentMonth = [];
-            const availableDatesAndHoursForNextMonth = [];
-
-            while (currentDateCopy <= thirtyDaysFromNow) {
-                if (
-                    currentDateCopy.getDay() !== 0 && // Sunday
-                    currentDateCopy.getDay() !== 6 && // Saturday
-                    therapist.hours.some(
-                        // Therapist works on this day
-                        (hour) =>
-                            weekDayMap[hour.weekDay] ===
-                            currentDateCopy.getDay(),
-                    )
-                ) {
-                    // The hours that this therapist works on this day
-                    const hours = therapist.hours
-                        .filter(
-                            (hour) =>
-                                weekDayMap[hour.weekDay] ===
-                                currentDateCopy.getDay(),
-                        )
-                        .map((hour) => hour.startAt);
-
-                    // Check every hour if there is an appointment
-                    // If there is, remove it from the available hours
-
-                    for (let i = 0; i < therapist.appointments.length; i++) {
-                        const appointment = therapist.appointments[i];
-
-                        if (
-                            appointment?.scheduledTo.getDate() ===
-                                currentDateCopy.getDate() &&
-                            appointment?.scheduledTo.getMonth() ===
-                                currentDateCopy.getMonth() &&
-                            appointment.scheduledTo.getFullYear() ===
-                                currentDateCopy.getFullYear() &&
-                            appointment.status === "ACCEPTED"
-                        ) {
-                            const appointmentHour =
-                                appointment.scheduledTo.getHours();
-
-                            const index = hours.indexOf(appointmentHour);
-
-                            if (index > -1) {
-                                hours.splice(index, 1);
-                            }
-                        }
-                    }
-
-                    if (currentDateCopy.getMonth() === currentDate.getMonth()) {
-                        availableDatesAndHoursForCurrentMonth.push({
-                            date: new Date(currentDateCopy),
-                            hours,
-                        });
-                    } else {
-                        availableDatesAndHoursForNextMonth.push({
-                            date: new Date(currentDateCopy),
-                            hours,
-                        });
-                    }
-                }
-                currentDateCopy.setDate(currentDateCopy.getDate() + 1);
-            }
-
-            availableDatesAndHoursInCurrentAndNextMonth.push({
-                monthIndex: currentDate.getMonth(),
-                dates: availableDatesAndHoursForCurrentMonth,
-            });
-
-            availableDatesAndHoursInCurrentAndNextMonth.push({
-                monthIndex: thirtyDaysFromNow.getMonth(),
-                dates: availableDatesAndHoursForCurrentMonth,
-            });
-
-            return availableDatesAndHoursInCurrentAndNextMonth;
+            return getAvailableDatesAndHours(therapist);
         }),
 });
+
+const getAvailableDatesAndHours = (
+    therapist: Therapist & {
+        hours: { startAt: number; weekDay: WeekDay }[];
+        appointments: { scheduledTo: Date; status: string }[];
+    },
+) => {
+    const weekDayMap: Record<WeekDay, number> = {
+        MONDAY: 1,
+        TUESDAY: 2,
+        WEDNESDAY: 3,
+        THURSDAY: 4,
+        FRIDAY: 5,
+    };
+
+    const availableDatesAndHoursInCurrentAndNextMonth: {
+        month: string;
+        dates: {
+            date: Date;
+            hours: number[];
+        }[];
+    }[] = [];
+
+    const currentDate = new Date();
+    const thirtyDaysFromNow = new Date(currentDate);
+    thirtyDaysFromNow.setDate(currentDate.getDate() + 30);
+
+    const currentDateCopy = new Date(currentDate);
+
+    const availableDatesAndHoursForCurrentMonth = [];
+    const availableDatesAndHoursForNextMonth = [];
+
+    while (currentDateCopy <= thirtyDaysFromNow) {
+        if (
+            currentDateCopy.getDay() !== 0 && // Sunday
+            currentDateCopy.getDay() !== 6 && // Saturday
+            therapist.hours.some(
+                // Therapist works on this day
+                (hour) => weekDayMap[hour.weekDay] === currentDateCopy.getDay(),
+            )
+        ) {
+            // The hours that this therapist works on this day
+            const hours = therapist.hours
+                .filter(
+                    (hour) =>
+                        weekDayMap[hour.weekDay] === currentDateCopy.getDay(),
+                )
+                .map((hour) => hour.startAt);
+
+            // Check every hour if there is an appointment
+            // If there is, remove it from the available hours
+
+            for (let i = 0; i < therapist.appointments.length; i++) {
+                const appointment = therapist.appointments[i];
+
+                if (
+                    appointment?.scheduledTo.getDate() ===
+                        currentDateCopy.getDate() &&
+                    appointment?.scheduledTo.getMonth() ===
+                        currentDateCopy.getMonth() &&
+                    appointment.scheduledTo.getFullYear() ===
+                        currentDateCopy.getFullYear() &&
+                    appointment.status === "ACCEPTED"
+                ) {
+                    const appointmentHour = appointment.scheduledTo.getHours();
+
+                    const index = hours.indexOf(appointmentHour);
+
+                    if (index > -1) {
+                        hours.splice(index, 1);
+                    }
+                }
+            }
+
+            // Remove all days that have no available hours
+            if (hours.length === 0) {
+                currentDateCopy.setDate(currentDateCopy.getDate() + 1);
+                continue;
+            }
+
+            if (currentDateCopy.getMonth() === currentDate.getMonth()) {
+                availableDatesAndHoursForCurrentMonth.push({
+                    date: new Date(currentDateCopy),
+                    hours,
+                });
+            } else {
+                availableDatesAndHoursForNextMonth.push({
+                    date: new Date(currentDateCopy),
+                    hours,
+                });
+            }
+        }
+        currentDateCopy.setDate(currentDateCopy.getDate() + 1);
+    }
+
+    availableDatesAndHoursInCurrentAndNextMonth.push({
+        month: currentDate.toLocaleString("default", { month: "long" }),
+        dates: availableDatesAndHoursForCurrentMonth,
+    });
+
+    availableDatesAndHoursInCurrentAndNextMonth.push({
+        month: thirtyDaysFromNow.toLocaleString("default", { month: "long" }),
+        dates: availableDatesAndHoursForNextMonth,
+    });
+
+    return availableDatesAndHoursInCurrentAndNextMonth;
+};
