@@ -1,7 +1,6 @@
 import { useState } from "react";
 import {
     Image,
-    RefreshControl,
     ScrollView,
     Text,
     TextInput,
@@ -16,31 +15,13 @@ import { ScreenWrapper } from "../../components/ScreenWrapper";
 import { Title } from "../../components/Title";
 import { useSearchTherapistByName } from "../../hooks/search/useSearchTherapistByName";
 import { useDebounce } from "../../hooks/util/useDebounce";
-import { api } from "../../utils/api";
 
 export default function SearchScreen() {
     const [search, setSearch] = useState("");
-    const [refreshing, setRefreshing] = useState(false);
     const debouncedValue = useDebounce(search, 500);
-    const utils = api.useContext();
-
-    function onRefresh() {
-        setRefreshing(true);
-        utils.therapists.findByNameLike.invalidate({
-            name: debouncedValue,
-        });
-        setTimeout(() => {
-            setRefreshing(false);
-        }, 500);
-    }
 
     return (
-        <ScreenWrapper
-            showsVerticalScrollIndicator={false}
-            refreshControl={
-                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
-        >
+        <ScreenWrapper>
             <Title title={t({ message: "Search" })} />
 
             <View className="flex flex-row items-center justify-between pt-2 align-middle">

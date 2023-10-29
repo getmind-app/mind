@@ -7,7 +7,6 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
 import { useRouter } from "expo-router";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import { Trans, t } from "@lingui/macro";

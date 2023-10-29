@@ -16,6 +16,7 @@ import { t } from "@lingui/macro";
 
 import { ScreenWrapper } from "../../components/ScreenWrapper";
 import { useUserHasProfileImage } from "../../hooks/user/useUserHasProfileImage";
+import { useUserIsProfessional } from "../../hooks/user/useUserIsProfessional";
 import { api } from "../../utils/api";
 
 export default function UserProfileScreen() {
@@ -23,6 +24,7 @@ export default function UserProfileScreen() {
     const { user, signOut } = useClerk();
     const { mutateAsync } = api.users.clearMetadata.useMutation({});
     const userHasProfileImage = useUserHasProfileImage();
+    const isProfessional = useUserIsProfessional();
 
     async function clearUserMetaData(): Promise<void> {
         console.log("Clearing user metadata");
@@ -30,9 +32,6 @@ export default function UserProfileScreen() {
         await user?.reload();
         router.replace("/onboard");
     }
-
-    // remove when we have a context provider
-    const isProfessional = user?.publicMetadata?.role === "professional";
 
     return (
         <ScreenWrapper>

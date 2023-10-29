@@ -14,7 +14,6 @@ import { atom, useAtom } from "jotai";
 import { AnimatedCard } from "../../../components/Accordion";
 import { Header } from "../../../components/Header";
 import geocodeAddress from "../../../helpers/geocodeAddress";
-import getNext30Days from "../../../helpers/next30Days";
 import { api } from "../../../utils/api";
 import {
     type Address,
@@ -181,8 +180,6 @@ const Calendar = ({
         | undefined;
 }) => {
     const [selectedDate, setSelectedDate] = useState<Date>();
-
-    console.log(availableDates);
 
     return (
         <View className="rounded-lg bg-white pt-4">

@@ -56,7 +56,7 @@ export default function SessionFinishAppointment() {
                         </Trans>
                     </Text>
                 </View>
-                <TouchableOpacity
+                {/* <TouchableOpacity
                     onPress={() => {
                         router.push("/calendar");
                     }}
@@ -72,7 +72,7 @@ export default function SessionFinishAppointment() {
                             <Trans>Create event</Trans>
                         </Text>
                     </View>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
                 <TouchableOpacity
                     onPress={() => {
                         router.push("/calendar");

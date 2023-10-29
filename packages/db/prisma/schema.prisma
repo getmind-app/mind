@@ -25,7 +25,7 @@ model Therapist {
     about             String?
     gender            Gender        @default(MALE)
     hourlyRate        Float
-    yearsOfExperience Int?
+    yearsOfExperience String?
     profilePictureUrl String
     userId            String        @unique
     paymentAccountId  String?

@@ -21,6 +21,7 @@ import { ScreenWrapper } from "../../components/ScreenWrapper";
 import { Title } from "../../components/Title";
 import { getShareLink } from "../../helpers/getShareLink";
 import { isMoreThan24HoursLater } from "../../helpers/isMoreThan24HoursLater";
+import { useUserIsProfessional } from "../../hooks/user/useUserIsProfessional";
 import { api } from "../../utils/api";
 import {
     type Appointment,
@@ -115,13 +116,8 @@ function BaseLayout({
 
 function EmptyState() {
     const router = useRouter();
-    const { user } = useUser();
-
-    // remove when we have a context provider
-    const therapistId =
-        user?.publicMetadata?.role == "professional"
-            ? api.therapists.findByUserId.useQuery().data?.id
-            : "";
+    const isProfessional = useUserIsProfessional();
+    const therapist = api.therapists.findByUserId.useQuery();
 
     return (
         <View className="mt-4 rounded-xl bg-white shadow-sm">
@@ -136,21 +132,12 @@ function EmptyState() {
                     </Trans>
                 </Text>
             </View>
-            {user?.publicMetadata.role == "patient" ? (
-                <TouchableOpacity onPress={() => router.push("/search")}>
-                    <View className="mt-6 flex w-full flex-row items-center justify-center rounded-b-xl bg-blue-500 py-3 align-middle">
-                        <FontAwesome size={16} color="white" name="search" />
-                        <Text className="ml-2 font-nunito-sans-bold text-lg text-white">
-                            <Trans>Therapists</Trans>
-                        </Text>
-                    </View>
-                </TouchableOpacity>
-            ) : (
+            {isProfessional ? (
                 <TouchableOpacity
                     onPress={() =>
                         void getShareLink({
-                            id: therapistId,
-                            name: user?.firstName ?? "",
+                            id: therapist.data?.id ?? "",
+                            name: therapist?.data?.name.split(" ")[0] ?? "",
                         })
                     }
                 >
@@ -158,6 +145,15 @@ function EmptyState() {
                         <MaterialIcons size={24} color="white" name="link" />
                         <Text className="ml-2 font-nunito-sans-bold text-lg text-white">
                             <Trans>Share your link</Trans>
+                        </Text>
+                    </View>
+                </TouchableOpacity>
+            ) : (
+                <TouchableOpacity onPress={() => router.push("/search")}>
+                    <View className="mt-6 flex w-full flex-row items-center justify-center rounded-b-xl bg-blue-500 py-3 align-middle">
+                        <FontAwesome size={16} color="white" name="search" />
+                        <Text className="ml-2 font-nunito-sans-bold text-lg text-white">
+                            <Trans>Therapists</Trans>
                         </Text>
                     </View>
                 </TouchableOpacity>
@@ -185,6 +181,7 @@ function AppointmentCard({
 }) {
     const [open, setOpen] = useState(false);
     const { user } = useUser();
+    const isProfessional = useUserIsProfessional();
 
     return (
         <Card key={appointment.id}>
@@ -216,18 +213,16 @@ function AppointmentCard({
                             className="rounded-full"
                             alt={`${appointment.therapist.name}'s profile picture`}
                             source={{
-                                uri:
-                                    user?.publicMetadata.role == "professional"
-                                        ? appointment.patient.profilePictureUrl
-                                        : appointment.therapist
-                                              .profilePictureUrl,
+                                uri: isProfessional
+                                    ? appointment.patient.profilePictureUrl
+                                    : appointment.therapist.profilePictureUrl,
                                 width: 20,
                                 height: 20,
                             }}
                         />
                         <Text className="font-nunito-sans text-sm text-slate-500">
                             {"  "}
-                            {user?.publicMetadata.role == "professional"
+                            {isProfessional
                                 ? appointment.patient.name
                                 : appointment.therapist.name}{" "}
                             {appointment.modality === "ONLINE"
@@ -235,20 +230,19 @@ function AppointmentCard({
                                 : t({ message: "in person" })}
                         </Text>
                     </View>
-                    {user?.publicMetadata.role == "professional" &&
-                        appointment.status == "ACCEPTED" && (
-                            <View>
-                                <Text
-                                    className={`fontnunito-sans pt-2 ${
-                                        appointment.isPaid
-                                            ? "text-green-500"
-                                            : "text-red-500"
-                                    }`}
-                                >
-                                    {appointment.isPaid ? "Paid" : "Not paid"}
-                                </Text>
-                            </View>
-                        )}
+                    {isProfessional && appointment.status == "ACCEPTED" && (
+                        <View>
+                            <Text
+                                className={`fontnunito-sans pt-2 ${
+                                    appointment.isPaid
+                                        ? "text-green-500"
+                                        : "text-red-500"
+                                }`}
+                            >
+                                {appointment.isPaid ? "Paid" : "Not paid"}
+                            </Text>
+                        </View>
+                    )}
                 </View>
                 <View className=" flex flex-col items-center justify-between">
                     <Text className="font-nunito-sans-bold text-xl text-blue-500 ">
@@ -257,11 +251,10 @@ function AppointmentCard({
                             ? "00"
                             : new Date(appointment.scheduledTo).getMinutes()}
                     </Text>
-                    {(appointment.status == "PENDENT" &&
-                        user?.publicMetadata.role === "professional") ||
+                    {(appointment.status == "PENDENT" && isProfessional) ||
                     (appointment.status == "ACCEPTED" &&
                         isMoreThan24HoursLater(appointment.scheduledTo) &&
-                        user?.publicMetadata.role === "patient") ? (
+                        !isProfessional) ? (
                         <TouchableOpacity onPress={() => setOpen(!open)}>
                             {open ? (
                                 <Feather

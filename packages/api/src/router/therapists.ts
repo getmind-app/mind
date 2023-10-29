@@ -179,7 +179,7 @@ export const therapistsRouter = createTRPCRouter({
                 crp: z.string().min(1),
                 phone: z.string().min(1),
                 hourlyRate: z.number().positive(),
-                yearsOfExperience: z.number().min(0),
+                yearsOfExperience: z.string().min(1),
                 about: z.string().nullable(),
             }),
         )
