@@ -15,26 +15,27 @@ model Note {
 }
 
 model Therapist {
-    id                String        @id @default(cuid())
-    createdAt         DateTime      @default(now())
-    name              String
-    dateOfBirth       DateTime
-    document          String
-    phone             String
-    crp               String
-    about             String?
-    gender            Gender        @default(MALE)
-    hourlyRate        Float
-    yearsOfExperience String?
-    profilePictureUrl String
-    userId            String        @unique
-    paymentAccountId  String?
-    modalities        Modality[]
-    address           Address?
-    education         Education[]
-    methodologies     Methodology[]
-    appointments      Appointment[]
-    hours             Hour[]
+    id                   String               @id @default(cuid())
+    createdAt            DateTime             @default(now())
+    name                 String
+    dateOfBirth          DateTime
+    document             String
+    phone                String
+    crp                  String
+    about                String?
+    gender               Gender               @default(MALE)
+    hourlyRate           Float
+    yearsOfExperience    String?
+    profilePictureUrl    String
+    userId               String               @unique
+    paymentAccountId     String?
+    paymentAccountStatus PaymentAccountStatus @default(UNACTIVE)
+    modalities           Modality[]
+    address              Address?
+    education            Education[]
+    methodologies        Methodology[]
+    appointments         Appointment[]
+    hours                Hour[]
 }
 
 model Methodology {
@@ -122,6 +123,11 @@ enum AppointmentStatus {
     ACCEPTED
     REJECTED
     CANCELED
+}
+
+enum PaymentAccountStatus {
+    ACTIVE
+    UNACTIVE
 }
 
 enum WeekDay {
