@@ -67,6 +67,7 @@ export const appointmentsRouter = createTRPCRouter({
                             address: true,
                         },
                     },
+                    patient: true,
                 },
                 orderBy: {
                     scheduledTo: "desc",
@@ -93,6 +94,7 @@ export const appointmentsRouter = createTRPCRouter({
                             address: true,
                         },
                     },
+                    patient: true,
                 },
                 orderBy: {
                     scheduledTo: "desc",

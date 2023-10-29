@@ -3,7 +3,6 @@ import {
     Image,
     Linking,
     RefreshControl,
-    ScrollView,
     Text,
     TouchableOpacity,
     View,
@@ -18,6 +17,7 @@ import DefaultHomeCard from "../../components/DefaultHomeCard";
 import { ScreenWrapper } from "../../components/ScreenWrapper";
 import { Title } from "../../components/Title";
 import geocodeAddress from "../../helpers/geocodeAddress";
+import { useUserIsProfessional } from "../../hooks/user/useUserIsProfessional";
 import { api } from "../../utils/api";
 
 export default function Index() {
@@ -62,34 +62,51 @@ export default function Index() {
 
 function NextAppointment() {
     const router = useRouter();
+    const isProfessional = useUserIsProfessional();
 
-    const { data, isLoading } =
-        api.appointments.findNextUserAppointment.useQuery();
+    const appointment = api.appointments.findNextUserAppointment.useQuery();
 
-    if (isLoading) return <CardSkeleton />;
+    console.log(appointment.data);
+
+    if (appointment.isLoading) return <CardSkeleton />;
 
     return (
         <>
-            {data && data.therapistId ? (
+            {appointment.data && appointment.data.therapistId ? (
                 <View className="mt-4 rounded-xl bg-white shadow-sm">
                     <View className="p-6">
                         <View className="flex w-full flex-row justify-between">
                             <Text className="font-nunito-sans text-xl">
                                 {new Intl.DateTimeFormat("en", {
                                     weekday: "long",
-                                }).format(new Date(data.scheduledTo))}
-                                , {new Date(data.scheduledTo).getDate()}/
-                                {new Date(data.scheduledTo).getMonth() + 1}
+                                }).format(
+                                    new Date(appointment.data.scheduledTo),
+                                )}
+                                ,{" "}
+                                {new Date(
+                                    appointment.data.scheduledTo,
+                                ).getDate()}
+                                /
+                                {new Date(
+                                    appointment.data.scheduledTo,
+                                ).getMonth() + 1}
                             </Text>
                             <Text className="font-nunito-sans-bold text-xl text-blue-500 ">
-                                {new Date(data.scheduledTo).getHours()}:
-                                {new Date(data.scheduledTo).getMinutes() == 0
+                                {new Date(
+                                    appointment.data.scheduledTo,
+                                ).getHours()}
+                                :
+                                {new Date(
+                                    appointment.data.scheduledTo,
+                                ).getMinutes() == 0
                                     ? "00"
-                                    : new Date(data.scheduledTo).getMinutes()}
+                                    : new Date(
+                                          appointment.data.scheduledTo,
+                                      ).getMinutes()}
                             </Text>
                         </View>
                         <Text className="font-nunito-sans text-sm text-slate-500">
-                            {data.modality === "ONLINE" ? (
+                            {appointment.data.modality === "ONLINE" ? (
                                 "via Google Meet"
                             ) : (
                                 <Text>
@@ -98,7 +115,8 @@ function NextAppointment() {
                                         <TouchableOpacity
                                             onPress={() =>
                                                 geocodeAddress(
-                                                    data?.therapist?.address,
+                                                    appointment.data?.therapist
+                                                        ?.address,
                                                 ).then((link) =>
                                                     Linking.openURL(
                                                         link ? link : "",
@@ -107,9 +125,15 @@ function NextAppointment() {
                                             }
                                         >
                                             <Text>
-                                                {data.therapist.address?.street}
+                                                {
+                                                    appointment.data.therapist
+                                                        .address?.street
+                                                }
                                                 ,{" "}
-                                                {data.therapist.address?.number}
+                                                {
+                                                    appointment.data.therapist
+                                                        .address?.number
+                                                }
                                             </Text>
                                         </TouchableOpacity>
                                     </Trans>
@@ -122,16 +146,25 @@ function NextAppointment() {
                                     <TouchableOpacity
                                         onPress={() =>
                                             router.push(
-                                                "/psych/" + data.therapist.id,
+                                                "/psych/" +
+                                                    appointment.data?.therapist
+                                                        .id,
                                             )
                                         }
                                     >
                                         <Image
                                             className="flex items-center justify-center rounded-full"
-                                            alt={`${data.therapist.name} profile picture`}
+                                            alt={
+                                                isProfessional
+                                                    ? "Patient"
+                                                    : "Therapist"
+                                            }
                                             source={{
-                                                uri: data.therapist
-                                                    .profilePictureUrl,
+                                                uri: isProfessional
+                                                    ? appointment.data.patient
+                                                          .profilePictureUrl
+                                                    : appointment.data.therapist
+                                                          .profilePictureUrl,
                                                 width: 32,
                                                 height: 32,
                                             }}
@@ -139,36 +172,40 @@ function NextAppointment() {
                                     </TouchableOpacity>
                                 </View>
                                 <Text className="pl-2 font-nunito-sans text-xl">
-                                    {data.therapist.name}
+                                    {isProfessional
+                                        ? appointment.data.patient.name
+                                        : appointment.data.therapist.name}
                                 </Text>
                             </View>
                         </View>
                     </View>
                     <TouchableOpacity
                         onPress={async () => {
-                            if (data.modality === "ONLINE") {
-                                Linking.openURL(data?.link as string);
+                            if (appointment.data?.modality === "ONLINE") {
+                                Linking.openURL(
+                                    appointment?.data?.link as string,
+                                );
                                 return;
                             }
 
                             const mapsLink = await geocodeAddress(
-                                data?.therapist.address,
+                                appointment.data?.therapist.address,
                             );
                             Linking.openURL(mapsLink as string);
                         }}
                     >
-                        <View className="flex w-full flex-row items-center justify-center rounded-bl-xl rounded-br-xl bg-blue-500 py-3 align-middle">
+                        <View className="flex w-full flex-row items-center justify-center rounded-bl-xl rounded-br-xl bg-blue-500 py-3 align-middle shadow-sm">
                             <FontAwesome
                                 size={16}
                                 color="white"
                                 name={`${
-                                    data.modality === "ONLINE"
+                                    appointment.data.modality === "ONLINE"
                                         ? "video-camera"
                                         : "car"
                                 }`}
                             />
                             <Text className="ml-4 font-nunito-sans-bold text-lg text-white">
-                                {data.modality === "ONLINE"
+                                {appointment.data.modality === "ONLINE"
                                     ? t({ message: "Join the meeting" })
                                     : t({ message: "Get directions" })}
                             </Text>
