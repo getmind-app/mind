@@ -138,10 +138,65 @@ export const stripeRouter = createTRPCRouter({
             const accountLink = await stripe.accountLinks.create({
                 account: input.therapistPaymentAccountId,
                 refresh_url: "http://localhost:3000/refresh",
-                return_url: "http://localhost:3000/return",
+                return_url:
+                    process.env.PROFILE! === "production"
+                        ? "https://getmind.app/redirect?redirectUrl=mind:///settings/payment-setup?success=true"
+                        : "http://localhost:3000/redirect?redirectUrl=exp://192.168.100.91:8081/settings/payment-setup?success=true",
                 type: "account_onboarding",
             });
 
             return accountLink;
         }),
+    getAccount: protectedProcedure
+        .input(
+            z.object({
+                paymentAccountId: z.string(),
+            }),
+        )
+        .query(async ({ input }) => {
+            const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+                apiVersion: "2023-08-16",
+            });
+
+            const account = await stripe.accounts.retrieve(
+                input.paymentAccountId,
+            );
+
+            return account;
+        }),
+    updateAccountStatus: protectedProcedure.mutation(async ({ ctx }) => {
+        const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+            apiVersion: "2023-08-16",
+        });
+
+        const therapist = await ctx.prisma.therapist.findUnique({
+            where: {
+                userId: ctx.auth.userId,
+            },
+        });
+
+        if (therapist?.paymentAccountStatus === "UNACTIVE") {
+            const account = await stripe.accounts.retrieve(
+                therapist?.paymentAccountId!,
+            );
+
+            if (
+                account.external_accounts?.data?.length &&
+                account.external_accounts?.data?.length > 0
+            ) {
+                const externalAccount = account.external_accounts?.data[0];
+
+                if (externalAccount?.status !== "errored") {
+                    await ctx.prisma.therapist.update({
+                        where: {
+                            userId: ctx.auth.userId,
+                        },
+                        data: {
+                            paymentAccountStatus: "ACTIVE",
+                        },
+                    });
+                }
+            }
+        }
+    }),
 });

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
     LayoutAnimation,
     RefreshControl,
@@ -7,6 +7,7 @@ import {
     View,
 } from "react-native";
 import * as Linking from "expo-linking";
+import { useLocalSearchParams } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
 import { FontAwesome } from "@expo/vector-icons";
 import { Trans, t } from "@lingui/macro";
@@ -22,11 +23,22 @@ export default function PaymentsSetup() {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 
     const [refreshing, setRefreshing] = useState(false);
-    const { data, isLoading, refetch } = api.therapists.findByUserId.useQuery();
+    const therapist = api.therapists.findByUserId.useQuery();
+    const updateAccountStatus = api.stripe.updateAccountStatus.useMutation();
     const createAccount = api.stripe.createAccount.useMutation();
     const linkAccount = api.stripe.linkAccount.useMutation();
+    const { success } = useLocalSearchParams();
 
-    if (!data || isLoading)
+    useEffect(() => {
+        if (success) {
+            (async () => {
+                await updateAccountStatus.mutateAsync();
+                await therapist.refetch();
+            })().catch(console.error);
+        }
+    }, [success]);
+
+    if (!therapist.data || therapist.isLoading)
         return (
             <View className="mx-4 mt-12">
                 <CardSkeleton />
@@ -36,7 +48,7 @@ export default function PaymentsSetup() {
     const onRefresh = async () => {
         setRefreshing(true);
         try {
-            await refetch();
+            await therapist.refetch();
         } finally {
             setRefreshing(false);
         }
@@ -44,7 +56,7 @@ export default function PaymentsSetup() {
 
     const onCreateAccount = async () => {
         createAccount.mutate();
-        await refetch();
+        await therapist.refetch();
     };
 
     return (
@@ -67,14 +79,14 @@ export default function PaymentsSetup() {
                 </Text>
                 <TouchableOpacity
                     onPress={onCreateAccount}
-                    disabled={!!data.paymentAccountId}
+                    disabled={!!therapist.data.paymentAccountId}
                 >
                     <View
                         style={{
                             elevation: 2,
                         }}
                         className={`mt-6 flex w-full flex-row items-center justify-center rounded-xl ${
-                            data.paymentAccountId
+                            therapist.data.paymentAccountId
                                 ? "bg-gray-200"
                                 : "bg-blue-500"
                         } py-3 align-middle shadow-sm`}
@@ -82,13 +94,13 @@ export default function PaymentsSetup() {
                         <FontAwesome size={16} color="green" name="check" />
                         <Text
                             className={`ml-2 font-nunito-sans-bold text-lg ${
-                                data.paymentAccountId
+                                therapist.data.paymentAccountId
                                     ? "text-black"
                                     : "text-white"
                             }`}
                         >
                             <Trans>
-                                {data.paymentAccountId
+                                {therapist.data.paymentAccountId
                                     ? "You already have an account"
                                     : "Create Stripe Account"}
                             </Trans>
@@ -97,10 +109,10 @@ export default function PaymentsSetup() {
                 </TouchableOpacity>
                 <TouchableOpacity
                     onPress={async () => {
-                        if (data.paymentAccountId) {
+                        if (therapist.data.paymentAccountId) {
                             const res = await linkAccount.mutateAsync({
                                 therapistPaymentAccountId:
-                                    data.paymentAccountId,
+                                    therapist.data.paymentAccountId,
                             });
                             await WebBrowser.openAuthSessionAsync(
                                 `${res.url}?linkingUri=${Linking.createURL(
