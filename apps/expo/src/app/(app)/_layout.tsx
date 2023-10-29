@@ -5,6 +5,7 @@ import { AntDesign } from "@expo/vector-icons";
 
 import { Loading } from "../../components/Loading";
 import { useUserHasProfileImage } from "../../hooks/user/useUserHasProfileImage";
+import { useUserIsProfessional } from "../../hooks/user/useUserIsProfessional";
 
 const tabBarActiveTintColor = "#2563eb"; // blue 600
 const tabBarInactiveTintColor = "black";
@@ -29,6 +30,7 @@ export default function AppRouter() {
     const { user } = useClerk();
     const rootNavigationState = useRootNavigationState();
     const userHasImage = useUserHasProfileImage();
+    const isProfessional = useUserIsProfessional();
 
     // https://github.com/expo/router/issues/740
     if (!rootNavigationState.key) {
@@ -76,10 +78,7 @@ export default function AppRouter() {
                 name="search"
                 options={{
                     title: "Search",
-                    href:
-                        user?.publicMetadata?.role === "professional"
-                            ? null
-                            : "/search",
+                    href: isProfessional ? null : "/search",
                     tabBarIcon: (props) => (
                         <TabBarIconWrapper focused={props.focused}>
                             <AntDesign name="search1" {...props} />

@@ -1,14 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import {
-    Alert,
-    Image,
-    Platform,
-    Pressable,
-    Text,
-    TouchableOpacity,
-    View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { Alert, Image, Platform, Pressable, Text, View } from "react-native";
 import Constants from "expo-constants";
 import * as Device from "expo-device";
 import * as Location from "expo-location";
@@ -286,7 +277,7 @@ async function registerForPushNotificationsAsync() {
     }
 
     if (Platform.OS === "android") {
-        Notifications.setNotificationChannelAsync("default", {
+        await Notifications.setNotificationChannelAsync("default", {
             name: "default",
             importance: Notifications.AndroidImportance.MAX,
             vibrationPattern: [0, 250, 250, 250],

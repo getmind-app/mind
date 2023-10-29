@@ -21,27 +21,23 @@ import { FormDateInput } from "../../../components/FormDateInput";
 import { FormTextInput } from "../../../components/FormTextInput";
 import { Header } from "../../../components/Header";
 import { ProfileSkeleton } from "../../../components/ProfileSkeleton";
+import { ScreenWrapper } from "../../../components/ScreenWrapper";
+import { useUserIsProfessional } from "../../../hooks/user/useUserIsProfessional";
 import { api } from "../../../utils/api";
 
 export default function PersonalInfo() {
-    const { user } = useUser();
+    const isProfessional = useUserIsProfessional();
 
     return (
         <>
             <Header />
-
             <KeyboardAvoidingView
                 style={{ flex: 1 }}
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
             >
-                <View className="h-full bg-off-white px-4 pb-4 pt-4">
-                    {/* IDK if spearating like this is the best option, but go 🐴 */}
-                    {user?.publicMetadata?.role == "professional" ? (
-                        <TherapistOptions />
-                    ) : (
-                        <PatientOptions />
-                    )}
-                </View>
+                <ScreenWrapper>
+                    {isProfessional ? <TherapistOptions /> : <PatientOptions />}
+                </ScreenWrapper>
             </KeyboardAvoidingView>
         </>
     );
@@ -50,10 +46,8 @@ export default function PersonalInfo() {
 function TherapistOptions() {
     const { user } = useUser();
     const router = useRouter();
+    const therapist = api.therapists.findByUserId.useQuery();
     const [showBirthdayPicker, setShowBirthdayPicker] = useState(false);
-
-    const { data: therapist, isLoading } =
-        api.therapists.findByUserId.useQuery();
 
     const { mutate: updateTherapist } = api.therapists.update.useMutation({
         onSuccess: async () => {
@@ -69,24 +63,24 @@ function TherapistOptions() {
         control,
         handleSubmit,
         formState: { isValid, isDirty },
-    } = useForm<NonNullable<typeof therapist>>({
-        defaultValues: therapist
+    } = useForm<NonNullable<typeof therapist.data>>({
+        defaultValues: therapist.data
             ? {
-                  name: therapist.name,
-                  dateOfBirth: therapist.dateOfBirth,
-                  document: therapist.document,
-                  crp: therapist.crp,
-                  yearsOfExperience: therapist.yearsOfExperience,
-                  hourlyRate: therapist.hourlyRate,
-                  phone: therapist.phone,
-                  about: therapist.about,
+                  name: therapist.data.name,
+                  dateOfBirth: therapist.data.dateOfBirth,
+                  document: therapist.data.document,
+                  crp: therapist.data.crp,
+                  yearsOfExperience: therapist.data.yearsOfExperience,
+                  hourlyRate: therapist.data.hourlyRate,
+                  phone: therapist.data.phone,
+                  about: therapist.data.about,
               }
             : {
                   name: "",
                   dateOfBirth: DateTime.local().toJSDate(),
                   document: "",
                   crp: "",
-                  yearsOfExperience: 0,
+                  yearsOfExperience: "",
                   hourlyRate: 100,
                   phone: "",
                   about: "",
@@ -101,14 +95,14 @@ function TherapistOptions() {
             dateOfBirth: formData.dateOfBirth,
             document: formData.document,
             crp: formData.crp,
-            yearsOfExperience: formData.yearsOfExperience ?? 0,
+            yearsOfExperience: formData.yearsOfExperience ?? "",
             hourlyRate: formData.hourlyRate,
             phone: formData.phone,
             about: formData.about,
         });
     });
 
-    if (!therapist || isLoading) {
+    if (!therapist.data || therapist.isLoading) {
         return <ProfileSkeleton />;
     }
 
@@ -233,10 +227,12 @@ const therapistSchema = z.object({
         })
         .min(2, "Full name must be at least 2 characters"),
     yearsOfExperience: z
-        .string({
-            required_error: "Your years of experience is required",
-        })
-        .min(1, "Please provide a valid number of years of experience"),
+        .string()
+        .refine(
+            (value) => !value || /^\d{0,2}$/.test(value),
+            "Must be a valid number",
+        )
+        .nullable(),
     dateOfBirth: z
         .date({
             required_error: "Must provide your birthday",
@@ -261,5 +257,5 @@ const therapistSchema = z.object({
             required_error: "Your phone number is required",
         })
         .min(10, "Your phone number must be valid"),
-    about: z.string(),
+    about: z.string().nullable(),
 });
