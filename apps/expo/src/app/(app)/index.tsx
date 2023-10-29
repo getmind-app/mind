@@ -7,6 +7,7 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 import { useRouter } from "expo-router";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import { Trans, t } from "@lingui/macro";
@@ -14,6 +15,7 @@ import { Trans, t } from "@lingui/macro";
 import { Card } from "../../components/Card";
 import { CardSkeleton } from "../../components/CardSkeleton";
 import DefaultHomeCard from "../../components/DefaultHomeCard";
+import { Refreshable } from "../../components/Refreshable";
 import { ScreenWrapper } from "../../components/ScreenWrapper";
 import { Title } from "../../components/Title";
 import geocodeAddress from "../../helpers/geocodeAddress";
@@ -25,37 +27,39 @@ export default function Index() {
     const [refreshing, setRefreshing] = useState(false);
     const utils = api.useContext();
 
-    const onRefresh = () => {
+    const onRefresh = async () => {
         setRefreshing(true);
-        utils.appointments.findNextUserAppointment.invalidate();
-        utils.notes.findByUserId.invalidate();
-        setTimeout(() => {
-            setRefreshing(false);
-        }, 500);
+        await utils.appointments.findNextUserAppointment.invalidate();
+        await utils.notes.findByUserId.invalidate();
+        setRefreshing(false);
     };
 
     return (
-        <ScreenWrapper
-            showsVerticalScrollIndicator={false}
-            refreshControl={
-                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
-        >
-            <Title title={t({ message: "Next session" })} />
+        <ScreenWrapper>
+            <Refreshable
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                    />
+                }
+            >
+                <Title title={t({ message: "Next session" })} />
 
-            <NextAppointment />
-            <View className="mb-2 flex flex-row items-center justify-between pt-8 align-middle">
-                <Title title={t({ message: "Last notes" })} />
+                <NextAppointment />
+                <View className="mb-2 flex flex-row items-center justify-between pt-8 align-middle">
+                    <Title title={t({ message: "Last notes" })} />
 
-                <TouchableOpacity onPress={() => router.push("/notes/new")}>
-                    <View className="rounded-lg bg-blue-500 px-3 py-1 shadow-sm">
-                        <Text className="text-center font-nunito-sans-bold text-base text-white">
-                            <Trans>New</Trans>
-                        </Text>
-                    </View>
-                </TouchableOpacity>
-            </View>
-            <LastNotes />
+                    <TouchableOpacity onPress={() => router.push("/notes/new")}>
+                        <View className="rounded-lg bg-blue-500 px-3 py-1 shadow-sm">
+                            <Text className="text-center font-nunito-sans-bold text-base text-white">
+                                <Trans>New</Trans>
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
+                </View>
+                <LastNotes />
+            </Refreshable>
         </ScreenWrapper>
     );
 }
@@ -65,8 +69,6 @@ function NextAppointment() {
     const isProfessional = useUserIsProfessional();
 
     const appointment = api.appointments.findNextUserAppointment.useQuery();
-
-    console.log(appointment.data);
 
     if (appointment.isLoading) return <CardSkeleton />;
 

@@ -15,6 +15,12 @@ export default function SettingsLayout() {
                     title: "Address",
                 }}
             />
+            <Stack.Screen
+                name="available-hours"
+                options={{
+                    title: "Available Hours",
+                }}
+            />
         </Stack>
     );
 }

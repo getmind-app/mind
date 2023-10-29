@@ -2,7 +2,6 @@ import { useState } from "react";
 import {
     LayoutAnimation,
     RefreshControl,
-    ScrollView,
     Text,
     TouchableOpacity,
     View,
@@ -14,6 +13,8 @@ import { Trans, t } from "@lingui/macro";
 
 import { CardSkeleton } from "../../../components/CardSkeleton";
 import { Header } from "../../../components/Header";
+import { Refreshable } from "../../../components/Refreshable";
+import { ScreenWrapper } from "../../../components/ScreenWrapper";
 import { Title } from "../../../components/Title";
 import { api } from "../../../utils/api";
 
@@ -42,24 +43,26 @@ export default function PaymentsSetup() {
     };
 
     const onCreateAccount = async () => {
-        await createAccount.mutate();
+        createAccount.mutate();
         await refetch();
     };
 
     return (
-        <ScrollView
-            className="bg-off-white"
-            refreshControl={
-                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
-        >
-            <Header />
-            <View className="p-6 pb-12">
+        <ScreenWrapper>
+            <Refreshable
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={void onRefresh}
+                    />
+                }
+            >
+                <Header />
                 <Title title={t({ message: "Payments Setup" })} />
                 <Text className="pb-4 font-nunito-sans text-base text-slate-500">
                     <Trans>
-                        We use Stripe as our payment provider, to receive
-                        payments via Mind you have to setup an account.
+                        We use Stripe as our payment provider. To receive
+                        payments from Mind you must setup an account.
                     </Trans>
                 </Text>
                 <TouchableOpacity
@@ -123,7 +126,7 @@ export default function PaymentsSetup() {
                         </Text>
                     </View>
                 </TouchableOpacity>
-            </View>
-        </ScrollView>
+            </Refreshable>
+        </ScreenWrapper>
     );
 }

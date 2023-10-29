@@ -1,10 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
     Image,
     Modal,
     Pressable,
     RefreshControl,
-    ScrollView,
     Text,
     TouchableOpacity,
     TouchableWithoutFeedback,
@@ -17,9 +16,11 @@ import { Trans, t } from "@lingui/macro";
 
 import { Card } from "../../components/Card";
 import { CardSkeleton } from "../../components/CardSkeleton";
+import { Refreshable } from "../../components/Refreshable";
 import { ScreenWrapper } from "../../components/ScreenWrapper";
 import { Title } from "../../components/Title";
 import { getShareLink } from "../../helpers/getShareLink";
+import { isMoreThan24HoursLater } from "../../helpers/isMoreThan24HoursLater";
 import { api } from "../../utils/api";
 import {
     type Appointment,
@@ -30,27 +31,20 @@ import {
 
 export default function CalendarScreen() {
     const [refreshing, setRefreshing] = useState(false);
+    const utils = api.useContext();
     const { user } = useUser();
 
     const {
         data: appointments,
         isLoading,
-        refetch,
         isError,
     } = api.appointments.findAll.useQuery();
 
-    const onRefresh = () => {
+    const onRefresh = async () => {
         setRefreshing(true);
-        setTimeout(() => {
-            setRefreshing(false);
-        }, 500);
+        await utils.appointments.findAll.invalidate();
+        setRefreshing(false);
     };
-
-    useEffect(() => {
-        if (refreshing) {
-            refetch;
-        }
-    }, [refreshing]);
 
     if (isLoading) {
         return (
@@ -104,8 +98,7 @@ function BaseLayout({
 }) {
     return (
         <ScreenWrapper>
-            <ScrollView
-                showsVerticalScrollIndicator={false}
+            <Refreshable
                 refreshControl={
                     <RefreshControl
                         refreshing={refreshing}
@@ -115,7 +108,7 @@ function BaseLayout({
             >
                 <Title title={t({ message: "Calendar" })} />
                 {children}
-            </ScrollView>
+            </Refreshable>
         </ScreenWrapper>
     );
 }
@@ -319,13 +312,11 @@ function PatientOptions({
 }: {
     appointment: Appointment & { therapist: Therapist };
 }) {
-    const acceptedAndMoreThan24Hours =
+    if (
         appointment.status === "ACCEPTED" &&
-        isMoreThan24HoursLater(appointment.scheduledTo);
-
-    if (acceptedAndMoreThan24Hours) {
+        isMoreThan24HoursLater(appointment.scheduledTo)
+    )
         return <SessionCancel appointment={appointment} />;
-    }
 
     return null;
 }
@@ -501,15 +492,4 @@ function Status({ status }: { status: AppointmentStatus }) {
             </Text>
         </View>
     );
-}
-
-function isMoreThan24HoursLater(dateToCheck: string | Date): boolean {
-    const currentDate = new Date();
-    const targetDate = new Date(dateToCheck);
-
-    // Calculate the difference in hours between the two dates
-    const timeDifferenceInHours =
-        (targetDate.getTime() - currentDate.getTime()) / (1000 * 60 * 60);
-
-    return timeDifferenceInHours > 24;
 }
