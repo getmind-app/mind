@@ -11,7 +11,7 @@ export const getShareLink = async ({
 }) => {
     await Share.share({
         message: t({
-            message: `Hey! Check ${name}'s profile: ${Linking.createURL(
+            message: `Hey! Check ${name}'s profile: https://getmind.app/redirect?redirectUrl=${Linking.createURL(
                 `/psych/${id}`,
             )}`,
         }),

@@ -109,11 +109,37 @@ export const stripeRouter = createTRPCRouter({
             apiVersion: "2023-08-16",
         });
 
-        const newAccountData = await stripe.accounts.create({
-            type: "express",
+        const therapist = await ctx.prisma.therapist.findUnique({
+            where: {
+                userId: ctx.auth.userId,
+            },
         });
 
-        const therapist = await ctx.prisma.therapist.update({
+        const newAccountData = await stripe.accounts.create({
+            type: "express",
+            business_profile: {
+                url: "https://getmind.app",
+            },
+            business_type: "individual",
+            country: "BR",
+            default_currency: "brl",
+            email: ctx.auth.user?.emailAddresses[0]?.emailAddress,
+            individual: {
+                email: ctx.auth.user?.emailAddresses[0]?.emailAddress,
+                gender: therapist?.gender.toLowerCase(),
+                first_name: therapist?.name.split(" ")[0],
+                last_name: therapist?.name.split(" ")[1],
+                id_number: therapist?.document,
+                dob: {
+                    day: therapist?.dateOfBirth?.getDate() ?? 1,
+                    month: therapist?.dateOfBirth?.getMonth() ?? 1,
+                    year: therapist?.dateOfBirth?.getFullYear() ?? 1990,
+                },
+                phone: "55" + therapist?.phone.replace(" ", ""),
+            },
+        });
+
+        return await ctx.prisma.therapist.update({
             where: {
                 userId: ctx.auth.userId,
             },
@@ -121,8 +147,6 @@ export const stripeRouter = createTRPCRouter({
                 paymentAccountId: newAccountData.id,
             },
         });
-
-        return therapist;
     }),
     linkAccount: protectedProcedure
         .input(

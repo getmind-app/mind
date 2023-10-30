@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
     LayoutAnimation,
     RefreshControl,
@@ -7,7 +7,6 @@ import {
     View,
 } from "react-native";
 import * as Linking from "expo-linking";
-import { useLocalSearchParams } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
 import { FontAwesome } from "@expo/vector-icons";
 import { Trans, t } from "@lingui/macro";
@@ -27,16 +26,12 @@ export default function PaymentsSetup() {
     const updateAccountStatus = api.stripe.updateAccountStatus.useMutation();
     const createAccount = api.stripe.createAccount.useMutation();
     const linkAccount = api.stripe.linkAccount.useMutation();
-    const { success } = useLocalSearchParams();
-
-    useEffect(() => {
-        if (success) {
-            (async () => {
-                await updateAccountStatus.mutateAsync();
-                await therapist.refetch();
-            })().catch(console.error);
-        }
-    }, [success]);
+    const account = api.stripe.getAccount.useQuery({
+        paymentAccountId: therapist.data?.paymentAccountId ?? "",
+    });
+    const therapistHasStripeAccount = therapist.data?.paymentAccountId !== null;
+    const therapistHasBankAccountLinked =
+        therapist.data?.paymentAccountStatus === "ACTIVE";
 
     if (!therapist.data || therapist.isLoading)
         return (
@@ -79,28 +74,36 @@ export default function PaymentsSetup() {
                 </Text>
                 <TouchableOpacity
                     onPress={onCreateAccount}
-                    disabled={!!therapist.data.paymentAccountId}
+                    disabled={!!therapistHasStripeAccount}
                 >
                     <View
                         style={{
                             elevation: 2,
                         }}
                         className={`mt-6 flex w-full flex-row items-center justify-center rounded-xl ${
-                            therapist.data.paymentAccountId
+                            therapistHasStripeAccount
                                 ? "bg-gray-200"
                                 : "bg-blue-500"
                         } py-3 align-middle shadow-sm`}
                     >
-                        <FontAwesome size={16} color="green" name="check" />
+                        <FontAwesome
+                            size={16}
+                            color={`${
+                                therapistHasStripeAccount ? "green" : "white"
+                            }`}
+                            name={`${
+                                therapistHasStripeAccount ? "check" : "link"
+                            }`}
+                        />
                         <Text
                             className={`ml-2 font-nunito-sans-bold text-lg ${
-                                therapist.data.paymentAccountId
+                                therapistHasStripeAccount
                                     ? "text-black"
                                     : "text-white"
                             }`}
                         >
                             <Trans>
-                                {therapist.data.paymentAccountId
+                                {therapistHasStripeAccount
                                     ? "You already have an account"
                                     : "Create Stripe Account"}
                             </Trans>
@@ -108,17 +111,28 @@ export default function PaymentsSetup() {
                     </View>
                 </TouchableOpacity>
                 <TouchableOpacity
+                    disabled={therapistHasBankAccountLinked}
                     onPress={async () => {
-                        if (therapist.data.paymentAccountId) {
+                        if (!therapistHasBankAccountLinked) {
                             const res = await linkAccount.mutateAsync({
                                 therapistPaymentAccountId:
-                                    therapist.data.paymentAccountId,
+                                    therapist?.data?.paymentAccountId ?? "",
                             });
                             await WebBrowser.openAuthSessionAsync(
                                 `${res.url}?linkingUri=${Linking.createURL(
                                     "/?",
                                 )}`,
                             );
+
+                            await account.refetch();
+
+                            if (
+                                account.data?.external_accounts?.data.length &&
+                                account.data?.external_accounts?.data.length > 0
+                            ) {
+                                await updateAccountStatus.mutateAsync();
+                                await therapist.refetch();
+                            }
                         } else {
                             throw new Error("No payment account id");
                         }
@@ -128,13 +142,35 @@ export default function PaymentsSetup() {
                         style={{
                             elevation: 2,
                         }}
-                        className={`mt-6 flex w-full flex-row items-center justify-center rounded-xl bg-blue-500 py-3 align-middle shadow-sm`}
+                        className={`mt-6 flex w-full flex-row items-center justify-center rounded-xl ${
+                            therapistHasBankAccountLinked
+                                ? "bg-gray-200"
+                                : "bg-blue-500"
+                        }  py-3 align-middle shadow-sm`}
                     >
-                        <FontAwesome size={16} color="white" name="link" />
+                        <FontAwesome
+                            size={16}
+                            color={`${
+                                therapistHasBankAccountLinked
+                                    ? "green"
+                                    : "white"
+                            }`}
+                            name={`${
+                                therapistHasBankAccountLinked ? "check" : "link"
+                            }`}
+                        />
                         <Text
-                            className={`ml-2 font-nunito-sans-bold text-lg text-white`}
+                            className={`ml-2 font-nunito-sans-bold text-lg ${
+                                therapistHasBankAccountLinked
+                                    ? "text-black"
+                                    : "text-white"
+                            }`}
                         >
-                            <Trans>Link Accounts</Trans>
+                            {therapistHasBankAccountLinked ? (
+                                <Trans>Bank account linked</Trans>
+                            ) : (
+                                <Trans>Link Accounts</Trans>
+                            )}
                         </Text>
                     </View>
                 </TouchableOpacity>

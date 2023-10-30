@@ -15,6 +15,7 @@ import { type Icon } from "@expo/vector-icons/build/createIconSet";
 import { t } from "@lingui/macro";
 
 import { ScreenWrapper } from "../../components/ScreenWrapper";
+import { getShareLink } from "../../helpers/getShareLink";
 import { useUserHasProfileImage } from "../../hooks/user/useUserHasProfileImage";
 import { useUserIsProfessional } from "../../hooks/user/useUserIsProfessional";
 import { api } from "../../utils/api";
@@ -41,7 +42,7 @@ export default function UserProfileScreen() {
                         className="rounded-full"
                         alt={`${user?.firstName}'s profile picture`}
                         source={{
-                            uri: user?.profileImageUrl,
+                            uri: user?.imageUrl,
                             width: 72,
                             height: 72,
                         }}
@@ -121,20 +122,7 @@ function ProfessionalMenuItems() {
     if (!data) return null;
 
     const handleShareLink = async () => {
-        const therapistUrl = Linking.createURL(`/psych/${data.id}`);
-
-        await Share.share({
-            message: t({
-                message: `Hey, I'm a therapist in Mind! Check out my profile: ${therapistUrl}`,
-            }),
-        }).catch((error) =>
-            Alert.alert(
-                t({
-                    message: "Error sharing link",
-                }),
-                error,
-            ),
-        );
+        await getShareLink({ id: data.id, name: data.name });
     };
 
     return (
@@ -162,7 +150,11 @@ function ProfessionalMenuItems() {
                 label={t({ message: "Setup Payments" })}
                 onPress={() => router.push("/(psych)/payments-setup")}
             />
-            <ShareLinkMenuItem handleShareLink={handleShareLink} />
+            <MenuItem
+                icon="share"
+                label={t({ message: "Share your link" })}
+                onPress={handleShareLink}
+            />
         </>
     );
 }
@@ -194,19 +186,5 @@ function MenuItem(props: {
                 <MaterialIcons size={24} name="chevron-right" />
             </View>
         </TouchableOpacity>
-    );
-}
-
-function ShareLinkMenuItem({
-    handleShareLink,
-}: {
-    handleShareLink: () => void;
-}) {
-    return (
-        <MenuItem
-            icon="share"
-            label={t({ message: "Share your link" })}
-            onPress={handleShareLink}
-        />
     );
 }
