@@ -31,7 +31,8 @@ config.resolver.nodeModulesPaths = [
     path.resolve(projectRoot, "node_modules"),
     path.resolve(workspaceRoot, "node_modules"),
 ];
+// https://github.com/expo/expo/issues/19870
 // 3. Force Metro to resolve (sub)dependencies only from the `nodeModulesPaths`
-// config.resolver.disableHierarchicalLookup = true;
+config.resolver.disableHierarchicalLookup = true;
 
 module.exports = config;

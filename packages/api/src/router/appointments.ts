@@ -1,5 +1,6 @@
 import type * as Notification from "expo-notifications";
 import clerk from "@clerk/clerk-sdk-node";
+import Stripe from "stripe";
 import { z } from "zod";
 
 import { sendPushNotification } from "../helpers/sendPushNotification";
@@ -183,16 +184,16 @@ export const appointmentsRouter = createTRPCRouter({
             }),
         )
         .mutation(async ({ ctx, input }) => {
-            if (input.status === "ACCEPTED" || input.status === "REJECTED") {
-                const patient = await ctx.prisma.patient.findUnique({
-                    where: {
-                        id: input.patientId,
-                    },
-                });
-
+            if (input.status !== "PENDENT") {
                 const therapist = await ctx.prisma.therapist.findUnique({
                     where: {
                         id: input.therapistId,
+                    },
+                });
+
+                const patient = await ctx.prisma.patient.findUnique({
+                    where: {
+                        id: input.patientId,
                     },
                 });
 
@@ -200,17 +201,96 @@ export const appointmentsRouter = createTRPCRouter({
                     patient?.userId ?? "",
                 );
 
+                const notificationMapper: {
+                    [key in "ACCEPTED" | "REJECTED" | "CANCELED"]: {
+                        title: string;
+                        body: string;
+                    };
+                } = {
+                    ACCEPTED: {
+                        title: "Appointment accepted! 🎉",
+                        body: `${therapist?.name} accepted your appointment request.`,
+                    },
+                    REJECTED: {
+                        title: "Appointment rejected ❌",
+                        body: `${therapist?.name} rejected your appointment request.`,
+                    },
+                    CANCELED: {
+                        title: "Appointment canceled ❌",
+                        body: `${therapist?.name} canceled your appointment.`,
+                    },
+                };
+
+                if (input.status === "ACCEPTED") {
+                    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+                        apiVersion: "2023-08-16",
+                    });
+
+                    if (!therapist?.paymentAccountId) {
+                        throw new Error(
+                            "Missing payment account id for therapist",
+                        );
+                    }
+
+                    if (!patient?.paymentAccountId) {
+                        throw new Error(
+                            "Missing payment account id for patient",
+                        );
+                    }
+
+                    if (!therapist?.hourlyRate) {
+                        throw new Error(
+                            "Missing payment account id for patient",
+                        );
+                    }
+
+                    if (!process.env.FIXED_APPLICATION_FEE) {
+                        throw new Error("Missing application fee");
+                    }
+
+                    const paymentMethod =
+                        await stripe.customers.listPaymentMethods(
+                            patient.paymentAccountId,
+                            {
+                                limit: 1,
+                            },
+                        );
+
+                    if (!paymentMethod.data || !paymentMethod.data[0]) {
+                        throw new Error("Missing payment method");
+                    }
+
+                    const paymentResponse = await stripe.paymentIntents.create({
+                        customer: patient.paymentAccountId,
+                        confirm: true,
+                        description: "Appointment payment",
+                        currency: "brl",
+                        amount: therapist.hourlyRate * 100,
+                        payment_method: paymentMethod.data[0].id,
+                        transfer_data: {
+                            destination: therapist.paymentAccountId,
+                        },
+                        automatic_payment_methods: {
+                            enabled: true,
+                            allow_redirects: "never",
+                        },
+
+                        application_fee_amount:
+                            parseFloat(process.env.FIXED_APPLICATION_FEE) *
+                            100 *
+                            therapist.hourlyRate,
+                    });
+
+                    if (paymentResponse.status !== "succeeded") {
+                        throw new Error("Payment failed");
+                    }
+                }
+
                 await sendPushNotification({
                     expoPushToken: patientUser.publicMetadata
                         .expoPushToken as Notification.ExpoPushToken,
-                    title:
-                        input.status === "ACCEPTED"
-                            ? "Appointment accepted! 🎉"
-                            : "Appointment rejected ❌",
-                    body:
-                        input.status === "ACCEPTED"
-                            ? `${therapist?.name} accepted your appointment request.`
-                            : `${therapist?.name} rejected your appointment request.`,
+                    title: notificationMapper[input.status]["title"],
+                    body: notificationMapper[input.status]["body"],
                 });
             }
 

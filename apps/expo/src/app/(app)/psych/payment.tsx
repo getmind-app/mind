@@ -45,15 +45,15 @@ export default function SessionPayment() {
             return;
         }
 
-        const { paymentIntent, ephemeralKey, customer } =
-            await createPaymentIntent.mutateAsync({
+        const { setupIntent, ephemeralKey, customer } =
+            await createSetupIntent.mutateAsync({
                 amount: data.therapist.hourlyRate * 100,
                 currency: "brl",
                 payment_method_types: ["card"],
                 therapistPaymentAccountId: data.therapist.paymentAccountId,
             });
 
-        if (!paymentIntent.client_secret) {
+        if (!setupIntent.client_secret) {
             Alert.alert("Missing stripe's client secret");
             return;
         }
@@ -61,7 +61,7 @@ export default function SessionPayment() {
         const { error } = await initPaymentSheet({
             customerId: customer.id,
             customerEphemeralKeySecret: ephemeralKey.secret,
-            paymentIntentClientSecret: paymentIntent.client_secret,
+            setupIntentClientSecret: setupIntent.client_secret,
             merchantDisplayName: "Mind",
             allowsDelayedPaymentMethods: true,
             returnURL: Linking.createURL("/"),
@@ -83,7 +83,7 @@ export default function SessionPayment() {
         }
     }
 
-    const createPaymentIntent = api.stripe.createPaymentIntent.useMutation();
+    const createSetupIntent = api.stripe.createSetupIntent.useMutation();
 
     const handleConfirm = async () => {
         const { error } = await presentPaymentSheet();

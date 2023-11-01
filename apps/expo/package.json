@@ -68,7 +68,7 @@
         "react-dom": "18.2.0",
         "react-hook-form": "^7.45.2",
         "react-intl": "^6.4.4",
-        "react-native": "0.72.5",
+        "react-native": "0.72.6",
         "react-native-currency-input": "^1.1.0",
         "react-native-gesture-handler": "~2.12.0",
         "react-native-linear-gradient": "^2.7.2",

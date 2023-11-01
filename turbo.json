@@ -46,6 +46,7 @@
         "NODE_ENV",
         "SKIP_ENV_VALIDATION",
         "VERCEL",
-        "VERCEL_URL"
+        "VERCEL_URL",
+        "FIXED_APPLICATION_FEE"
     ]
 }
