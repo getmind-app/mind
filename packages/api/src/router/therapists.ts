@@ -72,7 +72,10 @@ export const therapistsRouter = createTRPCRouter({
         )
         .query(async ({ ctx, input }) => {
             return await ctx.prisma.therapist.findMany({
-                where: { name: { contains: input.name, mode: "insensitive" } },
+                where: {
+                    name: { contains: input.name, mode: "insensitive" },
+                    paymentAccountStatus: "ACTIVE",
+                },
             });
         }),
     setAvailableHours: protectedProcedure
