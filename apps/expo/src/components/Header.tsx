@@ -44,9 +44,8 @@ export const Header = ({ title, share, onShare, onBack }: HeaderProps) => {
                         {title}
                     </Text>
                 ),
-                headerBackground: () => (
-                    <View className="h-full w-full bg-off-white"></View>
-                ),
+                headerStyle: { backgroundColor: "#f8f8f8" },
+                headerShadowVisible: false,
                 headerBackVisible: false,
             }}
         />
