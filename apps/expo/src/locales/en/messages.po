@@ -13,22 +13,20 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: src/app/(app)/(psych)/payments-setup.tsx:87
-#: src/app/(app)/psych/[id].tsx:186
-#: src/app/(app)/psych/schedule.tsx:173
-#: src/app/(app)/psych/schedule.tsx:214
+#: src/app/(app)/(psych)/payments-setup.tsx:105
+#: src/app/(app)/psych/[id].tsx:187
 msgid "{0}"
 msgstr "{0}"
 
-#: src/app/(app)/psych/schedule.tsx:107
+#: src/app/(app)/psych/schedule.tsx:142
 msgid "{0}'s Schedule"
 msgstr "{0}'s Schedule"
 
-#: src/app/(app)/psych/schedule.tsx:460
+#: src/app/(app)/psych/schedule.tsx:490
 msgid "{0}'s sessions happen at <0>{1}, {2}</0>"
 msgstr "{0}'s sessions happen at <0>{1}, {2}</0>"
 
-#: src/app/(app)/psych/schedule.tsx:472
+#: src/app/(app)/psych/schedule.tsx:502
 msgid "{0}'s sessions happen online!"
 msgstr "{0}'s sessions happen online!"
 
@@ -36,7 +34,7 @@ msgstr "{0}'s sessions happen online!"
 #~ msgid "{children}"
 #~ msgstr "{children}"
 
-#: src/app/(app)/search.tsx:93
+#: src/app/(app)/search.tsx:94
 msgid "{name}' profile picture"
 msgstr "{name}' profile picture"
 
@@ -44,7 +42,7 @@ msgstr "{name}' profile picture"
 #~ msgid "{therapistName}'s sessions happen at <0>335 Pioneer Way</0>"
 #~ msgstr "{therapistName}'s sessions happen at <0>335 Pioneer Way</0>"
 
-#: src/app/(app)/psych/[id].tsx:149
+#: src/app/(app)/psych/[id].tsx:150
 msgid "{title}"
 msgstr "{title}"
 
@@ -121,47 +119,51 @@ msgstr "About"
 #~ msgid "About me"
 #~ msgstr "About me"
 
-#: src/app/(app)/settings/personal-info.tsx:180
+#: src/app/(app)/settings/personal-info.tsx:174
 msgid "About you"
 msgstr "About you"
 
-#: src/app/(app)/calendar.tsx:361
+#: src/app/(app)/calendar.tsx:345
 msgid "Accept the session?"
 msgstr "Accept the session?"
 
 #: src/app/(app)/(psych)/address.tsx:208
-#: src/app/(app)/profile.tsx:131
+#: src/app/(app)/profile.tsx:139
 #: src/app/(app)/settings/address.tsx:95
 msgid "Address"
 msgstr "Address"
 
-#: src/app/(app)/psych/payment.tsx:129
+#: src/app/(app)/psych/payment.tsx:139
 msgid "Appointments with {0}"
 msgstr "Appointments with {0}"
 
-#: src/app/(app)/calendar.tsx:427
+#: src/app/(app)/calendar.tsx:411
 msgid "Are you sure?"
 msgstr "Are you sure?"
 
-#: src/app/(app)/profile.tsx:137
-#: src/app/(app)/settings/available-hours.tsx:42
+#: src/app/(app)/profile.tsx:145
+#: src/app/(app)/settings/available-hours.tsx:43
 msgid "Available hours"
 msgstr "Available hours"
 
-#: src/app/(app)/(psych)/profile.tsx:183
-#: src/app/(app)/settings/personal-info.tsx:134
+#: src/app/(app)/(psych)/payments-setup.tsx:170
+msgid "Bank account linked"
+msgstr "Bank account linked"
+
+#: src/app/(app)/(psych)/profile.tsx:184
+#: src/app/(app)/settings/personal-info.tsx:128
 msgid "Birthday"
 msgstr "Birthday"
 
-#: src/app/(app)/calendar.tsx:116
+#: src/app/(app)/calendar.tsx:110
 msgid "Calendar"
 msgstr "Calendar"
 
-#: src/app/(app)/calendar.tsx:437
+#: src/app/(app)/calendar.tsx:421
 msgid "Cancel"
 msgstr "Cancel"
 
-#: src/app/(app)/calendar.tsx:446
+#: src/app/(app)/calendar.tsx:430
 msgid "Cancel the session?"
 msgstr "Cancel the session?"
 
@@ -175,11 +177,11 @@ msgstr "City"
 msgid "Complement"
 msgstr "Complement"
 
-#: src/app/(app)/psych/payment.tsx:180
+#: src/app/(app)/psych/payment.tsx:189
 msgid "Confirm"
 msgstr "Confirm"
 
-#: src/app/(app)/psych/schedule.tsx:154
+#: src/app/(app)/psych/schedule.tsx:192
 msgid "Confirm appointment"
 msgstr "Confirm appointment"
 
@@ -187,16 +189,16 @@ msgstr "Confirm appointment"
 #~ msgid "Confirm sessions"
 #~ msgstr "Confirm sessions"
 
-#: src/app/(app)/notes/new.tsx:66
+#: src/app/(app)/notes/new.tsx:65
 msgid "Create"
 msgstr "Create"
 
 #: src/app/(app)/psych/finish.tsx:72
-msgid "Create event"
-msgstr "Create event"
+#~ msgid "Create event"
+#~ msgstr "Create event"
 
-#: src/app/(app)/(psych)/profile.tsx:215
-#: src/app/(app)/settings/personal-info.tsx:166
+#: src/app/(app)/(psych)/profile.tsx:216
+#: src/app/(app)/settings/personal-info.tsx:160
 msgid "CRP"
 msgstr "CRP"
 
@@ -204,7 +206,7 @@ msgstr "CRP"
 msgid "Delete"
 msgstr "Delete"
 
-#: src/app/(app)/psych/payment.tsx:126
+#: src/app/(app)/psych/payment.tsx:136
 msgid "Details"
 msgstr "Details"
 
@@ -212,29 +214,28 @@ msgstr "Details"
 #~ msgid "Discount"
 #~ msgstr "Discount"
 
-#: src/app/(app)/(psych)/profile.tsx:199
-#: src/app/(app)/settings/personal-info.tsx:150
+#: src/app/(app)/(psych)/profile.tsx:200
+#: src/app/(app)/settings/personal-info.tsx:144
 msgid "Document (CPF)"
 msgstr "Document (CPF)"
 
 #: src/app/(app)/psych/[id].tsx:112
-msgid "Education"
-msgstr "Education"
+#~ msgid "Education"
+#~ msgstr "Education"
 
 #: src/components/AvailableHoursPicker.tsx:141
 msgid "End Hour:"
 msgstr "End Hour:"
 
-#: src/app/(app)/profile.tsx:112
 #: src/helpers/getShareLink.ts:20
 msgid "Error sharing link"
 msgstr "Error sharing link"
 
-#: src/app/(app)/settings/personal-info.tsx:172
+#: src/app/(app)/settings/personal-info.tsx:166
 msgid "Experience"
 msgstr "Experience"
 
-#: src/app/(app)/(psych)/profile.tsx:341
+#: src/app/(app)/(psych)/profile.tsx:342
 msgid "Female"
 msgstr "Female"
 
@@ -254,44 +255,48 @@ msgstr "Finish"
 #~ msgid "First Appointment (10%)"
 #~ msgstr "First Appointment (10%)"
 
-#: src/app/(app)/(psych)/profile.tsx:176
-#: src/app/(app)/settings/personal-info.tsx:127
+#: src/app/(app)/(psych)/profile.tsx:177
+#: src/app/(app)/settings/personal-info.tsx:121
 msgid "Full Name"
 msgstr "Full Name"
 
-#: src/app/(app)/(psych)/profile.tsx:301
+#: src/app/(app)/(psych)/profile.tsx:302
 msgid "Gender"
 msgstr "Gender"
 
-#: src/app/(app)/index.tsx:184
+#: src/app/(app)/index.tsx:211
 msgid "Get directions"
 msgstr "Get directions"
 
 #: src/app/(app)/profile.tsx:107
-msgid "Hey, I'm a therapist in Mind! Check out my profile: {therapistUrl}"
-msgstr "Hey, I'm a therapist in Mind! Check out my profile: {therapistUrl}"
+#~ msgid "Hey, I'm a therapist in Mind! Check out my profile: {therapistUrl}"
+#~ msgstr "Hey, I'm a therapist in Mind! Check out my profile: {therapistUrl}"
 
 #: src/app/psych/[id].tsx:45
 #~ msgid "Hey! Check {0}'s profile: {1}"
 #~ msgstr "Hey! Check {0}'s profile: {1}"
 
 #: src/helpers/getShareLink.ts:13
-msgid "Hey! Check {name}'s profile: {0}"
-msgstr "Hey! Check {name}'s profile: {0}"
+#~ msgid "Hey! Check {name}'s profile: {0}"
+#~ msgstr "Hey! Check {name}'s profile: {0}"
 
-#: src/app/(app)/psych/schedule.tsx:316
+#: src/helpers/getShareLink.ts:13
+msgid "Hey! Check {name}'s profile: https://getmind.app/redirect?redirectUrl={0}"
+msgstr "Hey! Check {name}'s profile: https://getmind.app/redirect?redirectUrl={0}"
+
+#: src/app/(app)/psych/schedule.tsx:346
 msgid "Hour"
 msgstr "Hour"
 
-#: src/app/(app)/(psych)/profile.tsx:223
+#: src/app/(app)/(psych)/profile.tsx:224
 msgid "Hourly rate"
 msgstr "Hourly rate"
 
-#: src/app/(app)/settings/personal-info.tsx:189
+#: src/app/(app)/settings/personal-info.tsx:183
 msgid "Hourly Rate"
 msgstr "Hourly Rate"
 
-#: src/app/(app)/calendar.tsx:242
+#: src/app/(app)/calendar.tsx:230
 msgid "in person"
 msgstr "in person"
 
@@ -299,7 +304,7 @@ msgstr "in person"
 msgid "In Person"
 msgstr "In Person"
 
-#: src/app/(app)/index.tsx:101
+#: src/app/(app)/index.tsx:114
 msgid "in person at <0><1>{0}, {1}</1></0>"
 msgstr "in person at <0><1>{0}, {1}</1></0>"
 
@@ -307,7 +312,7 @@ msgstr "in person at <0><1>{0}, {1}</1></0>"
 #~ msgid "in person at <0>335 Pioneer Way</0>"
 #~ msgstr "in person at <0>335 Pioneer Way</0>"
 
-#: src/app/(app)/(psych)/profile.tsx:288
+#: src/app/(app)/(psych)/profile.tsx:289
 msgid "In-person"
 msgstr "In-person"
 
@@ -317,20 +322,20 @@ msgstr "Is that right?"
 
 #. Psych Onboard Full Name Placeholder
 #. Psych Onboard Full Name Placeholder
-#: src/app/(app)/(psych)/profile.tsx:177
-#: src/app/(app)/settings/personal-info.tsx:128
+#: src/app/(app)/(psych)/profile.tsx:178
+#: src/app/(app)/settings/personal-info.tsx:122
 msgid "John Doe"
 msgstr "John Doe"
 
-#: src/app/(app)/index.tsx:183
+#: src/app/(app)/index.tsx:210
 msgid "Join the meeting"
 msgstr "Join the meeting"
 
 #: src/app/onboard.tsx:134
-msgid "just want to talk"
-msgstr "just want to talk"
+#~ msgid "just want to talk"
+#~ msgstr "just want to talk"
 
-#: src/app/(app)/index.tsx:52
+#: src/app/(app)/index.tsx:50
 msgid "Last notes"
 msgstr "Last notes"
 
@@ -338,7 +343,7 @@ msgstr "Last notes"
 msgid "Let us help. Focus on connecting."
 msgstr "Let us help. Focus on connecting."
 
-#: src/app/(app)/(psych)/payments-setup.tsx:122
+#: src/app/(app)/(psych)/payments-setup.tsx:172
 msgid "Link Accounts"
 msgstr "Link Accounts"
 
@@ -351,8 +356,8 @@ msgid "Looking for a therapist?"
 msgstr "Looking for a therapist?"
 
 #: src/app/onboard.tsx:132
-msgid "Looking for help or"
-msgstr "Looking for help or"
+#~ msgid "Looking for help or"
+#~ msgstr "Looking for help or"
 
 #: src/app/onboard/index.tsx:62
 #~ msgid ""
@@ -362,17 +367,21 @@ msgstr "Looking for help or"
 #~ "Looking for help or\n"
 #~ "just want to talk"
 
-#: src/app/(app)/(psych)/profile.tsx:321
+#: src/app/onboard.tsx:164
+msgid "Looking for help or just want to talk"
+msgstr "Looking for help or just want to talk"
+
+#: src/app/(app)/(psych)/profile.tsx:322
 msgid "Male"
 msgstr "Male"
 
-#: src/app/(app)/psych/schedule.tsx:437
+#: src/app/(app)/psych/schedule.tsx:467
 msgid "Meet"
 msgstr "Meet"
 
 #: src/app/onboard.tsx:173
-msgid "Meet and help"
-msgstr "Meet and help"
+#~ msgid "Meet and help"
+#~ msgstr "Meet and help"
 
 #: src/app/onboard/index.tsx:104
 #~ msgid ""
@@ -382,15 +391,19 @@ msgstr "Meet and help"
 #~ "Meet and help\n"
 #~ "new patients"
 
-#: src/app/(app)/psych/[id].tsx:116
-msgid "Methodologies"
-msgstr "Methodologies"
+#: src/app/onboard.tsx:235
+msgid "Meet and help new patients"
+msgstr "Meet and help new patients"
 
-#: src/app/(app)/(psych)/profile.tsx:231
+#: src/app/(app)/psych/[id].tsx:116
+#~ msgid "Methodologies"
+#~ msgstr "Methodologies"
+
+#: src/app/(app)/(psych)/profile.tsx:232
 msgid "Modality (you can choose both)"
 msgstr "Modality (you can choose both)"
 
-#: src/app/(app)/(patient)/profile.tsx:139
+#: src/app/(app)/(patient)/profile.tsx:156
 msgid "Name"
 msgstr "Name"
 
@@ -399,7 +412,7 @@ msgstr "Name"
 msgid "Neighborhood"
 msgstr "Neighborhood"
 
-#: src/app/(app)/index.tsx:57
+#: src/app/(app)/index.tsx:55
 msgid "New"
 msgstr "New"
 
@@ -408,32 +421,36 @@ msgid "New note"
 msgstr "New note"
 
 #: src/app/onboard.tsx:175
-msgid "new patients"
-msgstr "new patients"
+#~ msgid "new patients"
+#~ msgstr "new patients"
 
-#: src/app/(app)/(patient)/profile.tsx:152
-#: src/app/(app)/(psych)/profile.tsx:358
-#: src/app/onboard.tsx:198
+#: src/app/(app)/(patient)/profile.tsx:166
+#: src/app/(app)/(psych)/profile.tsx:351
+#: src/app/onboard.tsx:251
 msgid "Next"
 msgstr "Next"
 
-#: src/app/(app)/index.tsx:48
+#: src/app/(app)/index.tsx:46
 msgid "Next session"
 msgstr "Next session"
 
-#: src/app/(app)/calendar.tsx:382
+#: src/app/(app)/calendar.tsx:366
 msgid "No"
 msgstr "No"
 
-#: src/app/(app)/psych/schedule.tsx:334
+#: src/app/(app)/psych/schedule.tsx:242
+msgid "No dates available for this month"
+msgstr "No dates available for this month"
+
+#: src/app/(app)/psych/schedule.tsx:364
 msgid "No more available sessions for this date!"
 msgstr "No more available sessions for this date!"
 
-#: src/app/(app)/search.tsx:120
+#: src/app/(app)/search.tsx:121
 msgid "No therapists found!"
 msgstr "No therapists found!"
 
-#: src/app/(app)/index.tsx:252
+#: src/app/(app)/index.tsx:279
 msgid "Notes are a tool for helping you track your progress"
 msgstr "Notes are a tool for helping you track your progress"
 
@@ -446,31 +463,31 @@ msgstr "Nothing for now!"
 msgid "Number"
 msgstr "Number"
 
-#: src/app/(app)/(patient)/profile.tsx:109
-#: src/app/(app)/(psych)/profile.tsx:142
+#: src/app/(app)/(patient)/profile.tsx:114
+#: src/app/(app)/(psych)/profile.tsx:143
 msgid "Onboard"
 msgstr "Onboard"
 
-#: src/app/(app)/(psych)/profile.tsx:260
+#: src/app/(app)/(psych)/profile.tsx:261
 #: src/app/(app)/psych/payment.tsx:13
-#: src/app/(app)/psych/schedule.tsx:496
+#: src/app/(app)/psych/schedule.tsx:526
 msgid "Online"
 msgstr "Online"
 
-#: src/app/(app)/psych/[id].tsx:188
+#: src/app/(app)/psych/[id].tsx:189
 msgid "Online and on-site"
 msgstr "Online and on-site"
 
-#: src/app/(app)/psych/schedule.tsx:515
+#: src/app/(app)/psych/schedule.tsx:545
 msgid "Onsite"
 msgstr "Onsite"
 
-#: src/app/(app)/calendar.tsx:140
+#: src/app/(app)/calendar.tsx:129
 msgid "Options for canceling and rescheduling will also be available"
 msgstr "Options for canceling and rescheduling will also be available"
 
-#: src/app/(app)/profile.tsx:59
-#: src/app/onboard.tsx:129
+#: src/app/(app)/profile.tsx:73
+#: src/app/onboard.tsx:161
 msgid "Patient"
 msgstr "Patient"
 
@@ -478,29 +495,29 @@ msgstr "Patient"
 #~ msgid "Patients"
 #~ msgstr "Patients"
 
-#: src/app/(app)/psych/payment.tsx:163
+#: src/app/(app)/psych/payment.tsx:172
 msgid "Payment method"
 msgstr "Payment method"
 
-#: src/app/(app)/(psych)/payments-setup.tsx:58
+#: src/app/(app)/(psych)/payments-setup.tsx:68
 msgid "Payments Setup"
 msgstr "Payments Setup"
 
-#: src/app/(app)/profile.tsx:125
-#: src/app/(app)/settings/personal-info.tsx:122
+#: src/app/(app)/profile.tsx:133
+#: src/app/(app)/settings/personal-info.tsx:116
 msgid "Personal info"
 msgstr "Personal info"
 
-#: src/app/(app)/(psych)/profile.tsx:207
-#: src/app/(app)/settings/personal-info.tsx:158
+#: src/app/(app)/(psych)/profile.tsx:208
+#: src/app/(app)/settings/personal-info.tsx:152
 msgid "Phone"
 msgstr "Phone"
 
-#: src/app/(app)/psych/schedule.tsx:112
+#: src/app/(app)/psych/schedule.tsx:153
 msgid "Pick the date that you would like to meet:"
 msgstr "Pick the date that you would like to meet:"
 
-#: src/app/(app)/psych/schedule.tsx:329
+#: src/app/(app)/psych/schedule.tsx:359
 msgid "Please select a date"
 msgstr "Please select a date"
 
@@ -508,20 +525,20 @@ msgstr "Please select a date"
 msgid "Practicing for"
 msgstr "Practicing for"
 
-#: src/app/(app)/profile.tsx:60
-#: src/app/onboard.tsx:170
+#: src/app/(app)/profile.tsx:74
+#: src/app/onboard.tsx:232
 msgid "Professional"
 msgstr "Professional"
 
-#: src/app/(app)/(patient)/profile.tsx:111
+#: src/app/(app)/(patient)/profile.tsx:116
 msgid "Profile picture"
 msgstr "Profile picture"
 
-#: src/app/(app)/search.tsx:106
+#: src/app/(app)/search.tsx:107
 msgid "Psychologist - {crp}"
 msgstr "Psychologist - {crp}"
 
-#: src/app/(app)/profile.tsx:87
+#: src/app/(app)/profile.tsx:100
 msgid "Reset user metadata"
 msgstr "Reset user metadata"
 
@@ -529,7 +546,7 @@ msgstr "Reset user metadata"
 msgid "Save"
 msgstr "Save"
 
-#: src/app/(app)/psych/[id].tsx:196
+#: src/app/(app)/psych/[id].tsx:197
 msgid "Schedule"
 msgstr "Schedule"
 
@@ -549,12 +566,12 @@ msgstr "Search for your therapist!"
 msgid "Set available hours for your appointments."
 msgstr "Set available hours for your appointments."
 
-#: src/app/(app)/profile.tsx:142
+#: src/app/(app)/profile.tsx:150
 msgid "Setup Payments"
 msgstr "Setup Payments"
 
-#: src/app/(app)/calendar.tsx:167
-#: src/app/(app)/profile.tsx:188
+#: src/app/(app)/calendar.tsx:147
+#: src/app/(app)/profile.tsx:155
 #: src/components/DefaultHomeCard.tsx:48
 msgid "Share your link"
 msgstr "Share your link"
@@ -572,11 +589,11 @@ msgstr "Sign in with"
 #~ msgid "Sign in with Google"
 #~ msgstr "Sign in with Google"
 
-#: src/app/(app)/profile.tsx:74
+#: src/app/(app)/profile.tsx:88
 msgid "Sign out"
 msgstr "Sign out"
 
-#: src/app/(app)/calendar.tsx:180
+#: src/app/(app)/calendar.tsx:169
 msgid "Something went wrong"
 msgstr "Something went wrong"
 
@@ -602,7 +619,7 @@ msgstr "Street"
 #~ msgid "The payment will be processed a day before each session."
 #~ msgstr "The payment will be processed a day before each session."
 
-#: src/app/(app)/calendar.tsx:151
+#: src/app/(app)/calendar.tsx:156
 #: src/components/DefaultHomeCard.tsx:57
 msgid "Therapists"
 msgstr "Therapists"
@@ -611,16 +628,16 @@ msgstr "Therapists"
 #~ msgid "There are no more available sessions for this date! 🫤"
 #~ msgstr "There are no more available sessions for this date! 🫤"
 
-#: src/app/(app)/search.tsx:65
+#: src/app/(app)/search.tsx:66
 msgid "There was an error when searching for therapists"
 msgstr "There was an error when searching for therapists"
 
-#: src/app/(app)/psych/payment.tsx:152
+#: src/app/(app)/psych/payment.tsx:162
 msgid "Total"
 msgstr "Total"
 
 #: src/app/(app)/settings/address.tsx:159
-#: src/app/(app)/settings/personal-info.tsx:201
+#: src/app/(app)/settings/personal-info.tsx:195
 msgid "Update"
 msgstr "Update"
 
@@ -629,35 +646,38 @@ msgid "Update hours"
 msgstr "Update hours"
 
 #: src/app/(app)/psych/payment.tsx:145
-msgid "US$"
-msgstr "US$"
+#~ msgid "US$"
+#~ msgstr "US$"
 
-#: src/app/(app)/psych/payment.tsx:156
 #: src/components/FormCurrencyInput.tsx:48
 msgid "US$ "
 msgstr "US$ "
 
-#: src/app/(app)/calendar.tsx:241
+#: src/app/(app)/calendar.tsx:229
 msgid "via Google Meet"
 msgstr "via Google Meet"
 
 #: src/app/(app)/(psych)/payments-setup.tsx:60
-msgid "We use Stripe as our payment provider, to receive payments via Mind you have to setup an account."
-msgstr "We use Stripe as our payment provider, to receive payments via Mind you have to setup an account."
+#~ msgid "We use Stripe as our payment provider, to receive payments via Mind you have to setup an account."
+#~ msgstr "We use Stripe as our payment provider, to receive payments via Mind you have to setup an account."
+
+#: src/app/(app)/(psych)/payments-setup.tsx:70
+msgid "We use Stripe as our payment provider. To receive payments from Mind you must setup an account."
+msgstr "We use Stripe as our payment provider. To receive payments from Mind you must setup an account."
 
 #: src/app/sign-in.tsx:28
 msgid "Welcome"
 msgstr "Welcome"
 
-#: src/app/onboard.tsx:110
+#: src/app/onboard.tsx:116
 msgid "Who are you?"
 msgstr "Who are you?"
 
-#: src/app/(app)/calendar.tsx:219
+#: src/app/(app)/calendar.tsx:209
 msgid "with"
 msgstr "with"
 
-#: src/app/(app)/notes/new.tsx:77
+#: src/app/(app)/notes/new.tsx:76
 msgid "Write your note here"
 msgstr "Write your note here"
 
@@ -665,8 +685,8 @@ msgstr "Write your note here"
 msgid "years"
 msgstr "years"
 
-#: src/app/(app)/calendar.tsx:371
-#: src/app/(app)/calendar.tsx:456
+#: src/app/(app)/calendar.tsx:355
+#: src/app/(app)/calendar.tsx:440
 msgid "Yes"
 msgstr "Yes"
 
@@ -674,7 +694,7 @@ msgstr "Yes"
 #~ msgid "You can cancel or reschedule your sessions up to 24 hours before."
 #~ msgstr "You can cancel or reschedule your sessions up to 24 hours before."
 
-#: src/app/(app)/index.tsx:249
+#: src/app/(app)/index.tsx:276
 msgid "You have no notes"
 msgstr "You have no notes"
 
@@ -682,7 +702,7 @@ msgstr "You have no notes"
 msgid "You're all set!"
 msgstr "You're all set!"
 
-#: src/app/(app)/psych/payment.tsx:123
+#: src/app/(app)/psych/payment.tsx:133
 msgid "Your appointment"
 msgstr "Your appointment"
 
@@ -690,7 +710,7 @@ msgstr "Your appointment"
 msgid "Your appointments"
 msgstr "Your appointments"
 
-#: src/app/(app)/calendar.tsx:137
+#: src/app/(app)/calendar.tsx:126
 msgid "Your appointments will show up here"
 msgstr "Your appointments will show up here"
 
