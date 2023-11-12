@@ -355,16 +355,28 @@ function HourPicker({
             <ScrollView className="w-full" horizontal={true}>
                 <View className="flex w-full flex-row pt-2">
                     {!date && (
-                        <Text className="font-nunito-sans text-[#666666]">
+                        <BasicText
+                            style={{
+                                paddingLeft: 4,
+                            }}
+                            color="gray"
+                            size="sm"
+                        >
                             <Trans>Please select a date</Trans>
-                        </Text>
+                        </BasicText>
                     )}
                     {date && availableHours.length === 0 && (
-                        <Text className="font-nunito-sans text-[#666666]">
+                        <BasicText
+                            style={{
+                                paddingLeft: 4,
+                            }}
+                            color="gray"
+                            size="sm"
+                        >
                             <Trans>
                                 No more available sessions for this date!
                             </Trans>
-                        </Text>
+                        </BasicText>
                     )}
                     {date &&
                         availableHours.map((n, i) => (
@@ -486,23 +498,39 @@ function ModalityPicker({
                         );
                     }}
                 >
-                    <Text className="mt-2 font-nunito-sans text-[#666666]">
+                    <BasicText
+                        style={{
+                            paddingLeft: 4,
+                        }}
+                        color="gray"
+                        size="sm"
+                    >
                         <Trans>
                             {therapist.name}&apos;s sessions happen at{" "}
-                            <Text className="font-nunito-sans underline">
+                            <BasicText
+                                style={{
+                                    textDecorationLine: "underline",
+                                }}
+                            >
                                 {therapist.address?.street},{" "}
                                 {therapist.address?.number}
-                            </Text>
+                            </BasicText>
                         </Trans>
-                    </Text>
+                    </BasicText>
                 </TouchableOpacity>
             ) : (
-                <Text className="mt-2 font-nunito-sans text-[#666666]">
+                <BasicText
+                    style={{
+                        paddingLeft: 4,
+                    }}
+                    color="gray"
+                    size="sm"
+                >
                     {/* TODO: Translate */}
                     <Trans>
                         {therapist.name}&apos;s sessions happen online!
                     </Trans>
-                </Text>
+                </BasicText>
             )}
 
             {therapist.modalities.length > 1 && (
