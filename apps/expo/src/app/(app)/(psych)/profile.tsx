@@ -22,6 +22,7 @@ import { z } from "zod";
 import { FormCurrencyInput } from "../../../components/FormCurrencyInput";
 import { FormDateInput } from "../../../components/FormDateInput";
 import { FormTextInput } from "../../../components/FormTextInput";
+import { LargeButton } from "../../../components/LargeButton";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
 import { Title } from "../../../components/Title";
 import { api } from "../../../utils/api";
@@ -346,19 +347,9 @@ export default function EditPsychProfile() {
                         )}
                     />
                 </ScrollView>
-                <TouchableOpacity className="mb-4 w-full" onPress={onSubmit}>
-                    <View
-                        className={`mt-4 flex w-full items-center justify-center rounded-xl ${
-                            isValid ? "bg-blue-500" : "bg-blue-200"
-                        } py-2`}
-                    >
-                        <Text
-                            className={`font-nunito-sans-bold text-lg text-white`}
-                        >
-                            <Trans>Next</Trans>
-                        </Text>
-                    </View>
-                </TouchableOpacity>
+                <LargeButton disabled={!isValid} onPress={onSubmit}>
+                    <Trans>Next</Trans>
+                </LargeButton>
             </ScreenWrapper>
         </KeyboardAvoidingView>
     );
