@@ -14,6 +14,7 @@ import { atom, useAtom } from "jotai";
 
 import { AnimatedCard } from "../../../components/Accordion";
 import { BasicText } from "../../../components/BasicText";
+import { FullScreenLoading } from "../../../components/FullScreenLoading";
 import { Header } from "../../../components/Header";
 import { LargeButton } from "../../../components/LargeButton";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
@@ -96,7 +97,8 @@ export default function TherapistSchedule() {
     }
 
     if (isLoading || !therapistAvailableDates.data)
-        return <Text>Loading...</Text>;
+        return <FullScreenLoading />;
+
     if (isError) return <Text>Error: {JSON.stringify(error)}</Text>;
     if (!data) return <Text>Not found</Text>;
 
