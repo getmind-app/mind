@@ -1,16 +1,12 @@
 import { View } from "react-native";
-import { Stack } from "expo-router";
 
+import { Header } from "./Header";
 import { Loading } from "./Loading";
 
 export function FullScreenLoading() {
     return (
         <>
-            <Stack.Screen
-                options={{
-                    headerShown: false,
-                }}
-            />
+            <Header />
             <View
                 style={{
                     flex: 1,
