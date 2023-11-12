@@ -6,8 +6,8 @@ import * as Linking from "expo-linking";
 import { useGlobalSearchParams, useRouter, useSearchParams } from "expo-router";
 import { Trans, t } from "@lingui/macro";
 
+import { FullScreenLoading } from "../../../components/FullScreenLoading";
 import { Header } from "../../../components/Header";
-import { ProfileSkeleton } from "../../../components/ProfileSkeleton";
 import formatModality from "../../../helpers/formatModality";
 import geocodeAddress from "../../../helpers/geocodeAddress";
 import { getShareLink } from "../../../helpers/getShareLink";
@@ -26,12 +26,7 @@ export default function TherapistProfile() {
     }
 
     if (isLoading) {
-        return (
-            <>
-                <Header />
-                <ProfileSkeleton />
-            </>
-        );
+        return <FullScreenLoading />;
     }
 
     return (
