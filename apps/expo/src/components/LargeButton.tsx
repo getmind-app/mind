@@ -3,7 +3,7 @@ import { TouchableOpacity, View } from "react-native";
 import { BasicText } from "./BasicText";
 import { Loading } from "./Loading";
 
-type TouchableOpacityProps = React.ComponentProps<typeof TouchableOpacity>;
+type TouchableOpacityProps = ConstructorParameters<typeof TouchableOpacity>;
 
 export function LargeButton({
     children,
@@ -11,6 +11,7 @@ export function LargeButton({
 }: TouchableOpacityProps & {
     loading?: boolean;
     children: React.ReactNode;
+    disabled?: boolean;
 }) {
     return (
         <TouchableOpacity
