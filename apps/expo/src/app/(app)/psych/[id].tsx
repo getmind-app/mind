@@ -3,11 +3,13 @@ import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { type Float } from "react-native/Libraries/Types/CodegenTypes";
 import { Image } from "expo-image";
 import * as Linking from "expo-linking";
+import * as NavigationBar from "expo-navigation-bar";
 import { useGlobalSearchParams, useRouter, useSearchParams } from "expo-router";
 import { Trans, t } from "@lingui/macro";
 
 import { FullScreenLoading } from "../../../components/FullScreenLoading";
 import { Header } from "../../../components/Header";
+import { ScreenWrapper } from "../../../components/ScreenWrapper";
 import formatModality from "../../../helpers/formatModality";
 import geocodeAddress from "../../../helpers/geocodeAddress";
 import { getShareLink } from "../../../helpers/getShareLink";
@@ -38,78 +40,90 @@ export default function TherapistProfile() {
                 }
                 onBack={() => router.push({ pathname: "/search" })}
             />
-            <ScrollView
-                showsVerticalScrollIndicator={false}
-                className="h-full bg-off-white px-4 py-2"
+            <ScreenWrapper
+                style={{
+                    paddingTop: 12,
+                }}
             >
-                <View className="flex flex-row items-center gap-x-6">
-                    <Image
-                        alt="Profile picture"
-                        style={{
-                            width: 80,
-                            height: 80,
-                            borderRadius: 100,
-                        }}
-                        source={data?.profilePictureUrl}
-                        contentFit="cover"
-                    />
-                    <View className="gap-y-2">
-                        <Text
+                <ScrollView
+                    style={{
+                        flex: 1,
+                    }}
+                    showsVerticalScrollIndicator={false}
+                >
+                    <View className="flex flex-row items-center gap-x-6">
+                        <Image
+                            alt="Profile picture"
                             style={{
-                                fontSize: 24,
-                                fontFamily: "NunitoSans_700Bold",
+                                width: 80,
+                                height: 80,
+                                borderRadius: 100,
                             }}
-                        >
-                            {data?.name}
-                        </Text>
-                        <View className="flex flex-col">
-                            <Text className="font-nunito-sans-bold text-base text-slate-500">
-                                CRP{" "}
-                                <Text className="text-black">{data?.crp}</Text>
-                            </Text>
-
-                            <Text className="font-nunito-sans-bold text-base text-slate-500">
-                                <Trans>Practicing for </Trans>
-                                <Text className="text-black">
-                                    {" "}
-                                    {data?.yearsOfExperience}
-                                    <Text className=" text-black">
-                                        {" "}
-                                        <Trans>years</Trans>
-                                    </Text>
-                                </Text>
-                            </Text>
-                        </View>
-                    </View>
-                </View>
-                <View className="pb-32 pt-4">
-                    {data?.about && (
-                        <ContentCard title={t({ message: "About" })} emoji="👤">
-                            {data?.about}
-                        </ContentCard>
-                    )}
-                    {data?.modalities.includes("ON_SITE") && (
-                        <ContentCard
-                            title={t({ message: "Location" })}
-                            emoji="📍"
-                        >
-                            <TouchableOpacity
-                                onPress={async () => {
-                                    const mapsLink = await geocodeAddress(
-                                        data?.address,
-                                    );
-                                    Linking.openURL(mapsLink as string);
+                            source={data?.profilePictureUrl}
+                            contentFit="cover"
+                        />
+                        <View className="gap-y-2">
+                            <Text
+                                style={{
+                                    fontSize: 24,
+                                    fontFamily: "NunitoSans_700Bold",
                                 }}
                             >
-                                <Text className="font-nunito-sans text-base underline">
-                                    {data?.address?.street}{" "}
-                                    {data?.address?.number} -{" "}
-                                    {data?.address?.city}
+                                {data?.name}
+                            </Text>
+                            <View className="flex flex-col">
+                                <Text className="font-nunito-sans-bold text-base text-slate-500">
+                                    CRP{" "}
+                                    <Text className="text-black">
+                                        {data?.crp}
+                                    </Text>
                                 </Text>
-                            </TouchableOpacity>
-                        </ContentCard>
-                    )}
-                    {/* <ContentCard title={t({ message: "Education" })} emoji="🎓">
+
+                                <Text className="font-nunito-sans-bold text-base text-slate-500">
+                                    <Trans>Practicing for </Trans>
+                                    <Text className="text-black">
+                                        {" "}
+                                        {data?.yearsOfExperience}
+                                        <Text className=" text-black">
+                                            {" "}
+                                            <Trans>years</Trans>
+                                        </Text>
+                                    </Text>
+                                </Text>
+                            </View>
+                        </View>
+                    </View>
+                    <View className="pb-32 pt-4">
+                        {data?.about && (
+                            <ContentCard
+                                title={t({ message: "About" })}
+                                emoji="👤"
+                            >
+                                {data?.about}
+                            </ContentCard>
+                        )}
+                        {data?.modalities.includes("ON_SITE") && (
+                            <ContentCard
+                                title={t({ message: "Location" })}
+                                emoji="📍"
+                            >
+                                <TouchableOpacity
+                                    onPress={async () => {
+                                        const mapsLink = await geocodeAddress(
+                                            data?.address,
+                                        );
+                                        Linking.openURL(mapsLink as string);
+                                    }}
+                                >
+                                    <Text className="font-nunito-sans text-base underline">
+                                        {data?.address?.street}{" "}
+                                        {data?.address?.number} -{" "}
+                                        {data?.address?.city}
+                                    </Text>
+                                </TouchableOpacity>
+                            </ContentCard>
+                        )}
+                        {/* <ContentCard title={t({ message: "Education" })} emoji="🎓">
                         Psicologia Cognitiva - Universidade Federal do Paraná
                     </ContentCard>
                     <ContentCard
@@ -119,9 +133,10 @@ export default function TherapistProfile() {
                         Terapia Cognitiva Comportamental, Mindfulness, Terapia
                         Psicodinâmica
                     </ContentCard> */}
-                    {/* COMENTADO ENQUANTO NÃO TEMOS INPUT DO TERAPEUTA */}
-                </View>
-            </ScrollView>
+                        {/* COMENTADO ENQUANTO NÃO TEMOS INPUT DO TERAPEUTA */}
+                    </View>
+                </ScrollView>
+            </ScreenWrapper>
             {data && (
                 <ScheduleBar
                     modalities={data?.modalities}
@@ -176,7 +191,18 @@ function ScheduleBar({
     }
 
     return (
-        <View className="absolute bottom-0 w-full rounded-t-xl bg-blue-500 px-6 pb-8 pt-4">
+        <View
+            style={{
+                flex: 1,
+                paddingHorizontal: 16,
+                paddingTop: 16,
+                paddingBottom: 24,
+                borderTopLeftRadius: 16,
+                borderTopRightRadius: 16,
+                width: "100%",
+            }}
+            className="absolute bottom-0 bg-blue-500 "
+        >
             <View className="flex flex-row items-center justify-between ">
                 <View className="flex flex-col">
                     <Text className="font-nunito-sans-bold text-base text-white shadow-sm">
@@ -191,7 +217,12 @@ function ScheduleBar({
                     </Text>
                 </View>
                 <TouchableOpacity onPress={handleSchedule}>
-                    <View className="rounded-xl bg-white">
+                    <View
+                        style={{
+                            borderRadius: 6,
+                            backgroundColor: "#fff",
+                        }}
+                    >
                         <View className="flex   flex-row items-center px-4 py-2 align-middle">
                             <Text className="font-nunito-sans-bold text-base">
                                 <Trans>Schedule</Trans>
