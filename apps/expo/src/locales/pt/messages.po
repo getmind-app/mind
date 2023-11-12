@@ -455,7 +455,7 @@ msgstr "Escolha a data em que gostaria de conversar:"
 
 #: src/app/(app)/psych/schedule.tsx:359
 msgid "Please select a date"
-msgstr "Por-favor escolha uma data"
+msgstr "Por favor escolha uma data"
 
 #: src/app/(app)/psych/[id].tsx:72
 msgid "Practicing for"
