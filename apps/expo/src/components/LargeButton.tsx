@@ -1,5 +1,6 @@
-import { Text, TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 
+import { BasicText } from "./BasicText";
 import { Loading } from "./Loading";
 
 type TouchableOpacityProps = React.ComponentProps<typeof TouchableOpacity>;
@@ -39,11 +40,16 @@ export function LargeButton({
                         }}
                     />
                 )}
-                <Text
-                    className={`relative font-nunito-sans-bold text-lg text-white`}
+                <BasicText
+                    style={{
+                        position: "relative",
+                    }}
+                    fontWeight="bold"
+                    color="white"
+                    size="lg"
                 >
                     {children}
-                </Text>
+                </BasicText>
             </View>
         </TouchableOpacity>
     );
