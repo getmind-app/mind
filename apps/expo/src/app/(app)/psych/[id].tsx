@@ -50,12 +50,21 @@ export default function TherapistProfile() {
                 <View className="flex flex-row items-center gap-x-6">
                     <Image
                         alt="Profile picture"
-                        className="h-28 w-28 rounded-full"
+                        style={{
+                            width: 80,
+                            height: 80,
+                            borderRadius: 100,
+                        }}
                         source={data?.profilePictureUrl}
                         contentFit="cover"
                     />
                     <View className="gap-y-2">
-                        <Text className="font-nunito-sans-bold text-3xl font-bold">
+                        <Text
+                            style={{
+                                fontSize: 24,
+                                fontFamily: "NunitoSans_700Bold",
+                            }}
+                        >
                             {data?.name}
                         </Text>
                         <View className="flex flex-col">
