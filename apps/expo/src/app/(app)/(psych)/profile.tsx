@@ -22,6 +22,7 @@ import { z } from "zod";
 import { FormCurrencyInput } from "../../../components/FormCurrencyInput";
 import { FormDateInput } from "../../../components/FormDateInput";
 import { FormTextInput } from "../../../components/FormTextInput";
+import { FullScreenLoading } from "../../../components/FullScreenLoading";
 import { LargeButton } from "../../../components/LargeButton";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
 import { Title } from "../../../components/Title";
@@ -53,7 +54,13 @@ export default function EditPsychProfile() {
     }>({
         defaultValues: {
             name: user?.fullName ?? "",
-            birthday: DateTime.local().minus({ years: 18 }).toJSDate(),
+            birthday: DateTime.local()
+                .set({
+                    year: 2000,
+                    month: 1,
+                    day: 1,
+                })
+                .toJSDate(),
             document: "",
             crp: "",
             gender: "MALE",
@@ -62,6 +69,7 @@ export default function EditPsychProfile() {
             modalities: [],
         },
         resolver: zodResolver(schema),
+        mode: "onTouched",
     });
 
     const onSubmit = handleSubmit(async (data) => {
@@ -127,12 +135,9 @@ export default function EditPsychProfile() {
     };
 
     if (isLoading) {
-        return (
-            <View className="flex h-full flex-col items-center justify-center">
-                <Text className="text-2xl">Loading...</Text>
-            </View>
-        );
+        return <FullScreenLoading />;
     }
+
     return (
         <KeyboardAvoidingView
             style={{ flex: 1 }}
@@ -361,7 +366,9 @@ const schema = z.object({
             required_error: "The document is required",
         })
         .min(11, "Your document must be 11 characters long")
-        .refine((value) => cpf.isValid(value), "Must be a valid CPF"),
+        .refine((value) => cpf.isValid(value), {
+            message: "Must be a valid CPF",
+        }),
     name: z
         .string({
             required_error: "Full name is required",
