@@ -237,6 +237,7 @@ const getAvailableDatesAndHours = (
 
     const availableDatesAndHoursInCurrentAndNextMonth: {
         month: string;
+        monthIndex: number;
         dates: {
             date: Date;
             hours: number[];
@@ -317,11 +318,13 @@ const getAvailableDatesAndHours = (
 
     availableDatesAndHoursInCurrentAndNextMonth.push({
         month: currentDate.toLocaleString("default", { month: "long" }),
+        monthIndex: currentDate.getMonth(),
         dates: availableDatesAndHoursForCurrentMonth,
     });
 
     availableDatesAndHoursInCurrentAndNextMonth.push({
         month: thirtyDaysFromNow.toLocaleString("default", { month: "long" }),
+        monthIndex: thirtyDaysFromNow.getMonth(),
         dates: availableDatesAndHoursForNextMonth,
     });
 
