@@ -46,7 +46,11 @@ export default function NewNote() {
             style={{ flex: 1 }}
             behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
-            <ScreenWrapper>
+            <ScreenWrapper
+                style={{
+                    paddingTop: 12,
+                }}
+            >
                 <Header />
                 <ScrollView
                     className="min-h-max"
