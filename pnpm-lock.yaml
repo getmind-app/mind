@@ -224,6 +224,9 @@ importers:
       expo-location:
         specifier: ~16.1.0
         version: 16.1.0(expo@49.0.9)
+      expo-navigation-bar:
+        specifier: ~2.3.0
+        version: 2.3.0(expo@49.0.9)
       expo-notifications:
         specifier: ~0.20.1
         version: 0.20.1(expo@49.0.9)
@@ -8541,6 +8544,18 @@ packages:
     dependencies:
       compare-versions: 3.6.0
       invariant: 2.2.4
+    dev: false
+
+  /expo-navigation-bar@2.3.0(expo@49.0.9):
+    resolution: {integrity: sha512-5C9iR+rrj0EUgCPIIxSHEPwj18IOL4zQPYKLbyV9KVeXSBqPspu+vRvF5pxgbyefWfoQDHKfOz56W/gZ3qRiTQ==}
+    peerDependencies:
+      expo: '*'
+    dependencies:
+      '@react-native/normalize-color': 2.1.0
+      debug: 4.3.4
+      expo: 49.0.9(@babel/core@7.22.10)
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /expo-notifications@0.20.1(expo@49.0.9):
