@@ -47,6 +47,7 @@ export const Header = ({ title, share, onShare, onBack }: HeaderProps) => {
                 headerStyle: { backgroundColor: "#f8f8f8" },
                 headerShadowVisible: false,
                 headerBackVisible: false,
+                headerShown: true,
             }}
         />
     );
