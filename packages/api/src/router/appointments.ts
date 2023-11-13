@@ -80,53 +80,53 @@ export const appointmentsRouter = createTRPCRouter({
                 where: { userId: ctx.auth.userId },
             });
 
-            const [OauthAccessToken] =
-                await clerk.users.getUserOauthAccessToken(
-                    ctx.auth.userId || "",
-                    "oauth_google",
-                );
+            // const [OauthAccessToken] =
+            //     await clerk.users.getUserOauthAccessToken(
+            //         ctx.auth.userId || "",
+            //         "oauth_google",
+            //     );
 
-            console.log(OauthAccessToken?.token);
+            // console.log(OauthAccessToken?.token);
 
-            const oauth2Client = new google.auth.OAuth2(
-                "797830716563-tjnnbou1onossf1tgm1a70vjcq5p5jn2.apps.googleusercontent.com",
-                "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",
-            );
+            // const oauth2Client = new google.auth.OAuth2(
+            //     "797830716563-tjnnbou1onossf1tgm1a70vjcq5p5jn2.apps.googleusercontent.com",
+            //     "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",
+            // );
 
-            oauth2Client.setCredentials({
-                access_token: OauthAccessToken?.token,
-            });
+            // oauth2Client.setCredentials({
+            //     access_token: OauthAccessToken?.token,
+            // });
 
-            const calendar = google.calendar({
-                version: "v3",
-                auth: oauth2Client,
-            });
+            // const calendar = google.calendar({
+            //     version: "v3",
+            //     auth: oauth2Client,
+            // });
 
-            const newAppointment = await calendar.events.insert({
-                calendarId: "primary",
-                requestBody: {
-                    summary: "Appointment",
-                    description: "Appointment",
-                    start: {
-                        dateTime: "2023-10-05T09:00:00-07:00",
-                        timeZone: "America/Los_Angeles",
-                    },
-                    end: {
-                        dateTime: "2023-10-05T17:00:00-07:00",
-                        timeZone: "America/Los_Angeles",
-                    },
-                    conferenceData: {
-                        createRequest: {
-                            requestId: "7qxalsvy0e",
-                            conferenceSolutionKey: {
-                                type: "hangoutsMeet",
-                            },
-                        },
-                    },
-                },
-            });
+            // const newAppointment = await calendar.events.insert({
+            //     calendarId: "primary",
+            //     requestBody: {
+            //         summary: "Appointment",
+            //         description: "Appointment",
+            //         start: {
+            //             dateTime: "2023-10-05T09:00:00-07:00",
+            //             timeZone: "America/Los_Angeles",
+            //         },
+            //         end: {
+            //             dateTime: "2023-10-05T17:00:00-07:00",
+            //             timeZone: "America/Los_Angeles",
+            //         },
+            //         conferenceData: {
+            //             createRequest: {
+            //                 requestId: "7qxalsvy0e",
+            //                 conferenceSolutionKey: {
+            //                     type: "hangoutsMeet",
+            //                 },
+            //             },
+            //         },
+            //     },
+            // });
 
-            console.log(newAppointment);
+            // console.log(newAppointment);
 
             foundAppointment = await ctx.prisma.appointment.findFirst({
                 where: {
