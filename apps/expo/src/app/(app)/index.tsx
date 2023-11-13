@@ -34,7 +34,11 @@ export default function Index() {
     };
 
     return (
-        <ScreenWrapper>
+        <ScreenWrapper
+            style={{
+                paddingHorizontal: 14,
+            }}
+        >
             <Refreshable
                 refreshControl={
                     <RefreshControl
@@ -74,7 +78,13 @@ function NextAppointment() {
     return (
         <>
             {appointment.data && appointment.data.therapistId ? (
-                <View className="mt-4 rounded-xl bg-white shadow-sm">
+                <View
+                    style={{
+                        elevation: 4,
+                        shadowColor: "#000",
+                    }}
+                    className="mt-4 rounded-xl bg-white shadow-sm"
+                >
                     <View className="p-6">
                         <View className="flex w-full flex-row justify-between">
                             <Text className="font-nunito-sans text-xl">
