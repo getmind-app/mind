@@ -43,6 +43,8 @@
         "EXPO_ROUTER_APP_ROOT",
         "NEXTAUTH_SECRET",
         "NEXTAUTH_URL",
+        "GOOGLE_CLIENT_ID",
+        "GOOGLE_CLIENT_SECRET",
         "NODE_ENV",
         "SKIP_ENV_VALIDATION",
         "VERCEL",

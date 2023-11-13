@@ -483,19 +483,22 @@ importers:
         version: 4.25.7(next@13.2.4)(react-dom@18.2.0)(react@18.2.0)
       '@google-cloud/local-auth':
         specifier: ^2.1.0
-        version: 2.1.0
+        version: 2.1.0(encoding@0.1.13)
       '@trpc/client':
         specifier: ^10.38.1
         version: 10.38.1(@trpc/server@10.38.1)
       '@trpc/server':
         specifier: ^10.38.1
         version: 10.38.1
+      encoding:
+        specifier: ^0.1.13
+        version: 0.1.13
       google-auth-library:
         specifier: ^9.2.0
-        version: 9.2.0
+        version: 9.2.0(encoding@0.1.13)
       googleapis:
         specifier: ^105.0.0
-        version: 105.0.0
+        version: 105.0.0(encoding@0.1.13)
       superjson:
         specifier: 1.9.1
         version: 1.9.1
@@ -2855,7 +2858,7 @@ packages:
       md5-file: 3.2.3
       md5hex: 1.0.0
       minipass: 3.1.6
-      node-fetch: 2.7.0
+      node-fetch: 2.7.0(encoding@0.1.13)
       node-forge: 1.3.1
       npm-package-arg: 7.0.0
       ora: 3.4.0
@@ -2930,7 +2933,7 @@ packages:
       md5-file: 3.2.3
       md5hex: 1.0.0
       minipass: 3.1.6
-      node-fetch: 2.7.0
+      node-fetch: 2.7.0(encoding@0.1.13)
       node-forge: 1.3.1
       npm-package-arg: 7.0.0
       ora: 3.4.0
@@ -3148,7 +3151,7 @@ packages:
       fs-extra: 9.0.0
       is-docker: 2.2.1
       is-wsl: 2.2.0
-      node-fetch: 2.7.0
+      node-fetch: 2.7.0(encoding@0.1.13)
       open: 8.4.2
       resolve-from: 5.0.0
       serialize-error: 6.0.0
@@ -3199,7 +3202,7 @@ packages:
       getenv: 1.0.0
       jimp-compact: 0.16.1
       mime: 2.6.0
-      node-fetch: 2.7.0
+      node-fetch: 2.7.0(encoding@0.1.13)
       parse-png: 2.1.0
       resolve-from: 5.0.0
       semver: 7.3.2
@@ -3217,7 +3220,7 @@ packages:
       getenv: 1.0.0
       jimp-compact: 0.16.1
       mime: 2.6.0
-      node-fetch: 2.7.0
+      node-fetch: 2.7.0(encoding@0.1.13)
       parse-png: 2.1.0
       resolve-from: 5.0.0
       semver: 7.3.2
@@ -3394,7 +3397,7 @@ packages:
       '@segment/loosely-validate-event': 2.0.0
       fetch-retry: 4.1.1
       md5: 2.3.0
-      node-fetch: 2.7.0
+      node-fetch: 2.7.0(encoding@0.1.13)
       remove-trailing-slash: 0.1.1
       uuid: 8.3.2
     transitivePeerDependencies:
@@ -3610,12 +3613,12 @@ packages:
     resolution: {integrity: sha512-k2Ty1JcVojjJFwrg/ThKi2ujJ7XNLYaFGNB/bWT9wGR+oSMJHMa5w+CUq6p/pVrKeNNgA7pCqEcjSnHVoqJQFw==}
     dev: false
 
-  /@google-cloud/local-auth@2.1.0:
+  /@google-cloud/local-auth@2.1.0(encoding@0.1.13):
     resolution: {integrity: sha512-ymZ1XuyKcRcro0aiMYz3hVGbZ+QZmN5V1Eyjvw2k1xqq76PwmDer0DIPxdxkLzfW9Inr8+g+MS9t9fZ7dOlTOQ==}
     engines: {node: '>=12.0.0'}
     dependencies:
       arrify: 2.0.1
-      google-auth-library: 8.9.0
+      google-auth-library: 8.9.0(encoding@0.1.13)
       open: 7.4.2
       server-destroy: 1.0.1
     transitivePeerDependencies:
@@ -4402,7 +4405,7 @@ packages:
       chalk: 4.1.2
       find-up: 5.0.0
       mime: 2.6.0
-      node-fetch: 2.7.0
+      node-fetch: 2.7.0(encoding@0.1.13)
       open: 6.4.0
       ora: 5.4.1
       semver: 7.5.4
@@ -6938,7 +6941,7 @@ packages:
   /cross-fetch@3.1.8:
     resolution: {integrity: sha512-cvA+JwZoU0Xq+h6WkMvAUqPEYy92Obet6UdKLfW60qn99ftItKjB5T+BkyWOFWe2pUyfQ+IJHmpOTznqk1M6Kg==}
     dependencies:
-      node-fetch: 2.7.0
+      node-fetch: 2.7.0(encoding@0.1.13)
     transitivePeerDependencies:
       - encoding
     dev: false
@@ -7569,6 +7572,12 @@ packages:
   /encodeurl@1.0.2:
     resolution: {integrity: sha512-TPJXq8JqFaVYm2CWmPvnP2Iyo4ZSM7/QKcSmuMLDObfpH5fi7RUGmd/rTDf+rut/saiDiQEeVTNgAmJEdAOx0w==}
     engines: {node: '>= 0.8'}
+    dev: false
+
+  /encoding@0.1.13:
+    resolution: {integrity: sha512-ETBauow1T35Y/WZMkio9jiM0Z5xjHHmJ4XmjZOq1l/dXz3lr2sRn87nJy20RupqSh1F2m3HHPSp8ShIPQJrJ3A==}
+    dependencies:
+      iconv-lite: 0.6.3
     dev: false
 
   /end-of-stream@1.4.4:
@@ -8770,7 +8779,7 @@ packages:
       fbemitter: 3.0.0
       invariant: 2.2.4
       md5-file: 3.2.3
-      node-fetch: 2.7.0
+      node-fetch: 2.7.0(encoding@0.1.13)
       pretty-format: 26.6.2
       uuid: 3.4.0
     transitivePeerDependencies:
@@ -8803,7 +8812,7 @@ packages:
       fbemitter: 3.0.0
       invariant: 2.2.4
       md5-file: 3.2.3
-      node-fetch: 2.7.0
+      node-fetch: 2.7.0(encoding@0.1.13)
       pretty-format: 26.6.2
       uuid: 3.4.0
     transitivePeerDependencies:
@@ -9225,48 +9234,48 @@ packages:
     resolution: {integrity: sha512-xckBUXyTIqT97tq2x2AMb+g163b5JFysYk0x4qxNFwbfQkmNZoiRHb6sPzI9/QV33WeuvVYBUIiD4NzNIyqaRQ==}
     dev: false
 
-  /gaxios@5.1.3:
+  /gaxios@5.1.3(encoding@0.1.13):
     resolution: {integrity: sha512-95hVgBRgEIRQQQHIbnxBXeHbW4TqFk4ZDJW7wmVtvYar72FdhRIo1UGOLS2eRAKCPEdPBWu+M7+A33D9CdX9rA==}
     engines: {node: '>=12'}
     dependencies:
       extend: 3.0.2
       https-proxy-agent: 5.0.1
       is-stream: 2.0.1
-      node-fetch: 2.7.0
+      node-fetch: 2.7.0(encoding@0.1.13)
     transitivePeerDependencies:
       - encoding
       - supports-color
     dev: false
 
-  /gaxios@6.1.1:
+  /gaxios@6.1.1(encoding@0.1.13):
     resolution: {integrity: sha512-bw8smrX+XlAoo9o1JAksBwX+hi/RG15J+NTSxmNPIclKC3ZVK6C2afwY8OSdRvOK0+ZLecUJYtj2MmjOt3Dm0w==}
     engines: {node: '>=14'}
     dependencies:
       extend: 3.0.2
       https-proxy-agent: 7.0.2
       is-stream: 2.0.1
-      node-fetch: 2.7.0
+      node-fetch: 2.7.0(encoding@0.1.13)
     transitivePeerDependencies:
       - encoding
       - supports-color
     dev: false
 
-  /gcp-metadata@5.3.0:
+  /gcp-metadata@5.3.0(encoding@0.1.13):
     resolution: {integrity: sha512-FNTkdNEnBdlqF2oatizolQqNANMrcqJt6AAYt99B3y1aLLC8Hc5IOBb+ZnnzllodEEf6xMBp6wRcBbc16fa65w==}
     engines: {node: '>=12'}
     dependencies:
-      gaxios: 5.1.3
+      gaxios: 5.1.3(encoding@0.1.13)
       json-bigint: 1.0.0
     transitivePeerDependencies:
       - encoding
       - supports-color
     dev: false
 
-  /gcp-metadata@6.0.0:
+  /gcp-metadata@6.0.0(encoding@0.1.13):
     resolution: {integrity: sha512-Ozxyi23/1Ar51wjUT2RDklK+3HxqDr8TLBNK8rBBFQ7T85iIGnXnVusauj06QyqCXRFZig8LZC+TUddWbndlpQ==}
     engines: {node: '>=14'}
     dependencies:
-      gaxios: 6.1.1
+      gaxios: 6.1.1(encoding@0.1.13)
       json-bigint: 1.0.0
     transitivePeerDependencies:
       - encoding
@@ -9454,7 +9463,7 @@ packages:
       pinkie-promise: 2.0.1
     dev: false
 
-  /google-auth-library@8.9.0:
+  /google-auth-library@8.9.0(encoding@0.1.13):
     resolution: {integrity: sha512-f7aQCJODJFmYWN6PeNKzgvy9LI2tYmXnzpNDHEjG5sDNPgGb2FXQyTBnXeSH+PAtpKESFD+LmHw3Ox3mN7e1Fg==}
     engines: {node: '>=12'}
     dependencies:
@@ -9462,9 +9471,9 @@ packages:
       base64-js: 1.5.1
       ecdsa-sig-formatter: 1.0.11
       fast-text-encoding: 1.0.6
-      gaxios: 5.1.3
-      gcp-metadata: 5.3.0
-      gtoken: 6.1.2
+      gaxios: 5.1.3(encoding@0.1.13)
+      gcp-metadata: 5.3.0(encoding@0.1.13)
+      gtoken: 6.1.2(encoding@0.1.13)
       jws: 4.0.0
       lru-cache: 6.0.0
     transitivePeerDependencies:
@@ -9472,15 +9481,15 @@ packages:
       - supports-color
     dev: false
 
-  /google-auth-library@9.2.0:
+  /google-auth-library@9.2.0(encoding@0.1.13):
     resolution: {integrity: sha512-1oV3p0JhNEhVbj26eF3FAJcv9MXXQt4S0wcvKZaDbl4oHq5V3UJoSbsGZGQNcjoCdhW4kDSwOs11wLlHog3fgQ==}
     engines: {node: '>=14'}
     dependencies:
       base64-js: 1.5.1
       ecdsa-sig-formatter: 1.0.11
-      gaxios: 6.1.1
-      gcp-metadata: 6.0.0
-      gtoken: 7.0.1
+      gaxios: 6.1.1(encoding@0.1.13)
+      gcp-metadata: 6.0.0(encoding@0.1.13)
+      gtoken: 7.0.1(encoding@0.1.13)
       jws: 4.0.0
     transitivePeerDependencies:
       - encoding
@@ -9495,13 +9504,13 @@ packages:
       node-forge: 1.3.1
     dev: false
 
-  /googleapis-common@6.0.4:
+  /googleapis-common@6.0.4(encoding@0.1.13):
     resolution: {integrity: sha512-m4ErxGE8unR1z0VajT6AYk3s6a9gIMM6EkDZfkPnES8joeOlEtFEJeF8IyZkb0tjPXkktUfYrE4b3Li1DNyOwA==}
     engines: {node: '>=12.0.0'}
     dependencies:
       extend: 3.0.2
-      gaxios: 5.1.3
-      google-auth-library: 8.9.0
+      gaxios: 5.1.3(encoding@0.1.13)
+      google-auth-library: 8.9.0(encoding@0.1.13)
       qs: 6.11.2
       url-template: 2.0.8
       uuid: 9.0.1
@@ -9510,12 +9519,12 @@ packages:
       - supports-color
     dev: false
 
-  /googleapis@105.0.0:
+  /googleapis@105.0.0(encoding@0.1.13):
     resolution: {integrity: sha512-wH/jU/6QpqwsjTKj4vfKZz97ne7xT7BBbKwzQEwnbsG8iH9Seyw19P+AuLJcxNNrmgblwLqfr3LORg4Okat1BQ==}
     engines: {node: '>=12.0.0'}
     dependencies:
-      google-auth-library: 8.9.0
-      googleapis-common: 6.0.4
+      google-auth-library: 8.9.0(encoding@0.1.13)
+      googleapis-common: 6.0.4(encoding@0.1.13)
     transitivePeerDependencies:
       - encoding
       - supports-color
@@ -9567,11 +9576,11 @@ packages:
     engines: {node: '>= 10.x'}
     dev: false
 
-  /gtoken@6.1.2:
+  /gtoken@6.1.2(encoding@0.1.13):
     resolution: {integrity: sha512-4ccGpzz7YAr7lxrT2neugmXQ3hP9ho2gcaityLVkiUecAiwiy60Ii8gRbZeOsXV19fYaRjgBSshs8kXw+NKCPQ==}
     engines: {node: '>=12.0.0'}
     dependencies:
-      gaxios: 5.1.3
+      gaxios: 5.1.3(encoding@0.1.13)
       google-p12-pem: 4.0.1
       jws: 4.0.0
     transitivePeerDependencies:
@@ -9579,11 +9588,11 @@ packages:
       - supports-color
     dev: false
 
-  /gtoken@7.0.1:
+  /gtoken@7.0.1(encoding@0.1.13):
     resolution: {integrity: sha512-KcFVtoP1CVFtQu0aSk3AyAt2og66PFhZAlkUOuWKwzMLoulHXG5W5wE5xAnHb+yl3/wEFoqGW7/cDGMU8igDZQ==}
     engines: {node: '>=14.0.0'}
     dependencies:
-      gaxios: 6.1.1
+      gaxios: 6.1.1(encoding@0.1.13)
       jws: 4.0.0
     transitivePeerDependencies:
       - encoding
@@ -11120,7 +11129,7 @@ packages:
     dependencies:
       connect: 3.7.0
       debug: 2.6.9
-      node-fetch: 2.7.0
+      node-fetch: 2.7.0(encoding@0.1.13)
       ws: 7.5.9
       yargs: 17.7.2
     transitivePeerDependencies:
@@ -11332,7 +11341,7 @@ packages:
       metro-transform-plugins: 0.76.8
       metro-transform-worker: 0.76.8
       mime-types: 2.1.35
-      node-fetch: 2.7.0
+      node-fetch: 2.7.0(encoding@0.1.13)
       nullthrows: 1.1.1
       rimraf: 3.0.2
       serialize-error: 2.1.0
@@ -11690,7 +11699,7 @@ packages:
     resolution: {integrity: sha512-VzW+TAk2wE4X9maiKMlT+GsPU4OMmR1U9CrHSmd3DFLn2IcZ9VJ6M6BBugGfYUnPCLSYxXdZy17M0BEJyhUTwg==}
     dev: false
 
-  /node-fetch@2.7.0:
+  /node-fetch@2.7.0(encoding@0.1.13):
     resolution: {integrity: sha512-c4FRfUm/dbcWZ7U+1Wq0AwCyFL+3nt2bEw05wfxSz+DWpWsitgmSgYmy2dQdWyKC1694ELPqMs/YzUSNozLt8A==}
     engines: {node: 4.x || >=6.0.0}
     peerDependencies:
@@ -11699,6 +11708,7 @@ packages:
       encoding:
         optional: true
     dependencies:
+      encoding: 0.1.13
       whatwg-url: 5.0.0
     dev: false
 
