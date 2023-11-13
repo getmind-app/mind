@@ -1,13 +1,13 @@
 import { google } from "googleapis";
 
-import { type Appointment } from "@acme/db";
+import { type Appointment, type Patient } from "@acme/db";
 
 export const createAppointmentInCalendar = async (
     userToken: string,
-    otherPartName: string,
-    appointment: Appointment,
+    therapistName: string,
     therapistEmail: string,
-    patientEmail: string,
+    appointment: Appointment,
+    patient: Patient,
 ) => {
     const oauth2Client = new google.auth.OAuth2(
         process.env.GOOGLE_CLIENT_ID,
@@ -27,52 +27,58 @@ export const createAppointmentInCalendar = async (
     const endDate = new Date(appointment.scheduledTo);
     endDate.setHours(endDate.getHours() + 1);
 
-    // creating calendar event with meet link and in brazil timezone
+    const requestBody: any = {
+        summary: "Sessão de terapia",
+        description: `Sessão do ${patient.name} com o terapeuta ${therapistName}`,
+        start: {
+            dateTime: appointment.scheduledTo.toISOString(),
+            timeZone: "America/Sao_Paulo",
+        },
+        end: {
+            dateTime: endDate.toISOString(),
+            timeZone: "America/Sao_Paulo",
+        },
+        attendees: [
+            {
+                email: therapistEmail,
+                organizer: true,
+            },
+            {
+                email: patient.email,
+            },
+        ],
+        reminders: {
+            useDefault: false,
+            overrides: [
+                {
+                    method: "email",
+                    minutes: 60,
+                },
+                {
+                    method: "popup",
+                    minutes: 10,
+                },
+            ],
+        },
+    };
+
+    // Check if the modality is "ONLINE" and add conferenceData accordingly
+    if (appointment.modality === "ONLINE") {
+        requestBody.conferenceDataVersion = 1;
+        requestBody.conferenceData = {
+            createRequest: {
+                requestId: appointment.id,
+                conferenceSolutionKey: {
+                    type: "hangoutsMeet",
+                },
+            },
+        };
+    }
+
     const newAppointment = await calendar.events.insert({
         calendarId: "primary",
         conferenceDataVersion: 1,
-        requestBody: {
-            summary: otherPartName,
-            description: "Sessão de terapia com " + otherPartName,
-            start: {
-                dateTime: appointment.scheduledTo.toISOString(),
-                timeZone: "America/Sao_Paulo",
-            },
-            end: {
-                dateTime: endDate.toISOString(),
-                timeZone: "America/Sao_Paulo",
-            },
-            conferenceData: {
-                createRequest: {
-                    requestId: appointment.id,
-                    conferenceSolutionKey: {
-                        type: "hangoutsMeet",
-                    },
-                },
-            },
-            attendees: [
-                {
-                    email: therapistEmail,
-                    organizer: true,
-                },
-                {
-                    email: patientEmail,
-                },
-            ],
-            reminders: {
-                useDefault: false,
-                overrides: [
-                    {
-                        method: "email",
-                        minutes: 60,
-                    },
-                    {
-                        method: "popup",
-                        minutes: 10,
-                    },
-                ],
-            },
-        },
+        requestBody,
     });
 
     return newAppointment;

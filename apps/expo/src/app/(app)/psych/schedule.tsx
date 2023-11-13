@@ -13,6 +13,7 @@ import { atom, useAtom } from "jotai";
 
 import { AnimatedCard } from "../../../components/Accordion";
 import { Header } from "../../../components/Header";
+import { ScreenWrapper } from "../../../components/ScreenWrapper";
 import geocodeAddress from "../../../helpers/geocodeAddress";
 import { api } from "../../../utils/api";
 import {
@@ -94,7 +95,7 @@ export default function TherapistSchedule() {
     return (
         <>
             <Header />
-            <ScrollView className="bg-off-white px-4">
+            <ScreenWrapper>
                 <View className="relative mt-8 rounded-2xl bg-white p-4 pt-12">
                     <View className="p-1/2 absolute -top-8 left-4 flex h-16 w-16 items-center justify-center overflow-hidden rounded-full">
                         <Image
@@ -159,7 +160,7 @@ export default function TherapistSchedule() {
                         </Text>
                     </TouchableOpacity>
                 </View>
-            </ScrollView>
+            </ScreenWrapper>
         </>
     );
 }

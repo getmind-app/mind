@@ -310,10 +310,10 @@ export const appointmentsRouter = createTRPCRouter({
 
                     calendarEvent = await createAppointmentInCalendar(
                         TherapistOauthAccessToken?.token ?? "",
-                        patient?.name ?? "",
-                        appointment as Appointment,
+                        therapist.name,
                         therapistUser.emailAddresses[0]?.emailAddress ?? "",
-                        patient.email ?? "",
+                        appointment as Appointment,
+                        patient,
                     );
                 }
 

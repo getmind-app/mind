@@ -44,6 +44,12 @@ export default function PaymentsSetup() {
         setRefreshing(true);
         try {
             await therapist.refetch();
+            await account.refetch();
+
+            if (account.data?.external_accounts?.data[0]?.status === "new") {
+                await updateAccountStatus.mutateAsync();
+                await therapist.refetch();
+            }
         } finally {
             setRefreshing(false);
         }
@@ -60,7 +66,7 @@ export default function PaymentsSetup() {
                 refreshControl={
                     <RefreshControl
                         refreshing={refreshing}
-                        onRefresh={void onRefresh}
+                        onRefresh={onRefresh}
                     />
                 }
             >

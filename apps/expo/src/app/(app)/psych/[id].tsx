@@ -8,6 +8,7 @@ import { Trans, t } from "@lingui/macro";
 
 import { Header } from "../../../components/Header";
 import { ProfileSkeleton } from "../../../components/ProfileSkeleton";
+import { ScreenWrapper } from "../../../components/ScreenWrapper";
 import formatModality from "../../../helpers/formatModality";
 import geocodeAddress from "../../../helpers/geocodeAddress";
 import { getShareLink } from "../../../helpers/getShareLink";
@@ -43,69 +44,72 @@ export default function TherapistProfile() {
                 }
                 onBack={() => router.push({ pathname: "/search" })}
             />
-            <ScrollView
-                showsVerticalScrollIndicator={false}
-                className="h-full bg-off-white px-4 py-2"
-            >
-                <View className="flex flex-row items-center gap-x-6">
-                    <Image
-                        alt="Profile picture"
-                        className="h-28 w-28 rounded-full"
-                        source={data?.profilePictureUrl}
-                        contentFit="cover"
-                    />
-                    <View className="gap-y-2">
-                        <Text className="font-nunito-sans-bold text-3xl font-bold">
-                            {data?.name}
-                        </Text>
-                        <View className="flex flex-col">
-                            <Text className="font-nunito-sans-bold text-base text-slate-500">
-                                CRP{" "}
-                                <Text className="text-black">{data?.crp}</Text>
+            <ScreenWrapper>
+                <ScrollView>
+                    <View className="flex flex-row items-center gap-x-6">
+                        <Image
+                            alt="Profile picture"
+                            className="h-28 w-28 rounded-full"
+                            source={data?.profilePictureUrl}
+                            contentFit="cover"
+                        />
+                        <View className="gap-y-2">
+                            <Text className="font-nunito-sans-bold text-3xl font-bold">
+                                {data?.name}
                             </Text>
-
-                            <Text className="font-nunito-sans-bold text-base text-slate-500">
-                                <Trans>Practicing for </Trans>
-                                <Text className="text-black">
-                                    {" "}
-                                    {data?.yearsOfExperience}
-                                    <Text className=" text-black">
-                                        {" "}
-                                        <Trans>years</Trans>
+                            <View className="flex flex-col">
+                                <Text className="font-nunito-sans-bold text-base text-slate-500">
+                                    CRP{" "}
+                                    <Text className="text-black">
+                                        {data?.crp}
                                     </Text>
                                 </Text>
-                            </Text>
+
+                                <Text className="font-nunito-sans-bold text-base text-slate-500">
+                                    <Trans>Practicing for </Trans>
+                                    <Text className="text-black">
+                                        {" "}
+                                        {data?.yearsOfExperience}
+                                        <Text className=" text-black">
+                                            {" "}
+                                            <Trans>years</Trans>
+                                        </Text>
+                                    </Text>
+                                </Text>
+                            </View>
                         </View>
                     </View>
-                </View>
-                <View className="pb-32 pt-4">
-                    {data?.about && (
-                        <ContentCard title={t({ message: "About" })} emoji="👤">
-                            {data?.about}
-                        </ContentCard>
-                    )}
-                    {data?.modalities.includes("ON_SITE") && (
-                        <ContentCard
-                            title={t({ message: "Location" })}
-                            emoji="📍"
-                        >
-                            <TouchableOpacity
-                                onPress={async () => {
-                                    const mapsLink = await geocodeAddress(
-                                        data?.address,
-                                    );
-                                    Linking.openURL(mapsLink as string);
-                                }}
+                    <View className="pb-32 pt-4">
+                        {data?.about && (
+                            <ContentCard
+                                title={t({ message: "About" })}
+                                emoji="👤"
                             >
-                                <Text className="font-nunito-sans text-base underline">
-                                    {data?.address?.street}{" "}
-                                    {data?.address?.number} -{" "}
-                                    {data?.address?.city}
-                                </Text>
-                            </TouchableOpacity>
-                        </ContentCard>
-                    )}
-                    {/* <ContentCard title={t({ message: "Education" })} emoji="🎓">
+                                {data?.about}
+                            </ContentCard>
+                        )}
+                        {data?.modalities.includes("ON_SITE") && (
+                            <ContentCard
+                                title={t({ message: "Location" })}
+                                emoji="📍"
+                            >
+                                <TouchableOpacity
+                                    onPress={async () => {
+                                        const mapsLink = await geocodeAddress(
+                                            data?.address,
+                                        );
+                                        Linking.openURL(mapsLink as string);
+                                    }}
+                                >
+                                    <Text className="font-nunito-sans text-base underline">
+                                        {data?.address?.street}{" "}
+                                        {data?.address?.number} -{" "}
+                                        {data?.address?.city}
+                                    </Text>
+                                </TouchableOpacity>
+                            </ContentCard>
+                        )}
+                        {/* <ContentCard title={t({ message: "Education" })} emoji="🎓">
                         Psicologia Cognitiva - Universidade Federal do Paraná
                     </ContentCard>
                     <ContentCard
@@ -115,9 +119,10 @@ export default function TherapistProfile() {
                         Terapia Cognitiva Comportamental, Mindfulness, Terapia
                         Psicodinâmica
                     </ContentCard> */}
-                    {/* COMENTADO ENQUANTO NÃO TEMOS INPUT DO TERAPEUTA */}
-                </View>
-            </ScrollView>
+                        {/* COMENTADO ENQUANTO NÃO TEMOS INPUT DO TERAPEUTA */}
+                    </View>
+                </ScrollView>
+            </ScreenWrapper>
             {data && (
                 <ScheduleBar
                     modalities={data?.modalities}
