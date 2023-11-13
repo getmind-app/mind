@@ -180,7 +180,6 @@ function AppointmentCard({
     metadata: UserPublicMetadata;
 }) {
     const [open, setOpen] = useState(false);
-    const { user } = useUser();
     const isProfessional = useUserIsProfessional();
 
     return (

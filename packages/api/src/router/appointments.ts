@@ -1,9 +1,11 @@
 import type * as Notification from "expo-notifications";
 import clerk from "@clerk/clerk-sdk-node";
-import { google } from "googleapis";
 import Stripe from "stripe";
 import { z } from "zod";
 
+import { type Appointment } from "@acme/db";
+
+import { createAppointmentInCalendar } from "../helpers/createAppointmentInCalendar";
 import { sendPushNotification } from "../helpers/sendPushNotification";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
@@ -79,54 +81,6 @@ export const appointmentsRouter = createTRPCRouter({
             const patient = await ctx.prisma.patient.findFirst({
                 where: { userId: ctx.auth.userId },
             });
-
-            // const [OauthAccessToken] =
-            //     await clerk.users.getUserOauthAccessToken(
-            //         ctx.auth.userId || "",
-            //         "oauth_google",
-            //     );
-
-            // console.log(OauthAccessToken?.token);
-
-            // const oauth2Client = new google.auth.OAuth2(
-            //     "797830716563-tjnnbou1onossf1tgm1a70vjcq5p5jn2.apps.googleusercontent.com",
-            //     "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",
-            // );
-
-            // oauth2Client.setCredentials({
-            //     access_token: OauthAccessToken?.token,
-            // });
-
-            // const calendar = google.calendar({
-            //     version: "v3",
-            //     auth: oauth2Client,
-            // });
-
-            // const newAppointment = await calendar.events.insert({
-            //     calendarId: "primary",
-            //     requestBody: {
-            //         summary: "Appointment",
-            //         description: "Appointment",
-            //         start: {
-            //             dateTime: "2023-10-05T09:00:00-07:00",
-            //             timeZone: "America/Los_Angeles",
-            //         },
-            //         end: {
-            //             dateTime: "2023-10-05T17:00:00-07:00",
-            //             timeZone: "America/Los_Angeles",
-            //         },
-            //         conferenceData: {
-            //             createRequest: {
-            //                 requestId: "7qxalsvy0e",
-            //                 conferenceSolutionKey: {
-            //                     type: "hangoutsMeet",
-            //                 },
-            //             },
-            //         },
-            //     },
-            // });
-
-            // console.log(newAppointment);
 
             foundAppointment = await ctx.prisma.appointment.findFirst({
                 where: {
@@ -233,6 +187,8 @@ export const appointmentsRouter = createTRPCRouter({
             }),
         )
         .mutation(async ({ ctx, input }) => {
+            let calendarEvent;
+
             if (input.status !== "PENDENT") {
                 const therapist = await ctx.prisma.therapist.findUnique({
                     where: {
@@ -248,6 +204,10 @@ export const appointmentsRouter = createTRPCRouter({
 
                 const patientUser = await clerk.users.getUser(
                     patient?.userId ?? "",
+                );
+
+                const therapistUser = await clerk.users.getUser(
+                    therapist?.userId ?? "",
                 );
 
                 const notificationMapper: {
@@ -333,6 +293,28 @@ export const appointmentsRouter = createTRPCRouter({
                     if (paymentResponse.status !== "succeeded") {
                         throw new Error("Payment failed");
                     }
+
+                    const [TherapistOauthAccessToken] =
+                        await clerk.users.getUserOauthAccessToken(
+                            therapist?.userId || "",
+                            "oauth_google",
+                        );
+
+                    const appointment = await ctx.prisma.appointment.findUnique(
+                        {
+                            where: {
+                                id: input.id,
+                            },
+                        },
+                    );
+
+                    calendarEvent = await createAppointmentInCalendar(
+                        TherapistOauthAccessToken?.token ?? "",
+                        patient?.name ?? "",
+                        appointment as Appointment,
+                        therapistUser.emailAddresses[0]?.emailAddress ?? "",
+                        patient.email ?? "",
+                    );
                 }
 
                 await sendPushNotification({
@@ -347,7 +329,11 @@ export const appointmentsRouter = createTRPCRouter({
                 where: {
                     id: input.id,
                 },
-                data: input,
+                data: {
+                    ...input,
+                    link: calendarEvent?.data?.hangoutLink,
+                    eventId: calendarEvent?.data?.id,
+                },
             });
         }),
 });
