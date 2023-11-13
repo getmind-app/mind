@@ -1,13 +1,4 @@
-import {
-    Alert,
-    Image,
-    ScrollView,
-    Share,
-    Text,
-    TouchableOpacity,
-    View,
-} from "react-native";
-import * as Linking from "expo-linking";
+import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useRouter } from "expo-router";
 import { useClerk } from "@clerk/clerk-expo";
 import { AntDesign, MaterialIcons } from "@expo/vector-icons";
