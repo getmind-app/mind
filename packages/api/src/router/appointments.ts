@@ -214,19 +214,26 @@ export const appointmentsRouter = createTRPCRouter({
                     [key in "ACCEPTED" | "REJECTED" | "CANCELED"]: {
                         title: string;
                         body: string;
+                        sendTo: Notification.ExpoPushToken;
                     };
                 } = {
                     ACCEPTED: {
                         title: "Appointment accepted! 🎉",
                         body: `${therapist?.name} accepted your appointment request.`,
+                        sendTo: patientUser.publicMetadata
+                            .expoPushToken as Notification.ExpoPushToken,
                     },
                     REJECTED: {
                         title: "Appointment rejected ❌",
                         body: `${therapist?.name} rejected your appointment request.`,
+                        sendTo: patientUser.publicMetadata
+                            .expoPushToken as Notification.ExpoPushToken,
                     },
                     CANCELED: {
                         title: "Appointment canceled ❌",
-                        body: `${therapist?.name} canceled your appointment.`,
+                        body: `${patient?.name} canceled the appointment.`,
+                        sendTo: therapistUser.publicMetadata
+                            .expoPushToken as Notification.ExpoPushToken,
                     },
                 };
 
@@ -323,8 +330,7 @@ export const appointmentsRouter = createTRPCRouter({
                 }
 
                 await sendPushNotification({
-                    expoPushToken: patientUser.publicMetadata
-                        .expoPushToken as Notification.ExpoPushToken,
+                    expoPushToken: notificationMapper[input.status].sendTo,
                     title: notificationMapper[input.status]["title"],
                     body: notificationMapper[input.status]["body"],
                 });
