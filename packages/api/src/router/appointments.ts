@@ -300,21 +300,26 @@ export const appointmentsRouter = createTRPCRouter({
                             "oauth_google",
                         );
 
-                    const appointment = await ctx.prisma.appointment.findUnique(
-                        {
-                            where: {
-                                id: input.id,
-                            },
-                        },
-                    );
+                    // only create event in google calendar if the therapist has a google oauth token
+                    if (
+                        TherapistOauthAccessToken &&
+                        TherapistOauthAccessToken.token
+                    ) {
+                        const appointment =
+                            await ctx.prisma.appointment.findUnique({
+                                where: {
+                                    id: input.id,
+                                },
+                            });
 
-                    calendarEvent = await createAppointmentInCalendar(
-                        TherapistOauthAccessToken?.token ?? "",
-                        therapist.name,
-                        therapistUser.emailAddresses[0]?.emailAddress ?? "",
-                        appointment as Appointment,
-                        patient,
-                    );
+                        calendarEvent = await createAppointmentInCalendar(
+                            TherapistOauthAccessToken?.token ?? "",
+                            therapist.name,
+                            therapistUser.emailAddresses[0]?.emailAddress ?? "",
+                            appointment as Appointment,
+                            patient,
+                        );
+                    }
                 }
 
                 await sendPushNotification({
