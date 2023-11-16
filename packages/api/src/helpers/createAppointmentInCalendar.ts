@@ -1,11 +1,16 @@
 import { google } from "googleapis";
 
-import { type Appointment, type Patient } from "@acme/db";
+import {
+    type Address,
+    type Appointment,
+    type Patient,
+    type Therapist,
+} from "@acme/db";
 
 import { getOAuth2GoogleClient } from "./getOAuth2GoogleClient";
 
 export const createAppointmentInCalendar = async (
-    therapistName: string,
+    therapist: Therapist & { address: Address },
     therapistEmail: string,
     appointment: Appointment,
     patient: Patient,
@@ -15,13 +20,17 @@ export const createAppointmentInCalendar = async (
         auth: await getOAuth2GoogleClient(),
     });
 
+    const modality =
+        appointment.modality === "ONLINE" ? "online" : "presencial";
+    const therapistPronoun = therapist.gender === "MALE" ? "o" : "a";
+
     // end date is 1 hour after start date
     const endDate = new Date(appointment.scheduledTo);
     endDate.setHours(endDate.getHours() + 1);
 
     const requestBody: any = {
-        summary: `Sessão do ${patient.name} com ${therapistName}`,
-        description: `Conversa do ${patient.name} com o terapeuta ${therapistName}`,
+        summary: `Sessão ${patient.name} e ${therapist.name}`,
+        description: `Conversa ${modality} do(a) ${patient.name} com ${therapistPronoun} terapeuta ${therapist.name}`,
         start: {
             dateTime: appointment.scheduledTo.toISOString(),
             timeZone: "America/Sao_Paulo",
@@ -65,6 +74,8 @@ export const createAppointmentInCalendar = async (
                 },
             },
         };
+    } else {
+        requestBody.location = `${therapist.address.street}, ${therapist.address.number} - ${therapist.address.neighborhood}`;
     }
 
     const newAppointment = await calendar.events.insert({
