@@ -1,7 +1,8 @@
-import clerk from "@clerk/clerk-sdk-node";
 import { google } from "googleapis";
 
 import { type Appointment, type Patient } from "@acme/db";
+
+import { getOAuth2GoogleClient } from "./getOAuth2GoogleClient";
 
 export const createAppointmentInCalendar = async (
     therapistName: string,
@@ -9,24 +10,9 @@ export const createAppointmentInCalendar = async (
     appointment: Appointment,
     patient: Patient,
 ) => {
-    const oauth2Client = new google.auth.OAuth2(
-        process.env.GOOGLE_CLIENT_ID,
-        process.env.GOOGLE_CLIENT_SECRET,
-    );
-
-    const [ScheduleUserOAuthAccessToken] =
-        await clerk.users.getUserOauthAccessToken(
-            process.env.SCHEDULE_USER_ID || "",
-            "oauth_google",
-        );
-
-    oauth2Client.setCredentials({
-        access_token: ScheduleUserOAuthAccessToken?.token,
-    });
-
     const calendar = google.calendar({
         version: "v3",
-        auth: oauth2Client,
+        auth: await getOAuth2GoogleClient(),
     });
 
     // end date is 1 hour after start date
@@ -34,8 +20,8 @@ export const createAppointmentInCalendar = async (
     endDate.setHours(endDate.getHours() + 1);
 
     const requestBody: any = {
-        summary: "Sessão de terapia",
-        description: `Sessão do ${patient.name} com o terapeuta ${therapistName}`,
+        summary: `Sessão do ${patient.name} com ${therapistName}`,
+        description: `Conversa do ${patient.name} com o terapeuta ${therapistName}`,
         start: {
             dateTime: appointment.scheduledTo.toISOString(),
             timeZone: "America/Sao_Paulo",

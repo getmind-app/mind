@@ -1,11 +1,11 @@
 import type * as Notification from "expo-notifications";
 import clerk from "@clerk/clerk-sdk-node";
-import { t } from "@lingui/macro";
 import Stripe from "stripe";
 import { z } from "zod";
 
 import { type Appointment } from "@acme/db";
 
+import { cancelAppointmentInCalendar } from "../helpers/cancelAppointmentInCalendar";
 import { createAppointmentInCalendar } from "../helpers/createAppointmentInCalendar";
 import { sendPushNotification } from "../helpers/sendPushNotification";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
@@ -42,10 +42,8 @@ export const appointmentsRouter = createTRPCRouter({
             await sendPushNotification({
                 expoPushToken: therapistUser.publicMetadata
                     .expoPushToken as Notification.ExpoPushToken,
-                title: t({ message: "New appointment! 🎉" }),
-                body: t({
-                    message: `${patient?.name} requested an appointment with you.`,
-                }),
+                title: "Nova sessão! 🎉",
+                body: `${patient?.name} quer marcar um horário com você.`,
             });
 
             return await ctx.prisma.appointment.create({ data: input });
@@ -177,6 +175,7 @@ export const appointmentsRouter = createTRPCRouter({
             return foundAppointment;
         }
     }),
+    // TODO: esse endpoint precisa ser refatorado urgentemente kkkkkkk
     update: protectedProcedure
         .input(
             z.object({
@@ -213,6 +212,12 @@ export const appointmentsRouter = createTRPCRouter({
                     therapist?.userId ?? "",
                 );
 
+                const appointment = await ctx.prisma.appointment.findUnique({
+                    where: {
+                        id: input.id,
+                    },
+                });
+
                 const notificationMapper: {
                     [key in "ACCEPTED" | "REJECTED" | "CANCELED"]: {
                         title: string;
@@ -221,26 +226,38 @@ export const appointmentsRouter = createTRPCRouter({
                     };
                 } = {
                     ACCEPTED: {
-                        title: t({ message: "Appointment accepted! 🎉" }),
-                        body: t({
-                            message: `${therapist?.name} accepted your appointment request.`,
-                        }),
+                        title: "Sessão confirmada! 🎉",
+                        body: `${
+                            therapist?.name
+                        } aceitou sua sessão no dia ${new Date(
+                            input.scheduledTo,
+                        ).getDate()} às ${new Date(
+                            input.scheduledTo,
+                        ).getHours()}.`,
                         sendTo: patientUser.publicMetadata
                             .expoPushToken as Notification.ExpoPushToken,
                     },
                     REJECTED: {
-                        title: t({ message: "Appointment rejected ❌" }),
-                        body: t({
-                            message: `${therapist?.name} rejected your appointment request.`,
-                        }),
+                        title: "Sessão cancelada ❌",
+                        body: `${
+                            therapist?.name
+                        } não vai poder atender você no dia ${new Date(
+                            input.scheduledTo,
+                        ).getDate()} às ${new Date(
+                            input.scheduledTo,
+                        ).getHours()}.`,
                         sendTo: patientUser.publicMetadata
                             .expoPushToken as Notification.ExpoPushToken,
                     },
                     CANCELED: {
-                        title: t({ message: "Appointment canceled ❌" }),
-                        body: t({
-                            message: `${patient?.name} canceled the appointment.`,
-                        }),
+                        title: "Sessão cancelada ❌",
+                        body: `${
+                            patient?.name
+                        } cancelou a sessão no dia ${new Date(
+                            input.scheduledTo,
+                        ).getDate()} às ${new Date(
+                            input.scheduledTo,
+                        ).getHours()}.`,
                         sendTo: therapistUser.publicMetadata
                             .expoPushToken as Notification.ExpoPushToken,
                     },
@@ -310,19 +327,15 @@ export const appointmentsRouter = createTRPCRouter({
                         throw new Error("Payment failed");
                     }
 
-                    const appointment = await ctx.prisma.appointment.findUnique(
-                        {
-                            where: {
-                                id: input.id,
-                            },
-                        },
-                    );
-
                     calendarEvent = await createAppointmentInCalendar(
                         therapist.name,
                         therapistUser.emailAddresses[0]?.emailAddress ?? "",
                         appointment as Appointment,
                         patient,
+                    );
+                } else if (input.status === "CANCELED") {
+                    await cancelAppointmentInCalendar(
+                        appointment?.eventId ?? "",
                     );
                 }
 
