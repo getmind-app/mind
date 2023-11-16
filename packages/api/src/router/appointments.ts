@@ -1,5 +1,6 @@
 import type * as Notification from "expo-notifications";
 import clerk from "@clerk/clerk-sdk-node";
+import { t } from "@lingui/macro";
 import Stripe from "stripe";
 import { z } from "zod";
 
@@ -41,8 +42,10 @@ export const appointmentsRouter = createTRPCRouter({
             await sendPushNotification({
                 expoPushToken: therapistUser.publicMetadata
                     .expoPushToken as Notification.ExpoPushToken,
-                title: "New appointment! 🎉",
-                body: `${patient?.name} requested an appointment with you.`,
+                title: t({ message: "New appointment! 🎉" }),
+                body: t({
+                    message: `${patient?.name} requested an appointment with you.`,
+                }),
             });
 
             return await ctx.prisma.appointment.create({ data: input });
@@ -218,20 +221,26 @@ export const appointmentsRouter = createTRPCRouter({
                     };
                 } = {
                     ACCEPTED: {
-                        title: "Appointment accepted! 🎉",
-                        body: `${therapist?.name} accepted your appointment request.`,
+                        title: t({ message: "Appointment accepted! 🎉" }),
+                        body: t({
+                            message: `${therapist?.name} accepted your appointment request.`,
+                        }),
                         sendTo: patientUser.publicMetadata
                             .expoPushToken as Notification.ExpoPushToken,
                     },
                     REJECTED: {
-                        title: "Appointment rejected ❌",
-                        body: `${therapist?.name} rejected your appointment request.`,
+                        title: t({ message: "Appointment rejected ❌" }),
+                        body: t({
+                            message: `${therapist?.name} rejected your appointment request.`,
+                        }),
                         sendTo: patientUser.publicMetadata
                             .expoPushToken as Notification.ExpoPushToken,
                     },
                     CANCELED: {
-                        title: "Appointment canceled ❌",
-                        body: `${patient?.name} canceled the appointment.`,
+                        title: t({ message: "Appointment canceled ❌" }),
+                        body: t({
+                            message: `${patient?.name} canceled the appointment.`,
+                        }),
                         sendTo: therapistUser.publicMetadata
                             .expoPushToken as Notification.ExpoPushToken,
                     },
