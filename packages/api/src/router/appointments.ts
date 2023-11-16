@@ -233,7 +233,7 @@ export const appointmentsRouter = createTRPCRouter({
                             input.scheduledTo,
                         ).getDate()} às ${new Date(
                             input.scheduledTo,
-                        ).getHours()}.`,
+                        ).getHours()}h.`,
                         sendTo: patientUser.publicMetadata
                             .expoPushToken as Notification.ExpoPushToken,
                     },
@@ -245,7 +245,7 @@ export const appointmentsRouter = createTRPCRouter({
                             input.scheduledTo,
                         ).getDate()} às ${new Date(
                             input.scheduledTo,
-                        ).getHours()}.`,
+                        ).getHours()}h.`,
                         sendTo: patientUser.publicMetadata
                             .expoPushToken as Notification.ExpoPushToken,
                     },
@@ -257,7 +257,7 @@ export const appointmentsRouter = createTRPCRouter({
                             input.scheduledTo,
                         ).getDate()} às ${new Date(
                             input.scheduledTo,
-                        ).getHours()}.`,
+                        ).getHours()}h.`,
                         sendTo: therapistUser.publicMetadata
                             .expoPushToken as Notification.ExpoPushToken,
                     },
