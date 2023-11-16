@@ -1,9 +1,9 @@
+import clerk from "@clerk/clerk-sdk-node";
 import { google } from "googleapis";
 
 import { type Appointment, type Patient } from "@acme/db";
 
 export const createAppointmentInCalendar = async (
-    userToken: string,
     therapistName: string,
     therapistEmail: string,
     appointment: Appointment,
@@ -14,8 +14,14 @@ export const createAppointmentInCalendar = async (
         process.env.GOOGLE_CLIENT_SECRET,
     );
 
+    const [ScheduleUserOAuthAccessToken] =
+        await clerk.users.getUserOauthAccessToken(
+            process.env.SCHEDULE_USER_ID || "",
+            "oauth_google",
+        );
+
     oauth2Client.setCredentials({
-        access_token: userToken,
+        access_token: ScheduleUserOAuthAccessToken?.token,
     });
 
     const calendar = google.calendar({

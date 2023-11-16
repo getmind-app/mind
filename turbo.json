@@ -49,6 +49,7 @@
         "SKIP_ENV_VALIDATION",
         "VERCEL",
         "VERCEL_URL",
-        "FIXED_APPLICATION_FEE"
+        "FIXED_APPLICATION_FEE",
+        "SCHEDULE_USER_ID"
     ]
 }

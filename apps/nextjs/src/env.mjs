@@ -21,6 +21,7 @@ const server = z.object({
     GOOGLE_CLIENT_ID: z.string().min(1),
     GOOGLE_CLIENT_SECRET: z.string().min(1),
     FIXED_APPLICATION_FEE: z.string().min(1),
+    SCHEDULE_USER_ID: z.string().min(1),
 });
 
 /**
@@ -46,6 +47,7 @@ const processEnv = {
     GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
     FIXED_APPLICATION_FEE: process.env.FIXED_APPLICATION_FEE,
+    SCHEDULE_USER_ID: process.env.SCHEDULE_USER_ID,
 };
 
 // Don't touch the part below
