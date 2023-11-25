@@ -165,14 +165,16 @@ function TherapistOptions() {
                 <FormTextInput
                     title={t({ message: "Experience" })}
                     placeholder="2"
-                    unit="years"
+                    unit={t({ message: "years" })}
                     control={control}
                     name="yearsOfExperience"
                     inputMode="numeric"
                 />
                 <FormTextInput
                     title={t({ message: "About you" })}
-                    placeholder="You tell me..."
+                    placeholder={t({
+                        message: "Tell us about yourself",
+                    })}
                     control={control}
                     name="about"
                     inputMode="text"
