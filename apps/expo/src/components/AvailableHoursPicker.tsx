@@ -14,6 +14,7 @@ import { useForm } from "react-hook-form";
 
 import { api } from "../utils/api";
 import { FormDateInput } from "./FormDateInput";
+import { LargeButton } from "./LargeButton";
 import { type Hour, type Therapist, type WeekDay } from ".prisma/client";
 
 function getHourFromISO(date: Date): string {
@@ -76,6 +77,7 @@ function AddHours({ setVisible }: { setVisible: (visible: boolean) => void }) {
     const [selectedDays, setSelectedDays] = useState<WeekDay[]>([]);
     const [showStartHourPicker, setShowStartHourPicker] = useState(false);
     const [showEndHourPicker, setShowEndHourPicker] = useState(false);
+
     const setTherapistHours = api.therapists.setAvailableHours.useMutation({
         async onSuccess() {
             await utils.therapists.findByUserId.invalidate();
@@ -83,7 +85,7 @@ function AddHours({ setVisible }: { setVisible: (visible: boolean) => void }) {
         },
     });
 
-    const { control, handleSubmit, setValue } = useForm({
+    const { control, handleSubmit, setValue, formState } = useForm({
         defaultValues: {
             days: [] as WeekDay[],
             startHour: DateTime.now()
@@ -141,19 +143,9 @@ function AddHours({ setVisible }: { setVisible: (visible: boolean) => void }) {
                 title={t({ message: "End Hour:" })}
                 mode="time"
             />
-            <TouchableOpacity className="w-full" onPress={onSubmit}>
-                <View
-                    className={`flex w-full items-center justify-center rounded-xl bg-blue-500 py-2`}
-                >
-                    <Text
-                        className={`font-nunito-sans-bold text-lg ${
-                            true ? "text-white" : "text-black"
-                        }`}
-                    >
-                        <Trans>Save</Trans>
-                    </Text>
-                </View>
-            </TouchableOpacity>
+            <LargeButton loading={formState.isSubmitting} onPress={onSubmit}>
+                <Trans>Save</Trans>
+            </LargeButton>
         </View>
     );
 }
