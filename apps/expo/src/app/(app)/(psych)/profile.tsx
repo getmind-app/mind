@@ -1,5 +1,6 @@
 import { useState } from "react";
 import {
+    ActivityIndicator,
     Image,
     KeyboardAvoidingView,
     Platform,
@@ -22,6 +23,7 @@ import { z } from "zod";
 import { FormCurrencyInput } from "../../../components/FormCurrencyInput";
 import { FormDateInput } from "../../../components/FormDateInput";
 import { FormTextInput } from "../../../components/FormTextInput";
+import { FullScreenLoading } from "../../../components/FullScreenLoading";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
 import { Title } from "../../../components/Title";
 import { api } from "../../../utils/api";
@@ -126,11 +128,7 @@ export default function EditPsychProfile() {
     };
 
     if (isLoading) {
-        return (
-            <View className="flex h-full flex-col items-center justify-center">
-                <Text className="text-2xl">Loading...</Text>
-            </View>
-        );
+        return <FullScreenLoading />;
     }
     return (
         <KeyboardAvoidingView

@@ -33,7 +33,7 @@ export default function AppRouter() {
     const isProfessional = useUserIsProfessional();
 
     // https://github.com/expo/router/issues/740
-    if (!rootNavigationState.key) {
+    if (!rootNavigationState || !rootNavigationState.key) {
         return (
             <View
                 style={{

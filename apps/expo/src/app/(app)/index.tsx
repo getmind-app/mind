@@ -10,6 +10,7 @@ import {
 import { useRouter } from "expo-router";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import { Trans, t } from "@lingui/macro";
+import { useLingui } from "@lingui/react";
 
 import { Card } from "../../components/Card";
 import { CardSkeleton } from "../../components/CardSkeleton";
@@ -66,6 +67,7 @@ export default function Index() {
 function NextAppointment() {
     const router = useRouter();
     const isProfessional = useUserIsProfessional();
+    const lingui = useLingui();
 
     const appointment = api.appointments.findNextUserAppointment.useQuery();
 
@@ -78,7 +80,7 @@ function NextAppointment() {
                     <View className="p-6">
                         <View className="flex w-full flex-row justify-between">
                             <Text className="font-nunito-sans text-xl">
-                                {new Intl.DateTimeFormat("en", {
+                                {new Intl.DateTimeFormat(lingui.i18n.locale, {
                                     weekday: "long",
                                 }).format(
                                     new Date(appointment.data.scheduledTo),
@@ -222,6 +224,7 @@ function NextAppointment() {
 
 function LastNotes() {
     const router = useRouter();
+    const lingui = useLingui();
 
     const { data, isLoading } = api.notes.findByUserId.useQuery();
 
@@ -243,13 +246,16 @@ function LastNotes() {
                         <Card key={id}>
                             <View className="flex w-full flex-row items-center justify-between align-middle">
                                 <View className="flex w-64 flex-col">
-                                    <Text className="font-nunito-sans-bold text-xl text-slate-500">
+                                    <Text className="font-nunito-sans-bold text-xl capitalize text-slate-500">
                                         <Text className="text-blue-500">
                                             {createdAt.getDate()}
                                         </Text>{" "}
-                                        {createdAt.toLocaleString("en", {
-                                            month: "long",
-                                        })}
+                                        {createdAt.toLocaleString(
+                                            lingui.i18n.locale,
+                                            {
+                                                month: "long",
+                                            },
+                                        )}
                                     </Text>
                                     <Text className="pt-2 font-nunito-sans text-base">
                                         {content}
