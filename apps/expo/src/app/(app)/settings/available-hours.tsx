@@ -40,15 +40,13 @@ export default function AvailableHours() {
                         />
                     }
                 >
-                    <View className={Platform.OS === "android" ? "mt-12" : ""}>
-                        <Title title={t({ message: "Available hours" })} />
-                        <Text className="pb-4 font-nunito-sans text-base text-slate-500">
-                            <Trans>
-                                Set available hours for your appointments.
-                            </Trans>
-                        </Text>
-                        <AvailableHoursPicker data={data} />
-                    </View>
+                    <Title title={t({ message: "Available hours" })} />
+                    <Text className="pb-4 font-nunito-sans text-base text-slate-500">
+                        <Trans>
+                            Set available hours for your appointments.
+                        </Trans>
+                    </Text>
+                    <AvailableHoursPicker data={data} />
                 </Refreshable>
             </ScreenWrapper>
         </>

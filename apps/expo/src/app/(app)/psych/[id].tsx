@@ -26,7 +26,7 @@ export default function TherapistProfile() {
         return <Text>There was an error</Text>;
     }
 
-    if (isLoading) {
+    if (isLoading || true) {
         return (
             <>
                 <Header />

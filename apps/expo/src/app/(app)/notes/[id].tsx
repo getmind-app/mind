@@ -59,9 +59,7 @@ export default function Note() {
                     showsVerticalScrollIndicator={false}
                 >
                     <View
-                        className={`flex flex-row items-center justify-between ${
-                            Platform.OS === "android" ? "mt-12" : ""
-                        }`}
+                        className={`flex flex-row items-center justify-between`}
                     >
                         <Text className="font-nunito-sans-bold text-3xl ">
                             <Text className="text-blue-500">

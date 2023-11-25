@@ -53,9 +53,7 @@ export default function NewNote() {
                     showsVerticalScrollIndicator={false}
                 >
                     <View
-                        className={`flex flex-row items-center justify-between ${
-                            Platform.OS === "android" ? "mt-12" : ""
-                        }`}
+                        className={`flex flex-row items-center justify-between`}
                     >
                         <Title title={t({ message: "New note" })} />
                         <TouchableOpacity
