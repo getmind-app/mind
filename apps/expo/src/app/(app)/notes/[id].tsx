@@ -14,7 +14,6 @@ import { Loading } from "../../../components/Loading";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
 import { api } from "../../../utils/api";
 
-// TODO: no futuro precisamos deixar editar a nota
 export default function Note() {
     const router = useRouter();
     const utils = api.useContext();
@@ -59,7 +58,11 @@ export default function Note() {
                     className="min-h-max"
                     showsVerticalScrollIndicator={false}
                 >
-                    <View className="flex flex-row items-center justify-between">
+                    <View
+                        className={`flex flex-row items-center justify-between ${
+                            Platform.OS === "android" ? "mt-12" : ""
+                        }`}
+                    >
                         <Text className="font-nunito-sans-bold text-3xl ">
                             <Text className="text-blue-500">
                                 {data.createdAt.getDate()}
