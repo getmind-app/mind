@@ -3,7 +3,7 @@ import clerk from "@clerk/clerk-sdk-node";
 import Stripe from "stripe";
 import { z } from "zod";
 
-import { type Appointment } from "@acme/db";
+import { type Address, type Appointment, type Therapist } from "@acme/db";
 
 import { cancelAppointmentInCalendar } from "../helpers/cancelAppointmentInCalendar";
 import { createAppointmentInCalendar } from "../helpers/createAppointmentInCalendar";
@@ -196,6 +196,9 @@ export const appointmentsRouter = createTRPCRouter({
                     where: {
                         id: input.therapistId,
                     },
+                    include: {
+                        address: true,
+                    },
                 });
 
                 const patient = await ctx.prisma.patient.findUnique({
@@ -316,7 +319,6 @@ export const appointmentsRouter = createTRPCRouter({
                             enabled: true,
                             allow_redirects: "never",
                         },
-
                         application_fee_amount:
                             parseFloat(process.env.FIXED_APPLICATION_FEE) *
                             100 *
@@ -328,7 +330,7 @@ export const appointmentsRouter = createTRPCRouter({
                     }
 
                     calendarEvent = await createAppointmentInCalendar(
-                        therapist.name,
+                        therapist as Therapist & { address: Address },
                         therapistUser.emailAddresses[0]?.emailAddress ?? "",
                         appointment as Appointment,
                         patient,
