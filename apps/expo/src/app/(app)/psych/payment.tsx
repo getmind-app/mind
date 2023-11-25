@@ -67,7 +67,7 @@ export default function SessionPayment() {
             Alert.alert("Error", error.message);
         } else {
             setReady(true);
-            updateAppointment.mutate({
+            await updateAppointment.mutateAsync({
                 id: String(appointmentId),
                 isPaid: true,
                 modality: data.modality,
