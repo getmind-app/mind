@@ -56,7 +56,7 @@ export default function PaymentsSetup() {
     };
 
     const onCreateAccount = async () => {
-        createAccount.mutate();
+        await createAccount.mutateAsync();
         await therapist.refetch();
     };
 

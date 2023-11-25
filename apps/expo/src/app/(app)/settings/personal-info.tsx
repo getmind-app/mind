@@ -20,6 +20,7 @@ import { FormCurrencyInput } from "../../../components/FormCurrencyInput";
 import { FormDateInput } from "../../../components/FormDateInput";
 import { FormTextInput } from "../../../components/FormTextInput";
 import { Header } from "../../../components/Header";
+import { LargeButton } from "../../../components/LargeButton";
 import { ProfileSkeleton } from "../../../components/ProfileSkeleton";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
 import { useUserIsProfessional } from "../../../hooks/user/useUserIsProfessional";
@@ -62,7 +63,7 @@ function TherapistOptions() {
     const {
         control,
         handleSubmit,
-        formState: { isValid, isDirty },
+        formState: { isValid, isDirty, isSubmitting },
     } = useForm<NonNullable<typeof therapist.data>>({
         defaultValues: therapist.data
             ? {
@@ -165,14 +166,16 @@ function TherapistOptions() {
                 <FormTextInput
                     title={t({ message: "Experience" })}
                     placeholder="2"
-                    unit="years"
+                    unit={t({ message: "years" })}
                     control={control}
                     name="yearsOfExperience"
                     inputMode="numeric"
                 />
                 <FormTextInput
                     title={t({ message: "About you" })}
-                    placeholder="You tell me..."
+                    placeholder={t({
+                        message: "Tell us about yourself",
+                    })}
                     control={control}
                     name="about"
                     inputMode="text"
@@ -183,19 +186,9 @@ function TherapistOptions() {
                     title={t({ message: "Hourly Rate" })}
                 />
             </ScrollView>
-            <TouchableOpacity className="w-full" onPress={onSubmit}>
-                <View
-                    className={`mt-4 flex w-full items-center justify-center rounded-xl ${
-                        isValid && isDirty ? "bg-blue-500" : "bg-blue-200"
-                    } py-2`}
-                >
-                    <Text
-                        className={`font-nunito-sans-bold text-lg text-white`}
-                    >
-                        <Trans>Update</Trans>
-                    </Text>
-                </View>
-            </TouchableOpacity>
+            <LargeButton onPress={onSubmit} loading={isSubmitting}>
+                <Trans>Update</Trans>
+            </LargeButton>
         </>
     );
 }
