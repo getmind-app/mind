@@ -109,8 +109,8 @@ function AddHours({ setVisible }: { setVisible: (visible: boolean) => void }) {
         setValue("days", selectedDays);
     }, [selectedDays, setValue]);
 
-    const onSubmit = handleSubmit((values) => {
-        setTherapistHours.mutate({
+    const onSubmit = handleSubmit(async (values) => {
+        await setTherapistHours.mutateAsync({
             days: values.days,
             startHour: parseInt(getHourFromISO(values.startHour)),
             endHour: parseInt(getHourFromISO(values.endHour)),
