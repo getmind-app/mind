@@ -1,11 +1,6 @@
-import { useEffect, useRef, useState } from "react";
-import { Alert, Image, Platform, Pressable, Text, View } from "react-native";
-import Constants from "expo-constants";
-import * as Device from "expo-device";
-import * as Location from "expo-location";
-import * as Notifications from "expo-notifications";
+import { useState } from "react";
+import { Image, Pressable, Text, View } from "react-native";
 import { useRouter } from "expo-router";
-import { requestTrackingPermissionsAsync } from "expo-tracking-transparency";
 import { useUser } from "@clerk/clerk-expo";
 import { Trans } from "@lingui/macro";
 
@@ -19,15 +14,9 @@ export default function Onboard() {
     const [selectedRole, setSelectedRole] = useState<
         "patient" | "professional"
     >();
-    const { setMetadata } = useUserMutations();
-    const [expoPushToken, setExpoPushToken] =
-        useState<Notifications.ExpoPushToken | null>(null);
-    const [notification, setNotification] = useState<
-        Notifications.Notification | boolean
-    >(false);
-    const notificationListener = useRef<Notifications.Subscription>();
-    const responseListener = useRef<Notifications.Subscription>();
+
     const [loading, setLoading] = useState(false);
+    const { setMetadata } = useUserMutations();
 
     async function handleNext() {
         setLoading(true);
@@ -36,7 +25,6 @@ export default function Onboard() {
                 await setMetadata.mutateAsync({
                     metadata: {
                         role: selectedRole,
-                        expoPushToken: expoPushToken?.data,
                     },
                 });
                 await user?.reload();
@@ -56,47 +44,6 @@ export default function Onboard() {
             throw new Error("No role selected");
         }
     }
-
-    useEffect(() => {
-        (async () => {
-            await requestTrackingPermissionsAsync();
-
-            const { status } =
-                await Location.requestForegroundPermissionsAsync();
-            if (status !== "granted") {
-                Alert.alert(
-                    "Permission",
-                    "Sorry, we need location permissions to make this work!",
-                    [{ text: "OK", onPress: () => {} }],
-                );
-            }
-
-            registerForPushNotificationsAsync().then((token) =>
-                setExpoPushToken(token ?? null),
-            );
-        })();
-
-        notificationListener.current =
-            Notifications.addNotificationReceivedListener((notification) => {
-                setNotification(notification);
-            });
-
-        responseListener.current =
-            Notifications.addNotificationResponseReceivedListener(
-                (response) => {
-                    console.log(response);
-                },
-            );
-
-        return () => {
-            Notifications.removeNotificationSubscription(
-                notificationListener.current as Notifications.Subscription,
-            );
-            Notifications.removeNotificationSubscription(
-                responseListener.current as Notifications.Subscription,
-            );
-        };
-    }, []);
 
     return (
         <ScreenWrapper>
@@ -253,37 +200,4 @@ export default function Onboard() {
             </View>
         </ScreenWrapper>
     );
-}
-
-async function registerForPushNotificationsAsync() {
-    let token;
-    if (Device.isDevice) {
-        const { status: existingStatus } =
-            await Notifications.getPermissionsAsync();
-        let finalStatus = existingStatus;
-        if (existingStatus !== "granted") {
-            const { status } = await Notifications.requestPermissionsAsync();
-            finalStatus = status;
-        }
-        if (finalStatus !== "granted") {
-            alert("Failed to get push token for push notification!");
-            return;
-        }
-        token = await Notifications.getExpoPushTokenAsync({
-            projectId: Constants.expoConfig?.extra?.eas.projectId,
-        });
-    } else {
-        alert("Must use physical device for Push Notifications");
-    }
-
-    if (Platform.OS === "android") {
-        await Notifications.setNotificationChannelAsync("default", {
-            name: "default",
-            importance: Notifications.AndroidImportance.MAX,
-            vibrationPattern: [0, 250, 250, 250],
-            lightColor: "#FF231F7C",
-        });
-    }
-
-    return token;
 }

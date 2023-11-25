@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
+    Alert,
     Image,
     Linking,
     RefreshControl,
@@ -7,7 +8,11 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
+import * as Location from "expo-location";
+import * as Notifications from "expo-notifications";
 import { useRouter } from "expo-router";
+import { requestTrackingPermissionsAsync } from "expo-tracking-transparency";
+import { useUser } from "@clerk/clerk-expo";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import { Trans, t } from "@lingui/macro";
 
@@ -18,13 +23,24 @@ import { Refreshable } from "../../components/Refreshable";
 import { ScreenWrapper } from "../../components/ScreenWrapper";
 import { Title } from "../../components/Title";
 import geocodeAddress from "../../helpers/geocodeAddress";
+import { registerForPushNotificationsAsync } from "../../helpers/registerForPushNotifications";
 import { useUserIsProfessional } from "../../hooks/user/useUserIsProfessional";
+import { useUserMutations } from "../../hooks/user/useUserMutations";
 import { api } from "../../utils/api";
 
 export default function Index() {
     const router = useRouter();
-    const [refreshing, setRefreshing] = useState(false);
     const utils = api.useContext();
+    const { user } = useUser();
+    const { setMetadata } = useUserMutations();
+    const [refreshing, setRefreshing] = useState(false);
+    const notificationListener = useRef<Notifications.Subscription>();
+    const responseListener = useRef<Notifications.Subscription>();
+    const [expoPushToken, setExpoPushToken] =
+        useState<Notifications.ExpoPushToken | null>(null);
+    const [notification, setNotification] = useState<
+        Notifications.Notification | boolean
+    >(false);
 
     const onRefresh = async () => {
         setRefreshing(true);
@@ -32,6 +48,55 @@ export default function Index() {
         await utils.notes.findByUserId.invalidate();
         setRefreshing(false);
     };
+
+    useEffect(() => {
+        (async () => {
+            await requestTrackingPermissionsAsync();
+
+            const { status } =
+                await Location.requestForegroundPermissionsAsync();
+            if (status !== "granted") {
+                Alert.alert(
+                    "Permission",
+                    "Sorry, we need location permissions to make this work!",
+                    [{ text: "OK", onPress: () => {} }],
+                );
+            }
+
+            await registerForPushNotificationsAsync().then((token) =>
+                setExpoPushToken(token ?? null),
+            );
+
+            await setMetadata.mutateAsync({
+                metadata: {
+                    ...user?.publicMetadata,
+                    expoPushToken: expoPushToken?.data,
+                },
+            });
+            await user?.reload();
+        })();
+
+        notificationListener.current =
+            Notifications.addNotificationReceivedListener((notification) => {
+                setNotification(notification);
+            });
+
+        responseListener.current =
+            Notifications.addNotificationResponseReceivedListener(
+                (response) => {
+                    console.log(response);
+                },
+            );
+
+        return () => {
+            Notifications.removeNotificationSubscription(
+                notificationListener.current as Notifications.Subscription,
+            );
+            Notifications.removeNotificationSubscription(
+                responseListener.current as Notifications.Subscription,
+            );
+        };
+    }, []);
 
     return (
         <ScreenWrapper>
