@@ -1,3 +1,4 @@
+import clerkClient from "@clerk/clerk-sdk-node";
 import { Resend } from "resend";
 import { z } from "zod";
 
@@ -31,18 +32,18 @@ export const therapistsRouter = createTRPCRouter({
                 },
             });
 
+            const user = await clerkClient.users.getUser(ctx.auth.userId);
             const resend = new Resend(process.env.RESEND_SECRET_KEY);
 
             await resend.emails.send({
                 from: "Mind <email@getmind.app>",
                 to: ["abdul@getmind.app", "gustavo@getmind.app"],
-                subject: `🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵`,
+                subject: `New therapist, ${input.name}, joined Mind!`,
                 text: `Hi there! ${
                     input.name
                 } just joined Mind! Please follow with the onboarding process.
                 Name: ${input.name}
-                Email: ${ctx.auth.user?.emailAddresses[0]}
-                Phone: ${input.phone}
+                Email: ${user.emailAddresses[0]?.emailAddress}
                 ${JSON.stringify(input, null, 2)}`,
             });
 
