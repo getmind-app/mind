@@ -140,12 +140,15 @@ function ProfessionalMenuItems() {
                 icon="attach-money"
                 label={t({ message: "Setup Payments" })}
                 onPress={() => router.push("/(psych)/payments-setup")}
+                alert={data.paymentAccountStatus !== "ACTIVE"}
             />
-            <MenuItem
-                icon="share"
-                label={t({ message: "Share your link" })}
-                onPress={handleShareLink}
-            />
+            {data.paymentAccountStatus === "ACTIVE" && (
+                <MenuItem
+                    icon="share"
+                    label={t({ message: "Share your link" })}
+                    onPress={handleShareLink}
+                />
+            )}
         </>
     );
 }
@@ -157,6 +160,7 @@ type PossibleMaterialIcons = typeof MaterialIcons extends Icon<infer K, string>
 function MenuItem(props: {
     label: string;
     icon: PossibleMaterialIcons;
+    alert?: boolean;
     isFirst?: boolean;
     isLast?: boolean;
     onPress: () => void;
@@ -173,6 +177,16 @@ function MenuItem(props: {
                     <Text className="font-nunito-sans text-xl">
                         {props.label}
                     </Text>
+                    {props.alert && (
+                        <View
+                            style={{
+                                width: 10,
+                                height: 10,
+                                borderRadius: 100,
+                                backgroundColor: "#F87171",
+                            }}
+                        />
+                    )}
                 </View>
                 <MaterialIcons size={24} name="chevron-right" />
             </View>
