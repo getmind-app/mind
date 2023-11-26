@@ -17,6 +17,7 @@ import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import { Trans, t } from "@lingui/macro";
 import { useLingui } from "@lingui/react";
 
+import { AccountInformationMessage } from "../../components/AccountInformationMessage";
 import { Card } from "../../components/Card";
 import { CardSkeleton } from "../../components/CardSkeleton";
 import DefaultHomeCard from "../../components/DefaultHomeCard";
@@ -25,6 +26,7 @@ import { ScreenWrapper } from "../../components/ScreenWrapper";
 import { Title } from "../../components/Title";
 import geocodeAddress from "../../helpers/geocodeAddress";
 import { registerForPushNotificationsAsync } from "../../helpers/registerForPushNotifications";
+import { useTherapistByUserId } from "../../hooks/therapist/useTherapistByUserId";
 import { useUserIsProfessional } from "../../hooks/user/useUserIsProfessional";
 import { useUserMutations } from "../../hooks/user/useUserMutations";
 import { api } from "../../utils/api";
@@ -42,11 +44,13 @@ export default function Index() {
     const [notification, setNotification] = useState<
         Notifications.Notification | boolean
     >(false);
+    const therapistByUserId = useTherapistByUserId();
 
     const onRefresh = async () => {
         setRefreshing(true);
         await utils.appointments.findNextUserAppointment.invalidate();
         await utils.notes.findByUserId.invalidate();
+        therapistByUserId.remove();
         setRefreshing(false);
     };
 
@@ -110,7 +114,7 @@ export default function Index() {
                 }
             >
                 <Title title={t({ message: "Next session" })} />
-
+                <AccountInformationMessage />
                 <NextAppointment />
                 <View className="mb-2 flex flex-row items-center justify-between pt-8 align-middle">
                     <Title title={t({ message: "Last notes" })} />
