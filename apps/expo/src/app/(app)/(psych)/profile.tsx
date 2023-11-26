@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
     Image,
     KeyboardAvoidingView,
@@ -130,6 +130,7 @@ export default function EditPsychProfile() {
     if (isLoading) {
         return <FullScreenLoading />;
     }
+
     return (
         <KeyboardAvoidingView
             style={{ flex: 1 }}
@@ -219,6 +220,7 @@ export default function EditPsychProfile() {
                         name="hourlyRate"
                         control={control}
                         title={t({ message: "Hourly rate" })}
+                        platformFee={0.1}
                     />
                     <Controller
                         control={control}
