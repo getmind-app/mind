@@ -82,7 +82,10 @@ function DefaultTherapistHomeCard() {
                         : router.push("/(psych)/payments-setup")
                 }
             >
-                <View className="mt-6 flex w-full flex-row items-center justify-center rounded-bl-xl rounded-br-xl bg-blue-500 py-3 align-middle">
+                <View
+                    className="mt-6 flex w-full flex-row items-center justify-center rounded-bl-xl rounded-br-xl bg-blue-500 py-3 align-middle shadow-sm"
+                    style={{ elevation: 2 }}
+                >
                     {bankAccountIsConfigured ? (
                         <>
                             <MaterialIcons

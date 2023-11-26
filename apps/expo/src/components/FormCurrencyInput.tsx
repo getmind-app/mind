@@ -21,6 +21,7 @@ export function FormCurrencyInput<
     control,
     name,
     rules,
+    platformFee,
 }: FormInputProps & {
     control: Control<TFieldValues>;
     name: TName;
@@ -29,6 +30,7 @@ export function FormCurrencyInput<
         "valueAsNumber" | "valueAsDate" | "setValueAs" | "disabled"
     >;
     error?: string;
+    platformFee?: number;
 }) {
     return (
         <Controller
@@ -40,12 +42,25 @@ export function FormCurrencyInput<
                     <Text className="font-nunito-sans text-lg text-slate-700">
                         {title}
                     </Text>
+                    {platformFee && (
+                        <Text className="font-nunito-sans text-sm text-slate-500">
+                            {t({
+                                message: value
+                                    ? `You'll receive R$ ${
+                                          (value * (1 - platformFee)).toFixed(
+                                              2,
+                                          ) ?? 0
+                                      } for each session`
+                                    : `Type the amount you want to charge for each session`,
+                            })}
+                        </Text>
+                    )}
                     <CurrencyInput
                         className="h-10 px-2 font-nunito-sans text-xl"
                         value={value}
                         onChangeValue={onChange}
                         onBlur={onBlur}
-                        prefix={t({ message: "US$ " })}
+                        prefix={t({ message: "R$ " })}
                         delimiter=","
                         separator="."
                         maxValue={1000}
