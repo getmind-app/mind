@@ -20,7 +20,6 @@ import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import { Trans, t } from "@lingui/macro";
 import { useLingui } from "@lingui/react";
 
-import { AccountInformationMessage } from "../../components/AccountInformationMessage";
 import { Card } from "../../components/Card";
 import { CardSkeleton } from "../../components/CardSkeleton";
 import DefaultHomeCard from "../../components/DefaultHomeCard";
@@ -90,7 +89,9 @@ export default function Index() {
 
                 await setMetadata.mutateAsync({
                     metadata: {
-                        ...user?.publicMetadata,
+                        role: user?.publicMetadata.role as
+                            | "patient"
+                            | "professional",
                         expoPushToken: expoPushToken?.data,
                     },
                 });
@@ -131,7 +132,6 @@ export default function Index() {
                 }
             >
                 <Title title={t({ message: "Next session" })} />
-                <AccountInformationMessage />
                 <NextAppointment />
                 <View className="mb-2 flex flex-row items-center justify-between pt-8 align-middle">
                     <Title title={t({ message: "Last notes" })} />
