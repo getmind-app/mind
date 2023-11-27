@@ -3,6 +3,7 @@ import { Redirect, Tabs, useRootNavigationState } from "expo-router";
 import { useClerk } from "@clerk/clerk-expo";
 import { AntDesign } from "@expo/vector-icons";
 
+import { FullScreenLoading } from "../../components/FullScreenLoading";
 import { Loading } from "../../components/Loading";
 import { useUserHasProfileImage } from "../../hooks/user/useUserHasProfileImage";
 import { useUserIsProfessional } from "../../hooks/user/useUserIsProfessional";
@@ -34,17 +35,7 @@ export default function AppRouter() {
 
     // https://github.com/expo/router/issues/740
     if (!rootNavigationState || !rootNavigationState.key) {
-        return (
-            <View
-                style={{
-                    flex: 1,
-                    justifyContent: "center",
-                    alignItems: "center",
-                }}
-            >
-                <Loading size={"large"} />
-            </View>
-        );
+        return <FullScreenLoading />;
     }
 
     if (!user?.publicMetadata?.role) {

@@ -25,6 +25,7 @@ import { FormTextInput } from "../../../components/FormTextInput";
 import { FullScreenLoading } from "../../../components/FullScreenLoading";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
 import { Title } from "../../../components/Title";
+import { useTherapistByUserId } from "../../../hooks/therapist/useTherapistByUserId";
 import { api } from "../../../utils/api";
 import { type Gender, type Modality } from ".prisma/client";
 
@@ -37,6 +38,7 @@ export default function EditPsychProfile() {
         useState<ImagePicker.ImagePickerAsset | null>(null);
 
     const [showBirthdayPicker, setShowBirthdayPicker] = useState(false);
+    const therapist = useTherapistByUserId();
 
     const {
         control,
@@ -87,7 +89,7 @@ export default function EditPsychProfile() {
             });
         }
 
-        mutate({
+        await mutateAsync({
             ...data,
             userId: String(user?.id),
             profilePictureUrl: image?.publicUrl ?? user?.imageUrl ?? "",
@@ -102,9 +104,10 @@ export default function EditPsychProfile() {
                 .replaceAll("-", ""),
             modalities: data.modalities,
         });
+        therapist.remove();
     });
 
-    const { mutate, isLoading } = api.therapists.create.useMutation({
+    const { mutateAsync, isLoading } = api.therapists.create.useMutation({
         onSuccess: async () => {
             await user?.reload();
             await createAccount.mutateAsync();

@@ -28,57 +28,99 @@ function DefaultTherapistHomeCard() {
 
     const therapistIsApproved = therapist.data?.status === "ACCEPTED";
 
+    if (!therapist.data) {
+        return (
+            <View className="mt-4 rounded-xl bg-white shadow-sm">
+                <View className="px-6 pt-6">
+                    <TherapistMissingProfile />
+                </View>
+
+                <TouchableOpacity
+                    onPress={() => router.push("/(psych)/profile/")}
+                >
+                    <View
+                        className="mt-6 flex w-full flex-row items-center justify-center rounded-bl-xl rounded-br-xl bg-blue-500 py-3 align-middle shadow-sm"
+                        style={{ elevation: 2 }}
+                    >
+                        <Text className="ml-2 font-nunito-sans-bold text-lg text-white">
+                            <Trans>Edit profile</Trans>
+                        </Text>
+                    </View>
+                </TouchableOpacity>
+            </View>
+        );
+    }
+
+    if (!therapistIsApproved) {
+        return (
+            <View className="mt-4 rounded-xl bg-white shadow-sm">
+                <View className="px-6 pt-6">
+                    <TherapistNotApprovedWarning />
+                </View>
+
+                <TouchableOpacity
+                    onPress={() =>
+                        Linking.openURL("mailto:contact@getmind.app")
+                    }
+                >
+                    <View
+                        className="mt-6 flex w-full flex-row items-center justify-center rounded-bl-xl rounded-br-xl bg-blue-500 py-3 align-middle shadow-sm"
+                        style={{ elevation: 2 }}
+                    >
+                        <Text className="ml-2 font-nunito-sans-bold text-lg text-white">
+                            <Trans>Contact us</Trans>
+                        </Text>
+                    </View>
+                </TouchableOpacity>
+            </View>
+        );
+    }
+
+    if (!bankAccountIsConfigured) {
+        return (
+            <View className="mt-4 rounded-xl bg-white shadow-sm">
+                <View className="px-6 pt-6">
+                    <BankAccountNotSetUpWarning />
+                </View>
+
+                <TouchableOpacity
+                    onPress={() => router.push("/(psych)/payments-setup")}
+                >
+                    <View
+                        className="mt-6 flex w-full flex-row items-center justify-center rounded-bl-xl rounded-br-xl bg-blue-500 py-3 align-middle shadow-sm"
+                        style={{ elevation: 2 }}
+                    >
+                        <Text className="ml-2 font-nunito-sans-bold text-lg text-white">
+                            <Trans>Finish configuration</Trans>
+                        </Text>
+                    </View>
+                </TouchableOpacity>
+            </View>
+        );
+    }
+
     return (
         <View className="mt-4 rounded-xl bg-white shadow-sm">
             <View className="px-6 pt-6">
-                {bankAccountIsConfigured && therapistIsApproved && (
-                    <NoNewAppointments />
-                )}
-                {!bankAccountIsConfigured && <BankAccountNotSetUpWarning />}
-
-                {!therapistIsApproved && <TherapistNotApprovedWarning />}
+                <NoNewAppointments />
             </View>
 
             <TouchableOpacity
                 onPress={() =>
-                    bankAccountIsConfigured && therapistIsApproved
-                        ? void getShareLink({
-                              id: therapist?.data?.id ?? "",
-                              name: user?.firstName ?? "",
-                          })
-                        : !bankAccountIsConfigured
-                        ? router.push("/(psych)/payments-setup")
-                        : Linking.openURL("mailto:contact@getmind.app")
+                    void getShareLink({
+                        id: therapist?.data?.id ?? "",
+                        name: user?.firstName ?? "",
+                    })
                 }
             >
                 <View
                     className="mt-6 flex w-full flex-row items-center justify-center rounded-bl-xl rounded-br-xl bg-blue-500 py-3 align-middle shadow-sm"
                     style={{ elevation: 2 }}
                 >
-                    {bankAccountIsConfigured && therapistIsApproved && (
-                        <>
-                            <MaterialIcons
-                                size={24}
-                                color="white"
-                                name="link"
-                            />
-                            <Text className="ml-2 font-nunito-sans-bold text-lg text-white">
-                                <Trans>Share your link</Trans>
-                            </Text>
-                        </>
-                    )}
-
-                    {!bankAccountIsConfigured && (
-                        <Text className="ml-2 font-nunito-sans-bold text-lg text-white">
-                            <Trans>Finish configuration</Trans>
-                        </Text>
-                    )}
-
-                    {!therapistIsApproved && (
-                        <Text className="ml-2 font-nunito-sans-bold text-lg text-white">
-                            <Trans>Contact us</Trans>
-                        </Text>
-                    )}
+                    <MaterialIcons size={24} color="white" name="link" />
+                    <Text className="ml-2 font-nunito-sans-bold text-lg text-white">
+                        <Trans>Share your link</Trans>
+                    </Text>
                 </View>
             </TouchableOpacity>
         </View>
@@ -177,6 +219,37 @@ function TherapistNotApprovedWarning() {
                 <Trans>
                     Our team is reviewing your account. You will be notified
                     when your account is ready.
+                </Trans>
+            </Text>
+        </>
+    );
+}
+
+function TherapistMissingProfile() {
+    return (
+        <>
+            <View
+                style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: 10,
+                }}
+            >
+                <View
+                    style={{
+                        width: 10,
+                        height: 10,
+                        borderRadius: 100,
+                        backgroundColor: "#F87171",
+                    }}
+                />
+                <Text className="font-nunito-sans text-xl">
+                    <Trans>Your profile is incomplete</Trans>
+                </Text>
+            </View>
+            <Text className="font-nunito-sans text-sm text-slate-500">
+                <Trans>
+                    Finish your profile to be able to receive appointments.
                 </Trans>
             </Text>
         </>
