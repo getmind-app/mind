@@ -92,6 +92,7 @@ export const therapistsRouter = createTRPCRouter({
                 where: {
                     name: { contains: input.name, mode: "insensitive" },
                     paymentAccountStatus: "ACTIVE",
+                    status: "ACCEPTED",
                 },
             });
         }),
