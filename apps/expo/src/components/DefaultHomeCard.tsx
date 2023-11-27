@@ -5,17 +5,111 @@ import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import { Trans, t } from "@lingui/macro";
 
 import { getShareLink } from "../helpers/getShareLink";
+import { useUserIsProfessional } from "../hooks/user/useUserIsProfessional";
 import { api } from "../utils/api";
 
 export default function DefaultHomeCard() {
-    const router = useRouter();
-    const { user } = useUser();
+    const userIsProfessional = useUserIsProfessional();
 
-    // remove when we have a context provider
-    const therapistId =
-        user?.publicMetadata?.role == "professional"
-            ? api.therapists.findByUserId.useQuery().data?.id
-            : "";
+    return userIsProfessional ? (
+        <DefaultTherapistHomeCard />
+    ) : (
+        <DefaultPatientHomeCard />
+    );
+}
+
+function DefaultTherapistHomeCard() {
+    const { user } = useUser();
+    const router = useRouter();
+    const therapist = api.therapists.findByUserId.useQuery();
+
+    const bankAccountIsConfigured =
+        therapist.data?.paymentAccountStatus !== "UNACTIVE";
+
+    return (
+        <View className="mt-4 rounded-xl bg-white shadow-sm">
+            <View className="px-6 pt-6">
+                {bankAccountIsConfigured ? (
+                    <>
+                        <Text className="font-nunito-sans text-xl">
+                            <Trans>Nothing for now!</Trans>
+                        </Text>
+                        <Text className="font-nunito-sans text-sm text-slate-500">
+                            {t({
+                                message:
+                                    "Share your profile with your patients to get some appointments.",
+                            })}
+                        </Text>
+                    </>
+                ) : (
+                    <>
+                        <View
+                            style={{
+                                flexDirection: "row",
+                                alignItems: "center",
+                                gap: 10,
+                            }}
+                        >
+                            <View
+                                style={{
+                                    width: 10,
+                                    height: 10,
+                                    borderRadius: 100,
+                                    backgroundColor: "#F87171",
+                                }}
+                            />
+                            <Text className="font-nunito-sans text-xl">
+                                <Trans>Configure your bank account!</Trans>
+                            </Text>
+                        </View>
+                        <Text className="font-nunito-sans text-sm text-slate-500">
+                            {t({
+                                message:
+                                    "You have to set up a bank account for receiving your payments.",
+                            })}
+                        </Text>
+                    </>
+                )}
+            </View>
+
+            <TouchableOpacity
+                onPress={() =>
+                    bankAccountIsConfigured
+                        ? void getShareLink({
+                              id: therapist?.data?.id ?? "",
+                              name: user?.firstName ?? "",
+                          })
+                        : router.push("/(psych)/payments-setup")
+                }
+            >
+                <View
+                    className="mt-6 flex w-full flex-row items-center justify-center rounded-bl-xl rounded-br-xl bg-blue-500 py-3 align-middle shadow-sm"
+                    style={{ elevation: 2 }}
+                >
+                    {bankAccountIsConfigured ? (
+                        <>
+                            <MaterialIcons
+                                size={24}
+                                color="white"
+                                name="link"
+                            />
+                            <Text className="ml-2 font-nunito-sans-bold text-lg text-white">
+                                <Trans>Share your link</Trans>
+                            </Text>
+                        </>
+                    ) : (
+                        <Text className="ml-2 font-nunito-sans-bold text-lg text-white">
+                            <Trans>Finish configuration</Trans>
+                        </Text>
+                    )}
+                </View>
+            </TouchableOpacity>
+        </View>
+    );
+}
+
+function DefaultPatientHomeCard() {
+    const router = useRouter();
 
     return (
         <View className="mt-4 rounded-xl bg-white shadow-sm">
@@ -24,41 +118,18 @@ export default function DefaultHomeCard() {
                     <Trans>Nothing for now!</Trans>
                 </Text>
                 <Text className="font-nunito-sans text-sm text-slate-500">
-                    {user?.publicMetadata?.role === "professional"
-                        ? t({
-                              message:
-                                  "Share your profile with your patients to get some appointments.",
-                          })
-                        : t({ message: "Search for your therapist!" })}
+                    {t({ message: "Search for your therapist!" })}
                 </Text>
             </View>
 
-            {user?.publicMetadata?.role === "professional" ? (
-                <TouchableOpacity
-                    onPress={() =>
-                        void getShareLink({
-                            id: therapistId,
-                            name: user?.firstName ?? "",
-                        })
-                    }
-                >
-                    <View className="mt-6 flex w-full flex-row items-center justify-center rounded-bl-xl rounded-br-xl bg-blue-500 py-3 align-middle">
-                        <MaterialIcons size={24} color="white" name="link" />
-                        <Text className="ml-2 font-nunito-sans-bold text-lg text-white">
-                            <Trans>Share your link</Trans>
-                        </Text>
-                    </View>
-                </TouchableOpacity>
-            ) : (
-                <TouchableOpacity onPress={() => router.push("/search")}>
-                    <View className="mt-6 flex w-full flex-row items-center justify-center rounded-bl-xl rounded-br-xl bg-blue-500 py-3 align-middle">
-                        <FontAwesome size={16} color="white" name="search" />
-                        <Text className="ml-2 font-nunito-sans-bold text-lg text-white">
-                            <Trans>Therapists</Trans>
-                        </Text>
-                    </View>
-                </TouchableOpacity>
-            )}
+            <TouchableOpacity onPress={() => router.push("/search")}>
+                <View className="mt-6 flex w-full flex-row items-center justify-center rounded-bl-xl rounded-br-xl bg-blue-500 py-3 align-middle">
+                    <FontAwesome size={16} color="white" name="search" />
+                    <Text className="ml-2 font-nunito-sans-bold text-lg text-white">
+                        <Trans>Therapists</Trans>
+                    </Text>
+                </View>
+            </TouchableOpacity>
         </View>
     );
 }

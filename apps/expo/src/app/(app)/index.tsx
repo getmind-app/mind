@@ -11,7 +11,10 @@ import {
 import * as Location from "expo-location";
 import * as Notifications from "expo-notifications";
 import { useRouter } from "expo-router";
-import { requestTrackingPermissionsAsync } from "expo-tracking-transparency";
+import {
+    requestTrackingPermissionsAsync,
+    useTrackingPermissions,
+} from "expo-tracking-transparency";
 import { useUser } from "@clerk/clerk-expo";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import { Trans, t } from "@lingui/macro";
@@ -37,13 +40,15 @@ export default function Index() {
     const { user } = useUser();
     const { setMetadata } = useUserMutations();
     const [refreshing, setRefreshing] = useState(false);
+    const [trackingStatus] = useTrackingPermissions();
+    const [locationStatus] = Location.useBackgroundPermissions();
     const notificationListener = useRef<Notifications.Subscription>();
     const responseListener = useRef<Notifications.Subscription>();
     const [expoPushToken, setExpoPushToken] =
         useState<Notifications.ExpoPushToken | null>(null);
-    const [notification, setNotification] = useState<
-        Notifications.Notification | boolean
-    >(false);
+    const [, setNotification] = useState<Notifications.Notification | boolean>(
+        false,
+    );
     const therapistByUserId = useTherapistByUserId();
 
     const onRefresh = async () => {
@@ -56,29 +61,41 @@ export default function Index() {
 
     useEffect(() => {
         (async () => {
-            await requestTrackingPermissionsAsync();
-
-            const { status } =
-                await Location.requestForegroundPermissionsAsync();
-            if (status !== "granted") {
-                Alert.alert(
-                    "Permission",
-                    "Sorry, we need location permissions to make this work!",
-                    [{ text: "OK", onPress: () => {} }],
-                );
+            if (!trackingStatus?.granted && trackingStatus?.canAskAgain) {
+                await requestTrackingPermissionsAsync();
             }
 
-            await registerForPushNotificationsAsync().then((token) =>
-                setExpoPushToken(token ?? null),
-            );
+            if (!locationStatus?.granted) {
+                const { status } =
+                    await Location.requestForegroundPermissionsAsync();
+                if (status !== "granted") {
+                    Alert.alert(
+                        "Permission",
+                        "Sorry, we need location permissions to make this work!",
+                        [{ text: "OK", onPress: () => {} }],
+                    );
+                }
+            }
 
-            await setMetadata.mutateAsync({
-                metadata: {
-                    ...user?.publicMetadata,
-                    expoPushToken: expoPushToken?.data,
-                },
-            });
-            await user?.reload();
+            const notificationPermission =
+                await Notifications.getPermissionsAsync();
+
+            if (
+                !notificationPermission.granted &&
+                notificationPermission.canAskAgain
+            ) {
+                await registerForPushNotificationsAsync().then((token) =>
+                    setExpoPushToken(token ?? null),
+                );
+
+                await setMetadata.mutateAsync({
+                    metadata: {
+                        ...user?.publicMetadata,
+                        expoPushToken: expoPushToken?.data,
+                    },
+                });
+                await user?.reload();
+            }
         })();
 
         notificationListener.current =
