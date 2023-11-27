@@ -159,7 +159,7 @@ function NextAppointment() {
 
     if (appointment.isLoading) return <CardSkeleton />;
 
-    if (!appointment.data && !appointment.data.therapistId)
+    if (!appointment.data || !appointment.data.therapistId)
         return <DefaultHomeCard />;
 
     return (
