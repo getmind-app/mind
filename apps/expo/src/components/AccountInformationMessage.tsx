@@ -16,7 +16,7 @@ export function AccountInformationMessage() {
     if (therapist.isError) {
         return <ErrorMessage />;
     }
-    console.log(therapist.data);
+
     if (therapist.data?.status === "PENDENT") {
         return <PendentAccountMessage />;
     }
