@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import MapView from "react-native-maps";
+import { Marker } from "react-native-svg";
 import { type Float } from "react-native/Libraries/Types/CodegenTypes";
 import { Image } from "expo-image";
 import * as Linking from "expo-linking";
@@ -11,10 +13,11 @@ import { FullScreenLoading } from "../../../components/FullScreenLoading";
 import { Header } from "../../../components/Header";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
 import formatModality from "../../../helpers/formatModality";
+import { geocode } from "../../../helpers/geocode";
 import geocodeAddress from "../../../helpers/geocodeAddress";
 import { getShareLink } from "../../../helpers/getShareLink";
 import { api } from "../../../utils/api";
-import { type Modality } from ".prisma/client";
+import { type Address, type Modality } from ".prisma/client";
 
 export default function TherapistProfile() {
     const params = useGlobalSearchParams();
@@ -40,35 +43,17 @@ export default function TherapistProfile() {
                 }
                 onBack={() => router.push({ pathname: "/search" })}
             />
-            <ScreenWrapper
-                style={{
-                    paddingTop: 12,
-                }}
-            >
-                <ScrollView
-                    style={{
-                        flex: 1,
-                    }}
-                    showsVerticalScrollIndicator={false}
-                >
+            <ScreenWrapper>
+                <ScrollView>
                     <View className="flex flex-row items-center gap-x-6">
                         <Image
                             alt="Profile picture"
-                            style={{
-                                width: 80,
-                                height: 80,
-                                borderRadius: 100,
-                            }}
+                            className="h-28 w-28 rounded-full"
                             source={data?.profilePictureUrl}
                             contentFit="cover"
                         />
                         <View className="gap-y-2">
-                            <Text
-                                style={{
-                                    fontSize: 24,
-                                    fontFamily: "NunitoSans_700Bold",
-                                }}
-                            >
+                            <Text className="font-nunito-sans-bold text-3xl font-bold">
                                 {data?.name}
                             </Text>
                             <View className="flex flex-col">
@@ -79,17 +64,19 @@ export default function TherapistProfile() {
                                     </Text>
                                 </Text>
 
-                                <Text className="font-nunito-sans-bold text-base text-slate-500">
-                                    <Trans>Practicing for </Trans>
-                                    <Text className="text-black">
-                                        {" "}
-                                        {data?.yearsOfExperience}
-                                        <Text className=" text-black">
+                                {data?.yearsOfExperience && (
+                                    <Text className="font-nunito-sans-bold text-base text-slate-500">
+                                        <Trans>Practicing for </Trans>
+                                        <Text className="text-black">
                                             {" "}
-                                            <Trans>years</Trans>
+                                            {data?.yearsOfExperience}
+                                            <Text className=" text-black">
+                                                {" "}
+                                                <Trans>years</Trans>
+                                            </Text>
                                         </Text>
                                     </Text>
-                                </Text>
+                                )}
                             </View>
                         </View>
                     </View>
@@ -107,20 +94,7 @@ export default function TherapistProfile() {
                                 title={t({ message: "Location" })}
                                 emoji="📍"
                             >
-                                <TouchableOpacity
-                                    onPress={async () => {
-                                        const mapsLink = await geocodeAddress(
-                                            data?.address,
-                                        );
-                                        Linking.openURL(mapsLink as string);
-                                    }}
-                                >
-                                    <Text className="font-nunito-sans text-base underline">
-                                        {data?.address?.street}{" "}
-                                        {data?.address?.number} -{" "}
-                                        {data?.address?.city}
-                                    </Text>
-                                </TouchableOpacity>
+                                <LocationContent address={data?.address} />
                             </ContentCard>
                         )}
                         {/* <ContentCard title={t({ message: "Education" })} emoji="🎓">
@@ -232,5 +206,71 @@ function ScheduleBar({
                 </TouchableOpacity>
             </View>
         </View>
+    );
+}
+
+function LocationContent({ address }: { address: Address }) {
+    const [location, setLocation] = useState<{
+        latitude: number;
+        longitude: number;
+    } | null>(null);
+
+    useEffect(() => {
+        const fetchLocation = async () => {
+            const result = await geocode(address);
+            // Assuming your geocode function returns an object with latitude and longitude
+            setLocation(result[0] as { latitude: number; longitude: number });
+        };
+
+        fetchLocation();
+    }, [address]);
+
+    const handlePress = async () => {
+        const mapsLink = await geocodeAddress(address);
+        Linking.openURL(mapsLink as string);
+    };
+
+    return (
+        <>
+            <TouchableOpacity onPress={handlePress}>
+                <Text className="font-nunito-sans text-base underline">
+                    {address.street} {address.number} - {address.city}
+                </Text>
+            </TouchableOpacity>
+            <View
+                style={{
+                    paddingTop: 16,
+                }}
+            >
+                {location && (
+                    <MapView
+                        style={{
+                            alignContent: "center",
+                            alignSelf: "center",
+                            borderRadius: 10,
+                            height: 120,
+                            width: 320,
+                        }}
+                        camera={{
+                            center: {
+                                latitude: location.latitude,
+                                longitude: location.longitude,
+                            },
+                            pitch: 0,
+                            heading: 0,
+                            altitude: 1000,
+                            zoom: 15,
+                        }}
+                    >
+                        <Marker
+                            coordinate={{
+                                latitude: location.latitude,
+                                longitude: location.longitude,
+                            }}
+                        />
+                    </MapView>
+                )}
+            </View>
+        </>
     );
 }

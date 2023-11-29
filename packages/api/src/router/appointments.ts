@@ -3,6 +3,10 @@ import clerk from "@clerk/clerk-sdk-node";
 import Stripe from "stripe";
 import { z } from "zod";
 
+import { type Address, type Appointment, type Therapist } from "@acme/db";
+
+import { cancelAppointmentInCalendar } from "../helpers/cancelAppointmentInCalendar";
+import { createAppointmentInCalendar } from "../helpers/createAppointmentInCalendar";
 import { sendPushNotification } from "../helpers/sendPushNotification";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
@@ -38,8 +42,8 @@ export const appointmentsRouter = createTRPCRouter({
             await sendPushNotification({
                 expoPushToken: therapistUser.publicMetadata
                     .expoPushToken as Notification.ExpoPushToken,
-                title: "New appointment! 🎉",
-                body: `${patient?.name} requested an appointment with you.`,
+                title: "Nova sessão! 🎉",
+                body: `${patient?.name} quer marcar um horário com você.`,
             });
 
             return await ctx.prisma.appointment.create({ data: input });
@@ -171,6 +175,7 @@ export const appointmentsRouter = createTRPCRouter({
             return foundAppointment;
         }
     }),
+    // TODO: esse endpoint precisa ser refatorado urgentemente kkkkkkk
     update: protectedProcedure
         .input(
             z.object({
@@ -184,10 +189,15 @@ export const appointmentsRouter = createTRPCRouter({
             }),
         )
         .mutation(async ({ ctx, input }) => {
+            let calendarEvent;
+
             if (input.status !== "PENDENT") {
                 const therapist = await ctx.prisma.therapist.findUnique({
                     where: {
                         id: input.therapistId,
+                    },
+                    include: {
+                        address: true,
                     },
                 });
 
@@ -201,23 +211,58 @@ export const appointmentsRouter = createTRPCRouter({
                     patient?.userId ?? "",
                 );
 
+                const therapistUser = await clerk.users.getUser(
+                    therapist?.userId ?? "",
+                );
+
+                const appointment = await ctx.prisma.appointment.findUnique({
+                    where: {
+                        id: input.id,
+                    },
+                });
+
                 const notificationMapper: {
                     [key in "ACCEPTED" | "REJECTED" | "CANCELED"]: {
                         title: string;
                         body: string;
+                        sendTo: Notification.ExpoPushToken;
                     };
                 } = {
                     ACCEPTED: {
-                        title: "Appointment accepted! 🎉",
-                        body: `${therapist?.name} accepted your appointment request.`,
+                        title: "Sessão confirmada! 🎉",
+                        body: `${
+                            therapist?.name
+                        } aceitou sua sessão no dia ${new Date(
+                            input.scheduledTo,
+                        ).getDate()} às ${new Date(
+                            input.scheduledTo,
+                        ).getHours()}h.`,
+                        sendTo: patientUser.publicMetadata
+                            .expoPushToken as Notification.ExpoPushToken,
                     },
                     REJECTED: {
-                        title: "Appointment rejected ❌",
-                        body: `${therapist?.name} rejected your appointment request.`,
+                        title: "Sessão cancelada ❌",
+                        body: `${
+                            therapist?.name
+                        } não vai poder atender você no dia ${new Date(
+                            input.scheduledTo,
+                        ).getDate()} às ${new Date(
+                            input.scheduledTo,
+                        ).getHours()}h.`,
+                        sendTo: patientUser.publicMetadata
+                            .expoPushToken as Notification.ExpoPushToken,
                     },
                     CANCELED: {
-                        title: "Appointment canceled ❌",
-                        body: `${therapist?.name} canceled your appointment.`,
+                        title: "Sessão cancelada ❌",
+                        body: `${
+                            patient?.name
+                        } cancelou a sessão no dia ${new Date(
+                            input.scheduledTo,
+                        ).getDate()} às ${new Date(
+                            input.scheduledTo,
+                        ).getHours()}h.`,
+                        sendTo: therapistUser.publicMetadata
+                            .expoPushToken as Notification.ExpoPushToken,
                     },
                 };
 
@@ -274,7 +319,6 @@ export const appointmentsRouter = createTRPCRouter({
                             enabled: true,
                             allow_redirects: "never",
                         },
-
                         application_fee_amount:
                             parseFloat(process.env.FIXED_APPLICATION_FEE) *
                             100 *
@@ -284,11 +328,21 @@ export const appointmentsRouter = createTRPCRouter({
                     if (paymentResponse.status !== "succeeded") {
                         throw new Error("Payment failed");
                     }
+
+                    calendarEvent = await createAppointmentInCalendar(
+                        therapist as Therapist & { address: Address },
+                        therapistUser.emailAddresses[0]?.emailAddress ?? "",
+                        appointment as Appointment,
+                        patient,
+                    );
+                } else if (input.status === "CANCELED") {
+                    await cancelAppointmentInCalendar(
+                        appointment?.eventId ?? "",
+                    );
                 }
 
                 await sendPushNotification({
-                    expoPushToken: patientUser.publicMetadata
-                        .expoPushToken as Notification.ExpoPushToken,
+                    expoPushToken: notificationMapper[input.status].sendTo,
                     title: notificationMapper[input.status]["title"],
                     body: notificationMapper[input.status]["body"],
                 });
@@ -298,7 +352,11 @@ export const appointmentsRouter = createTRPCRouter({
                 where: {
                     id: input.id,
                 },
-                data: input,
+                data: {
+                    ...input,
+                    link: calendarEvent?.data?.hangoutLink,
+                    eventId: calendarEvent?.data?.id,
+                },
             });
         }),
 });

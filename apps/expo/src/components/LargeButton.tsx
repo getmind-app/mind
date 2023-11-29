@@ -3,7 +3,7 @@ import { TouchableOpacity, View } from "react-native";
 import { BasicText } from "./BasicText";
 import { Loading } from "./Loading";
 
-type TouchableOpacityProps = ConstructorParameters<typeof TouchableOpacity>;
+type TouchableOpacityProps = ConstructorParameters<typeof TouchableOpacity>[0];
 
 export function LargeButton({
     children,

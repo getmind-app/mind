@@ -13,6 +13,7 @@ import { useRouter } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
 import { Feather, FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import { Trans, t } from "@lingui/macro";
+import { useLingui } from "@lingui/react";
 
 import { Card } from "../../components/Card";
 import { CardSkeleton } from "../../components/CardSkeleton";
@@ -180,8 +181,8 @@ function AppointmentCard({
     metadata: UserPublicMetadata;
 }) {
     const [open, setOpen] = useState(false);
-    const { user } = useUser();
     const isProfessional = useUserIsProfessional();
+    const lingui = useLingui();
 
     return (
         <Card key={appointment.id}>
@@ -197,8 +198,8 @@ function AppointmentCard({
                     }}
                 >
                     <Status status={appointment.status} />
-                    <Text className="pt-2 font-nunito-sans text-xl">
-                        {new Intl.DateTimeFormat("en", {
+                    <Text className="pt-2 font-nunito-sans text-xl capitalize">
+                        {new Intl.DateTimeFormat(lingui.i18n.locale, {
                             weekday: "long",
                         }).format(new Date(appointment.scheduledTo))}
                         , {new Date(appointment.scheduledTo).getDate()}/
@@ -451,29 +452,35 @@ const statusMapper: {
     [key in AppointmentStatus]: {
         color: string;
         circleColor: string;
+        label: string;
     };
 } = {
     ACCEPTED: {
         color: "green-600",
         circleColor: "green",
+        label: t({ message: "ACCEPTED" }),
     },
     PENDENT: {
         color: "yellow-300",
         circleColor: "yellow",
+        label: t({ message: "PENDENT" }),
     },
     REJECTED: {
         color: "red-500",
         circleColor: "red",
+        label: t({ message: "REJECTED" }),
     },
     CANCELED: {
         color: "red-500",
         circleColor: "red",
+        label: t({ message: "CANCELED" }),
     },
 };
 
 function Status({ status }: { status: AppointmentStatus }) {
     const textColor = statusMapper[status].color;
     const circleColor = statusMapper[status].circleColor;
+    const label = statusMapper[status].label;
 
     return (
         <View className="flex flex-row items-center align-middle">
@@ -481,7 +488,7 @@ function Status({ status }: { status: AppointmentStatus }) {
             <Text
                 className={`text-${textColor} pl-2 font-nunito-sans-bold text-base`}
             >
-                {status}
+                {label}
             </Text>
         </View>
     );

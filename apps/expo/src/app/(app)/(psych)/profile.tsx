@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
     Image,
     KeyboardAvoidingView,
@@ -32,6 +32,7 @@ import { type Gender, type Modality } from ".prisma/client";
 export default function EditPsychProfile() {
     const { user } = useUser();
     const router = useRouter();
+    const createAccount = api.stripe.createAccount.useMutation();
     const [modalities, setModalities] = useState<Modality[]>([]);
     const [selectedImage, setSelectedImage] =
         useState<ImagePicker.ImagePickerAsset | null>(null);
@@ -109,12 +110,12 @@ export default function EditPsychProfile() {
                 .replaceAll("-", ""),
             modalities: data.modalities,
         });
-        4;
     });
 
     const { mutate, isLoading } = api.therapists.create.useMutation({
         onSuccess: async () => {
             await user?.reload();
+            await createAccount.mutateAsync();
             if (modalities.includes("ON_SITE")) {
                 router.push("/(psych)/address");
             } else {
@@ -227,6 +228,7 @@ export default function EditPsychProfile() {
                         name="hourlyRate"
                         control={control}
                         title={t({ message: "Hourly rate" })}
+                        platformFee={0.1}
                     />
                     <Controller
                         control={control}

@@ -16,6 +16,7 @@ import { Title } from "../../components/Title";
 import { useSearchTherapistByName } from "../../hooks/search/useSearchTherapistByName";
 import { useDebounce } from "../../hooks/util/useDebounce";
 
+//
 export default function SearchScreen() {
     const [search, setSearch] = useState("");
     const debouncedValue = useDebounce(search, 500);

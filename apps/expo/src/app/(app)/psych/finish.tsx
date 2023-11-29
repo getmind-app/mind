@@ -1,7 +1,6 @@
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter, useSearchParams } from "expo-router";
-import { MaterialIcons } from "@expo/vector-icons";
 import { Trans } from "@lingui/macro";
 
 import { api } from "../../../utils/api";
@@ -31,11 +30,14 @@ export default function SessionFinishAppointment() {
                 <View className="w-4/5 pt-2">
                     <Text className="text-center">
                         <Trans>
+                            <Text className="font-nunito-sans text-lg text-slate-500">
+                                If{" "}
+                            </Text>
                             <Text className="font-nunito-sans-bold text-lg">
                                 {data?.therapist.name.split(" ")[0]}{" "}
                             </Text>
                             <Text className="font-nunito-sans text-lg text-slate-500">
-                                will be meeting with you on{" "}
+                                accepts, you will be meeting on{" "}
                             </Text>
                             <Text className="font-nunito-sans-bold text-lg ">
                                 {new Intl.DateTimeFormat("en", {

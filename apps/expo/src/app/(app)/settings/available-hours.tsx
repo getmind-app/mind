@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { RefreshControl, ScrollView, Text, View } from "react-native";
+import { Platform, RefreshControl, ScrollView, Text, View } from "react-native";
 import { Trans, t } from "@lingui/macro";
 
 import { AvailableHoursPicker } from "../../../components/AvailableHoursPicker";

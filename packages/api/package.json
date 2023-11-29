@@ -16,8 +16,12 @@
     "@clerk/clerk-js": "^4.63.0",
     "@clerk/clerk-sdk-node": "^4.12.16",
     "@clerk/nextjs": "^4.25.7",
+    "@google-cloud/local-auth": "^2.1.0",
     "@trpc/client": "^10.38.1",
     "@trpc/server": "^10.38.1",
+    "encoding": "^0.1.13",
+    "google-auth-library": "^9.2.0",
+    "googleapis": "^105.0.0",
     "superjson": "1.9.1",
     "zod": "^3.21.4"
   },

@@ -7,6 +7,7 @@ import { usePaymentSheet } from "@stripe/stripe-react-native";
 
 import { Header } from "../../../components/Header";
 import { ProfileSkeleton } from "../../../components/ProfileSkeleton";
+import { ScreenWrapper } from "../../../components/ScreenWrapper";
 import { api } from "../../../utils/api";
 
 function handleMode(x: string) {
@@ -46,12 +47,7 @@ export default function SessionPayment() {
         }
 
         const { setupIntent, ephemeralKey, customer } =
-            await createSetupIntent.mutateAsync({
-                amount: data.therapist.hourlyRate * 100,
-                currency: "brl",
-                payment_method_types: ["card"],
-                therapistPaymentAccountId: data.therapist.paymentAccountId,
-            });
+            await createSetupIntent.mutateAsync();
 
         if (!setupIntent.client_secret) {
             Alert.alert("Missing stripe's client secret");
@@ -71,7 +67,7 @@ export default function SessionPayment() {
             Alert.alert("Error", error.message);
         } else {
             setReady(true);
-            updateAppointment.mutate({
+            await updateAppointment.mutateAsync({
                 id: String(appointmentId),
                 isPaid: true,
                 modality: data.modality,
@@ -123,75 +119,78 @@ export default function SessionPayment() {
     return (
         <>
             <Header />
-            <ScrollView
-                className="min-h-screen bg-off-white px-4 pt-4"
-                showsVerticalScrollIndicator={false}
-                overScrollMode="never"
-            >
-                <View className="rounded-2xl bg-white px-4 py-6 shadow-sm">
-                    <Text className="font-nunito-sans-bold text-2xl">
-                        <Trans>Your appointment</Trans>
-                    </Text>
-                    <Text className="pl-0.5 pt-2 font-nunito-sans text-sm">
-                        <Trans>Details</Trans>
-                    </Text>
-                    <Text className="pl-3 pt-2 font-nunito-sans text-[#666666]">
-                        <Trans>Appointments with {data?.therapist.name}</Trans>
-                    </Text>
-                    <View>
-                        <View className="flex flex-row justify-between pl-6 pt-2">
-                            <Text className="font-nunito-sans text-[#666666]">
-                                {data?.scheduledTo.getDate()} -{" "}
-                                {data?.scheduledTo.getHours()}:
-                                {data?.scheduledTo.getMinutes() == 0
-                                    ? "00"
-                                    : data?.scheduledTo.getMinutes()}{" "}
-                                -{" "}
-                                {handleMode(
-                                    data?.modality ? data?.modality : "",
-                                )}
+            <ScreenWrapper>
+                <ScrollView
+                    showsVerticalScrollIndicator={false}
+                    overScrollMode="never"
+                >
+                    <View className="rounded-2xl bg-white px-4 py-6 shadow-sm">
+                        <Text className="font-nunito-sans-bold text-2xl">
+                            <Trans>Your appointment</Trans>
+                        </Text>
+                        <Text className="pl-0.5 pt-2 font-nunito-sans text-sm">
+                            <Trans>Details</Trans>
+                        </Text>
+                        <Text className="pl-3 pt-2 font-nunito-sans text-[#666666]">
+                            <Trans>
+                                Appointments with {data?.therapist.name}
+                            </Trans>
+                        </Text>
+                        <View>
+                            <View className="flex flex-row justify-between pl-6 pt-2">
+                                <Text className="font-nunito-sans text-[#666666]">
+                                    {data?.scheduledTo.getDate()} -{" "}
+                                    {data?.scheduledTo.getHours()}:
+                                    {data?.scheduledTo.getMinutes() == 0
+                                        ? "00"
+                                        : data?.scheduledTo.getMinutes()}{" "}
+                                    -{" "}
+                                    {handleMode(
+                                        data?.modality ? data?.modality : "",
+                                    )}
+                                </Text>
+                                <Text className=" font-nunito-sans text-[#666666]">
+                                    {"R$ "}
+                                    {data?.therapist.hourlyRate}
+                                </Text>
+                            </View>
+                        </View>
+                        <View className="flex flex-row justify-between pt-4">
+                            <Text className="pl-0.5 font-nunito-sans">
+                                <Trans>Total</Trans>
                             </Text>
-                            <Text className=" font-nunito-sans text-[#666666]">
-                                {"R$ "}
-                                {data?.therapist.hourlyRate}
+                            <Text className="font-nunito-sans">
+                                {data?.therapist && data?.therapist.hourlyRate
+                                    ? "R$ " + data.therapist.hourlyRate
+                                    : "N/A"}
                             </Text>
                         </View>
-                    </View>
-                    <View className="flex flex-row justify-between pt-4">
-                        <Text className="pl-0.5 font-nunito-sans">
-                            <Trans>Total</Trans>
-                        </Text>
-                        <Text className="font-nunito-sans">
-                            {data?.therapist && data?.therapist.hourlyRate
-                                ? "R$ " + data.therapist.hourlyRate
-                                : "N/A"}
-                        </Text>
-                    </View>
-                    <View>
-                        <Text className="pt-8 font-nunito-sans-bold text-2xl">
-                            <Trans>Payment method</Trans>
-                        </Text>
-
-                        <TouchableOpacity
-                            disabled={loadingPaymentSheet || !ready}
-                            onPress={handleConfirm}
-                            className={`${
-                                loadingPaymentSheet
-                                    ? "bg-blue-300"
-                                    : "bg-blue-500"
-                            } mt-2 rounded-lg py-2`}
-                        >
-                            <Text
-                                className={
-                                    "text-center font-nunito-sans-bold text-base text-white"
-                                }
-                            >
-                                <Trans>Confirm</Trans>
+                        <View>
+                            <Text className="pt-8 font-nunito-sans-bold text-2xl">
+                                <Trans>Payment method</Trans>
                             </Text>
-                        </TouchableOpacity>
+
+                            <TouchableOpacity
+                                disabled={loadingPaymentSheet || !ready}
+                                onPress={handleConfirm}
+                                className={`${
+                                    loadingPaymentSheet
+                                        ? "bg-blue-300"
+                                        : "bg-blue-500"
+                                } mt-2 rounded-lg py-2`}
+                            >
+                                <Text
+                                    className={
+                                        "text-center font-nunito-sans-bold text-base text-white"
+                                    }
+                                >
+                                    <Trans>Confirm</Trans>
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
-                </View>
-            </ScrollView>
+                </ScrollView>
+            </ScreenWrapper>
         </>
     );
 }

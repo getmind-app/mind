@@ -24,7 +24,6 @@ export default function PaymentsSetup() {
     const [refreshing, setRefreshing] = useState(false);
     const therapist = api.therapists.findByUserId.useQuery();
     const updateAccountStatus = api.stripe.updateAccountStatus.useMutation();
-    const createAccount = api.stripe.createAccount.useMutation();
     const linkAccount = api.stripe.linkAccount.useMutation();
     const account = api.stripe.getAccount.useQuery({
         paymentAccountId: therapist.data?.paymentAccountId ?? "",
@@ -44,14 +43,15 @@ export default function PaymentsSetup() {
         setRefreshing(true);
         try {
             await therapist.refetch();
+            await account.refetch();
+
+            if (account.data?.external_accounts?.data[0]?.status === "new") {
+                await updateAccountStatus.mutateAsync();
+                await therapist.refetch();
+            }
         } finally {
             setRefreshing(false);
         }
-    };
-
-    const onCreateAccount = async () => {
-        createAccount.mutate();
-        await therapist.refetch();
     };
 
     return (
@@ -60,7 +60,7 @@ export default function PaymentsSetup() {
                 refreshControl={
                     <RefreshControl
                         refreshing={refreshing}
-                        onRefresh={void onRefresh}
+                        onRefresh={onRefresh}
                     />
                 }
             >
@@ -72,44 +72,6 @@ export default function PaymentsSetup() {
                         payments from Mind you must setup an account.
                     </Trans>
                 </Text>
-                <TouchableOpacity
-                    onPress={onCreateAccount}
-                    disabled={!!therapistHasStripeAccount}
-                >
-                    <View
-                        style={{
-                            elevation: 2,
-                        }}
-                        className={`mt-6 flex w-full flex-row items-center justify-center rounded-xl ${
-                            therapistHasStripeAccount
-                                ? "bg-gray-200"
-                                : "bg-blue-500"
-                        } py-3 align-middle shadow-sm`}
-                    >
-                        <FontAwesome
-                            size={16}
-                            color={`${
-                                therapistHasStripeAccount ? "green" : "white"
-                            }`}
-                            name={`${
-                                therapistHasStripeAccount ? "check" : "link"
-                            }`}
-                        />
-                        <Text
-                            className={`ml-2 font-nunito-sans-bold text-lg ${
-                                therapistHasStripeAccount
-                                    ? "text-black"
-                                    : "text-white"
-                            }`}
-                        >
-                            <Trans>
-                                {therapistHasStripeAccount
-                                    ? "You already have an account"
-                                    : "Create Stripe Account"}
-                            </Trans>
-                        </Text>
-                    </View>
-                </TouchableOpacity>
                 <TouchableOpacity
                     disabled={therapistHasBankAccountLinked}
                     onPress={async () => {

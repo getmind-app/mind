@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import {
     KeyboardAvoidingView,
-    LayoutAnimation,
     Platform,
     ScrollView,
     Text,
@@ -9,7 +8,6 @@ import {
     View,
 } from "react-native";
 import MapView, { Marker } from "react-native-maps";
-import * as Location from "expo-location";
 import { useRouter } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -18,8 +16,8 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { FormTextInput } from "../../../components/FormTextInput";
+import { geocode } from "../../../helpers/geocode";
 import { api } from "../../../utils/api";
-import { type Address } from ".prisma/client";
 
 const schema = z.object({
     zipCode: z
@@ -101,22 +99,6 @@ export default function OnboardAddressScreen() {
             lookupAddress();
         }
     }, [watch("zipCode")]);
-
-    const geocode = async (address: Address) => {
-        const location = await Location.geocodeAsync(
-            address?.street +
-                ", " +
-                address?.number +
-                ", " +
-                address?.city +
-                ", " +
-                address?.state +
-                ", " +
-                address?.country,
-        );
-
-        return location;
-    };
 
     useEffect(() => {
         if (isValid) {

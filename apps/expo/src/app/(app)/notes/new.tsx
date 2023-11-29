@@ -56,9 +56,14 @@ export default function NewNote() {
                     className="min-h-max"
                     showsVerticalScrollIndicator={false}
                 >
-                    <View className="flex flex-row items-center justify-between">
+                    <View
+                        className={`flex flex-row items-center justify-between`}
+                    >
                         <Title title={t({ message: "New note" })} />
-                        <TouchableOpacity onPress={handleNewNote}>
+                        <TouchableOpacity
+                            onPress={handleNewNote}
+                            disabled={isLoading}
+                        >
                             <View
                                 className={`rounded-xl bg-blue-500 ${
                                     (isLoading || !isValid) && "opacity-75"

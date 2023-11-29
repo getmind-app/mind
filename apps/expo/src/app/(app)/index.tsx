@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
+    Alert,
     Image,
     Linking,
     RefreshControl,
@@ -7,9 +8,17 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
+import * as Location from "expo-location";
+import * as Notifications from "expo-notifications";
 import { useRouter } from "expo-router";
+import {
+    requestTrackingPermissionsAsync,
+    useTrackingPermissions,
+} from "expo-tracking-transparency";
+import { useUser } from "@clerk/clerk-expo";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import { Trans, t } from "@lingui/macro";
+import { useLingui } from "@lingui/react";
 
 import { Card } from "../../components/Card";
 import { CardSkeleton } from "../../components/CardSkeleton";
@@ -18,13 +27,26 @@ import { Refreshable } from "../../components/Refreshable";
 import { ScreenWrapper } from "../../components/ScreenWrapper";
 import { Title } from "../../components/Title";
 import geocodeAddress from "../../helpers/geocodeAddress";
+import { registerForPushNotificationsAsync } from "../../helpers/registerForPushNotifications";
 import { useUserIsProfessional } from "../../hooks/user/useUserIsProfessional";
+import { useUserMutations } from "../../hooks/user/useUserMutations";
 import { api } from "../../utils/api";
 
 export default function Index() {
     const router = useRouter();
-    const [refreshing, setRefreshing] = useState(false);
     const utils = api.useContext();
+    const { user } = useUser();
+    const { setMetadata } = useUserMutations();
+    const [refreshing, setRefreshing] = useState(false);
+    const [trackingStatus] = useTrackingPermissions();
+    const [locationStatus] = Location.useBackgroundPermissions();
+    const notificationListener = useRef<Notifications.Subscription>();
+    const responseListener = useRef<Notifications.Subscription>();
+    const [expoPushToken, setExpoPushToken] =
+        useState<Notifications.ExpoPushToken | null>(null);
+    const [, setNotification] = useState<Notifications.Notification | boolean>(
+        false,
+    );
 
     const onRefresh = async () => {
         setRefreshing(true);
@@ -32,6 +54,67 @@ export default function Index() {
         await utils.notes.findByUserId.invalidate();
         setRefreshing(false);
     };
+
+    useEffect(() => {
+        (async () => {
+            if (!trackingStatus?.granted && trackingStatus?.canAskAgain) {
+                await requestTrackingPermissionsAsync();
+            }
+
+            if (!locationStatus?.granted) {
+                const { status } =
+                    await Location.requestForegroundPermissionsAsync();
+                if (status !== "granted") {
+                    Alert.alert(
+                        "Permission",
+                        "Sorry, we need location permissions to make this work!",
+                        [{ text: "OK", onPress: () => {} }],
+                    );
+                }
+            }
+
+            const notificationPermission =
+                await Notifications.getPermissionsAsync();
+
+            if (
+                !notificationPermission.granted &&
+                notificationPermission.canAskAgain
+            ) {
+                await registerForPushNotificationsAsync().then((token) =>
+                    setExpoPushToken(token ?? null),
+                );
+
+                await setMetadata.mutateAsync({
+                    metadata: {
+                        ...user?.publicMetadata,
+                        expoPushToken: expoPushToken?.data,
+                    },
+                });
+                await user?.reload();
+            }
+        })();
+
+        notificationListener.current =
+            Notifications.addNotificationReceivedListener((notification) => {
+                setNotification(notification);
+            });
+
+        responseListener.current =
+            Notifications.addNotificationResponseReceivedListener(
+                (response) => {
+                    console.log(response);
+                },
+            );
+
+        return () => {
+            Notifications.removeNotificationSubscription(
+                notificationListener.current as Notifications.Subscription,
+            );
+            Notifications.removeNotificationSubscription(
+                responseListener.current as Notifications.Subscription,
+            );
+        };
+    }, []);
 
     return (
         <ScreenWrapper
@@ -70,6 +153,7 @@ export default function Index() {
 function NextAppointment() {
     const router = useRouter();
     const isProfessional = useUserIsProfessional();
+    const lingui = useLingui();
 
     const appointment = api.appointments.findNextUserAppointment.useQuery();
 
@@ -88,7 +172,7 @@ function NextAppointment() {
                     <View className="p-6">
                         <View className="flex w-full flex-row justify-between">
                             <Text className="font-nunito-sans text-xl">
-                                {new Intl.DateTimeFormat("en", {
+                                {new Intl.DateTimeFormat(lingui.i18n.locale, {
                                     weekday: "long",
                                 }).format(
                                     new Date(appointment.data.scheduledTo),
@@ -232,6 +316,7 @@ function NextAppointment() {
 
 function LastNotes() {
     const router = useRouter();
+    const lingui = useLingui();
 
     const { data, isLoading } = api.notes.findByUserId.useQuery();
 
@@ -253,13 +338,16 @@ function LastNotes() {
                         <Card key={id}>
                             <View className="flex w-full flex-row items-center justify-between align-middle">
                                 <View className="flex w-64 flex-col">
-                                    <Text className="font-nunito-sans-bold text-xl text-slate-500">
+                                    <Text className="font-nunito-sans-bold text-xl capitalize text-slate-500">
                                         <Text className="text-blue-500">
                                             {createdAt.getDate()}
                                         </Text>{" "}
-                                        {createdAt.toLocaleString("en", {
-                                            month: "long",
-                                        })}
+                                        {createdAt.toLocaleString(
+                                            lingui.i18n.locale,
+                                            {
+                                                month: "long",
+                                            },
+                                        )}
                                     </Text>
                                     <Text className="pt-2 font-nunito-sans text-base">
                                         {content}

@@ -1,22 +1,15 @@
-import { View } from "react-native";
-
-import { Header } from "./Header";
-import { Loading } from "./Loading";
+import { ActivityIndicator, View } from "react-native";
 
 export function FullScreenLoading() {
     return (
-        <>
-            <Header />
-            <View
-                style={{
-                    flex: 1,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    backgroundColor: "#f8f8f8",
-                }}
-            >
-                <Loading size={"large"} />
-            </View>
-        </>
+        <View
+            style={{
+                flex: 1,
+                alignItems: "center",
+                justifyContent: "center",
+            }}
+        >
+            <ActivityIndicator size={"large"} color={"#3b82f6"} />
+        </View>
     );
 }

@@ -1,13 +1,4 @@
-import {
-    Alert,
-    Image,
-    ScrollView,
-    Share,
-    Text,
-    TouchableOpacity,
-    View,
-} from "react-native";
-import * as Linking from "expo-linking";
+import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useRouter } from "expo-router";
 import { useClerk } from "@clerk/clerk-expo";
 import { AntDesign, MaterialIcons } from "@expo/vector-icons";
@@ -36,46 +27,59 @@ export default function UserProfileScreen() {
 
     return (
         <ScreenWrapper>
-            <View className="flex flex-row items-center gap-x-4 pt-4 align-middle">
-                {userHasProfileImage.data ? (
-                    <Image
-                        className="rounded-full"
-                        alt={`${user?.firstName}'s profile picture`}
-                        source={{
-                            uri: user?.imageUrl,
-                            width: 72,
-                            height: 72,
-                        }}
-                    />
-                ) : (
-                    <View
-                        style={{
-                            backgroundColor: "#e5e7eb",
-                            padding: 24,
-                            borderRadius: 100,
-                        }}
-                    >
-                        <AntDesign name="user" size={24} color="black" />
-                    </View>
-                )}
-                <View className="flex flex-col">
-                    <View>
-                        {user?.firstName && (
-                            <Text className="font-nunito-sans-bold text-3xl">
-                                {user?.firstName}
-                            </Text>
-                        )}
-                    </View>
-                    <View>
-                        {user?.publicMetadata && (
+            <View
+                style={{
+                    flex: 1,
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                }}
+            >
+                <View className="flex flex-row items-center gap-x-4 pt-4 align-middle">
+                    {userHasProfileImage.data ? (
+                        <Image
+                            className="rounded-full"
+                            alt={`${user?.firstName}'s profile picture`}
+                            source={{
+                                uri: user?.imageUrl,
+                                width: 72,
+                                height: 72,
+                            }}
+                        />
+                    ) : (
+                        <View
+                            style={{
+                                backgroundColor: "#e5e7eb",
+                                padding: 24,
+                                borderRadius: 100,
+                            }}
+                        >
+                            <AntDesign name="user" size={24} color="black" />
+                        </View>
+                    )}
+                    <View className="flex flex-col">
+                        <View>
+                            {user?.firstName && (
+                                <Text className="font-nunito-sans-bold text-3xl">
+                                    {user?.firstName}
+                                </Text>
+                            )}
+                        </View>
+                        <View>
                             <Text className="pl-1 font-nunito-sans text-lg text-slate-500">
-                                {user.publicMetadata.role == "patient"
-                                    ? t({ message: "Patient" })
-                                    : t({ message: "Professional" })}
+                                {isProfessional
+                                    ? t({ message: "Professional" })
+                                    : t({ message: "Patient" })}
                             </Text>
-                        )}
+                        </View>
                     </View>
                 </View>
+                {isProfessional && (
+                    <ShareLink
+                        therapistId={user?.id ?? ""}
+                        therapistName={user?.firstName ?? ""}
+                    />
+                )}
             </View>
 
             <ScrollView showsVerticalScrollIndicator={false}>
@@ -121,10 +125,6 @@ function ProfessionalMenuItems() {
 
     if (!data) return null;
 
-    const handleShareLink = async () => {
-        await getShareLink({ id: data.id, name: data.name });
-    };
-
     return (
         <>
             <MenuItem
@@ -149,11 +149,7 @@ function ProfessionalMenuItems() {
                 icon="attach-money"
                 label={t({ message: "Setup Payments" })}
                 onPress={() => router.push("/(psych)/payments-setup")}
-            />
-            <MenuItem
-                icon="share"
-                label={t({ message: "Share your link" })}
-                onPress={handleShareLink}
+                alert={data.paymentAccountStatus !== "ACTIVE"}
             />
         </>
     );
@@ -166,12 +162,14 @@ type PossibleMaterialIcons = typeof MaterialIcons extends Icon<infer K, string>
 function MenuItem(props: {
     label: string;
     icon: PossibleMaterialIcons;
+    alert?: boolean;
+    disabled?: boolean;
     isFirst?: boolean;
     isLast?: boolean;
     onPress: () => void;
 }) {
     return (
-        <TouchableOpacity onPress={props.onPress}>
+        <TouchableOpacity onPress={props.onPress} disabled={props.disabled}>
             <View
                 className={`flex flex-row items-center justify-between bg-white px-6 py-4 align-middle shadow-sm ${
                     props.isFirst ? "mt-6 rounded-t-xl" : ""
@@ -182,9 +180,39 @@ function MenuItem(props: {
                     <Text className="font-nunito-sans text-xl">
                         {props.label}
                     </Text>
+                    {props.alert && (
+                        <View
+                            style={{
+                                width: 10,
+                                height: 10,
+                                borderRadius: 100,
+                                backgroundColor: "#F87171",
+                            }}
+                        />
+                    )}
                 </View>
                 <MaterialIcons size={24} name="chevron-right" />
             </View>
         </TouchableOpacity>
+    );
+}
+
+function ShareLink({
+    therapistId,
+    therapistName,
+}: {
+    therapistId: string;
+    therapistName: string;
+}) {
+    const handleShareLink = async () => {
+        await getShareLink({ id: therapistId, name: therapistName });
+    };
+
+    return (
+        <View className="pr-4">
+            <TouchableOpacity onPress={() => handleShareLink()}>
+                <MaterialIcons size={24} name="ios-share" />
+            </TouchableOpacity>
+        </View>
     );
 }

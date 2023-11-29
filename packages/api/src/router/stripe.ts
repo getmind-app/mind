@@ -24,45 +24,33 @@ export const stripeRouter = createTRPCRouter({
             customer: customer.id,
         };
     }),
-    createSetupIntent: protectedProcedure
-        .input(
-            z.object({
-                amount: z.number(),
-                currency: z.string(),
-                payment_method_types: z.array(z.string()),
-                therapistPaymentAccountId: z.string(),
-            }),
-        )
-        .mutation(async ({ input, ctx }) => {
-            const patient = await ctx.prisma.patient.findUnique({
-                where: {
-                    userId: ctx.auth.userId,
-                },
-            });
+    createSetupIntent: protectedProcedure.mutation(async ({ ctx }) => {
+        const patient = await ctx.prisma.patient.findUnique({
+            where: {
+                userId: ctx.auth.userId,
+            },
+        });
 
-            const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-                apiVersion: "2023-08-16",
-            });
+        const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+            apiVersion: "2023-08-16",
+        });
 
-            const customer = patient?.paymentAccountId
-                ? await stripe.customers.retrieve(patient.paymentAccountId)
-                : await stripe.customers.create({
-                      email: patient?.email,
-                      name: patient?.name,
-                  });
+        const customer = await stripe.customers.retrieve(
+            String(patient?.paymentAccountId),
+        );
 
-            const ephemeralKey = await stripe.ephemeralKeys.create(
-                { customer: customer.id },
-                { apiVersion: "2022-08-01" },
-            );
+        const ephemeralKey = await stripe.ephemeralKeys.create(
+            { customer: customer.id },
+            { apiVersion: "2022-08-01" },
+        );
 
-            const setupIntent = await stripe.setupIntents.create({
-                customer: customer.id,
-                payment_method_types: ["card"],
-            });
+        const setupIntent = await stripe.setupIntents.create({
+            customer: customer.id,
+            payment_method_types: ["card"],
+        });
 
-            return { setupIntent, ephemeralKey, customer };
-        }),
+        return { setupIntent, ephemeralKey, customer };
+    }),
     createPaymentIntent: protectedProcedure
         .input(
             z.object({
@@ -135,7 +123,6 @@ export const stripeRouter = createTRPCRouter({
                     month: therapist?.dateOfBirth?.getMonth() ?? 1,
                     year: therapist?.dateOfBirth?.getFullYear() ?? 1990,
                 },
-                phone: "55" + therapist?.phone.replace(" ", ""),
             },
         });
 
