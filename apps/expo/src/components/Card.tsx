@@ -14,7 +14,7 @@ export function Card({
     return (
         <View
             className="my-2 rounded-xl bg-white p-6 shadow-sm"
-            style={{ elevation: 4, shadowColor: "#000", marginHorizontal: 2 }}
+            style={{ elevation: 2, marginHorizontal: 2 }}
         >
             {children}
         </View>

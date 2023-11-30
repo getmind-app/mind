@@ -114,8 +114,7 @@ function DefaultPatientHomeCard() {
     return (
         <View
             style={{
-                elevation: 4,
-                shadowColor: "#000",
+                elevation: 2,
                 marginHorizontal: 2,
             }}
             className="mt-4 rounded-xl bg-white shadow-sm"

@@ -1,5 +1,4 @@
 import { Platform, SafeAreaView, View } from "react-native";
-import { usePathname, useRouter } from "expo-router";
 
 type ScreenWrapperProps = ConstructorParameters<typeof View>[0];
 export const ScreenWrapper = ({

@@ -164,8 +164,7 @@ function NextAppointment() {
             {appointment.data && appointment.data.therapistId ? (
                 <View
                     style={{
-                        elevation: 4,
-                        shadowColor: "#000",
+                        elevation: 2,
                     }}
                     className="mt-4 rounded-xl bg-white shadow-sm"
                 >

@@ -42,7 +42,7 @@ export default function SignInScreen() {
                 <TouchableOpacity onPress={onGooglePress} className="w-full">
                     <View
                         className="mt-8  flex w-full flex-row items-center justify-center rounded-xl bg-blue-500 px-8 py-4 font-bold shadow-sm"
-                        style={{ elevation: 4, shadowColor: "#000" }}
+                        style={{ elevation: 2 }}
                     >
                         <FontAwesome color="white" size={22} name="google" />
                         <Text className="ml-4 font-nunito-sans text-xl text-white">
@@ -56,7 +56,7 @@ export default function SignInScreen() {
                 <TouchableOpacity onPress={onApplePress} className="w-full">
                     <View
                         className="flex w-full flex-row items-center justify-center rounded-xl bg-white px-8 py-4 font-bold shadow-sm"
-                        style={{ elevation: 4, shadowColor: "#000" }}
+                        style={{ elevation: 2 }}
                     >
                         <FontAwesome size={22} name="apple" />
                         <Text className="ml-4 font-nunito-sans text-xl">
