@@ -1,6 +1,6 @@
 import { Text, View } from "react-native";
 import CurrencyInput from "react-native-currency-input";
-import { t } from "@lingui/macro";
+import { Trans, t } from "@lingui/macro";
 import {
     Controller,
     type Control,
@@ -44,15 +44,19 @@ export function FormCurrencyInput<
                     </Text>
                     {platformFee && (
                         <Text className="font-nunito-sans text-sm text-slate-500">
-                            {t({
-                                message: value
-                                    ? `You'll receive R$ ${
-                                          (value * (1 - platformFee)).toFixed(
-                                              2,
-                                          ) ?? 0
-                                      } for each session`
-                                    : `Type the amount you want to charge for each session`,
-                            })}
+                            {value ? (
+                                <Trans>
+                                    You'll receive R$ $
+                                    {(value * (1 - platformFee)).toFixed(2) ??
+                                        0}{" "}
+                                    for each session
+                                </Trans>
+                            ) : (
+                                <Trans>
+                                    Type the amount you want to charge for each
+                                    session
+                                </Trans>
+                            )}
                         </Text>
                     )}
                     <CurrencyInput
