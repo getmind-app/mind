@@ -1,8 +1,9 @@
-import { SafeAreaView, View } from "react-native";
+import { Platform, SafeAreaView, View } from "react-native";
 
 type ScreenWrapperProps = ConstructorParameters<typeof View>[0];
 export const ScreenWrapper = ({
     children,
+    style,
     ...rest
 }: ScreenWrapperProps): JSX.Element => {
     return (
@@ -16,7 +17,9 @@ export const ScreenWrapper = ({
                 style={{
                     flex: 1,
                     paddingHorizontal: 16,
-                    paddingTop: 32,
+                    paddingTop: Platform.OS === "android" ? 48 : 32,
+                    paddingBottom: Platform.OS === "android" ? 16 : 0,
+                    ...(typeof style === "object" ? style : {}),
                 }}
                 {...rest}
             >

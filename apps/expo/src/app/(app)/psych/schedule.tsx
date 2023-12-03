@@ -9,13 +9,18 @@ import {
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Trans } from "@lingui/macro";
+import { useLingui } from "@lingui/react";
 import { atom, useAtom } from "jotai";
 
 import { AnimatedCard } from "../../../components/Accordion";
+import { BasicText } from "../../../components/BasicText";
+import { FullScreenLoading } from "../../../components/FullScreenLoading";
 import { Header } from "../../../components/Header";
+import { LargeButton } from "../../../components/LargeButton";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
 import geocodeAddress from "../../../helpers/geocodeAddress";
-import { api } from "../../../utils/api";
+import { getMonthInLocale } from "../../../helpers/getMonthInLocale";
+import { api, type RouterOutputs } from "../../../utils/api";
 import {
     type Address,
     type Appointment,
@@ -35,6 +40,9 @@ const appointmentAtom = atom<{
     hour: null,
     modality: null,
 });
+
+type therapistAvailableDates =
+    RouterOutputs["therapists"]["getAvailableDatesAndHours"];
 
 export default function TherapistSchedule() {
     const [appointment, setAppointment] = useAtom(appointmentAtom);
@@ -56,7 +64,7 @@ export default function TherapistSchedule() {
         },
     });
 
-    const { data: availableDates } =
+    const therapistAvailableDates =
         api.therapists.getAvailableDatesAndHours.useQuery({
             therapistId: String(id),
         });
@@ -88,7 +96,9 @@ export default function TherapistSchedule() {
         });
     }
 
-    if (isLoading) return <Text>Loading...</Text>;
+    if (isLoading || !therapistAvailableDates.data)
+        return <FullScreenLoading />;
+
     if (isError) return <Text>Error: {JSON.stringify(error)}</Text>;
     if (!data) return <Text>Not found</Text>;
 
@@ -96,69 +106,91 @@ export default function TherapistSchedule() {
         <>
             <Header />
             <ScreenWrapper>
-                <View className="relative mt-8 rounded-2xl bg-white p-4 pt-12">
-                    <View className="p-1/2 absolute -top-8 left-4 flex h-16 w-16 items-center justify-center overflow-hidden rounded-full">
-                        <Image
-                            alt={`${data.name} picture`}
-                            source={{
-                                uri: data.profilePictureUrl,
-                                width: 64,
-                                height: 64,
+                <View
+                    style={{
+                        flex: 1,
+                        justifyContent: "space-between",
+                    }}
+                >
+                    <View>
+                        <View
+                            style={{
+                                position: "relative",
+                                borderRadius: 10,
+                                backgroundColor: "#fff",
+                                padding: 16,
+                                paddingTop: 40,
                             }}
+                        >
+                            <View className="p-1/2 absolute -top-8 left-4 flex h-16 w-16 items-center justify-center overflow-hidden rounded-full">
+                                <Image
+                                    alt={`${data.name} picture`}
+                                    source={{
+                                        uri: data.profilePictureUrl,
+                                        width: 64,
+                                        height: 64,
+                                    }}
+                                />
+                            </View>
+                            <BasicText
+                                size="2xl"
+                                fontWeight="bold"
+                                style={{
+                                    marginBottom: 2,
+                                }}
+                            >
+                                <Trans>
+                                    {data.name.split(" ").at(0)}&apos;s Schedule
+                                </Trans>
+                            </BasicText>
+                            <BasicText
+                                color="gray"
+                                size="sm"
+                                style={{
+                                    marginBottom: 2,
+                                }}
+                            >
+                                <Trans>
+                                    Pick the date that you would like to meet:
+                                </Trans>
+                            </BasicText>
+                            <Calendar
+                                availableDates={therapistAvailableDates.data}
+                                onSelect={(newDate) =>
+                                    setAppointment({
+                                        ...appointment,
+                                        date: newDate,
+                                    })
+                                }
+                            />
+                        </View>
+                        <HourPicker
+                            hour={appointment.hour}
+                            date={appointment.date}
+                            therapistAppointments={data.appointments}
+                            therapistHours={data.hours}
+                            onSelect={(newHour) =>
+                                setAppointment({
+                                    ...appointment,
+                                    hour: newHour,
+                                })
+                            }
+                        />
+                        <ModalityPicker
+                            therapist={data}
+                            hour={appointment.hour}
+                            mode={appointment.modality}
+                            onSelect={(newModality) =>
+                                setAppointment({
+                                    ...appointment,
+                                    modality: newModality,
+                                })
+                            }
                         />
                     </View>
-                    <Text className="mb-2 font-nunito-sans-bold text-2xl">
-                        <Trans>
-                            {data.name.split(" ").at(0)}&apos;s Schedule
-                        </Trans>
-                    </Text>
-                    <Text className="mb-2 font-nunito-sans text-sm text-[#666666]">
-                        <Trans>
-                            Pick the date that you would like to meet:
-                        </Trans>
-                    </Text>
-                    <Calendar
-                        availableDates={availableDates}
-                        onSelect={(newDate) =>
-                            setAppointment({ ...appointment, date: newDate })
-                        }
-                    />
-                </View>
-                <HourPicker
-                    hour={appointment.hour}
-                    date={appointment.date}
-                    therapistAppointments={data.appointments}
-                    therapistHours={data.hours}
-                    onSelect={(newHour) =>
-                        setAppointment({ ...appointment, hour: newHour })
-                    }
-                />
-                <ModalityPicker
-                    therapist={data}
-                    hour={appointment.hour}
-                    mode={appointment.modality}
-                    onSelect={(newModality) =>
-                        setAppointment({
-                            ...appointment,
-                            modality: newModality,
-                        })
-                    }
-                />
-
-                <View className="mb-28 mt-5 flex w-min flex-row justify-center">
-                    <TouchableOpacity
-                        className={`w-full rounded-lg bg-[#2185EE] px-16 py-3 ${
-                            allPicked ? "" : "opacity-30"
-                        }`}
-                        disabled={!allPicked}
-                        onPress={handleConfirm}
-                    >
-                        <Text
-                            className={`text-center font-nunito-sans-bold text-lg font-bold text-white`}
-                        >
-                            <Trans>Confirm appointment</Trans>
-                        </Text>
-                    </TouchableOpacity>
+                    <LargeButton disabled={!allPicked} onPress={handleConfirm}>
+                        <Trans>Confirm appointment</Trans>
+                    </LargeButton>
                 </View>
             </ScreenWrapper>
         </>
@@ -170,16 +202,9 @@ const Calendar = ({
     availableDates,
 }: {
     onSelect: (n: Date) => void;
-    availableDates:
-        | {
-              month: string;
-              dates: {
-                  date: Date;
-                  hours: number[];
-              }[];
-          }[]
-        | undefined;
+    availableDates: therapistAvailableDates;
 }) => {
+    const lingui = useLingui();
     const [selectedDate, setSelectedDate] = useState<Date>();
 
     return (
@@ -187,41 +212,69 @@ const Calendar = ({
             {availableDates &&
                 availableDates.length > 0 &&
                 availableDates.map((month) => (
-                    <View key={month.month}>
-                        <Text className="relative left-1 w-full pb-3 font-nunito-sans-bold text-xl">
-                            <Trans>{month.month}</Trans>
-                        </Text>
+                    <View
+                        key={month.month}
+                        style={{
+                            paddingLeft: 4,
+                        }}
+                    >
+                        <BasicText
+                            style={{
+                                textTransform: "capitalize",
+                                paddingBottom: 4,
+                            }}
+                            size="lg"
+                        >
+                            {getMonthInLocale({
+                                locale: lingui.i18n.locale,
+                                monthIndex: month.monthIndex,
+                            })}
+                        </BasicText>
                         <ScrollView horizontal={true}>
-                            {month.dates.map((day) => (
-                                <TouchableOpacity
-                                    key={day.date.getDate()}
-                                    className={`mr-2 flex w-16 rounded-lg ${
-                                        day.date.getMonth() ===
-                                            selectedDate?.getMonth() &&
-                                        day.date.getDate() ===
-                                            selectedDate?.getDate()
-                                            ? "bg-[#2185EE]"
-                                            : "bg-off-white"
-                                    }`}
-                                    onPress={() => {
-                                        onSelect(day.date);
-                                        setSelectedDate(day.date);
+                            {month.dates.length === 0 ? (
+                                <BasicText
+                                    style={{
+                                        paddingLeft: 4,
                                     }}
+                                    color="gray"
+                                    size="sm"
                                 >
-                                    <Text
-                                        className={`p-3 text-center font-nunito-sans text-sm ${
+                                    <Trans>
+                                        No dates available for this month
+                                    </Trans>
+                                </BasicText>
+                            ) : (
+                                month.dates.map((day) => (
+                                    <TouchableOpacity
+                                        key={day.date.getDate()}
+                                        className={`mr-2 flex w-16 rounded-lg ${
                                             day.date.getMonth() ===
                                                 selectedDate?.getMonth() &&
                                             day.date.getDate() ===
                                                 selectedDate?.getDate()
-                                                ? "font-nunito-sans-bold text-white"
-                                                : ""
+                                                ? "bg-[#2185EE]"
+                                                : "bg-off-white"
                                         }`}
+                                        onPress={() => {
+                                            onSelect(day.date);
+                                            setSelectedDate(day.date);
+                                        }}
                                     >
-                                        {day.date.getDate()}
-                                    </Text>
-                                </TouchableOpacity>
-                            ))}
+                                        <Text
+                                            className={`p-3 text-center font-nunito-sans text-sm ${
+                                                day.date.getMonth() ===
+                                                    selectedDate?.getMonth() &&
+                                                day.date.getDate() ===
+                                                    selectedDate?.getDate()
+                                                    ? "font-nunito-sans-bold text-white"
+                                                    : ""
+                                            }`}
+                                        >
+                                            {day.date.getDate()}
+                                        </Text>
+                                    </TouchableOpacity>
+                                ))
+                            )}
                         </ScrollView>
                     </View>
                 ))}
@@ -302,16 +355,28 @@ function HourPicker({
             <ScrollView className="w-full" horizontal={true}>
                 <View className="flex w-full flex-row pt-2">
                     {!date && (
-                        <Text className="font-nunito-sans text-[#666666]">
+                        <BasicText
+                            style={{
+                                paddingLeft: 4,
+                            }}
+                            color="gray"
+                            size="sm"
+                        >
                             <Trans>Please select a date</Trans>
-                        </Text>
+                        </BasicText>
                     )}
                     {date && availableHours.length === 0 && (
-                        <Text className="font-nunito-sans text-[#666666]">
+                        <BasicText
+                            style={{
+                                paddingLeft: 4,
+                            }}
+                            color="gray"
+                            size="sm"
+                        >
                             <Trans>
                                 No more available sessions for this date!
                             </Trans>
-                        </Text>
+                        </BasicText>
                     )}
                     {date &&
                         availableHours.map((n, i) => (
@@ -433,23 +498,39 @@ function ModalityPicker({
                         );
                     }}
                 >
-                    <Text className="mt-2 font-nunito-sans text-[#666666]">
+                    <BasicText
+                        style={{
+                            paddingLeft: 4,
+                        }}
+                        color="gray"
+                        size="sm"
+                    >
                         <Trans>
                             {therapist.name}&apos;s sessions happen at{" "}
-                            <Text className="font-nunito-sans underline">
+                            <BasicText
+                                style={{
+                                    textDecorationLine: "underline",
+                                }}
+                            >
                                 {therapist.address?.street},{" "}
                                 {therapist.address?.number}
-                            </Text>
+                            </BasicText>
                         </Trans>
-                    </Text>
+                    </BasicText>
                 </TouchableOpacity>
             ) : (
-                <Text className="mt-2 font-nunito-sans text-[#666666]">
+                <BasicText
+                    style={{
+                        paddingLeft: 4,
+                    }}
+                    color="gray"
+                    size="sm"
+                >
                     {/* TODO: Translate */}
                     <Trans>
                         {therapist.name}&apos;s sessions happen online!
                     </Trans>
-                </Text>
+                </BasicText>
             )}
 
             {therapist.modalities.length > 1 && (

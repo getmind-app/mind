@@ -1,5 +1,6 @@
-import { Text, TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 
+import { BasicText } from "./BasicText";
 import { Loading } from "./Loading";
 
 type TouchableOpacityProps = React.ComponentProps<typeof TouchableOpacity>;
@@ -19,13 +20,12 @@ const colorMapper: {
 export function LargeButton({
     children,
     color = "blue",
-    textStyle,
     ...props
 }: TouchableOpacityProps & {
     loading?: boolean;
     children: React.ReactNode;
+    disabled?: boolean;
     color?: color;
-    textStyle?: React.ComponentProps<typeof Text>["style"];
 }) {
     return (
         <TouchableOpacity
@@ -55,20 +55,16 @@ export function LargeButton({
                         }}
                     />
                 )}
-                <Text
+                <BasicText
                     style={{
-                        color: colorMapper[color].text,
                         position: "relative",
-                        fontFamily: "NunitoSans_700Bold",
-                        fontSize: 18,
-                        lineHeight: 28,
-                        ...(textStyle !== null && typeof textStyle === "object"
-                            ? textStyle
-                            : {}),
                     }}
+                    fontWeight="bold"
+                    color="white"
+                    size="lg"
                 >
                     {children}
-                </Text>
+                </BasicText>
             </View>
         </TouchableOpacity>
     );

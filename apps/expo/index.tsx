@@ -40,7 +40,6 @@ export function App() {
 
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
-            {/* @ts-expect-error isso é um erro do expo-router com o webpack, não temos como resolver */}
             <ExpoRoot context={ctx} />
         </GestureHandlerRootView>
     );

@@ -23,6 +23,7 @@ import { FormCurrencyInput } from "../../../components/FormCurrencyInput";
 import { FormDateInput } from "../../../components/FormDateInput";
 import { FormTextInput } from "../../../components/FormTextInput";
 import { FullScreenLoading } from "../../../components/FullScreenLoading";
+import { LargeButton } from "../../../components/LargeButton";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
 import { Title } from "../../../components/Title";
 import { useTherapistByUserId } from "../../../hooks/therapist/useTherapistByUserId";
@@ -56,7 +57,13 @@ export default function EditPsychProfile() {
     }>({
         defaultValues: {
             name: user?.fullName ?? "",
-            birthday: DateTime.local().minus({ years: 18 }).toJSDate(),
+            birthday: DateTime.local()
+                .set({
+                    year: 2000,
+                    month: 1,
+                    day: 1,
+                })
+                .toJSDate(),
             document: "",
             crp: "",
             gender: "MALE",
@@ -65,6 +72,7 @@ export default function EditPsychProfile() {
             modalities: [],
         },
         resolver: zodResolver(schema),
+        mode: "onTouched",
     });
 
     const onSubmit = handleSubmit(async (data) => {
@@ -349,19 +357,9 @@ export default function EditPsychProfile() {
                         )}
                     />
                 </ScrollView>
-                <TouchableOpacity className="mb-4 w-full" onPress={onSubmit}>
-                    <View
-                        className={`mt-4 flex w-full items-center justify-center rounded-xl ${
-                            isValid ? "bg-blue-500" : "bg-blue-200"
-                        } py-2`}
-                    >
-                        <Text
-                            className={`font-nunito-sans-bold text-lg text-white`}
-                        >
-                            <Trans>Next</Trans>
-                        </Text>
-                    </View>
-                </TouchableOpacity>
+                <LargeButton disabled={!isValid} onPress={onSubmit}>
+                    <Trans>Next</Trans>
+                </LargeButton>
             </ScreenWrapper>
         </KeyboardAvoidingView>
     );
@@ -373,7 +371,9 @@ const schema = z.object({
             required_error: "The document is required",
         })
         .min(11, "Your document must be 11 characters long")
-        .refine((value) => cpf.isValid(value), "Must be a valid CPF"),
+        .refine((value) => cpf.isValid(value), {
+            message: "Must be a valid CPF",
+        }),
     name: z
         .string({
             required_error: "Full name is required",

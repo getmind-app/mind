@@ -122,7 +122,11 @@ export default function Index() {
     }, []);
 
     return (
-        <ScreenWrapper>
+        <ScreenWrapper
+            style={{
+                paddingHorizontal: 14,
+            }}
+        >
             <Refreshable
                 refreshControl={
                     <RefreshControl
@@ -163,126 +167,156 @@ function NextAppointment() {
         return <DefaultHomeCard />;
 
     return (
-        <View className="mt-4 rounded-xl bg-white shadow-sm">
-            <View className="p-6">
-                <View className="flex w-full flex-row justify-between">
-                    <Text className="font-nunito-sans text-xl">
-                        {new Intl.DateTimeFormat(lingui.i18n.locale, {
-                            weekday: "long",
-                        }).format(new Date(appointment.data.scheduledTo))}
-                        , {new Date(appointment.data.scheduledTo).getDate()}/
-                        {new Date(appointment.data.scheduledTo).getMonth() + 1}
-                    </Text>
-                    <Text className="font-nunito-sans-bold text-xl text-blue-500 ">
-                        {new Date(appointment.data.scheduledTo).getHours()}:
-                        {new Date(appointment.data.scheduledTo).getMinutes() ==
-                        0
-                            ? "00"
-                            : new Date(
-                                  appointment.data.scheduledTo,
-                              ).getMinutes()}
-                    </Text>
-                </View>
-                <Text className="font-nunito-sans text-sm text-slate-500">
-                    {appointment.data.modality === "ONLINE" ? (
-                        "via Google Meet"
-                    ) : (
-                        <Text>
-                            <Trans>
-                                in person at{" "}
-                                <TouchableOpacity
-                                    onPress={() =>
-                                        geocodeAddress(
-                                            appointment.data?.therapist
-                                                ?.address,
-                                        ).then((link) =>
-                                            Linking.openURL(link ? link : ""),
-                                        )
-                                    }
-                                >
-                                    <Text>
-                                        {
-                                            appointment.data.therapist.address
-                                                ?.street
-                                        }
-                                        ,{" "}
-                                        {
-                                            appointment.data.therapist.address
-                                                ?.number
-                                        }
-                                    </Text>
-                                </TouchableOpacity>
-                            </Trans>
-                        </Text>
-                    )}
-                </Text>
-                <View className="flex w-full flex-row items-center justify-between pt-4 align-middle">
-                    <View className="flex flex-row items-center align-middle">
-                        <View className="flex items-center justify-center overflow-hidden rounded-full align-middle">
-                            <TouchableOpacity
-                                onPress={() =>
-                                    router.push(
-                                        "/psych/" +
-                                            appointment.data?.therapist.id,
-                                    )
-                                }
-                            >
-                                <Image
-                                    className="flex items-center justify-center rounded-full"
-                                    alt={
-                                        isProfessional ? "Patient" : "Therapist"
-                                    }
-                                    source={{
-                                        uri: isProfessional
-                                            ? appointment.data.patient
-                                                  .profilePictureUrl
-                                            : appointment.data.therapist
-                                                  .profilePictureUrl,
-                                        width: 32,
-                                        height: 32,
-                                    }}
-                                />
-                            </TouchableOpacity>
+        <>
+            {appointment.data && appointment.data.therapistId ? (
+                <View
+                    style={{
+                        elevation: 2,
+                    }}
+                    className="mt-4 rounded-xl bg-white shadow-sm"
+                >
+                    <View className="p-6">
+                        <View className="flex w-full flex-row justify-between">
+                            <Text className="font-nunito-sans text-xl">
+                                {new Intl.DateTimeFormat(lingui.i18n.locale, {
+                                    weekday: "long",
+                                }).format(
+                                    new Date(appointment.data.scheduledTo),
+                                )}
+                                ,{" "}
+                                {new Date(
+                                    appointment.data.scheduledTo,
+                                ).getDate()}
+                                /
+                                {new Date(
+                                    appointment.data.scheduledTo,
+                                ).getMonth() + 1}
+                            </Text>
+                            <Text className="font-nunito-sans-bold text-xl text-blue-500 ">
+                                {new Date(
+                                    appointment.data.scheduledTo,
+                                ).getHours()}
+                                :
+                                {new Date(
+                                    appointment.data.scheduledTo,
+                                ).getMinutes() == 0
+                                    ? "00"
+                                    : new Date(
+                                          appointment.data.scheduledTo,
+                                      ).getMinutes()}
+                            </Text>
                         </View>
-                        <Text className="pl-2 font-nunito-sans text-xl">
-                            {isProfessional
-                                ? appointment.data.patient.name
-                                : appointment.data.therapist.name}
+                        <Text className="font-nunito-sans text-sm text-slate-500">
+                            {appointment.data.modality === "ONLINE" ? (
+                                "via Google Meet"
+                            ) : (
+                                <Text>
+                                    <Trans>
+                                        in person at{" "}
+                                        <TouchableOpacity
+                                            onPress={() =>
+                                                geocodeAddress(
+                                                    appointment.data?.therapist
+                                                        ?.address,
+                                                ).then((link) =>
+                                                    Linking.openURL(
+                                                        link ? link : "",
+                                                    ),
+                                                )
+                                            }
+                                        >
+                                            <Text>
+                                                {
+                                                    appointment.data.therapist
+                                                        .address?.street
+                                                }
+                                                ,{" "}
+                                                {
+                                                    appointment.data.therapist
+                                                        .address?.number
+                                                }
+                                            </Text>
+                                        </TouchableOpacity>
+                                    </Trans>
+                                </Text>
+                            )}
                         </Text>
+                        <View className="flex w-full flex-row items-center justify-between pt-4 align-middle">
+                            <View className="flex flex-row items-center align-middle">
+                                <View className="flex items-center justify-center overflow-hidden rounded-full align-middle">
+                                    <TouchableOpacity
+                                        onPress={() =>
+                                            router.push(
+                                                "/psych/" +
+                                                    appointment.data?.therapist
+                                                        .id,
+                                            )
+                                        }
+                                    >
+                                        <Image
+                                            className="flex items-center justify-center rounded-full"
+                                            alt={
+                                                isProfessional
+                                                    ? "Patient"
+                                                    : "Therapist"
+                                            }
+                                            source={{
+                                                uri: isProfessional
+                                                    ? appointment.data.patient
+                                                          .profilePictureUrl
+                                                    : appointment.data.therapist
+                                                          .profilePictureUrl,
+                                                width: 32,
+                                                height: 32,
+                                            }}
+                                        />
+                                    </TouchableOpacity>
+                                </View>
+                                <Text className="pl-2 font-nunito-sans text-xl">
+                                    {isProfessional
+                                        ? appointment.data.patient.name
+                                        : appointment.data.therapist.name}
+                                </Text>
+                            </View>
+                        </View>
                     </View>
-                </View>
-            </View>
-            <TouchableOpacity
-                onPress={async () => {
-                    if (appointment.data?.modality === "ONLINE") {
-                        Linking.openURL(appointment?.data?.link as string);
-                        return;
-                    }
+                    <TouchableOpacity
+                        onPress={async () => {
+                            if (appointment.data?.modality === "ONLINE") {
+                                Linking.openURL(
+                                    appointment?.data?.link as string,
+                                );
+                                return;
+                            }
 
-                    const mapsLink = await geocodeAddress(
-                        appointment.data?.therapist.address,
-                    );
-                    Linking.openURL(mapsLink as string);
-                }}
-            >
-                <View className="flex w-full flex-row items-center justify-center rounded-bl-xl rounded-br-xl bg-blue-500 py-3 align-middle shadow-sm">
-                    <FontAwesome
-                        size={16}
-                        color="white"
-                        name={`${
-                            appointment.data.modality === "ONLINE"
-                                ? "video-camera"
-                                : "car"
-                        }`}
-                    />
-                    <Text className="ml-4 font-nunito-sans-bold text-lg text-white">
-                        {appointment.data.modality === "ONLINE"
-                            ? t({ message: "Join the meeting" })
-                            : t({ message: "Get directions" })}
-                    </Text>
+                            const mapsLink = await geocodeAddress(
+                                appointment.data?.therapist.address,
+                            );
+                            Linking.openURL(mapsLink as string);
+                        }}
+                    >
+                        <View className="flex w-full flex-row items-center justify-center rounded-bl-xl rounded-br-xl bg-blue-500 py-3 align-middle shadow-sm">
+                            <FontAwesome
+                                size={16}
+                                color="white"
+                                name={`${
+                                    appointment.data.modality === "ONLINE"
+                                        ? "video-camera"
+                                        : "car"
+                                }`}
+                            />
+                            <Text className="ml-4 font-nunito-sans-bold text-lg text-white">
+                                {appointment.data.modality === "ONLINE"
+                                    ? t({ message: "Join the meeting" })
+                                    : t({ message: "Get directions" })}
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
                 </View>
-            </TouchableOpacity>
-        </View>
+            ) : (
+                <DefaultHomeCard />
+            )}
+        </>
     );
 }
 

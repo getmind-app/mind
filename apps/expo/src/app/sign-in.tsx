@@ -40,7 +40,10 @@ export default function SignInScreen() {
                     />
                 </View>
                 <TouchableOpacity onPress={onGooglePress} className="w-full">
-                    <View className="mt-8  flex w-full flex-row items-center justify-center rounded-xl bg-blue-500 px-8 py-4 font-bold shadow-sm">
+                    <View
+                        className="mt-8  flex w-full flex-row items-center justify-center rounded-xl bg-blue-500 px-8 py-4 font-bold shadow-sm"
+                        style={{ elevation: 2 }}
+                    >
                         <FontAwesome color="white" size={22} name="google" />
                         <Text className="ml-4 font-nunito-sans text-xl text-white">
                             <Trans>Sign in with</Trans>{" "}

@@ -29,9 +29,9 @@ export function Card({
 
     return (
         <View
-            className="rounded-xl bg-white p-6 shadow-sm"
             style={{
                 elevation: 2,
+                marginHorizontal: 2,
                 marginVertical: 8,
                 borderRadius: 12,
                 backgroundColor: colorToBackgroundMapper[color],

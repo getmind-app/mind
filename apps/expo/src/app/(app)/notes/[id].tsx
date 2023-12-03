@@ -9,6 +9,7 @@ import {
 import { useGlobalSearchParams, useRouter } from "expo-router";
 import { Trans } from "@lingui/macro";
 
+import { FullScreenLoading } from "../../../components/FullScreenLoading";
 import { Header } from "../../../components/Header";
 import { Loading } from "../../../components/Loading";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
@@ -36,23 +37,22 @@ export default function Note() {
         deleteNote.mutateAsync({ id: String(params.id) });
     }
 
-    if (isLoading)
-        return (
-            <View className="flex h-full items-center justify-center bg-off-white">
-                <Loading size={"large"} />
-            </View>
-        );
+    if (isLoading) return <FullScreenLoading />;
 
     if (isError) return <Text>Error: {JSON.stringify(error)}</Text>;
 
     if (!data) return <Text>Not found</Text>;
 
     return (
-        <KeyboardAvoidingView
-            style={{ flex: 1 }}
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
+        <ScreenWrapper
+            style={{
+                paddingTop: 12,
+            }}
         >
-            <ScreenWrapper>
+            <KeyboardAvoidingView
+                style={{ flex: 1 }}
+                behavior={Platform.OS === "ios" ? "padding" : "height"}
+            >
                 <Header onBack={() => router.push("/")} />
                 <ScrollView
                     className="min-h-max"
@@ -90,7 +90,7 @@ export default function Note() {
                         {data.content}
                     </Text>
                 </ScrollView>
-            </ScreenWrapper>
-        </KeyboardAvoidingView>
+            </KeyboardAvoidingView>
+        </ScreenWrapper>
     );
 }

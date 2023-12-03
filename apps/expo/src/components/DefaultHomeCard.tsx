@@ -131,7 +131,13 @@ function DefaultPatientHomeCard() {
     const router = useRouter();
 
     return (
-        <View className="mt-4 rounded-xl bg-white shadow-sm">
+        <View
+            style={{
+                elevation: 2,
+                marginHorizontal: 2,
+            }}
+            className="mt-4 rounded-xl bg-white shadow-sm"
+        >
             <View className="px-6 pt-6">
                 <Text className="font-nunito-sans text-xl">
                     <Trans>Nothing for now!</Trans>

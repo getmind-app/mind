@@ -8,8 +8,8 @@ import * as Linking from "expo-linking";
 import { useGlobalSearchParams, useRouter, useSearchParams } from "expo-router";
 import { Trans, t } from "@lingui/macro";
 
+import { FullScreenLoading } from "../../../components/FullScreenLoading";
 import { Header } from "../../../components/Header";
-import { ProfileSkeleton } from "../../../components/ProfileSkeleton";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
 import formatModality from "../../../helpers/formatModality";
 import { geocode } from "../../../helpers/geocode";
@@ -30,12 +30,7 @@ export default function TherapistProfile() {
     }
 
     if (isLoading) {
-        return (
-            <>
-                <Header />
-                <ProfileSkeleton />
-            </>
-        );
+        return <FullScreenLoading />;
     }
 
     return (
@@ -93,13 +88,16 @@ export default function TherapistProfile() {
                                 {data?.about}
                             </ContentCard>
                         )}
-                        {data?.modalities.includes("ON_SITE") && (
+                        {data?.modalities.includes("ON_SITE") &&
+                        data.address ? (
                             <ContentCard
                                 title={t({ message: "Location" })}
                                 emoji="📍"
                             >
-                                <LocationContent address={data?.address} />
+                                <LocationContent address={data.address} />
                             </ContentCard>
+                        ) : (
+                            <Text>Missing Address</Text>
                         )}
                         {/* <ContentCard title={t({ message: "Education" })} emoji="🎓">
                         Psicologia Cognitiva - Universidade Federal do Paraná
@@ -169,7 +167,18 @@ function ScheduleBar({
     }
 
     return (
-        <View className="absolute bottom-0 w-full rounded-t-xl bg-blue-500 px-6 pb-8 pt-4">
+        <View
+            style={{
+                flex: 1,
+                paddingHorizontal: 16,
+                paddingTop: 16,
+                paddingBottom: 24,
+                borderTopLeftRadius: 16,
+                borderTopRightRadius: 16,
+                width: "100%",
+            }}
+            className="absolute bottom-0 bg-blue-500 "
+        >
             <View className="flex flex-row items-center justify-between ">
                 <View className="flex flex-col">
                     <Text className="font-nunito-sans-bold text-base text-white shadow-sm">
@@ -184,7 +193,12 @@ function ScheduleBar({
                     </Text>
                 </View>
                 <TouchableOpacity onPress={handleSchedule}>
-                    <View className="rounded-xl bg-white">
+                    <View
+                        style={{
+                            borderRadius: 6,
+                            backgroundColor: "#fff",
+                        }}
+                    >
                         <View className="flex   flex-row items-center px-4 py-2 align-middle">
                             <Text className="font-nunito-sans-bold text-base">
                                 <Trans>Schedule</Trans>
@@ -251,6 +265,7 @@ function LocationContent({ address }: { address: Address }) {
                         }}
                     >
                         <Marker
+                            // @ts-expect-error
                             coordinate={{
                                 latitude: location.latitude,
                                 longitude: location.longitude,
