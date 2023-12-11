@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import {
     Image,
     ScrollView,
@@ -7,6 +7,9 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
+import Slider, { SliderLabel, type LabelProps } from "react-native-a11y-slider";
+import { Modalize } from "react-native-modalize";
+import { Portal } from "react-native-portalize";
 import { useRouter } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Trans, t } from "@lingui/macro";
@@ -19,49 +22,85 @@ import { useDebounce } from "../../hooks/util/useDebounce";
 
 export default function SearchScreen() {
     const [search, setSearch] = useState("");
+    const [price, setPrice] = useState(30);
+    const modalizeRef = useRef<Modalize>(null);
     const debouncedValue = useDebounce(search, 500);
 
-    return (
-        <ScreenWrapper>
-            <Title title={t({ message: "Search" })} />
+    function onOpen() {
+        modalizeRef.current?.open();
+    }
 
-            <View className="flex flex-row items-center justify-between pt-2 align-middle">
-                <TextInput
-                    onChangeText={setSearch}
-                    autoFocus={false}
-                    value={search}
-                    placeholder={t({ message: "Looking for a therapist?" })}
-                    className="w-72 font-nunito-sans text-lg"
-                />
-                {/* Filters icon that shows modal with filter options */}
-                <TouchableOpacity onPress={() => {}}>
-                    <MaterialIcons
-                        name="filter-list"
-                        style={{
-                            paddingRight: 8,
-                        }}
-                        size={24}
-                        color="black"
+    return (
+        <>
+            <ScreenWrapper>
+                <Title title={t({ message: "Search" })} />
+
+                <View className="flex flex-row items-center justify-between pt-2 align-middle">
+                    <TextInput
+                        onChangeText={setSearch}
+                        autoFocus={false}
+                        value={search}
+                        placeholder={t({ message: "Looking for a therapist?" })}
+                        className="w-72 font-nunito-sans text-lg"
                     />
-                </TouchableOpacity>
-            </View>
-            <ScrollView className="w-full" showsVerticalScrollIndicator={false}>
-                {search.length > 1 ? (
-                    <List search={debouncedValue} />
-                ) : (
-                    <View className="flex flex-col items-center justify-center gap-2 pt-32">
-                        <Image
-                            className="h-48 w-48"
-                            alt={`No therapists picture`}
-                            source={require("../../../assets/images/girl_dog.png")}
+                    <TouchableOpacity onPress={onOpen}>
+                        <MaterialIcons
+                            name="filter-list"
+                            style={{
+                                paddingRight: 8,
+                            }}
+                            size={24}
+                            color="black"
                         />
-                        <Text className="font-nunito-sans text-xl text-slate-500">
-                            <Trans>Find your therapist</Trans>
-                        </Text>
-                    </View>
-                )}
-            </ScrollView>
-        </ScreenWrapper>
+                    </TouchableOpacity>
+                </View>
+                <ScrollView
+                    className="w-full"
+                    showsVerticalScrollIndicator={false}
+                >
+                    {search.length > 1 ? (
+                        <List search={debouncedValue} />
+                    ) : (
+                        <View className="flex flex-col items-center justify-center gap-2 pt-32">
+                            <Image
+                                className="h-48 w-48"
+                                alt={`No therapists picture`}
+                                source={require("../../../assets/images/girl_dog.png")}
+                            />
+                            <Text className="font-nunito-sans text-xl text-slate-500">
+                                <Trans>Find your therapist</Trans>
+                            </Text>
+                        </View>
+                    )}
+                </ScrollView>
+            </ScreenWrapper>
+            <Portal>
+                <Modalize
+                    ref={modalizeRef}
+                    modalHeight={300}
+                    snapPoint={300}
+                    modalStyle={{ backgroundColor: "#f8f8f8", padding: 24 }}
+                >
+                    <Text className="font-nunito-sans-bold text-base ">
+                        <Trans>Price</Trans>
+                    </Text>
+                    <Slider
+                        min={30}
+                        max={1000}
+                        values={[30]}
+                        markerComponent={CustomMarker}
+                        labelComponent={CustomLabel}
+                        style={{
+                            paddingHorizontal: 12,
+                            paddingTop: 12,
+                        }}
+                        onChange={(values: number[]) => {
+                            setPrice(values[0] ?? 30);
+                        }}
+                    />
+                </Modalize>
+            </Portal>
+        </>
     );
 }
 
@@ -135,3 +174,43 @@ function List({ search }: { search: string }) {
         </View>
     );
 }
+
+function CustomLabel(props: LabelProps) {
+    const position = useMemo(() => {
+        if (typeof props.position.value === "number") {
+            return {
+                ...props.position,
+                value: `R$ ${props.position.value}`,
+            };
+        }
+        return props.position;
+    }, [props.position]);
+
+    return (
+        <SliderLabel
+            {...props}
+            position={position}
+            style={{
+                backgroundColor: "#f8f8f8",
+                borderWidth: 0,
+            }}
+            textStyle={{
+                fontFamily: "NunitoSans_700Bold",
+            }}
+        />
+    );
+}
+
+function CustomMarker() {
+    return (
+        <View
+            style={{
+                backgroundColor: "#3b82f6",
+                height: CustomMarker.size,
+                width: CustomMarker.size,
+                borderRadius: CustomMarker.size / 2,
+            }}
+        />
+    );
+}
+CustomMarker.size = 16;

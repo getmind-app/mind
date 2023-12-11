@@ -1,4 +1,5 @@
 import { Image, View } from "react-native";
+import { Host } from "react-native-portalize";
 import { Redirect, Tabs, useRootNavigationState } from "expo-router";
 import { useClerk } from "@clerk/clerk-expo";
 import { AntDesign } from "@expo/vector-icons";
@@ -52,123 +53,125 @@ export default function AppRouter() {
     }
 
     return (
-        <Tabs
-            screenOptions={{
-                tabBarStyle: {
-                    paddingHorizontal: 16,
-                },
-                headerShown: false,
-                tabBarShowLabel: false,
-                tabBarActiveTintColor,
-                tabBarInactiveTintColor,
-            }}
-        >
-            <Tabs.Screen
-                name="index"
-                options={{
-                    title: "Home",
-                    tabBarIcon: (props) => (
-                        <TabBarIconWrapper focused={props.focused}>
-                            <AntDesign name="home" {...props} />
-                        </TabBarIconWrapper>
-                    ),
-                }}
-            />
-            <Tabs.Screen
-                name="search"
-                options={{
-                    title: "Search",
-                    href: isProfessional ? null : "/search",
-                    tabBarIcon: (props) => (
-                        <TabBarIconWrapper focused={props.focused}>
-                            <AntDesign name="search1" {...props} />
-                        </TabBarIconWrapper>
-                    ),
-                }}
-            />
-            <Tabs.Screen
-                name="calendar"
-                options={{
-                    title: "Calendar",
-                    tabBarIcon: (props) => (
-                        <TabBarIconWrapper focused={props.focused}>
-                            <AntDesign name="calendar" {...props} />
-                        </TabBarIconWrapper>
-                    ),
-                }}
-            />
-            <Tabs.Screen
-                name="profile"
-                options={{
-                    title: "User Profile",
-                    tabBarIcon: (props) => (
-                        <TabBarIconWrapper focused={props.focused}>
-                            {userHasImage.isLoading ? (
-                                <Loading size={"small"} />
-                            ) : userHasImage.data ? (
-                                <Image
-                                    className="rounded-full"
-                                    alt={`${user?.firstName} profile picture`}
-                                    source={{
-                                        uri: user?.imageUrl,
-                                        width: 30,
-                                        height: 30,
-                                    }}
-                                />
-                            ) : (
-                                <AntDesign name="user" {...props} />
-                            )}
-                        </TabBarIconWrapper>
-                    ),
-                }}
-            />
-            <Tabs.Screen
-                name="psych"
-                options={{
-                    title: "Psych Profile",
-                    href: null,
+        <Host>
+            <Tabs
+                screenOptions={{
                     tabBarStyle: {
-                        maxHeight: 0,
+                        paddingHorizontal: 16,
                     },
+                    headerShown: false,
+                    tabBarShowLabel: false,
+                    tabBarActiveTintColor,
+                    tabBarInactiveTintColor,
                 }}
-            />
-            <Tabs.Screen
-                name="(psych)"
-                options={{
-                    title: "Psych Settings",
-                    href: null,
-                    tabBarStyle: {
-                        maxHeight: 0,
-                    },
-                }}
-            />
-            <Tabs.Screen
-                name="(patient)"
-                options={{
-                    title: "Patient Settings",
-                    href: null,
-                    tabBarStyle: {
-                        maxHeight: 0,
-                    },
-                }}
-            />
-            <Tabs.Screen
-                name="settings"
-                options={{
-                    title: "Settings",
-                    href: null,
-                    tabBarStyle: {
-                        maxHeight: 0,
-                    },
-                }}
-            />
-            <Tabs.Screen
-                name="notes"
-                options={{
-                    title: "Notes",
-                    href: null,
-                }}
-            />
-        </Tabs>
+            >
+                <Tabs.Screen
+                    name="index"
+                    options={{
+                        title: "Home",
+                        tabBarIcon: (props) => (
+                            <TabBarIconWrapper focused={props.focused}>
+                                <AntDesign name="home" {...props} />
+                            </TabBarIconWrapper>
+                        ),
+                    }}
+                />
+                <Tabs.Screen
+                    name="search"
+                    options={{
+                        title: "Search",
+                        href: isProfessional ? null : "/search",
+                        tabBarIcon: (props) => (
+                            <TabBarIconWrapper focused={props.focused}>
+                                <AntDesign name="search1" {...props} />
+                            </TabBarIconWrapper>
+                        ),
+                    }}
+                />
+                <Tabs.Screen
+                    name="calendar"
+                    options={{
+                        title: "Calendar",
+                        tabBarIcon: (props) => (
+                            <TabBarIconWrapper focused={props.focused}>
+                                <AntDesign name="calendar" {...props} />
+                            </TabBarIconWrapper>
+                        ),
+                    }}
+                />
+                <Tabs.Screen
+                    name="profile"
+                    options={{
+                        title: "User Profile",
+                        tabBarIcon: (props) => (
+                            <TabBarIconWrapper focused={props.focused}>
+                                {userHasImage.isLoading ? (
+                                    <Loading size={"small"} />
+                                ) : userHasImage.data ? (
+                                    <Image
+                                        className="rounded-full"
+                                        alt={`${user?.firstName} profile picture`}
+                                        source={{
+                                            uri: user?.imageUrl,
+                                            width: 30,
+                                            height: 30,
+                                        }}
+                                    />
+                                ) : (
+                                    <AntDesign name="user" {...props} />
+                                )}
+                            </TabBarIconWrapper>
+                        ),
+                    }}
+                />
+                <Tabs.Screen
+                    name="psych"
+                    options={{
+                        title: "Psych Profile",
+                        href: null,
+                        tabBarStyle: {
+                            maxHeight: 0,
+                        },
+                    }}
+                />
+                <Tabs.Screen
+                    name="(psych)"
+                    options={{
+                        title: "Psych Settings",
+                        href: null,
+                        tabBarStyle: {
+                            maxHeight: 0,
+                        },
+                    }}
+                />
+                <Tabs.Screen
+                    name="(patient)"
+                    options={{
+                        title: "Patient Settings",
+                        href: null,
+                        tabBarStyle: {
+                            maxHeight: 0,
+                        },
+                    }}
+                />
+                <Tabs.Screen
+                    name="settings"
+                    options={{
+                        title: "Settings",
+                        href: null,
+                        tabBarStyle: {
+                            maxHeight: 0,
+                        },
+                    }}
+                />
+                <Tabs.Screen
+                    name="notes"
+                    options={{
+                        title: "Notes",
+                        href: null,
+                    }}
+                />
+            </Tabs>
+        </Host>
     );
 }

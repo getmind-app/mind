@@ -432,6 +432,12 @@ importers:
       react-icons:
         specifier: ^4.9.0
         version: 4.10.1(react@18.2.0)
+      react-native-a11y-slider:
+        specifier: ^1.3.2
+        version: 1.3.2
+      react-native-portalize:
+        specifier: ^1.0.7
+        version: 1.0.7(react-native@0.72.6)(react@18.2.0)
       superjson:
         specifier: 1.9.1
         version: 1.9.1
@@ -12434,6 +12440,10 @@ packages:
   /react-is@18.2.0:
     resolution: {integrity: sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w==}
 
+  /react-native-a11y-slider@1.3.2:
+    resolution: {integrity: sha512-8PZMKy7RYq4Xc8LY2R9FVDJsOcEvwrnTS50AxN315ROUnojhD6u1qJvAC2OFETKOqSk+OZpbXSYRwqw+y7JYLA==}
+    dev: false
+
   /react-native-currency-input@1.1.0(react-native@0.72.6)(react@18.2.0):
     resolution: {integrity: sha512-TNyqQ98pB6WdLJiEz5NIZWUT1zpzJNBUCGS+5PGO0QCmbssSA/n4zVC7+msX5Z0Wl+iwhpTPsCckDJeRIlxwKg==}
     peerDependencies:
@@ -12517,6 +12527,16 @@ packages:
       immer: 6.0.9
       lodash.find: 4.6.0
       lodash.findindex: 4.6.0
+      react: 18.2.0
+      react-native: 0.72.6(@babel/core@7.22.10)(@babel/preset-env@7.21.4)(react@18.2.0)
+    dev: false
+
+  /react-native-portalize@1.0.7(react-native@0.72.6)(react@18.2.0):
+    resolution: {integrity: sha512-icqopPh9ZSV+I8C5LlZN9pQJ0OMeBDNqHhP80+qDx0hOGEcsDC09wgjogbEMfJE0GcMDM7PDYtyQkqa9gIqd1g==}
+    peerDependencies:
+      react: '> 15.0.0'
+      react-native: '> 0.50.0'
+    dependencies:
       react: 18.2.0
       react-native: 0.72.6(@babel/core@7.22.10)(@babel/preset-env@7.21.4)(react@18.2.0)
     dev: false
