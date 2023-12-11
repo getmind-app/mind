@@ -8,6 +8,7 @@ import {
     View,
 } from "react-native";
 import { useRouter } from "expo-router";
+import { MaterialIcons } from "@expo/vector-icons";
 import { Trans, t } from "@lingui/macro";
 
 import { ProfileSkeleton } from "../../components/ProfileSkeleton";
@@ -30,8 +31,23 @@ export default function SearchScreen() {
                     autoFocus={false}
                     value={search}
                     placeholder={t({ message: "Looking for a therapist?" })}
-                    className="w-full font-nunito-sans text-lg"
+                    className="w-72 font-nunito-sans text-lg"
                 />
+                {/* Filters icon that shows modal with filter options */}
+                <TouchableOpacity
+                    onPress={() => {
+                        // show modal
+                    }}
+                >
+                    <MaterialIcons
+                        name="filter-list"
+                        style={{
+                            paddingRight: 8,
+                        }}
+                        size={24}
+                        color="black"
+                    />
+                </TouchableOpacity>
             </View>
             <ScrollView className="w-full" showsVerticalScrollIndicator={false}>
                 {search.length > 1 ? (

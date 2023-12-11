@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { Linking, ScrollView, Switch, Text, View } from "react-native";
 import * as Notifications from "expo-notifications";
+import { useUser } from "@clerk/clerk-expo";
 import { Trans } from "@lingui/macro";
 
 import { Header } from "../../../components/Header";
 import { Loading } from "../../../components/Loading";
-import { ProfileSkeleton } from "../../../components/ProfileSkeleton";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
+import { registerForPushNotificationsAsync } from "../../../helpers/registerForPushNotifications";
+import { useUserMutations } from "../../../hooks/user/useUserMutations";
 
 export default function NotificationsPage() {
     return (
@@ -31,6 +33,16 @@ function NotificationConfig() {
     const [notificationSettings, setNotificationSettings] =
         useState<Notifications.NotificationPermissionsStatus | null>(null);
 
+    const [expoPushToken, setExpoPushToken] =
+        useState<Notifications.ExpoPushToken | null>(null);
+
+    const [switchActive, setSwitchActive] = useState(
+        notificationSettings?.status === "granted",
+    );
+
+    const { setMetadata } = useUserMutations();
+    const { user } = useUser();
+
     useEffect(() => {
         (async () => {
             const status = await Notifications.getPermissionsAsync();
@@ -54,18 +66,46 @@ function NotificationConfig() {
                 paddingTop: 16,
             }}
         >
-            <Text className="text-lg text-black">
+            <Text className="font-nunito-sans text-lg">
                 <Trans>Appointments and events </Trans>
             </Text>
             <Switch
                 onChange={async () => {
-                    await Linking.openSettings();
+                    setSwitchActive(!switchActive);
+
+                    if (notificationSettings.status !== "granted") {
+                        await Notifications.requestPermissionsAsync();
+                        const status =
+                            await Notifications.getPermissionsAsync();
+
+                        setNotificationSettings(status);
+
+                        await registerForPushNotificationsAsync().then(
+                            (token) => setExpoPushToken(token ?? null),
+                        );
+
+                        await setMetadata.mutateAsync({
+                            metadata: {
+                                ...user?.publicMetadata,
+                                expoPushToken: expoPushToken?.data,
+                            },
+                        });
+                    } else {
+                        await Linking.openSettings();
+
+                        const status =
+                            await Notifications.getPermissionsAsync();
+
+                        setNotificationSettings(status);
+                    }
+
+                    setSwitchActive(notificationSettings.status === "granted");
                 }}
                 style={{
                     marginRight: 16,
                 }}
                 trackColor={{ false: "#767577", true: "#3b82f6" }}
-                value={notificationSettings.status === "granted"}
+                value={switchActive}
             />
         </View>
     );
