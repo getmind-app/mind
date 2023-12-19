@@ -2,6 +2,7 @@ import { z } from "zod";
 
 import { type Therapist, type WeekDay } from "@acme/db";
 
+import calculateBoundingBox from "../helpers/calculateBoundingBox";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const therapistsRouter = createTRPCRouter({
@@ -64,18 +65,105 @@ export const therapistsRouter = createTRPCRouter({
     findAll: protectedProcedure.query(async ({ ctx }) => {
         return await ctx.prisma.therapist.findMany();
     }),
-    findByNameLike: protectedProcedure
+    findWithFilters: protectedProcedure
         .input(
             z.object({
-                name: z.string().min(1),
+                name: z.string().min(1).nullable(),
+                priceRange: z
+                    .object({
+                        min: z.number().positive(),
+                        max: z.number().positive(),
+                    })
+                    .nullable(),
+                gender: z.array(z.enum(["MALE", "FEMALE"])).nullable(),
+                modalities: z.array(z.enum(["ONLINE", "ON_SITE"])).nullable(),
+                distance: z.number().positive().nullable(),
+                currentLocation: z
+                    .object({
+                        latitude: z.number(),
+                        longitude: z.number(),
+                    })
+                    .nullable(),
             }),
         )
         .query(async ({ ctx, input }) => {
-            return await ctx.prisma.therapist.findMany({
-                where: {
+            let whereClause: Record<string, unknown> = {
+                paymentAccountStatus: "ACTIVE",
+            };
+
+            if (input.name) {
+                whereClause = {
+                    ...whereClause,
                     name: { contains: input.name, mode: "insensitive" },
-                    paymentAccountStatus: "ACTIVE",
-                },
+                };
+            }
+
+            if (input.priceRange) {
+                whereClause = {
+                    ...whereClause,
+                    hourlyRate: {
+                        gte: input.priceRange.min,
+                        lte: input.priceRange.max,
+                    },
+                };
+            }
+
+            if (input.gender && input.gender.length > 0) {
+                whereClause = {
+                    ...whereClause,
+                    gender: {
+                        in: input.gender,
+                    },
+                };
+            }
+
+            if (input.modalities && input.modalities.length > 0) {
+                whereClause = {
+                    ...whereClause,
+                    modalities: {
+                        hasSome: input.modalities,
+                    },
+                };
+            }
+
+            if (input.distance && input.currentLocation) {
+                const { latitude, longitude } = input.currentLocation;
+
+                const boundingBox = calculateBoundingBox(
+                    latitude,
+                    longitude,
+                    input.distance,
+                );
+
+                const therapistIds = await ctx.prisma.therapist.findMany({
+                    select: {
+                        id: true,
+                    },
+                    where: {
+                        address: {
+                            latitude: {
+                                gte: boundingBox.minLat,
+                                lte: boundingBox.maxLat,
+                            },
+                            longitude: {
+                                gte: boundingBox.minLon,
+                                lte: boundingBox.maxLon,
+                            },
+                        },
+                    },
+                });
+
+                whereClause = {
+                    ...whereClause,
+
+                    id: {
+                        in: therapistIds.map((therapist) => therapist.id),
+                    },
+                };
+            }
+
+            return await ctx.prisma.therapist.findMany({
+                where: whereClause,
             });
         }),
     setAvailableHours: protectedProcedure
@@ -143,6 +231,8 @@ export const therapistsRouter = createTRPCRouter({
                 state: z.string().min(1),
                 country: z.string().min(1),
                 zipCode: z.string().min(1),
+                latitude: z.number(),
+                longitude: z.number(),
             }),
         )
         .mutation(async ({ ctx, input }) => {

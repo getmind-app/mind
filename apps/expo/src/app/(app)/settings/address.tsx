@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
     KeyboardAvoidingView,
     Platform,
@@ -6,6 +7,7 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
+import MapView, { Marker } from "react-native-maps";
 import { useRouter } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,12 +18,15 @@ import { z } from "zod";
 import { FormTextInput } from "../../../components/FormTextInput";
 import { Header } from "../../../components/Header";
 import { ProfileSkeleton } from "../../../components/ProfileSkeleton";
+import { geocode } from "../../../helpers/geocode";
 import { api } from "../../../utils/api";
 import { type Address } from ".prisma/client";
 
 export default function Address() {
     const { user } = useUser();
     const router = useRouter();
+    const [latitude, setLatitude] = useState(0);
+    const [longitude, setLongitude] = useState(0);
 
     const { data: therapist, isLoading } =
         api.therapists.findByUserId.useQuery();
@@ -36,6 +41,9 @@ export default function Address() {
     const {
         control,
         handleSubmit,
+        getValues,
+        watch,
+        reset,
         formState: { isValid, isDirty },
     } = useForm<Address>({
         defaultValues:
@@ -70,10 +78,72 @@ export default function Address() {
             neighborhood: data.neighborhood,
             city: data.city,
             state: data.state,
-            zipCode: data.zipCode,
+            zipCode: data.zipCode.replaceAll("-", "").replaceAll(".", ""),
             country: "BR",
+            latitude: latitude,
+            longitude: longitude,
         });
     });
+
+    useEffect(() => {
+        if (getValues("zipCode").replaceAll("-", "").length >= 8) {
+            lookupAddress();
+        }
+    }, [watch("zipCode")]);
+
+    useEffect(() => {
+        if (isValid) {
+            (async () => {
+                const address = {
+                    street: getValues("street"),
+                    number: getValues("number"),
+                    city: getValues("city"),
+                    state: getValues("state"),
+                    country: "Brazil",
+                };
+
+                try {
+                    const location = await geocode(address);
+
+                    if (location && location.length > 0) {
+                        setLatitude(location[0]?.latitude ?? 0);
+                        setLongitude(location[0]?.longitude ?? 0);
+                    }
+                } catch (error) {
+                    console.log(error);
+                }
+            })();
+        }
+    }, [isValid, watch()]);
+
+    const lookupAddress = () => {
+        fetch(
+            `https://viacep.com.br/ws/${getValues("zipCode").replaceAll(
+                "-",
+                "",
+            )}/json/`,
+        )
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return response.json();
+            })
+            .then((data) => {
+                reset({
+                    street: data.logradouro,
+                    number: "",
+                    complement: data.complemento,
+                    neighborhood: data.bairro,
+                    city: data.localidade,
+                    state: data.uf,
+                    zipCode: data.cep,
+                });
+            })
+            .catch((error) => {
+                console.error("Error fetching address data:", error);
+            });
+    };
 
     if (!therapist || isLoading) {
         return <ProfileSkeleton />;
@@ -144,6 +214,39 @@ export default function Address() {
                             placeholder="PR"
                             inputMode="text"
                         />
+                        <View className="gap-3 py-3 pb-6">
+                            <Text className="font-nunito-sans text-lg text-slate-700">
+                                <Trans>Is that right?</Trans>
+                            </Text>
+                            <View>
+                                <MapView
+                                    style={{
+                                        alignContent: "center",
+                                        alignSelf: "center",
+                                        borderRadius: 10,
+                                        height: 120,
+                                        width: 350,
+                                    }}
+                                    camera={{
+                                        center: {
+                                            latitude: latitude,
+                                            longitude: longitude,
+                                        },
+                                        pitch: 0,
+                                        heading: 0,
+                                        altitude: 1000,
+                                        zoom: 15,
+                                    }}
+                                >
+                                    <Marker
+                                        coordinate={{
+                                            latitude: latitude,
+                                            longitude: longitude,
+                                        }}
+                                    />
+                                </MapView>
+                            </View>
+                        </View>
                     </ScrollView>
                     <TouchableOpacity className="w-full" onPress={onSubmit}>
                         <View
