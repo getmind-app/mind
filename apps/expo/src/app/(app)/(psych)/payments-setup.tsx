@@ -28,7 +28,6 @@ export default function PaymentsSetup() {
     const account = api.stripe.getAccount.useQuery({
         paymentAccountId: therapist.data?.paymentAccountId ?? "",
     });
-    const therapistHasStripeAccount = therapist.data?.paymentAccountId !== null;
     const therapistHasBankAccountLinked =
         therapist.data?.paymentAccountStatus === "ACTIVE";
 
@@ -69,7 +68,9 @@ export default function PaymentsSetup() {
                 <Text className="pb-4 font-nunito-sans text-base text-slate-500">
                     <Trans>
                         We use Stripe as our payment provider. To receive
-                        payments from Mind you must setup an account.
+                        payments from Mind you must setup an account. The
+                        proccess can take a couple minutes, so you can refresh
+                        this page to check the status after the setup.
                     </Trans>
                 </Text>
                 <TouchableOpacity

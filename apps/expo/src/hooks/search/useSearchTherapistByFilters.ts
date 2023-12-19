@@ -6,7 +6,7 @@ export function useSearchTherapistByFilters({
     priceRange,
     gender,
     modalities,
-    proximity,
+    distance,
     currentLocation,
 }: {
     name: string | null;
@@ -16,7 +16,7 @@ export function useSearchTherapistByFilters({
     } | null;
     gender: Gender[] | null;
     modalities: Modality[] | null;
-    proximity: number | null;
+    distance: number | null;
     currentLocation: {
         latitude: number;
         longitude: number;
@@ -28,7 +28,7 @@ export function useSearchTherapistByFilters({
             priceRange,
             gender,
             modalities,
-            proximity,
+            distance,
             currentLocation,
         },
         {

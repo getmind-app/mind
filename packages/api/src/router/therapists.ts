@@ -2,6 +2,7 @@ import { z } from "zod";
 
 import { type Therapist, type WeekDay } from "@acme/db";
 
+import calculateBoundingBox from "../helpers/calculateBoundingBox";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const therapistsRouter = createTRPCRouter({
@@ -76,11 +77,11 @@ export const therapistsRouter = createTRPCRouter({
                     .nullable(),
                 gender: z.array(z.enum(["MALE", "FEMALE"])).nullable(),
                 modalities: z.array(z.enum(["ONLINE", "ON_SITE"])).nullable(),
-                proximity: z.number().positive().nullable(),
+                distance: z.number().positive().nullable(),
                 currentLocation: z
                     .object({
-                        latitude: z.number().positive(),
-                        longitude: z.number().positive(),
+                        latitude: z.number(),
+                        longitude: z.number(),
                     })
                     .nullable(),
             }),
@@ -125,17 +126,30 @@ export const therapistsRouter = createTRPCRouter({
                 };
             }
 
-            if (input.proximity && input.currentLocation) {
+            if (input.distance && input.currentLocation) {
+                const { latitude, longitude } = input.currentLocation;
+
+                const boundingBox = calculateBoundingBox(
+                    latitude,
+                    longitude,
+                    input.distance,
+                );
+
                 const therapistIds = await ctx.prisma.therapist.findMany({
-                    // figure out how to do this
-                    // where: {
-                    //     address: {
-                    //         /
-                    //         },
-                    //     },
-                    // },
                     select: {
                         id: true,
+                    },
+                    where: {
+                        address: {
+                            latitude: {
+                                gte: boundingBox.minLat,
+                                lte: boundingBox.maxLat,
+                            },
+                            longitude: {
+                                gte: boundingBox.minLon,
+                                lte: boundingBox.maxLon,
+                            },
+                        },
                     },
                 });
 
@@ -217,8 +231,8 @@ export const therapistsRouter = createTRPCRouter({
                 state: z.string().min(1),
                 country: z.string().min(1),
                 zipCode: z.string().min(1),
-                latitude: z.number().positive(),
-                longitude: z.number().positive(),
+                latitude: z.number(),
+                longitude: z.number(),
             }),
         )
         .mutation(async ({ ctx, input }) => {
