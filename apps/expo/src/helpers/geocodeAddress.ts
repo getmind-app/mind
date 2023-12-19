@@ -1,8 +1,14 @@
 import * as Location from "expo-location";
 
-import { type Address } from ".prisma/client";
+type geocodeInput = {
+    street: string;
+    number: string;
+    city: string;
+    state: string;
+    country: string;
+};
 
-const geocodeAddress = async (address: Address | null | undefined) => {
+const geocodeAddress = async (address: geocodeInput | null | undefined) => {
     if (!address) {
         return;
     }

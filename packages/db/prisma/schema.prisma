@@ -18,6 +18,7 @@ model Therapist {
     id                   String               @id @default(cuid())
     createdAt            DateTime             @default(now())
     name                 String
+    status               TherapistStatus      @default(PENDENT)
     dateOfBirth          DateTime
     document             String
     phone                String
@@ -66,6 +67,8 @@ model Address {
     state        String
     country      String
     zipCode      String
+    latitude     Float?
+    longitude    Float?
     therapistId  String    @unique
     therapist    Therapist @relation(fields: [therapistId], references: [id], onDelete: Cascade)
 }
@@ -138,4 +141,11 @@ enum WeekDay {
     WEDNESDAY
     THURSDAY
     FRIDAY
+}
+
+enum TherapistStatus {
+    PENDENT
+    ACCEPTED
+    REJECTED
+    CANCELED
 }

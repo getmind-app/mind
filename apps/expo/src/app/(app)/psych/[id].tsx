@@ -5,7 +5,6 @@ import { Marker } from "react-native-svg";
 import { type Float } from "react-native/Libraries/Types/CodegenTypes";
 import { Image } from "expo-image";
 import * as Linking from "expo-linking";
-import * as NavigationBar from "expo-navigation-bar";
 import { useGlobalSearchParams, useRouter, useSearchParams } from "expo-router";
 import { Trans, t } from "@lingui/macro";
 
@@ -89,14 +88,15 @@ export default function TherapistProfile() {
                                 {data?.about}
                             </ContentCard>
                         )}
-                        {data?.modalities.includes("ON_SITE") && (
-                            <ContentCard
-                                title={t({ message: "Location" })}
-                                emoji="📍"
-                            >
-                                <LocationContent address={data?.address} />
-                            </ContentCard>
-                        )}
+                        {data?.modalities.includes("ON_SITE") &&
+                            data?.address && (
+                                <ContentCard
+                                    title={t({ message: "Location" })}
+                                    emoji="📍"
+                                >
+                                    <LocationContent address={data?.address} />
+                                </ContentCard>
+                            )}
                         {/* <ContentCard title={t({ message: "Education" })} emoji="🎓">
                         Psicologia Cognitiva - Universidade Federal do Paraná
                     </ContentCard>

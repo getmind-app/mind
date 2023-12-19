@@ -14,17 +14,21 @@ import { useRouter } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Trans, t } from "@lingui/macro";
 
+import { type Gender, type Modality } from "../../../../../packages/db";
 import { ProfileSkeleton } from "../../components/ProfileSkeleton";
 import { ScreenWrapper } from "../../components/ScreenWrapper";
 import { Title } from "../../components/Title";
-import { useSearchTherapistByName } from "../../hooks/search/useSearchTherapistByName";
+import { useSearchTherapistByFilters } from "../../hooks/search/useSearchTherapistByFilters";
 import { useDebounce } from "../../hooks/util/useDebounce";
 
 export default function SearchScreen() {
-    const [search, setSearch] = useState("");
-    const [price, setPrice] = useState(30);
+    const [search, setSearch] = useState<string | null>(null);
+    const [priceRange, setPriceRange] = useState<number[] | null>(null);
+    const [modality, setModality] = useState<Modality[] | null>(null);
+    const [gender, setGender] = useState<Gender[] | null>(null);
     const modalizeRef = useRef<Modalize>(null);
-    const debouncedValue = useDebounce(search, 500);
+    const debounceSearch = useDebounce(search, 500);
+    const debouncePriceRange = useDebounce(priceRange, 300);
 
     function onOpen() {
         modalizeRef.current?.open();
@@ -39,7 +43,7 @@ export default function SearchScreen() {
                     <TextInput
                         onChangeText={setSearch}
                         autoFocus={false}
-                        value={search}
+                        value={search ?? ""}
                         placeholder={t({ message: "Looking for a therapist?" })}
                         className="w-72 font-nunito-sans text-lg"
                     />
@@ -50,7 +54,13 @@ export default function SearchScreen() {
                                 paddingRight: 8,
                             }}
                             size={24}
-                            color="black"
+                            color={
+                                priceRange ||
+                                (gender && gender.length > 0) ||
+                                (modality && modality.length > 0)
+                                    ? "#3b82f6"
+                                    : "black"
+                            }
                         />
                     </TouchableOpacity>
                 </View>
@@ -58,8 +68,15 @@ export default function SearchScreen() {
                     className="w-full"
                     showsVerticalScrollIndicator={false}
                 >
-                    {search.length > 1 ? (
-                        <List search={debouncedValue} />
+                    {search || priceRange || gender || modality ? (
+                        <List
+                            name={debounceSearch}
+                            priceRange={debouncePriceRange ?? []}
+                            modalities={modality}
+                            gender={gender}
+                            proximity={null}
+                            currentLocation={null}
+                        />
                     ) : (
                         <View className="flex flex-col items-center justify-center gap-2 pt-32">
                             <Image
@@ -87,7 +104,10 @@ export default function SearchScreen() {
                     <Slider
                         min={30}
                         max={1000}
-                        values={[30]}
+                        values={[
+                            priceRange?.[0] ?? 30,
+                            priceRange?.[1] ?? 1000,
+                        ]}
                         markerComponent={CustomMarker}
                         labelComponent={CustomLabel}
                         style={{
@@ -95,19 +115,149 @@ export default function SearchScreen() {
                             paddingTop: 12,
                         }}
                         onChange={(values: number[]) => {
-                            setPrice(values[0] ?? 30);
+                            setPriceRange(values);
                         }}
                     />
+                    <Text className="font-nunito-sans-bold text-base ">
+                        <Trans>Gender</Trans>
+                    </Text>
+                    <View className="flex flex-row items-center justify-between gap-4">
+                        <TouchableOpacity
+                            className={`${
+                                gender?.includes("MALE") ? "bg-blue-500" : ""
+                            }`}
+                            onPress={() => {
+                                if (gender?.includes("MALE")) {
+                                    setGender(
+                                        gender.filter(
+                                            (gender) => gender !== "MALE",
+                                        ),
+                                    );
+                                } else {
+                                    setGender([...(gender ?? []), "MALE"]);
+                                }
+                            }}
+                        >
+                            <Trans>
+                                <Text>Male</Text>
+                            </Trans>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            className={`${
+                                gender?.includes("FEMALE") ? "bg-blue-500" : ""
+                            }`}
+                            onPress={() => {
+                                if (gender?.includes("FEMALE")) {
+                                    setGender(
+                                        gender.filter(
+                                            (gender) => gender !== "FEMALE",
+                                        ),
+                                    );
+                                } else {
+                                    setGender([...(gender ?? []), "FEMALE"]);
+                                }
+                            }}
+                        >
+                            <Trans>
+                                <Text>Female</Text>
+                            </Trans>
+                        </TouchableOpacity>
+                    </View>
+
+                    <Text className="font-nunito-sans-bold text-base ">
+                        <Trans>Modality</Trans>
+                    </Text>
+                    <View className="flex flex-row items-center justify-between gap-4">
+                        <TouchableOpacity
+                            className={`${
+                                modality?.includes("ONLINE")
+                                    ? "bg-blue-500"
+                                    : ""
+                            }`}
+                            onPress={() => {
+                                if (modality?.includes("ONLINE")) {
+                                    setModality(
+                                        modality.filter(
+                                            (modality) => modality !== "ONLINE",
+                                        ),
+                                    );
+                                } else {
+                                    setModality([
+                                        ...(modality ?? []),
+                                        "ONLINE",
+                                    ]);
+                                }
+                            }}
+                        >
+                            <Trans>
+                                <Text>Online</Text>
+                            </Trans>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            className={`${
+                                modality?.includes("ON_SITE")
+                                    ? "bg-blue-500"
+                                    : ""
+                            }`}
+                            onPress={() => {
+                                if (modality?.includes("ON_SITE")) {
+                                    setModality(
+                                        modality.filter(
+                                            (modality) =>
+                                                modality !== "ON_SITE",
+                                        ),
+                                    );
+                                } else {
+                                    setModality([
+                                        ...(modality ?? []),
+                                        "ON_SITE",
+                                    ]);
+                                }
+                            }}
+                        >
+                            <Trans>
+                                <Text>On Site</Text>
+                            </Trans>
+                        </TouchableOpacity>
+                    </View>
                 </Modalize>
             </Portal>
         </>
     );
 }
 
-function List({ search }: { search: string }) {
-    const { data, isLoading, isError } = useSearchTherapistByName({
-        name: search,
+function List({
+    name,
+    priceRange,
+    gender,
+    modalities,
+    proximity,
+    currentLocation,
+}: {
+    name: string | null;
+    priceRange: number[] | null;
+    gender: Gender[] | null;
+    modalities: Modality[] | null;
+    proximity: number | null;
+    currentLocation: {
+        latitude: number;
+        longitude: number;
+    } | null;
+}) {
+    const { data, isLoading, isError } = useSearchTherapistByFilters({
+        name: name,
+        priceRange: priceRange
+            ? {
+                  min: priceRange[0] ?? 1,
+                  max: priceRange[1] ?? 1000,
+              }
+            : null,
+        gender: gender,
+        modalities: modalities,
+        proximity: proximity,
+        currentLocation: currentLocation ?? null,
     });
+
     const router = useRouter();
 
     if (isError) {
@@ -134,32 +284,43 @@ function List({ search }: { search: string }) {
 
     return data.length > 0 ? (
         <View className="flex w-full flex-col items-start justify-center gap-y-4 pt-2">
-            {data.map(({ name, profilePictureUrl, id, crp }) => (
-                <TouchableOpacity
-                    className="flex w-full flex-row items-center gap-4 align-middle"
-                    key={id}
-                    onPress={() => router.push(`/psych/${id}`)}
-                >
-                    <Image
-                        className="rounded-full"
-                        alt={t({ message: `${name}' profile picture` })}
-                        source={{
-                            uri: profilePictureUrl,
-                            width: 48,
-                            height: 48,
-                        }}
-                    />
-                    <View className="flex flex-col justify-center align-middle">
-                        <Text className="-mb-1 font-nunito-sans-bold text-lg">
-                            {name}
-                        </Text>
-                        <Text className=" font-nunito-sans text-slate-500">
-                            {/*TODO: add mask*/}
-                            <Trans>Psychologist - {crp}</Trans>
-                        </Text>
-                    </View>
-                </TouchableOpacity>
-            ))}
+            {data.map(
+                ({ name, profilePictureUrl, id, modalities, hourlyRate }) => (
+                    <TouchableOpacity
+                        className="flex w-full flex-row items-center gap-4 align-middle"
+                        key={id}
+                        onPress={() => router.push(`/psych/${id}`)}
+                    >
+                        <Image
+                            className="rounded-full"
+                            alt={t({ message: `${name}' profile picture` })}
+                            source={{
+                                uri: profilePictureUrl,
+                                width: 48,
+                                height: 48,
+                            }}
+                        />
+                        <View className="flex flex-col justify-center align-middle">
+                            <Text className="-mb-1 font-nunito-sans-bold text-lg">
+                                {name}
+                            </Text>
+                            <Text className=" font-nunito-sans text-slate-500">
+                                <Trans>
+                                    {modalities.length > 1
+                                        ? "Online e presencial"
+                                        : modalities.includes("ONLINE")
+                                        ? "Online"
+                                        : "Presencial"}{" "}
+                                    |{" "}
+                                    <Text className="font-nunito-sans-bold">
+                                        R$ {hourlyRate}
+                                    </Text>
+                                </Trans>
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
+                ),
+            )}
         </View>
     ) : (
         <View className="flex flex-col items-center justify-center gap-2 pt-32">

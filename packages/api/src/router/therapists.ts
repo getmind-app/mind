@@ -64,18 +64,92 @@ export const therapistsRouter = createTRPCRouter({
     findAll: protectedProcedure.query(async ({ ctx }) => {
         return await ctx.prisma.therapist.findMany();
     }),
-    findByNameLike: protectedProcedure
+    findWithFilters: protectedProcedure
         .input(
             z.object({
-                name: z.string().min(1),
+                name: z.string().min(1).nullable(),
+                priceRange: z
+                    .object({
+                        min: z.number().positive(),
+                        max: z.number().positive(),
+                    })
+                    .nullable(),
+                gender: z.array(z.enum(["MALE", "FEMALE"])).nullable(),
+                modalities: z.array(z.enum(["ONLINE", "ON_SITE"])).nullable(),
+                proximity: z.number().positive().nullable(),
+                currentLocation: z
+                    .object({
+                        latitude: z.number().positive(),
+                        longitude: z.number().positive(),
+                    })
+                    .nullable(),
             }),
         )
         .query(async ({ ctx, input }) => {
-            return await ctx.prisma.therapist.findMany({
-                where: {
+            let whereClause: Record<string, unknown> = {
+                paymentAccountStatus: "ACTIVE",
+            };
+
+            if (input.name) {
+                whereClause = {
+                    ...whereClause,
                     name: { contains: input.name, mode: "insensitive" },
-                    paymentAccountStatus: "ACTIVE",
-                },
+                };
+            }
+
+            if (input.priceRange) {
+                whereClause = {
+                    ...whereClause,
+                    hourlyRate: {
+                        gte: input.priceRange.min,
+                        lte: input.priceRange.max,
+                    },
+                };
+            }
+
+            if (input.gender && input.gender.length > 0) {
+                whereClause = {
+                    ...whereClause,
+                    gender: {
+                        in: input.gender,
+                    },
+                };
+            }
+
+            if (input.modalities && input.modalities.length > 0) {
+                whereClause = {
+                    ...whereClause,
+                    modalities: {
+                        hasSome: input.modalities,
+                    },
+                };
+            }
+
+            if (input.proximity && input.currentLocation) {
+                const therapistIds = await ctx.prisma.therapist.findMany({
+                    // figure out how to do this
+                    // where: {
+                    //     address: {
+                    //         /
+                    //         },
+                    //     },
+                    // },
+                    select: {
+                        id: true,
+                    },
+                });
+
+                whereClause = {
+                    ...whereClause,
+
+                    id: {
+                        in: therapistIds.map((therapist) => therapist.id),
+                    },
+                };
+            }
+
+            return await ctx.prisma.therapist.findMany({
+                where: whereClause,
             });
         }),
     setAvailableHours: protectedProcedure
@@ -143,6 +217,8 @@ export const therapistsRouter = createTRPCRouter({
                 state: z.string().min(1),
                 country: z.string().min(1),
                 zipCode: z.string().min(1),
+                latitude: z.number().positive(),
+                longitude: z.number().positive(),
             }),
         )
         .mutation(async ({ ctx, input }) => {
