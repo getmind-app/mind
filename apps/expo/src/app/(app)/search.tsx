@@ -45,7 +45,7 @@ export default function SearchScreen() {
                 alert(
                     t({
                         message:
-                            "Location permission is required to use this feature",
+                            "You won't be able to use the location filter without location permission.",
                     }),
                 );
                 return;
@@ -106,7 +106,6 @@ export default function SearchScreen() {
                                 (debouceDistance && debouceDistance[0]) ?? null
                             }
                             currentLocation={currentLocation}
-
                         />
                     ) : (
                         <View className="flex flex-col items-center justify-center gap-2 pt-32">
