@@ -4,7 +4,6 @@ import {
     Platform,
     ScrollView,
     Text,
-    TouchableOpacity,
     View,
 } from "react-native";
 import { useRouter } from "expo-router";
