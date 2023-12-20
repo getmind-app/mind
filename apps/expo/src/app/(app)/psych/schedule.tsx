@@ -3,6 +3,7 @@ import {
     Image,
     Linking,
     ScrollView,
+    Switch,
     Text,
     TouchableOpacity,
     View,
@@ -35,10 +36,12 @@ const appointmentAtom = atom<{
     date: Date | null;
     hour: string | null;
     modality: Modality | null;
+    repeat: boolean;
 }>({
     date: null,
     hour: null,
     modality: null,
+    repeat: false,
 });
 
 type therapistAvailableDates =
@@ -55,7 +58,7 @@ export default function TherapistSchedule() {
             id: String(id),
         });
 
-    const { mutate } = api.appointments.create.useMutation({
+    const { mutateAsync } = api.appointments.create.useMutation({
         onSuccess: (appointment) => {
             router.push({
                 pathname: "/psych/payment",
@@ -82,7 +85,7 @@ export default function TherapistSchedule() {
 
         const [hour, minutes] = appointment.hour.split(":");
 
-        mutate({
+        mutateAsync({
             scheduledTo: new Date(
                 appointment.date.getFullYear(),
                 appointment.date.getMonth(),
@@ -93,6 +96,7 @@ export default function TherapistSchedule() {
             modality: appointment.modality,
             therapistId: String(id),
             patientId: String(patient?.id),
+            repeat: appointment.repeat,
         });
     }
 
@@ -186,6 +190,15 @@ export default function TherapistSchedule() {
                                     modality: newModality,
                                 })
                             }
+                        />
+                        <RecurrenceOptions
+                            repeat={appointment.repeat}
+                            onToggle={() => {
+                                setAppointment({
+                                    ...appointment,
+                                    repeat: !appointment.repeat,
+                                });
+                            }}
                         />
                     </View>
                     <LargeButton disabled={!allPicked} onPress={handleConfirm}>
@@ -576,5 +589,47 @@ function ModalityPicker({
                 </View>
             )}
         </AnimatedCard>
+    );
+}
+
+type RecurrenceOptionsProps = {
+    repeat: boolean;
+    onToggle: () => void;
+};
+
+function RecurrenceOptions({ repeat, onToggle }: RecurrenceOptionsProps) {
+    return (
+        <View className={"relative mt-3 rounded-2xl bg-white p-3"}>
+            <TouchableOpacity className={"rounded"} onPress={onToggle}>
+                <View
+                    style={{
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                    }}
+                >
+                    <View>
+                        <BasicText size="2xl">
+                            <Trans>Repeat weekly</Trans>
+                        </BasicText>
+                        <BasicText
+                            color="gray"
+                            size="sm"
+                            style={{
+                                marginBottom: 2,
+                                maxWidth: 320,
+                            }}
+                        >
+                            <Trans>
+                                This appointment will be automatically added to
+                                your calendar and charged every week.
+                                {"\n"}You can cancel it anytime.
+                            </Trans>
+                        </BasicText>
+                    </View>
+                    <Switch value={repeat} onChange={onToggle} />
+                </View>
+            </TouchableOpacity>
+        </View>
     );
 }

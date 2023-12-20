@@ -18,6 +18,7 @@ export const appointmentsRouter = createTRPCRouter({
                 modality: z.enum(["ONLINE", "ON_SITE"]),
                 therapistId: z.string().min(1),
                 patientId: z.string().min(1),
+                repeat: z.boolean(),
             }),
         )
         .mutation(async ({ ctx, input }) => {

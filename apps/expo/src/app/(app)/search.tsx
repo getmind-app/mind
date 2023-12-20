@@ -492,15 +492,15 @@ function List({
                             </Text>
                             <Text className=" font-nunito-sans text-slate-500">
                                 <Trans>
+                                    <Text className="font-nunito-sans-bold">
+                                        R$ {hourlyRate}
+                                    </Text>{" "}
+                                    {"|"}{" "}
                                     {modalities.length > 1
                                         ? "Online e presencial"
                                         : modalities.includes("ONLINE")
                                         ? "Online"
                                         : "Presencial"}{" "}
-                                    |{" "}
-                                    <Text className="font-nunito-sans-bold">
-                                        R$ {hourlyRate}
-                                    </Text>
                                 </Trans>
                             </Text>
                         </View>
