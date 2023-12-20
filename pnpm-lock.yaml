@@ -198,8 +198,8 @@ importers:
         specifier: ~14.4.2
         version: 14.4.2(expo@49.0.9)
       expo-dev-client:
-        specifier: ~2.4.11
-        version: 2.4.11(expo@49.0.9)
+        specifier: ~2.4.12
+        version: 2.4.12(expo@49.0.9)
       expo-device:
         specifier: ~5.4.0
         version: 5.4.0(expo@49.0.9)
@@ -207,8 +207,8 @@ importers:
         specifier: ~11.4.0
         version: 11.4.0(expo@49.0.9)
       expo-image:
-        specifier: ~1.3.3
-        version: 1.3.3(expo@49.0.9)
+        specifier: ~1.3.5
+        version: 1.3.5(expo@49.0.9)
       expo-image-picker:
         specifier: ~14.3.2
         version: 14.3.2(expo@49.0.9)
@@ -7722,6 +7722,19 @@ packages:
       expo-updates-interface: 0.10.1(expo@49.0.9)
     dev: false
 
+  /expo-dev-client@2.4.12(expo@49.0.9):
+    resolution: {integrity: sha512-3+xg0yb/0g6+JQaWq5+xn2uHoOXP4oSX33aWkaZPSNJLoyzfRaHNDF5MLcrMBbEHCw5T5qZRU291K+uQeMMC0g==}
+    peerDependencies:
+      expo: '*'
+    dependencies:
+      expo: 49.0.9(@babel/core@7.22.10)
+      expo-dev-launcher: 2.4.14(expo@49.0.9)
+      expo-dev-menu: 3.2.2(expo@49.0.9)
+      expo-dev-menu-interface: 1.3.0(expo@49.0.9)
+      expo-manifests: 0.7.2
+      expo-updates-interface: 0.10.1(expo@49.0.9)
+    dev: false
+
   /expo-dev-launcher@2.4.13(expo@49.0.9):
     resolution: {integrity: sha512-afszaREyGnhWJMmcOuDGs83r0UWeRvZrOHlKQxxst/UhAeFQqlDmkEjwtDWfTUy7BoXuuw2CuQtUFH+vTyjEGA==}
     peerDependencies:
@@ -7729,6 +7742,17 @@ packages:
     dependencies:
       expo: 49.0.9(@babel/core@7.22.10)
       expo-dev-menu: 3.2.1(expo@49.0.9)
+      resolve-from: 5.0.0
+      semver: 7.5.4
+    dev: false
+
+  /expo-dev-launcher@2.4.14(expo@49.0.9):
+    resolution: {integrity: sha512-SlUf+fEX9sKzDzY1Ui8j5775eLKpO0xPVoI89G7CRsrpUv6ZRvRF836cMFesxkU5d+3bXHpKzDQiEPDSI1G/WQ==}
+    peerDependencies:
+      expo: '*'
+    dependencies:
+      expo: 49.0.9(@babel/core@7.22.10)
+      expo-dev-menu: 3.2.2(expo@49.0.9)
       resolve-from: 5.0.0
       semver: 7.5.4
     dev: false
@@ -7743,6 +7767,16 @@ packages:
 
   /expo-dev-menu@3.2.1(expo@49.0.9):
     resolution: {integrity: sha512-SxH/ZUIYZliMBjJTpiECVSDkP7e81mbGNLH8ZD69iCAfLeH7P1OPXFycEdcvN33I7tVqzFgARGLK/W/8JV+U9w==}
+    peerDependencies:
+      expo: '*'
+    dependencies:
+      expo: 49.0.9(@babel/core@7.22.10)
+      expo-dev-menu-interface: 1.3.0(expo@49.0.9)
+      semver: 7.5.4
+    dev: false
+
+  /expo-dev-menu@3.2.2(expo@49.0.9):
+    resolution: {integrity: sha512-q0IDlCGkZMsDIFV+Mgnz0Q3u/bcnrF8IFMglJ0onF09e5csLk5Ts7hKoQyervOJeThyI402r9OQsFNaru2tgtg==}
     peerDependencies:
       expo: '*'
     dependencies:
@@ -7832,6 +7866,14 @@ packages:
 
   /expo-image@1.3.3(expo@49.0.9):
     resolution: {integrity: sha512-H/w/4XGPRrOv8PsBnoVrctLKtsLYhavrhTK/SkizF3F5u81aHItBACgV8HVrh1qzPXbP40hp/Oyua/ttz61zMQ==}
+    peerDependencies:
+      expo: '*'
+    dependencies:
+      expo: 49.0.9(@babel/core@7.22.10)
+    dev: false
+
+  /expo-image@1.3.5(expo@49.0.9):
+    resolution: {integrity: sha512-yrIR2mnfIKbKcguoqWK3U5m3zvLPnonvSCabB2ErVGhws8zQs7ILYf+7T08j8U6eFcohjw0CoAFJ6RWNsX2EhA==}
     peerDependencies:
       expo: '*'
     dependencies:
