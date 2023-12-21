@@ -68,7 +68,7 @@ export const therapistsRouter = createTRPCRouter({
     findWithFilters: protectedProcedure
         .input(
             z.object({
-                name: z.string().min(1).nullable(),
+                name: z.string().nullable(),
                 priceRange: z
                     .object({
                         min: z.number().positive(),
@@ -91,7 +91,9 @@ export const therapistsRouter = createTRPCRouter({
                 paymentAccountStatus: "ACTIVE",
             };
 
-            if (input.name) {
+            const orderByClause: Record<string, unknown> = {};
+
+            if (input.name && input.name.length > 0) {
                 whereClause = {
                     ...whereClause,
                     name: { contains: input.name, mode: "insensitive" },
@@ -135,35 +137,27 @@ export const therapistsRouter = createTRPCRouter({
                     input.distance,
                 );
 
-                const therapistIds = await ctx.prisma.therapist.findMany({
-                    select: {
-                        id: true,
-                    },
-                    where: {
-                        address: {
-                            latitude: {
-                                gte: boundingBox.minLat,
-                                lte: boundingBox.maxLat,
-                            },
-                            longitude: {
-                                gte: boundingBox.minLon,
-                                lte: boundingBox.maxLon,
-                            },
-                        },
-                    },
-                });
-
                 whereClause = {
                     ...whereClause,
-
-                    id: {
-                        in: therapistIds.map((therapist) => therapist.id),
+                    address: {
+                        latitude: {
+                            gte: boundingBox.minLat,
+                            lte: boundingBox.maxLat,
+                        },
+                        longitude: {
+                            gte: boundingBox.minLon,
+                            lte: boundingBox.maxLon,
+                        },
                     },
                 };
             }
 
             return await ctx.prisma.therapist.findMany({
                 where: whereClause,
+                orderBy: orderByClause,
+                include: {
+                    address: true,
+                },
             });
         }),
     setAvailableHours: protectedProcedure

@@ -15,10 +15,15 @@ import { useRouter } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Trans, t } from "@lingui/macro";
 
-import { type Gender, type Modality } from "../../../../../packages/db";
+import {
+    type Address,
+    type Gender,
+    type Modality,
+} from "../../../../../packages/db";
 import { ProfileSkeleton } from "../../components/ProfileSkeleton";
 import { ScreenWrapper } from "../../components/ScreenWrapper";
 import { Title } from "../../components/Title";
+import getDistanceFromCurrentLocation from "../../helpers/getDistanceFromCurrentLocation";
 import { useSearchTherapistByFilters } from "../../hooks/search/useSearchTherapistByFilters";
 import { useDebounce } from "../../hooks/util/useDebounce";
 
@@ -467,7 +472,14 @@ function List({
     return data.length > 0 ? (
         <View className="flex w-full flex-col items-start justify-center gap-y-4 pt-2">
             {data.map(
-                ({ name, profilePictureUrl, id, modalities, hourlyRate }) => (
+                ({
+                    name,
+                    profilePictureUrl,
+                    id,
+                    modalities,
+                    hourlyRate,
+                    address,
+                }) => (
                     <TouchableOpacity
                         className="flex w-full flex-row items-center gap-4 align-middle"
                         key={id}
@@ -488,16 +500,22 @@ function List({
                             </Text>
                             <Text className=" font-nunito-sans text-slate-500">
                                 <Trans>
+                                    <Text className="font-nunito-sans-bold">
+                                        R$ {hourlyRate}{" "}
+                                    </Text>
+                                    |{" "}
                                     {modalities.length > 1
                                         ? "Online e presencial"
                                         : modalities.includes("ONLINE")
                                         ? "Online"
-                                        : "Presencial"}{" "}
-                                    |{" "}
-                                    <Text className="font-nunito-sans-bold">
-                                        R$ {hourlyRate}
-                                    </Text>
-                                </Trans>
+                                        : "Presencial"}
+                                </Trans>{" "}
+                                {address && currentLocation && (
+                                    <Distance
+                                        address={address}
+                                        currentLocation={currentLocation}
+                                    />
+                                )}
                             </Text>
                         </View>
                     </TouchableOpacity>
@@ -515,6 +533,29 @@ function List({
                 <Trans>No therapists found!</Trans>
             </Text>
         </View>
+    );
+}
+
+function Distance({
+    address,
+    currentLocation,
+}: {
+    address: Address;
+    currentLocation: { latitude: number; longitude: number };
+}) {
+    const distanceFromCurrentLocation = getDistanceFromCurrentLocation({
+        address,
+        currentLocation,
+    });
+
+    return (
+        <Text className="font-nunito-sans">
+            (
+            {distanceFromCurrentLocation && distanceFromCurrentLocation > 1000
+                ? `${(distanceFromCurrentLocation / 1000).toFixed(1)} km`
+                : `${distanceFromCurrentLocation} m`}
+            )
+        </Text>
     );
 }
 
