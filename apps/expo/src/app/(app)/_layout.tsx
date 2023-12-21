@@ -30,7 +30,7 @@ function TabBarIconWrapper({
 export default function AppRouter() {
     const { user } = useClerk();
     const rootNavigationState = useRootNavigationState();
-    const userHasImage = useUserHasProfileImage();
+    const userHasImage = useUserHasProfileImage({ userId: null });
     const isProfessional = useUserIsProfessional();
 
     // https://github.com/expo/router/issues/740
