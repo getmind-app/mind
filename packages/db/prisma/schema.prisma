@@ -37,6 +37,7 @@ model Therapist {
     methodologies        Methodology[]
     appointments         Appointment[]
     hours                Hour[]
+    Recurrence           Recurrence[]
 }
 
 model Methodology {
@@ -105,12 +106,35 @@ model Patient {
     userId            String        @unique
     paymentAccountId  String?
     appointments      Appointment[]
+    Recurrence        Recurrence[]
 }
 
 model Email {
     id        String   @id @default(cuid())
     email     String   @unique
     createdAt DateTime @default(now())
+}
+
+model Recurrence {
+    id              String           @id @default(cuid())
+    createdAt       DateTime         @default(now())
+    startAt         DateTime
+    endAt           DateTime
+    weekDay         WeekDay
+    patientId       String
+    patient         Patient          @relation(fields: [patientId], references: [id], onDelete: Cascade)
+    therapistId     String
+    therapist       Therapist        @relation(fields: [therapistId], references: [id], onDelete: Cascade)
+    defaultModality Modality
+    status          RecurrenceStatus @default(PENDENT)
+    frequency       Frequency        @default(WEEKLY)
+}
+
+enum Frequency {
+    WEEKLY
+    BIWEEKLY
+    MONTHLY
+    CUSTOM
 }
 
 enum Modality {
@@ -121,6 +145,13 @@ enum Modality {
 enum Gender {
     FEMALE
     MALE
+}
+
+enum RecurrenceStatus {
+    PENDENT
+    ACCEPTED
+    REJECTED
+    CANCELED
 }
 
 enum AppointmentStatus {
