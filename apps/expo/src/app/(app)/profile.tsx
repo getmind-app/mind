@@ -6,6 +6,7 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
+import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
 import { useClerk } from "@clerk/clerk-expo";
 import { AntDesign, MaterialIcons } from "@expo/vector-icons";
@@ -32,6 +33,21 @@ export default function UserProfileScreen() {
         router.replace("/onboard");
     }
 
+    const pickImageAsync = async () => {
+        const result = await ImagePicker.launchImageLibraryAsync({
+            allowsEditing: true,
+            quality: 1,
+            base64: true,
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        });
+
+        if (result.canceled) return;
+
+        await user?.setProfileImage({
+            file: `data:image/png;base64,${result.assets[0]?.base64}`,
+        });
+    };
+
     return (
         <ScreenWrapper>
             <View
@@ -42,27 +58,33 @@ export default function UserProfileScreen() {
                 }}
             >
                 <View className="flex flex-row items-center gap-x-4 pt-4 align-middle">
-                    {userHasProfileImage.data ? (
-                        <Image
-                            className="rounded-full"
-                            alt={`${user?.firstName}'s profile picture`}
-                            source={{
-                                uri: user?.imageUrl,
-                                width: 72,
-                                height: 72,
-                            }}
-                        />
-                    ) : (
-                        <View
-                            style={{
-                                backgroundColor: "#e5e7eb",
-                                padding: 24,
-                                borderRadius: 100,
-                            }}
-                        >
-                            <AntDesign name="user" size={24} color="black" />
-                        </View>
-                    )}
+                    <TouchableOpacity onPress={() => pickImageAsync()}>
+                        {userHasProfileImage.data ? (
+                            <Image
+                                className="rounded-full"
+                                alt={`${user?.firstName}'s profile picture`}
+                                source={{
+                                    uri: user?.imageUrl,
+                                    width: 72,
+                                    height: 72,
+                                }}
+                            />
+                        ) : (
+                            <View
+                                style={{
+                                    backgroundColor: "#e5e7eb",
+                                    padding: 24,
+                                    borderRadius: 100,
+                                }}
+                            >
+                                <AntDesign
+                                    name="user"
+                                    size={24}
+                                    color="black"
+                                />
+                            </View>
+                        )}
+                    </TouchableOpacity>
                     <View className="flex flex-col">
                         <View>
                             {user?.firstName && (
