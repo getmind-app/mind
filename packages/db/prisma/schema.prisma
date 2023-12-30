@@ -34,17 +34,9 @@ model Therapist {
     modalities           Modality[]
     address              Address?
     education            Education[]
-    methodologies        Methodology[]
+    methodologies        String[]
     appointments         Appointment[]
     hours                Hour[]
-}
-
-model Methodology {
-    id          String    @id @default(cuid())
-    name        String
-    description String
-    therapistId String    @unique
-    therapist   Therapist @relation(fields: [therapistId], references: [id], onDelete: Cascade)
 }
 
 model Education {

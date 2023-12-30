@@ -185,7 +185,11 @@ function TherapistOptions() {
                     title={t({ message: "Hourly Rate" })}
                 />
             </ScrollView>
-            <LargeButton onPress={onSubmit} loading={isSubmitting}>
+            <LargeButton
+                onPress={onSubmit}
+                loading={isSubmitting}
+                disabled={!isValid || !isDirty}
+            >
                 <Trans>Update</Trans>
             </LargeButton>
         </>
