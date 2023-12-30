@@ -78,6 +78,8 @@ export default function TherapistSchedule() {
     function handleConfirm() {
         if (!appointment.date || !appointment.hour || !appointment.modality) {
             throw new Error("Missing form data");
+        } else if (!data?.hourlyRate) {
+            throw new Error("Missing hourly rate");
         }
 
         const [hour, minutes] = appointment.hour.split(":");
@@ -93,6 +95,7 @@ export default function TherapistSchedule() {
             modality: appointment.modality,
             therapistId: String(id),
             patientId: String(patient?.id),
+            hourlyRate: data?.hourlyRate,
         });
     }
 

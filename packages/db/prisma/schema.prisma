@@ -79,6 +79,7 @@ model Appointment {
     scheduledAt DateTime          @default(now())
     modality    Modality
     status      AppointmentStatus @default(PENDENT)
+    hourlyRate  Float
     link        String?
     isPaid      Boolean           @default(false)
     eventId     String?

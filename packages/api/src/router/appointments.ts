@@ -3,7 +3,7 @@ import clerk from "@clerk/clerk-sdk-node";
 import Stripe from "stripe";
 import { z } from "zod";
 
-import { type Address, type Appointment, type Therapist } from "@acme/db";
+import { type Address, type Therapist } from "@acme/db";
 
 import { cancelAppointmentInCalendar } from "../helpers/cancelAppointmentInCalendar";
 import { createAppointmentInCalendar } from "../helpers/createAppointmentInCalendar";
@@ -17,6 +17,7 @@ export const appointmentsRouter = createTRPCRouter({
                 scheduledTo: z.date(),
                 modality: z.enum(["ONLINE", "ON_SITE"]),
                 therapistId: z.string().min(1),
+                hourlyRate: z.number(),
                 patientId: z.string().min(1),
             }),
         )
@@ -283,10 +284,8 @@ export const appointmentsRouter = createTRPCRouter({
                         );
                     }
 
-                    if (!therapist?.hourlyRate) {
-                        throw new Error(
-                            "Missing payment account id for patient",
-                        );
+                    if (!appointment?.hourlyRate) {
+                        throw new Error("Missing hourly rate for appointment");
                     }
 
                     if (!process.env.FIXED_APPLICATION_FEE) {
@@ -310,7 +309,7 @@ export const appointmentsRouter = createTRPCRouter({
                         confirm: true,
                         description: "Appointment payment",
                         currency: "brl",
-                        amount: therapist.hourlyRate * 100,
+                        amount: appointment.hourlyRate * 100,
                         payment_method: paymentMethod.data[0].id,
                         transfer_data: {
                             destination: therapist.paymentAccountId,
@@ -322,7 +321,7 @@ export const appointmentsRouter = createTRPCRouter({
                         application_fee_amount:
                             parseFloat(process.env.FIXED_APPLICATION_FEE) *
                             100 *
-                            therapist.hourlyRate,
+                            appointment.hourlyRate,
                     });
 
                     if (paymentResponse.status !== "succeeded") {
@@ -332,7 +331,7 @@ export const appointmentsRouter = createTRPCRouter({
                     calendarEvent = await createAppointmentInCalendar(
                         therapist as Therapist & { address: Address },
                         therapistUser.emailAddresses[0]?.emailAddress ?? "",
-                        appointment as Appointment,
+                        appointment,
                         patient,
                     );
                 } else if (input.status === "CANCELED") {
