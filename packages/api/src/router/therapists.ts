@@ -83,6 +83,7 @@ export const therapistsRouter = createTRPCRouter({
                         longitude: z.number(),
                     })
                     .nullable(),
+                methodologies: z.array(z.string()).nullable(),
             }),
         )
         .query(async ({ ctx, input }) => {
@@ -121,6 +122,15 @@ export const therapistsRouter = createTRPCRouter({
                     ...whereClause,
                     modalities: {
                         hasSome: input.modalities,
+                    },
+                };
+            }
+
+            if (input.methodologies && input.methodologies.length > 0) {
+                whereClause = {
+                    ...whereClause,
+                    methodologies: {
+                        hasSome: input.methodologies,
                     },
                 };
             }

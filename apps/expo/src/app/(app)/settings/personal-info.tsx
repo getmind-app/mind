@@ -63,8 +63,6 @@ function TherapistOptions() {
     const {
         control,
         handleSubmit,
-        watch,
-        getValues,
         formState: { isValid, isDirty, isSubmitting },
     } = useForm<NonNullable<typeof therapist.data>>({
         defaultValues: therapist.data
@@ -107,18 +105,6 @@ function TherapistOptions() {
             methodologies: formData.methodologies as string[],
         });
     });
-
-    // use effect loggin every change in the form
-    useEffect(() => {
-        console.log("yearsOfExperience", watch("yearsOfExperience"));
-        console.log("yearsOfExperience", therapist.data?.yearsOfExperience);
-
-        console.log("watching");
-        console.log("isDirty", isDirty);
-        console.log("isValid", isValid);
-
-        console.log(getValues());
-    }, [watch()]);
 
     if (!therapist.data || therapist.isLoading) {
         return <ProfileSkeleton />;
@@ -211,7 +197,7 @@ function TherapistOptions() {
                             t({
                                 message: "Cognitivo Comportamental (TCC)",
                             }),
-                            t({ message: "Psicoterapia breve focal" }),
+                            t({ message: "Psicoterapia Breve Focal" }),
                             t({ message: "Humanismo" }),
                             t({ message: "Behaviorista" }),
                             t({ message: "Existencial" }),
