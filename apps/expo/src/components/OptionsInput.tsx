@@ -52,7 +52,7 @@ export function OptionsInput({
                             borderRadius: 50,
                             borderWidth: 1,
                             borderColor: isOptionSelected(option)
-                                ? "3b82f6"
+                                ? "#3b82f6"
                                 : "#C0C0C2",
                             backgroundColor: isOptionSelected(option)
                                 ? "#3b82f6"

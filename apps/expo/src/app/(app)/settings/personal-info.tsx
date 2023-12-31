@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
     KeyboardAvoidingView,
     Platform,
@@ -6,6 +6,7 @@ import {
     Text,
     View,
 } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
 import { useRouter } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,6 +18,7 @@ import { z } from "zod";
 
 import { FormCurrencyInput } from "../../../components/FormCurrencyInput";
 import { FormDateInput } from "../../../components/FormDateInput";
+import { FormLongTextInput } from "../../../components/FormLongTextInput";
 import { FormOptionsInput } from "../../../components/FormOptionsInput";
 import { FormTextInput } from "../../../components/FormTextInput";
 import { Header } from "../../../components/Header";
@@ -175,7 +177,12 @@ function TherapistOptions() {
                         name="yearsOfExperience"
                         inputMode="numeric"
                     />
-                    <FormTextInput
+                    <FormCurrencyInput
+                        name="hourlyRate"
+                        control={control}
+                        title={t({ message: "Hourly Rate" })}
+                    />
+                    <FormLongTextInput
                         title={t({ message: "About you" })}
                         placeholder={t({
                             message: "Tell us about yourself",
@@ -183,12 +190,59 @@ function TherapistOptions() {
                         control={control}
                         name="about"
                         inputMode="text"
+                        lengthLimit={250}
                     />
-                    <FormCurrencyInput
-                        name="hourlyRate"
-                        control={control}
-                        title={t({ message: "Hourly Rate" })}
-                    />
+                    {/* input de escolaridade baseado no seguinte model:
+                    
+                    
+                    model Education {
+                        id          String    @id @default(cuid())
+                        institution String
+                        degree      String
+                        startAt     DateTime?
+                        endAt       DateTime?
+                        therapistId String    @unique
+                        therapist   Therapist @relation(fields: [therapistId], references: [id], onDelete: Cascade)
+                    }
+                    
+                    
+                    */}
+
+                    <View className="gap-2 py-3">
+                        <Text className="font-nunito-sans text-lg text-slate-700">
+                            {t({ message: "Education" })}
+                        </Text>
+
+                        <View
+                            style={{
+                                flexDirection: "row",
+                                flexWrap: "wrap",
+                            }}
+                        >
+                            <TouchableOpacity
+                                style={{
+                                    paddingVertical: 8,
+                                    paddingHorizontal: 16,
+                                    marginHorizontal: 4,
+                                    marginBottom: 8,
+                                    borderRadius: 50,
+                                    borderWidth: 1,
+                                    borderColor: "#C0C0C2",
+                                    backgroundColor: "white",
+                                }}
+                            >
+                                <Text
+                                    style={{
+                                        color: "black",
+                                    }}
+                                    className="font-nunito-sans text-sm"
+                                >
+                                    {t({ message: "Add" })}
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+
                     <FormOptionsInput
                         title={t({ message: "Methodologies" })}
                         options={[
