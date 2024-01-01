@@ -78,6 +78,7 @@ function TherapistOptions() {
                   phone: therapist.data.phone,
                   about: therapist.data.about,
                   methodologies: therapist.data.methodologies as string[],
+                  education: therapist.data.education,
               }
             : {
                   name: "",
@@ -89,6 +90,7 @@ function TherapistOptions() {
                   phone: "",
                   about: "",
                   methodologies: [],
+                  education: [],
               },
         resolver: zodResolver(therapistSchema),
     });
@@ -105,6 +107,7 @@ function TherapistOptions() {
             phone: formData.phone,
             about: formData.about,
             methodologies: formData.methodologies as string[],
+            education: formData.education,
         });
     });
 
@@ -192,21 +195,6 @@ function TherapistOptions() {
                         inputMode="text"
                         lengthLimit={250}
                     />
-                    {/* input de escolaridade baseado no seguinte model:
-                    
-                    
-                    model Education {
-                        id          String    @id @default(cuid())
-                        institution String
-                        degree      String
-                        startAt     DateTime?
-                        endAt       DateTime?
-                        therapistId String    @unique
-                        therapist   Therapist @relation(fields: [therapistId], references: [id], onDelete: Cascade)
-                    }
-                    
-                    
-                    */}
 
                     <View className="gap-2 py-3">
                         <Text className="font-nunito-sans text-lg text-slate-700">
@@ -336,4 +324,14 @@ const therapistSchema = z.object({
         .min(10, "Your phone number must be valid"),
     about: z.string().nullable(),
     methodologies: z.array(z.string()).nullable(),
+    education: z.array(
+        z.object({
+            id: z.string(),
+            degree: z.string(),
+            institution: z.string(),
+            startAt: z.date(),
+            endAt: z.date(),
+            therapistId: z.string(),
+        }),
+    ),
 });
