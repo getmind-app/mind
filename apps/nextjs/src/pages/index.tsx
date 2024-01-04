@@ -45,8 +45,16 @@ const Home: NextPage = () => {
                             <p className="text-lg text-slate-500">
                                 Mind helps you to find the best therapist,
                                 schedule
-                                <br /> appointments and pay for them.
+                                <br /> appointments and pay for them. See our{" "}
+                                <a
+                                    href="/privacy"
+                                    className="text-slate-800 duration-500 hover:text-slate-500"
+                                >
+                                    privacy policy
+                                </a>
+                                .
                             </p>
+
                             <div className="flex items-center gap-6 align-middle">
                                 <Link href="https://www.youtube.com/watch?v=EuF4Mvld-Kc&ab_channel=GustavoFior">
                                     <button className="rounded-lg bg-blue-500 px-4 py-2 font-bold text-white transition duration-300 hover:bg-blue-400">
