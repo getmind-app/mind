@@ -27,7 +27,7 @@ import { useUserHasProfileImage } from "../../../hooks/user/useUserHasProfileIma
 export default function EditPatientProfile() {
     const { user } = useUser();
     const router = useRouter();
-    const userHasProfileImage = useUserHasProfileImage();
+    const userHasProfileImage = useUserHasProfileImage({ userId: null });
     const [selectedImage, setSelectedImage] =
         useState<ImagePicker.ImagePickerAsset | null>(null);
     const { createPatient } = usePatientMutations({
