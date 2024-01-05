@@ -22,7 +22,7 @@ export default function UserProfileScreen() {
     const router = useRouter();
     const { user, signOut } = useClerk();
     const { mutateAsync } = api.users.clearMetadata.useMutation({});
-    const userHasProfileImage = useUserHasProfileImage();
+    const userHasProfileImage = useUserHasProfileImage({ userId: null });
     const isProfessional = useUserIsProfessional();
 
     async function clearUserMetaData(): Promise<void> {
