@@ -40,7 +40,7 @@ export default function SearchScreen() {
         longitude: number;
     } | null>(null);
     const modalizeRef = useRef<Modalize>(null);
-    const ref = useRef(null);
+    const ref = useRef<number[] | null>(null);
     const debounceSearch = useDebounce(search, 500);
     const debouncePriceRange = useDebounce(priceRange, 300);
     const debouceDistance = useDebounce(distance, 300);
