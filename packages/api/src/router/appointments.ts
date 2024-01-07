@@ -42,9 +42,15 @@ export const appointmentsRouter = createTRPCRouter({
                 }),
             ]);
 
-            const therapistUser = await clerk.users.getUser(
-                therapist?.userId ?? "",
-            );
+            if (!therapist?.userId) {
+                throw new Error("Couldn't find therapist");
+            }
+
+            if (!patient?.userId) {
+                throw new Error("Couldn't find patient");
+            }
+
+            const therapistUser = await clerk.users.getUser(therapist.userId);
 
             if (input.repeat) {
                 await ctx.prisma.recurrence.create({
