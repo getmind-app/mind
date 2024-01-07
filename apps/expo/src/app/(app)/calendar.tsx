@@ -1,5 +1,6 @@
 import { useState } from "react";
 import {
+    ActivityIndicator,
     Image,
     Modal,
     Pressable,
@@ -11,7 +12,12 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
-import { Feather, FontAwesome, MaterialIcons } from "@expo/vector-icons";
+import {
+    AntDesign,
+    Feather,
+    FontAwesome,
+    MaterialIcons,
+} from "@expo/vector-icons";
 import { Trans, t } from "@lingui/macro";
 import { useLingui } from "@lingui/react";
 
@@ -23,14 +29,15 @@ import { ScreenWrapper } from "../../components/ScreenWrapper";
 import { Title } from "../../components/Title";
 import { getShareLink } from "../../helpers/getShareLink";
 import { isMoreThan24HoursLater } from "../../helpers/isMoreThan24HoursLater";
+import { useUserHasProfileImage } from "../../hooks/user/useUserHasProfileImage";
 import { useUserIsProfessional } from "../../hooks/user/useUserIsProfessional";
 import { api } from "../../utils/api";
 import {
     type Appointment,
     type AppointmentStatus,
+    type AppointmentType,
     type Patient,
     type Therapist,
-    type AppointmentType as TypeOfAppointment,
 } from ".prisma/client";
 
 export default function CalendarScreen() {
@@ -217,17 +224,7 @@ function AppointmentCard({
                             <Trans>with</Trans>
                             {"  "}
                         </Text>
-                        <Image
-                            className="rounded-full"
-                            alt={`${appointment.therapist.name}'s profile picture`}
-                            source={{
-                                uri: isProfessional
-                                    ? appointment.patient.profilePictureUrl
-                                    : appointment.therapist.profilePictureUrl,
-                                width: 20,
-                                height: 20,
-                            }}
-                        />
+                        <PatientPhoto appointment={appointment} />
                         <Text className="font-nunito-sans text-sm text-slate-500">
                             {"  "}
                             {isProfessional
@@ -500,7 +497,7 @@ function Status({ status }: { status: AppointmentStatus }) {
 }
 
 const appointmentMapper: {
-    [key in TypeOfAppointment]: string;
+    [key in AppointmentType]: string;
 } = {
     FIRST_IN_RECURRENCE: t({ message: "First in recurrence" }),
     SINGLE: t({ message: "Single" }),
@@ -511,11 +508,42 @@ const appointmentMapper: {
 function TypeOfAppointment({
     appointmentType,
 }: {
-    appointmentType: TypeOfAppointment;
+    appointmentType: AppointmentType;
 }) {
     return (
         <BasicText color="black">
             {appointmentMapper[appointmentType]}
         </BasicText>
+    );
+}
+
+function PatientPhoto({
+    appointment,
+}: {
+    appointment: Appointment & { therapist: Therapist } & { patient: Patient };
+}) {
+    const { data, isLoading } = useUserHasProfileImage({
+        userId: appointment.patient.userId,
+    });
+
+    if (isLoading) return <ActivityIndicator />;
+
+    if (!data)
+        return (
+            <View className={`rounded-full bg-blue-100 p-[2px]`}>
+                <AntDesign name="user" size={20} />
+            </View>
+        );
+
+    return (
+        <Image
+            className="rounded-full"
+            alt={`${appointment.therapist.name}'s profile picture`}
+            source={{
+                uri: appointment.patient.profilePictureUrl,
+                width: 20,
+                height: 20,
+            }}
+        />
     );
 }
