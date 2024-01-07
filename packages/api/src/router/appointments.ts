@@ -1,5 +1,5 @@
 import type * as Notification from "expo-notifications";
-import clerk from "@clerk/clerk-sdk-node";
+import clerk, { type User } from "@clerk/clerk-sdk-node";
 import { addHours, format } from "date-fns";
 import Stripe from "stripe";
 import { z } from "zod";
@@ -7,6 +7,8 @@ import { z } from "zod";
 import {
     type Address,
     type Appointment,
+    type AppointmentStatus,
+    type Patient,
     type Therapist,
     type WeekDay,
 } from "@acme/db";
@@ -15,6 +17,60 @@ import { cancelAppointmentInCalendar } from "../helpers/cancelAppointmentInCalen
 import { createAppointmentInCalendar } from "../helpers/createAppointmentInCalendar";
 import { sendPushNotification } from "../helpers/sendPushNotification";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
+
+async function updateAppointmentStatusNotificationMessage({
+    therapistUser,
+    therapist,
+    patientUser,
+    patient,
+    status,
+    scheduledTo,
+}: {
+    therapistUser: User;
+    patientUser: User;
+    patient: Patient;
+    therapist: Therapist;
+    status: AppointmentStatus;
+    scheduledTo: Date;
+}) {
+    const [date, hour] = format(scheduledTo, "dd HH");
+
+    if (status === "PENDENT") {
+        return;
+    }
+
+    if (status === "CANCELED") {
+        await sendPushNotification({
+            expoPushToken: therapistUser.publicMetadata
+                .expoPushToken as Notification.ExpoPushToken,
+            title: "Sessão cancelada ❌",
+            body: `${patient.name} cancelou a sessão no dia ${date} às ${hour}h.`,
+        });
+        return;
+    }
+
+    if (status === "REJECTED") {
+        await sendPushNotification({
+            expoPushToken: patientUser.publicMetadata
+                .expoPushToken as Notification.ExpoPushToken,
+            title: "Sessão cancelada ❌",
+            body: `${therapist.name} não vai poder atender você no dia ${date} às ${hour}h.`,
+        });
+        return;
+    }
+
+    if (status === "ACCEPTED") {
+        await sendPushNotification({
+            expoPushToken: patientUser.publicMetadata
+                .expoPushToken as Notification.ExpoPushToken,
+            title: "Sessão confirmada! 🎉",
+            body: `${therapist.name} aceitou sua sessão no dia ${date} às ${hour}h.`,
+        });
+        return;
+    }
+
+    const _exhaustive: never = status;
+}
 
 export const appointmentsRouter = createTRPCRouter({
     create: protectedProcedure
@@ -254,164 +310,59 @@ export const appointmentsRouter = createTRPCRouter({
             }),
         )
         .mutation(async ({ ctx, input }) => {
-            let calendarEvent;
+            let calendarEvent: null | Awaited<
+                ReturnType<typeof createAppointmentInCalendar>
+            > = null;
 
-            if (input.status !== "PENDENT") {
-                const therapist = await ctx.prisma.therapist.findUnique({
-                    where: {
-                        id: input.therapistId,
-                    },
-                    include: {
-                        address: true,
-                    },
-                });
-
-                const patient = await ctx.prisma.patient.findUnique({
-                    where: {
-                        id: input.patientId,
-                    },
-                });
-
-                const patientUser = await clerk.users.getUser(
-                    patient?.userId ?? "",
-                );
-
-                const therapistUser = await clerk.users.getUser(
-                    therapist?.userId ?? "",
-                );
-
-                const appointment = await ctx.prisma.appointment.findUnique({
-                    where: {
-                        id: input.id,
-                    },
-                });
-
-                const notificationMapper: {
-                    [key in "ACCEPTED" | "REJECTED" | "CANCELED"]: {
-                        title: string;
-                        body: string;
-                        sendTo: Notification.ExpoPushToken;
-                    };
-                } = {
-                    ACCEPTED: {
-                        title: "Sessão confirmada! 🎉",
-                        body: `${
-                            therapist?.name
-                        } aceitou sua sessão no dia ${new Date(
-                            input.scheduledTo,
-                        ).getDate()} às ${new Date(
-                            input.scheduledTo,
-                        ).getHours()}h.`,
-                        sendTo: patientUser.publicMetadata
-                            .expoPushToken as Notification.ExpoPushToken,
-                    },
-                    REJECTED: {
-                        title: "Sessão cancelada ❌",
-                        body: `${
-                            therapist?.name
-                        } não vai poder atender você no dia ${new Date(
-                            input.scheduledTo,
-                        ).getDate()} às ${new Date(
-                            input.scheduledTo,
-                        ).getHours()}h.`,
-                        sendTo: patientUser.publicMetadata
-                            .expoPushToken as Notification.ExpoPushToken,
-                    },
-                    CANCELED: {
-                        title: "Sessão cancelada ❌",
-                        body: `${
-                            patient?.name
-                        } cancelou a sessão no dia ${new Date(
-                            input.scheduledTo,
-                        ).getDate()} às ${new Date(
-                            input.scheduledTo,
-                        ).getHours()}h.`,
-                        sendTo: therapistUser.publicMetadata
-                            .expoPushToken as Notification.ExpoPushToken,
-                    },
-                };
-
-                if (input.status === "ACCEPTED") {
-                    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-                        apiVersion: "2023-08-16",
-                    });
-
-                    if (!therapist?.paymentAccountId) {
-                        throw new Error(
-                            "Missing payment account id for therapist",
-                        );
-                    }
-
-                    if (!patient?.paymentAccountId) {
-                        throw new Error(
-                            "Missing payment account id for patient",
-                        );
-                    }
-
-                    if (!therapist?.hourlyRate) {
-                        throw new Error(
-                            "Missing payment account id for patient",
-                        );
-                    }
-
-                    if (!process.env.FIXED_APPLICATION_FEE) {
-                        throw new Error("Missing application fee");
-                    }
-
-                    const paymentMethod =
-                        await stripe.customers.listPaymentMethods(
-                            patient.paymentAccountId,
-                            {
-                                limit: 1,
-                            },
-                        );
-
-                    if (!paymentMethod.data || !paymentMethod.data[0]) {
-                        throw new Error("Missing payment method");
-                    }
-
-                    const paymentResponse = await stripe.paymentIntents.create({
-                        customer: patient.paymentAccountId,
-                        confirm: true,
-                        description: "Appointment payment",
-                        currency: "brl",
-                        amount: therapist.hourlyRate * 100,
-                        payment_method: paymentMethod.data[0].id,
-                        transfer_data: {
-                            destination: therapist.paymentAccountId,
-                        },
-                        automatic_payment_methods: {
-                            enabled: true,
-                            allow_redirects: "never",
-                        },
-                        application_fee_amount:
-                            parseFloat(process.env.FIXED_APPLICATION_FEE) *
-                            100 *
-                            therapist.hourlyRate,
-                    });
-
-                    if (paymentResponse.status !== "succeeded") {
-                        throw new Error("Payment failed");
-                    }
-
-                    calendarEvent = await createAppointmentInCalendar(
-                        therapist as Therapist & { address: Address },
-                        therapistUser.emailAddresses[0]?.emailAddress ?? "",
-                        appointment as Appointment,
-                        patient,
-                    );
-                } else if (input.status === "CANCELED") {
-                    await cancelAppointmentInCalendar(
-                        appointment?.eventId ?? "",
-                    );
-                }
-
-                await sendPushNotification({
-                    expoPushToken: notificationMapper[input.status].sendTo,
-                    title: notificationMapper[input.status]["title"],
-                    body: notificationMapper[input.status]["body"],
-                });
+            if (input.status === "PENDENT") {
+                throw new Error("Cannot update appointment status to PENDENT");
             }
+
+            const therapist = await ctx.prisma.therapist.findUniqueOrThrow({
+                where: {
+                    id: input.therapistId,
+                },
+                include: {
+                    address: true,
+                },
+            });
+
+            const patient = await ctx.prisma.patient.findUniqueOrThrow({
+                where: {
+                    id: input.patientId,
+                },
+            });
+
+            const patientUser = await clerk.users.getUser(patient.userId);
+            const therapistUser = await clerk.users.getUser(therapist.userId);
+
+            const appointment = await ctx.prisma.appointment.findUniqueOrThrow({
+                where: {
+                    id: input.id,
+                },
+            });
+
+            if (input.status === "ACCEPTED") {
+                await handleAppointmentPayment({ therapist, patient });
+
+                calendarEvent = await createAppointmentInCalendar(
+                    therapist as Therapist & { address: Address },
+                    therapistUser.emailAddresses[0]?.emailAddress ?? "",
+                    appointment,
+                    patient,
+                );
+            } else if (input.status === "CANCELED") {
+                await cancelAppointmentInCalendar(appointment?.eventId ?? "");
+            }
+
+            await updateAppointmentStatusNotificationMessage({
+                status: input.status,
+                scheduledTo: input.scheduledTo,
+                patient,
+                patientUser,
+                therapist,
+                therapistUser,
+            });
 
             return await ctx.prisma.appointment.update({
                 where: {
@@ -419,9 +370,75 @@ export const appointmentsRouter = createTRPCRouter({
                 },
                 data: {
                     ...input,
-                    link: calendarEvent?.data?.hangoutLink,
-                    eventId: calendarEvent?.data?.id,
+                    ...(calendarEvent
+                        ? {
+                              link: calendarEvent.data.hangoutLink,
+                              eventId: calendarEvent.data.id,
+                          }
+                        : {}),
                 },
             });
         }),
 });
+async function handleAppointmentPayment({
+    therapist,
+    patient,
+}: {
+    therapist: Therapist & { address: Address | null };
+    patient: Patient;
+}) {
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+        apiVersion: "2023-08-16",
+    });
+
+    if (!therapist.paymentAccountId) {
+        throw new Error("Missing payment account id for therapist");
+    }
+
+    if (!patient.paymentAccountId) {
+        throw new Error("Missing payment account id for patient");
+    }
+
+    if (!therapist.hourlyRate) {
+        throw new Error("Missing payment account id for patient");
+    }
+
+    if (!process.env.FIXED_APPLICATION_FEE) {
+        throw new Error("Missing application fee");
+    }
+
+    const paymentMethod = await stripe.customers.listPaymentMethods(
+        patient.paymentAccountId,
+        {
+            limit: 1,
+        },
+    );
+
+    if (!paymentMethod.data || !paymentMethod.data[0]) {
+        throw new Error("Missing payment method");
+    }
+
+    const paymentResponse = await stripe.paymentIntents.create({
+        customer: patient.paymentAccountId,
+        confirm: true,
+        description: "Appointment payment",
+        currency: "brl",
+        amount: therapist.hourlyRate * 100,
+        payment_method: paymentMethod.data[0].id,
+        transfer_data: {
+            destination: therapist.paymentAccountId,
+        },
+        automatic_payment_methods: {
+            enabled: true,
+            allow_redirects: "never",
+        },
+        application_fee_amount:
+            parseFloat(process.env.FIXED_APPLICATION_FEE) *
+            100 *
+            therapist.hourlyRate,
+    });
+
+    if (paymentResponse.status !== "succeeded") {
+        throw new Error("Payment failed");
+    }
+}
