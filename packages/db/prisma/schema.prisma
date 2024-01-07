@@ -75,19 +75,21 @@ model Address {
 }
 
 model Appointment {
-    id          String            @id @default(cuid())
-    scheduledTo DateTime
-    scheduledAt DateTime          @default(now())
-    modality    Modality
-    status      AppointmentStatus @default(PENDENT)
-    link        String?
-    isPaid      Boolean           @default(false)
-    eventId     String?
-    patientId   String
-    patient     Patient           @relation(fields: [patientId], references: [id], onDelete: Cascade)
-    therapistId String
-    therapist   Therapist         @relation(fields: [therapistId], references: [id], onDelete: Cascade)
-    type        AppointmentType
+    id           String            @id @default(cuid())
+    scheduledTo  DateTime
+    scheduledAt  DateTime          @default(now())
+    modality     Modality
+    status       AppointmentStatus @default(PENDENT)
+    link         String?
+    isPaid       Boolean           @default(false)
+    eventId      String?
+    patientId    String
+    patient      Patient           @relation(fields: [patientId], references: [id], onDelete: Cascade)
+    therapistId  String
+    therapist    Therapist         @relation(fields: [therapistId], references: [id], onDelete: Cascade)
+    recurrence   Recurrence?       @relation(fields: [recurrenceId], references: [id], onDelete: Cascade)
+    recurrenceId String?
+    type         AppointmentType
 }
 
 model Hour {
@@ -129,6 +131,7 @@ model Recurrence {
     defaultModality Modality
     status          RecurrenceStatus @default(PENDENT)
     frequency       Frequency        @default(WEEKLY)
+    Appointment     Appointment[]
 }
 
 enum Frequency {
