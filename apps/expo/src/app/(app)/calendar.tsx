@@ -15,6 +15,7 @@ import { Feather, FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import { Trans, t } from "@lingui/macro";
 import { useLingui } from "@lingui/react";
 
+import { BasicText } from "../../components/BasicText";
 import { Card } from "../../components/Card";
 import { CardSkeleton } from "../../components/CardSkeleton";
 import { Refreshable } from "../../components/Refreshable";
@@ -29,6 +30,7 @@ import {
     type AppointmentStatus,
     type Patient,
     type Therapist,
+    type AppointmentType as TypeOfAppointment,
 } from ".prisma/client";
 
 export default function CalendarScreen() {
@@ -183,6 +185,10 @@ function AppointmentCard({
     const [open, setOpen] = useState(false);
     const isProfessional = useUserIsProfessional();
     const lingui = useLingui();
+    const patientCanCancel =
+        appointment.status == "ACCEPTED" &&
+        isMoreThan24HoursLater(appointment.scheduledTo) &&
+        !isProfessional;
 
     return (
         <Card key={appointment.id}>
@@ -198,6 +204,7 @@ function AppointmentCard({
                     }}
                 >
                     <Status status={appointment.status} />
+                    <TypeOfAppointment appointmentType={appointment.type} />
                     <Text className="pt-2 font-nunito-sans text-xl capitalize">
                         {new Intl.DateTimeFormat(lingui.i18n.locale, {
                             weekday: "long",
@@ -253,9 +260,7 @@ function AppointmentCard({
                             : new Date(appointment.scheduledTo).getMinutes()}
                     </Text>
                     {(appointment.status == "PENDENT" && isProfessional) ||
-                    (appointment.status == "ACCEPTED" &&
-                        isMoreThan24HoursLater(appointment.scheduledTo) &&
-                        !isProfessional) ? (
+                    patientCanCancel ? (
                         <TouchableOpacity onPress={() => setOpen(!open)}>
                             {open ? (
                                 <Feather
@@ -491,5 +496,26 @@ function Status({ status }: { status: AppointmentStatus }) {
                 {label}
             </Text>
         </View>
+    );
+}
+
+const appointmentMapper: {
+    [key in TypeOfAppointment]: string;
+} = {
+    FIRST_IN_RECURRENCE: t({ message: "First in recurrence" }),
+    SINGLE: t({ message: "Single" }),
+    RECURRENT: t({ message: "Recurrent" }),
+    SINGLE_REPEATED: t({ message: "Repeated" }),
+};
+
+function TypeOfAppointment({
+    appointmentType,
+}: {
+    appointmentType: TypeOfAppointment;
+}) {
+    return (
+        <BasicText color="black">
+            {appointmentMapper[appointmentType]}
+        </BasicText>
     );
 }
