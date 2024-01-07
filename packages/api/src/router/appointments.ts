@@ -46,13 +46,6 @@ export const appointmentsRouter = createTRPCRouter({
                 therapist?.userId ?? "",
             );
 
-            await sendPushNotification({
-                expoPushToken: therapistUser.publicMetadata
-                    .expoPushToken as Notification.ExpoPushToken,
-                title: "Nova sessão! 🎉",
-                body: `${patient?.name} quer marcar um horário com você.`,
-            });
-
             if (input.repeat) {
                 await ctx.prisma.recurrence.create({
                     data: {
@@ -66,6 +59,19 @@ export const appointmentsRouter = createTRPCRouter({
                             "EEEE",
                         ).toUpperCase() as WeekDay,
                     },
+                });
+                await sendPushNotification({
+                    expoPushToken: therapistUser.publicMetadata
+                        .expoPushToken as Notification.ExpoPushToken,
+                    title: "Nova recorrência! 🔵",
+                    body: `${patient?.name} quer marcar sessões semanais com você.`,
+                });
+            } else {
+                await sendPushNotification({
+                    expoPushToken: therapistUser.publicMetadata
+                        .expoPushToken as Notification.ExpoPushToken,
+                    title: "Nova sessão! 🎉",
+                    body: `${patient?.name} quer marcar um horário com você.`,
                 });
             }
 
