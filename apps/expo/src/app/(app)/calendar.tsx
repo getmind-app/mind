@@ -1,6 +1,7 @@
 import { useState } from "react";
 import {
     ActivityIndicator,
+    Alert,
     Image,
     Modal,
     Pressable,
@@ -24,11 +25,13 @@ import { useLingui } from "@lingui/react";
 import { BasicText } from "../../components/BasicText";
 import { Card } from "../../components/Card";
 import { CardSkeleton } from "../../components/CardSkeleton";
+import { LargeButton } from "../../components/LargeButton";
 import { Refreshable } from "../../components/Refreshable";
 import { ScreenWrapper } from "../../components/ScreenWrapper";
 import { Title } from "../../components/Title";
 import { getShareLink } from "../../helpers/getShareLink";
 import { isMoreThan24HoursLater } from "../../helpers/isMoreThan24HoursLater";
+import { useUpdateRecurrece } from "../../hooks/recurrence/useUpdateRecurrence";
 import { useUserHasProfileImage } from "../../hooks/user/useUserHasProfileImage";
 import { useUserIsProfessional } from "../../hooks/user/useUserIsProfessional";
 import { api } from "../../utils/api";
@@ -295,7 +298,7 @@ function TherapistOptions({
     appointment: Appointment & { therapist: Therapist };
 }) {
     return (
-        <View className="flex flex-col gap-2 pl-2 pt-2">
+        <View className="flex flex-col gap-2 pl-2 pt-4">
             {appointment.status === "PENDENT" ? (
                 <SessionConfirmation appointment={appointment} />
             ) : null}
@@ -323,15 +326,16 @@ function SessionConfirmation({
     appointment: Appointment & { therapist: Therapist };
 }) {
     const utils = api.useContext();
+    const updateRecurrence = useUpdateRecurrece();
 
-    const { mutate } = api.appointments.update.useMutation({
+    const { mutateAsync } = api.appointments.update.useMutation({
         onSuccess: async () => {
             await utils.appointments.findAll.invalidate();
         },
     });
 
-    const handleSessionConfirmation = (newStatus: AppointmentStatus) => {
-        mutate({
+    const handleSessionConfirmation = async (newStatus: AppointmentStatus) => {
+        await mutateAsync({
             id: appointment.id,
             scheduledTo: appointment.scheduledTo,
             modality: appointment.modality,
@@ -343,33 +347,139 @@ function SessionConfirmation({
     };
 
     return (
-        <View className="flex flex-row items-center pt-4 align-middle">
-            <Text className="text-base">
-                <Trans>Accept the session?</Trans>
+        <View
+            style={{
+                flex: 1,
+                alignItems: "flex-start",
+                gap: 12,
+            }}
+        >
+            <Text
+                style={{
+                    flex: 1,
+                }}
+                className="text-base"
+            >
+                <Trans>Options</Trans>
             </Text>
-            <View className="flex flex-row gap-2 pl-3">
-                <TouchableOpacity
+            <View
+                style={{
+                    flex: 1,
+                    gap: 8,
+                    width: "100%",
+                }}
+            >
+                {appointment.type === "FIRST_IN_RECURRENCE" && (
+                    <LargeButton
+                        onPress={() => {
+                            Alert.alert(
+                                t({ message: "Confirm recurrence acceptance" }),
+                                t({
+                                    message: `After accepting the recurrence, weekly events will be added to your calendar. 
+                                        Recurrent appointments are approved by default and can be canceled up until 24 hours before the session.`,
+                                }),
+                                [
+                                    {
+                                        text: t({ message: "Cancel" }),
+                                        style: "cancel",
+                                    },
+                                    {
+                                        text: t({ message: "Accept" }),
+                                        onPress: async () => {
+                                            await handleSessionConfirmation(
+                                                "ACCEPTED",
+                                            );
+                                            if (appointment.recurrenceId) {
+                                                await updateRecurrence({
+                                                    recurrenceId:
+                                                        appointment.recurrenceId,
+                                                    status: "ACCEPTED",
+                                                });
+                                            }
+                                        },
+                                    },
+                                ],
+                            );
+                        }}
+                    >
+                        <Trans>Accept session and recurrence </Trans>
+                    </LargeButton>
+                )}
+                <LargeButton
                     onPress={() => {
-                        handleSessionConfirmation("ACCEPTED");
+                        Alert.alert(
+                            t({
+                                message: "Confirm session acceptance",
+                            }),
+                            t({
+                                message: `After accepting the session, an event will be created in your calendar.${
+                                    appointment.recurrenceId
+                                        ? "Accepting a single session will refuse the patient's recurrence request."
+                                        : ""
+                                }`,
+                            }),
+                            [
+                                {
+                                    text: t({ message: "Cancel" }),
+                                    style: "cancel",
+                                },
+                                {
+                                    text: t({ message: "Accept" }),
+                                    onPress: async () => {
+                                        await handleSessionConfirmation(
+                                            "ACCEPTED",
+                                        );
+                                        if (appointment.recurrenceId) {
+                                            await updateRecurrence({
+                                                recurrenceId:
+                                                    appointment.recurrenceId,
+                                                status: "REJECTED",
+                                            });
+                                        }
+                                    },
+                                },
+                            ],
+                        );
                     }}
                 >
-                    <View className="rounded-lg bg-green-400 shadow-sm">
-                        <Text className="px-3 py-2 text-white">
-                            <Trans>Yes</Trans>
-                        </Text>
-                    </View>
-                </TouchableOpacity>
-                <TouchableOpacity
+                    <Trans>
+                        {appointment.type === "FIRST_IN_RECURRENCE"
+                            ? "Accept single session"
+                            : "Accept session"}
+                    </Trans>
+                </LargeButton>
+                <LargeButton
+                    color="red"
                     onPress={() => {
-                        handleSessionConfirmation("REJECTED");
+                        Alert.alert(
+                            t({ message: "Confirm session rejection" }),
+                            t({ message: "This action can't be undone" }),
+                            [
+                                {
+                                    text: t({ message: "Cancel" }),
+                                    style: "cancel",
+                                },
+                                {
+                                    text: t({ message: "Reject" }),
+                                    onPress: async () => {
+                                        await handleSessionConfirmation(
+                                            "REJECTED",
+                                        );
+                                        if (appointment.recurrenceId) {
+                                            await updateRecurrence({
+                                                recurrenceId:
+                                                    appointment.recurrenceId,
+                                                status: "REJECTED",
+                                            });
+                                        }
+                                    },
+                                },
+                            ],
+                        );
                     }}
                 >
-                    <View className="rounded-lg bg-red-400 shadow-sm">
-                        <Text className="px-3 py-2 text-white">
-                            <Trans>No</Trans>
-                        </Text>
-                    </View>
-                </TouchableOpacity>
+                    <Trans>Refuse session</Trans>
+                </LargeButton>
             </View>
         </View>
     );
