@@ -51,9 +51,10 @@ export const appointmentsRouter = createTRPCRouter({
             }
 
             const therapistUser = await clerk.users.getUser(therapist.userId);
+            let recurrenceId = null;
 
             if (input.repeat) {
-                await ctx.prisma.recurrence.create({
+                const recurrence = await ctx.prisma.recurrence.create({
                     data: {
                         defaultModality: input.modality,
                         therapistId: input.therapistId,
@@ -66,6 +67,8 @@ export const appointmentsRouter = createTRPCRouter({
                         ).toUpperCase() as WeekDay,
                     },
                 });
+                recurrenceId = recurrence.id;
+
                 await sendPushNotification({
                     expoPushToken: therapistUser.publicMetadata
                         .expoPushToken as Notification.ExpoPushToken,
@@ -218,6 +221,25 @@ export const appointmentsRouter = createTRPCRouter({
             return foundAppointment;
         }
     }),
+    updateRecurrence: protectedProcedure
+        .input(
+            z.object({
+                recurrenceId: z.string().min(1),
+                status: z.enum(["PENDENT", "ACCEPTED", "REJECTED", "CANCELED"]),
+            }),
+        )
+        .mutation(async ({ ctx, input }) => {
+            const recurrence = await ctx.prisma.recurrence.update({
+                where: {
+                    id: input.recurrenceId,
+                },
+                data: {
+                    status: input.status,
+                },
+            });
+
+            return recurrence;
+        }),
     // TODO: esse endpoint precisa ser refatorado urgentemente kkkkkkk
     update: protectedProcedure
         .input(
