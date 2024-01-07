@@ -31,7 +31,7 @@ import { ScreenWrapper } from "../../components/ScreenWrapper";
 import { Title } from "../../components/Title";
 import { getShareLink } from "../../helpers/getShareLink";
 import { isMoreThan24HoursLater } from "../../helpers/isMoreThan24HoursLater";
-import { useUpdateRecurrece } from "../../hooks/recurrence/useUpdateRecurrence";
+import { useUpdateRecurrence } from "../../hooks/recurrence/useUpdateRecurrence";
 import { useUserHasProfileImage } from "../../hooks/user/useUserHasProfileImage";
 import { useUserIsProfessional } from "../../hooks/user/useUserIsProfessional";
 import { api } from "../../utils/api";
@@ -326,7 +326,7 @@ function SessionConfirmation({
     appointment: Appointment & { therapist: Therapist };
 }) {
     const utils = api.useContext();
-    const updateRecurrence = useUpdateRecurrece();
+    const updateRecurrence = useUpdateRecurrence();
 
     const { mutateAsync } = api.appointments.update.useMutation({
         onSuccess: async () => {
