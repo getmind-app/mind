@@ -303,6 +303,48 @@ export const therapistsRouter = createTRPCRouter({
 
             return getAvailableDatesAndHours(therapist);
         }),
+    pendentRecurrences: protectedProcedure.query(async ({ ctx }) => {
+        const therapist = await ctx.prisma.therapist.findUniqueOrThrow({
+            where: {
+                userId: ctx.auth.userId,
+            },
+        });
+
+        if (!therapist) {
+            throw new Error("Therapist not found");
+        }
+
+        const recurrences = await ctx.prisma.recurrence.findMany({
+            where: {
+                status: "PENDENT",
+                therapistId: therapist.id,
+            },
+        });
+
+        return recurrences;
+    }),
+    recurrences: protectedProcedure.query(async ({ ctx }) => {
+        const therapist = await ctx.prisma.therapist.findUniqueOrThrow({
+            where: {
+                userId: ctx.auth.userId,
+            },
+        });
+
+        if (!therapist) {
+            throw new Error("Therapist not found");
+        }
+        const recurrences = await ctx.prisma.recurrence.findMany({
+            where: {
+                therapistId: therapist.id,
+            },
+            include: {
+                therapist: true,
+                patient: true,
+            },
+        });
+
+        return recurrences;
+    }),
 });
 
 const getAvailableDatesAndHours = (
