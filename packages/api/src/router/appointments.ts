@@ -1,9 +1,15 @@
 import type * as Notification from "expo-notifications";
 import clerk from "@clerk/clerk-sdk-node";
+import { addHours, format } from "date-fns";
 import Stripe from "stripe";
 import { z } from "zod";
 
-import { type Address, type Appointment, type Therapist } from "@acme/db";
+import {
+    type Address,
+    type Appointment,
+    type Therapist,
+    type WeekDay,
+} from "@acme/db";
 
 import { cancelAppointmentInCalendar } from "../helpers/cancelAppointmentInCalendar";
 import { createAppointmentInCalendar } from "../helpers/createAppointmentInCalendar";
@@ -47,7 +53,30 @@ export const appointmentsRouter = createTRPCRouter({
                 body: `${patient?.name} quer marcar um horário com você.`,
             });
 
-            return await ctx.prisma.appointment.create({ data: input });
+            if (input.repeat) {
+                await ctx.prisma.recurrence.create({
+                    data: {
+                        defaultModality: input.modality,
+                        therapistId: input.therapistId,
+                        patientId: input.patientId,
+                        startTime: input.scheduledTo,
+                        endTime: addHours(input.scheduledTo, 1),
+                        weekDay: format(
+                            input.scheduledTo,
+                            "EEEE",
+                        ).toUpperCase() as WeekDay,
+                    },
+                });
+            }
+
+            return await ctx.prisma.appointment.create({
+                data: {
+                    modality: input.modality,
+                    scheduledTo: input.scheduledTo,
+                    therapistId: input.therapistId,
+                    patientId: input.patientId,
+                },
+            });
         }),
     findNextUserAppointment: protectedProcedure.query(async ({ ctx }) => {
         let foundAppointment;

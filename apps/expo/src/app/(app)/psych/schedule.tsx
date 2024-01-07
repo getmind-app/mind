@@ -539,7 +539,6 @@ function ModalityPicker({
                     color="gray"
                     size="sm"
                 >
-                    {/* TODO: Translate */}
                     <Trans>
                         {therapist.name}&apos;s sessions happen online!
                     </Trans>

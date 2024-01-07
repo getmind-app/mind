@@ -118,8 +118,8 @@ model Email {
 model Recurrence {
     id              String           @id @default(cuid())
     createdAt       DateTime         @default(now())
-    startAt         DateTime
-    endAt           DateTime
+    startTime       DateTime         @db.Time
+    endTime         DateTime         @db.Time
     weekDay         WeekDay
     patientId       String
     patient         Patient          @relation(fields: [patientId], references: [id], onDelete: Cascade)
