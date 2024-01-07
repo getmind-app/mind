@@ -87,6 +87,7 @@ model Appointment {
     patient     Patient           @relation(fields: [patientId], references: [id], onDelete: Cascade)
     therapistId String
     therapist   Therapist         @relation(fields: [therapistId], references: [id], onDelete: Cascade)
+    type        AppointmentType
 }
 
 model Hour {
@@ -159,6 +160,13 @@ enum AppointmentStatus {
     ACCEPTED
     REJECTED
     CANCELED
+}
+
+enum AppointmentType {
+    SINGLE
+    SINGLE_REPEATED
+    RECURRENT
+    FIRST_IN_RECURRENCE
 }
 
 enum PaymentAccountStatus {
