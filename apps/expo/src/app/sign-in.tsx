@@ -1,5 +1,6 @@
 import {
     Image,
+    Linking,
     StyleSheet,
     Text,
     TouchableOpacity,
@@ -68,6 +69,20 @@ export default function SignInScreen() {
                     </View>
                 </TouchableOpacity>
             </View>
+            <Text className="mt-4 font-nunito-sans text-base text-gray-500">
+                <Trans>
+                    See our{" "}
+                    <TouchableOpacity
+                        onPress={() => {
+                            void Linking.openURL(
+                                "https://www.getmind.app/privacy",
+                            );
+                        }}
+                    >
+                        <Text className="underline">privacy policy.</Text>
+                    </TouchableOpacity>
+                </Trans>
+            </Text>
         </View>
     );
 }
