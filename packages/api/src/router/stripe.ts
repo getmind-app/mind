@@ -106,7 +106,7 @@ export const stripeRouter = createTRPCRouter({
         });
 
         const newAccountData = await stripe.accounts.create({
-            type: "standard",
+            type: "express",
             business_profile: {
                 url: "https://getmind.app",
             },
