@@ -23,6 +23,7 @@ const Home: NextPage = () => {
             <Head>
                 <title>Mind</title>
                 <link rel="icon" href="/favicon.ico" />
+                <link rel="shortcut icon" href="/favicon.ico" />
             </Head>
 
             <main
@@ -47,7 +48,7 @@ const Home: NextPage = () => {
                                 schedule
                                 <br /> appointments and pay for them. See our{" "}
                                 <a
-                                    href="/privacy"
+                                    href="https://getmind.app/privacy"
                                     className="text-slate-800 duration-500 hover:text-slate-500"
                                 >
                                     privacy policy
