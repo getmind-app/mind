@@ -91,6 +91,8 @@ export default function OnboardAddressScreen() {
             state: data.state,
             zipCode: data.zipCode.replaceAll("-", "").replaceAll(".", ""),
             country: "Brazil",
+            latitude: latitude,
+            longitude: longitude,
         });
     });
 
@@ -106,14 +108,9 @@ export default function OnboardAddressScreen() {
                 const address = {
                     street: getValues("street"),
                     number: getValues("number"),
-                    complement: getValues("complement"),
-                    neighborhood: getValues("neighborhood"),
                     city: getValues("city"),
                     state: getValues("state"),
-                    zipCode: getValues("zipCode").replaceAll("-", ""),
                     country: "Brazil",
-                    id: "",
-                    therapistId: "",
                 };
 
                 try {

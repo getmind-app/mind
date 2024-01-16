@@ -1,4 +1,11 @@
-import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import {
+    Image,
+    Platform,
+    ScrollView,
+    Text,
+    TouchableOpacity,
+    View,
+} from "react-native";
 import { useRouter } from "expo-router";
 import { useClerk } from "@clerk/clerk-expo";
 import { AntDesign, MaterialIcons } from "@expo/vector-icons";
@@ -15,7 +22,7 @@ export default function UserProfileScreen() {
     const router = useRouter();
     const { user, signOut } = useClerk();
     const { mutateAsync } = api.users.clearMetadata.useMutation({});
-    const userHasProfileImage = useUserHasProfileImage();
+    const userHasProfileImage = useUserHasProfileImage({ userId: null });
     const isProfessional = useUserIsProfessional();
 
     async function clearUserMetaData(): Promise<void> {
@@ -85,8 +92,13 @@ export default function UserProfileScreen() {
                 {isProfessional ? <ProfessionalMenuItems /> : null}
 
                 <MenuItem
-                    isFirst={!isProfessional}
-                    isLast={true}
+                    isFirst
+                    icon="notifications"
+                    label={t({ message: "Notifications" })}
+                    onPress={() => router.push("/settings/notifications")}
+                />
+                <MenuItem
+                    isLast
                     icon="logout"
                     label={t({ message: "Sign out" })}
                     onPress={signOut}
@@ -145,6 +157,7 @@ function ProfessionalMenuItems() {
                 onPress={() => router.push("/settings/available-hours")}
             />
             <MenuItem
+                isLast
                 icon="attach-money"
                 label={t({ message: "Setup Payments" })}
                 onPress={() => router.push("/(psych)/payments-setup")}
@@ -173,6 +186,9 @@ function MenuItem(props: {
                 className={`flex flex-row items-center justify-between bg-white px-6 py-4 align-middle shadow-sm ${
                     props.isFirst ? "mt-6 rounded-t-xl" : ""
                 } ${props.isLast ? "rounded-b-xl" : ""}`}
+                style={{
+                    elevation: Platform.OS === "android" ? 2 : 0,
+                }}
             >
                 <View className="flex flex-row items-center gap-4 align-middle">
                     <MaterialIcons size={20} color="gray" name={props.icon} />
