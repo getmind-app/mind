@@ -62,7 +62,7 @@ function TherapistOptions() {
     const {
         control,
         handleSubmit,
-        formState: { isValid, isDirty, isSubmitting },
+        formState: { isSubmitting },
     } = useForm<NonNullable<typeof therapist.data>>({
         defaultValues: therapist.data
             ? {
