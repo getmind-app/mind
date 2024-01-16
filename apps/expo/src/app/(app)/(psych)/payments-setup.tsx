@@ -79,6 +79,7 @@ export default function PaymentsSetup() {
                     <TouchableOpacity
                         onPress={async () => {
                             await createStripeAccount.mutateAsync();
+                            await therapist.refetch();
                         }}
                     >
                         <View
