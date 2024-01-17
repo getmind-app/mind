@@ -1,6 +1,7 @@
 import { type inferAsyncReturnType } from "@trpc/server";
 import { addDays, differenceInWeeks, setHours } from "date-fns";
 
+import { createAppointmentInCalendar } from "../helpers/createAppointmentInCalendar";
 import { type createContext } from "../trpc";
 
 export async function createFirstAppointmentsInRecurrence({
@@ -25,10 +26,13 @@ export async function createFirstAppointmentsInRecurrence({
         firstAppointmentScheduledTo,
     );
 
+    const promises = [];
+
     for (let i = 1; i <= weeksToSchedule; i++) {
         const date = addDays(firstAppointmentScheduledTo, i * 7 + 1);
 
-        await prisma.appointment.create({
+        // Create the appointment without waiting for it to finish
+        const appointmentPromise = prisma.appointment.create({
             data: {
                 recurrenceId,
                 modality: recurrence.defaultModality,
@@ -39,5 +43,28 @@ export async function createFirstAppointmentsInRecurrence({
                 type: "RECURRENT",
             },
         });
+
+        // Store the promise for later
+        promises.push(appointmentPromise);
+    }
+
+    try {
+        const appointments = await Promise.all(promises);
+        try {
+            await Promise.all(
+                appointments.map((appointment) =>
+                    createAppointmentInCalendar({ appointment, prisma }),
+                ),
+            );
+        } catch {
+            console.error(
+                `An error occurred while creating appointments in calendar, recurrence id: ${recurrenceId}`,
+            );
+        }
+    } catch (error) {
+        console.error(
+            "An error occurred while scheduling appointments:",
+            error,
+        );
     }
 }
