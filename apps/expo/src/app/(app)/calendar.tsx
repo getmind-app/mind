@@ -20,7 +20,9 @@ import {
     MaterialIcons,
 } from "@expo/vector-icons";
 import { Trans, t } from "@lingui/macro";
-import { useLingui } from "@lingui/react";
+import { useLingui, type I18nContext } from "@lingui/react";
+import { format } from "date-fns";
+import { enUS, ptBR } from "date-fns/locale";
 
 import { BasicText } from "../../components/BasicText";
 import { Card } from "../../components/Card";
@@ -42,6 +44,11 @@ import {
     type Patient,
     type Therapist,
 } from ".prisma/client";
+
+function getLocale(lingui: I18nContext) {
+    if (lingui.i18n.locale === "pt") return ptBR;
+    return enUS;
+}
 
 export default function CalendarScreen() {
     const [refreshing, setRefreshing] = useState(false);
@@ -216,11 +223,13 @@ function AppointmentCard({
                     <Status status={appointment.status} />
                     <TypeOfAppointment appointmentType={appointment.type} />
                     <Text className="pt-2 font-nunito-sans text-xl capitalize">
-                        {new Intl.DateTimeFormat(lingui.i18n.locale, {
-                            weekday: "long",
-                        }).format(new Date(appointment.scheduledTo))}
-                        , {new Date(appointment.scheduledTo).getDate()}/
-                        {new Date(appointment.scheduledTo).getMonth() + 1}
+                        {format(
+                            new Date(appointment.scheduledTo),
+                            "EEEE, dd/MM",
+                            {
+                                locale: getLocale(lingui),
+                            },
+                        )}
                     </Text>
                     <View className="flex flex-row pt-2">
                         <Text className="font-nunito-sans text-sm text-slate-500">

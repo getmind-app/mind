@@ -38,6 +38,7 @@
         "@trpc/server": "^10.38.1",
         "@types/luxon": "^3.3.0",
         "cpf-cnpj-validator": "^1.0.3",
+        "date-fns": "^3.1.0",
         "expo": "^49.0.9",
         "expo-auth-session": "~5.0.2",
         "expo-clipboard": "~4.3.1",
