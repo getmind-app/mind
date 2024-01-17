@@ -1,5 +1,5 @@
 import { type inferAsyncReturnType } from "@trpc/server";
-import { addDays, addWeeks, differenceInWeeks } from "date-fns";
+import { addDays, differenceInWeeks, setHours } from "date-fns";
 
 import { type createContext } from "../trpc";
 
@@ -15,12 +15,18 @@ export async function createFirstAppointmentsInRecurrence({
         },
     });
 
-    const firstDate = recurrence.startAt;
+    const firstAppointmentScheduledTo = setHours(
+        recurrence.startAt,
+        recurrence.startTime.getHours(),
+    );
     const nextMonth = addDays(new Date(), 31);
-    const weeksToSchedule = differenceInWeeks(nextMonth, firstDate);
+    const weeksToSchedule = differenceInWeeks(
+        nextMonth,
+        firstAppointmentScheduledTo,
+    );
 
-    for (let i = 0; i < weeksToSchedule; i++) {
-        const date = addWeeks(firstDate, 1);
+    for (let i = 1; i <= weeksToSchedule; i++) {
+        const date = addDays(firstAppointmentScheduledTo, i * 7 + 1);
 
         await prisma.appointment.create({
             data: {
