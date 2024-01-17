@@ -96,6 +96,7 @@ export const appointmentsRouter = createTRPCRouter({
                     therapistId: input.therapistId,
                     patientId: input.patientId,
                     type: input.repeat ? "FIRST_IN_RECURRENCE" : "SINGLE",
+                    recurrenceId,
                 },
             });
         }),
