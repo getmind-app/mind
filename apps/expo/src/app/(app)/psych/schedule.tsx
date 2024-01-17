@@ -11,6 +11,7 @@ import {
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Trans } from "@lingui/macro";
 import { useLingui } from "@lingui/react";
+import { setHours, setMilliseconds, setMinutes, setSeconds } from "date-fns";
 import { atom, useAtom } from "jotai";
 
 import { AnimatedCard } from "../../../components/Accordion";
@@ -21,6 +22,7 @@ import { LargeButton } from "../../../components/LargeButton";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
 import geocodeAddress from "../../../helpers/geocodeAddress";
 import { getMonthInLocale } from "../../../helpers/getMonthInLocale";
+import { useRecurrenceCanHappen } from "../../../hooks/recurrence/useRecurrenceCanHappen";
 import { api, type RouterOutputs } from "../../../utils/api";
 import {
     type Address,
@@ -78,21 +80,28 @@ export default function TherapistSchedule() {
         );
     }, [appointment]);
 
-    function handleConfirm() {
-        if (!appointment.date || !appointment.hour || !appointment.modality) {
+    const completeDate = useMemo(() => {
+        if (!appointment.date || !appointment.hour) return null;
+
+        const [hour, minutes] = appointment.hour
+            .split(":")
+            .map((v) => parseInt(v)) as [number, number];
+        return setHours(
+            setMinutes(
+                setSeconds(setMilliseconds(appointment.date, 0), 0),
+                minutes,
+            ),
+            hour,
+        );
+    }, [appointment.date, appointment.hour]);
+
+    async function handleConfirm() {
+        if (!completeDate || !appointment.modality) {
             throw new Error("Missing form data");
         }
 
-        const [hour, minutes] = appointment.hour.split(":");
-
-        mutateAsync({
-            scheduledTo: new Date(
-                appointment.date.getFullYear(),
-                appointment.date.getMonth(),
-                appointment.date.getDate(),
-                parseInt(String(hour)),
-                parseInt(String(minutes)),
-            ),
+        await mutateAsync({
+            scheduledTo: completeDate,
             modality: appointment.modality,
             therapistId: String(id),
             patientId: String(patient?.id),
@@ -192,6 +201,8 @@ export default function TherapistSchedule() {
                             }
                         />
                         <RecurrenceOptions
+                            scheduledTo={completeDate}
+                            therapistId={data.id}
                             repeat={appointment.repeat}
                             onToggle={() => {
                                 setAppointment({
@@ -594,12 +605,31 @@ function ModalityPicker({
 type RecurrenceOptionsProps = {
     repeat: boolean;
     onToggle: () => void;
+    scheduledTo: Date | null;
+    therapistId: string;
 };
 
-function RecurrenceOptions({ repeat, onToggle }: RecurrenceOptionsProps) {
+function RecurrenceOptions({
+    repeat,
+    onToggle,
+    scheduledTo,
+    therapistId,
+}: RecurrenceOptionsProps) {
+    const recurrenceCanHappen = useRecurrenceCanHappen({
+        scheduledTo,
+        therapistId,
+    });
     return (
-        <View className={"relative mt-3 rounded-2xl bg-white p-3"}>
-            <TouchableOpacity className={"rounded"} onPress={onToggle}>
+        <View
+            className={`relative mt-3 rounded-2xl bg-white p-3 ${
+                !recurrenceCanHappen.data && "opacity-50"
+            }`}
+        >
+            <TouchableOpacity
+                disabled={!recurrenceCanHappen.data}
+                className={"rounded"}
+                onPress={onToggle}
+            >
                 <View
                     style={{
                         flexDirection: "row",
@@ -626,7 +656,11 @@ function RecurrenceOptions({ repeat, onToggle }: RecurrenceOptionsProps) {
                             </Trans>
                         </BasicText>
                     </View>
-                    <Switch value={repeat} onChange={onToggle} />
+                    <Switch
+                        disabled={!recurrenceCanHappen.data}
+                        value={repeat}
+                        onChange={onToggle}
+                    />
                 </View>
             </TouchableOpacity>
         </View>
