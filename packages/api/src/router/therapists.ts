@@ -1,6 +1,7 @@
+import { isSameDay, isSameHour } from "date-fns";
 import { z } from "zod";
 
-import { type Therapist, type WeekDay } from "@acme/db";
+import { type Appointment, type Therapist, type WeekDay } from "@acme/db";
 
 import calculateBoundingBox from "../helpers/calculateBoundingBox";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
@@ -400,23 +401,22 @@ const getAvailableDatesAndHours = (
             // If there is, remove it from the available hours
 
             for (let i = 0; i < therapist.appointments.length; i++) {
-                const appointment = therapist.appointments[i];
+                const appointment = therapist.appointments[i] as Appointment;
 
                 if (
-                    appointment?.scheduledTo.getDate() ===
-                        currentDateCopy.getDate() &&
-                    appointment?.scheduledTo.getMonth() ===
-                        currentDateCopy.getMonth() &&
-                    appointment.scheduledTo.getFullYear() ===
-                        currentDateCopy.getFullYear() &&
-                    appointment.status === "ACCEPTED"
+                    isSameDay(appointment.scheduledTo, currentDateCopy) &&
+                    isSameHour(appointment.scheduledTo, currentDateCopy) &&
+                    ["ACCEPTED", "PENDING"].includes(appointment.status)
                 ) {
-                    const appointmentHour = appointment.scheduledTo.getHours();
+                    {
+                        const appointmentHour =
+                            appointment.scheduledTo.getHours();
 
-                    const index = hours.indexOf(appointmentHour);
+                        const index = hours.indexOf(appointmentHour);
 
-                    if (index > -1) {
-                        hours.splice(index, 1);
+                        if (index > -1) {
+                            hours.splice(index, 1);
+                        }
                     }
                 }
             }
