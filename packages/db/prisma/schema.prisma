@@ -121,6 +121,7 @@ model Email {
 model Recurrence {
     id              String           @id @default(cuid())
     createdAt       DateTime         @default(now())
+    startAt         DateTime?        @db.Date
     startTime       DateTime         @db.Time
     endTime         DateTime         @db.Time
     weekDay         WeekDay

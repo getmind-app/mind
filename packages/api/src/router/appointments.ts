@@ -64,6 +64,7 @@ export const appointmentsRouter = createTRPCRouter({
                         therapistId: input.therapistId,
                         patientId: input.patientId,
                         startTime: input.scheduledTo,
+                        startAt: input.scheduledTo,
                         endTime: addHours(input.scheduledTo, 1),
                         weekDay: format(
                             input.scheduledTo,
