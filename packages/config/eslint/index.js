@@ -23,6 +23,7 @@ const config = {
             { prefer: "type-imports", fixStyle: "inline-type-imports" },
         ],
         "react-hooks/exhaustive-deps": "off",
+        "@typescript-eslint/no-misused-promises": "off",
     },
     ignorePatterns: ["**/*.config.js", "**/*.config.cjs", "packages/config/**"],
     reportUnusedDisableDirectives: true,
