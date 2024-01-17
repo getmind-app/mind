@@ -263,10 +263,7 @@ function AppointmentCard({
                 </View>
                 <View className=" flex flex-col items-center justify-between">
                     <Text className="font-nunito-sans-bold text-xl text-blue-500 ">
-                        {new Date(appointment.scheduledTo).getHours()}:
-                        {new Date(appointment.scheduledTo).getMinutes() == 0
-                            ? "00"
-                            : new Date(appointment.scheduledTo).getMinutes()}
+                        {format(appointment.scheduledTo, "HH:mm")}
                     </Text>
                     {(appointment.status == "PENDENT" && isProfessional) ||
                     patientCanCancel ? (
@@ -337,7 +334,7 @@ function SessionConfirmation({
     const utils = api.useContext();
     const updateRecurrence = useUpdateRecurrence();
 
-    const { mutateAsync } = api.appointments.update.useMutation({
+    const { mutateAsync, isLoading } = api.appointments.update.useMutation({
         onSuccess: async () => {
             await utils.appointments.findAll.invalidate();
         },
@@ -354,6 +351,8 @@ function SessionConfirmation({
             patientId: appointment.patientId,
         });
     };
+
+    const isMutating = isLoading || updateRecurrence.isLoading;
 
     return (
         <View
@@ -380,6 +379,7 @@ function SessionConfirmation({
             >
                 {appointment.type === "FIRST_IN_RECURRENCE" && (
                     <LargeButton
+                        disabled={isMutating}
                         onPress={() => {
                             Alert.alert(
                                 t({ message: "Confirm recurrence acceptance" }),
@@ -399,11 +399,13 @@ function SessionConfirmation({
                                                 "ACCEPTED",
                                             );
                                             if (appointment.recurrenceId) {
-                                                await updateRecurrence({
-                                                    recurrenceId:
-                                                        appointment.recurrenceId,
-                                                    status: "ACCEPTED",
-                                                });
+                                                await updateRecurrence.mutateAsync(
+                                                    {
+                                                        recurrenceId:
+                                                            appointment.recurrenceId,
+                                                        status: "ACCEPTED",
+                                                    },
+                                                );
                                             }
                                         },
                                     },
@@ -415,6 +417,7 @@ function SessionConfirmation({
                     </LargeButton>
                 )}
                 <LargeButton
+                    disabled={isMutating}
                     onPress={() => {
                         Alert.alert(
                             t({
@@ -439,7 +442,7 @@ function SessionConfirmation({
                                             "ACCEPTED",
                                         );
                                         if (appointment.recurrenceId) {
-                                            await updateRecurrence({
+                                            await updateRecurrence.mutateAsync({
                                                 recurrenceId:
                                                     appointment.recurrenceId,
                                                 status: "REJECTED",
@@ -459,6 +462,7 @@ function SessionConfirmation({
                 </LargeButton>
                 <LargeButton
                     color="red"
+                    disabled={isMutating}
                     onPress={() => {
                         Alert.alert(
                             t({ message: "Confirm session rejection" }),
@@ -475,7 +479,7 @@ function SessionConfirmation({
                                             "REJECTED",
                                         );
                                         if (appointment.recurrenceId) {
-                                            await updateRecurrence({
+                                            await updateRecurrence.mutateAsync({
                                                 recurrenceId:
                                                     appointment.recurrenceId,
                                                 status: "REJECTED",
