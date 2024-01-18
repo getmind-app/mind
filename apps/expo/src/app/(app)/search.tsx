@@ -12,14 +12,21 @@ import { Modalize } from "react-native-modalize";
 import { Portal } from "react-native-portalize";
 import * as Location from "expo-location";
 import { useRouter } from "expo-router";
-import { MaterialIcons } from "@expo/vector-icons";
+import { AntDesign, MaterialIcons } from "@expo/vector-icons";
 import { Trans, t } from "@lingui/macro";
 
-import { type Gender, type Modality } from "../../../../../packages/db";
+import {
+    type Address,
+    type Gender,
+    type Modality,
+    type Therapist,
+} from "../../../../../packages/db";
 import { ProfileSkeleton } from "../../components/ProfileSkeleton";
 import { ScreenWrapper } from "../../components/ScreenWrapper";
 import { Title } from "../../components/Title";
+import getDistanceFromCurrentLocation from "../../helpers/getDistanceFromCurrentLocation";
 import { useSearchTherapistByFilters } from "../../hooks/search/useSearchTherapistByFilters";
+import { useUserHasProfileImage } from "../../hooks/user/useUserHasProfileImage";
 import { useDebounce } from "../../hooks/util/useDebounce";
 
 export default function SearchScreen() {
@@ -66,7 +73,7 @@ export default function SearchScreen() {
                 alert(
                     t({
                         message:
-                            "Location permission is required to use this feature",
+                            "You won't be able to use the location filter without location permission.",
                     }),
                 );
                 return;
@@ -558,8 +565,6 @@ function List({
         methodologies: methodologies,
     });
 
-    const router = useRouter();
-
     if (isError) {
         return (
             <View className="flex  items-center justify-center">
@@ -583,44 +588,16 @@ function List({
     }
 
     return data.length > 0 ? (
-        <View className="flex w-full flex-col items-start justify-center gap-y-4 pt-2">
-            {data.map(
-                ({ name, profilePictureUrl, id, modalities, hourlyRate }) => (
-                    <TouchableOpacity
-                        className="flex w-full flex-row items-center gap-4 align-middle"
-                        key={id}
-                        onPress={() => router.push(`/psych/${id}`)}
-                    >
-                        <Image
-                            className="rounded-full"
-                            alt={t({ message: `${name}' profile picture` })}
-                            source={{
-                                uri: profilePictureUrl,
-                                width: 48,
-                                height: 48,
-                            }}
-                        />
-                        <View className="flex flex-col justify-center align-middle">
-                            <Text className="-mb-1 font-nunito-sans-bold text-lg">
-                                {name}
-                            </Text>
-                            <Text className=" font-nunito-sans text-slate-500">
-                                <Trans>
-                                    {modalities.length > 1
-                                        ? "Online e presencial"
-                                        : modalities.includes("ONLINE")
-                                        ? "Online"
-                                        : "Presencial"}{" "}
-                                    |{" "}
-                                    <Text className="font-nunito-sans-bold">
-                                        R$ {hourlyRate}
-                                    </Text>
-                                </Trans>
-                            </Text>
-                        </View>
-                    </TouchableOpacity>
-                ),
-            )}
+        <View className="flex w-full flex-col items-start justify-center gap-y-4 pt-4">
+            {data.map((therapist) => (
+                <View key={therapist.id} className="w-full">
+                    <TherapistProfile
+                        key={therapist.id}
+                        therapist={therapist}
+                        currentLocation={currentLocation}
+                    />
+                </View>
+            ))}
         </View>
     ) : (
         <View className="flex flex-col items-center justify-center gap-2 pt-32">
@@ -633,6 +610,87 @@ function List({
                 <Trans>No therapists found!</Trans>
             </Text>
         </View>
+    );
+}
+
+function TherapistProfile({
+    therapist,
+    currentLocation,
+}: {
+    therapist: Therapist & { address: Address | null };
+    currentLocation: { latitude: number; longitude: number } | null;
+}) {
+    const userHasImage = useUserHasProfileImage({ userId: therapist.userId });
+    const router = useRouter();
+
+    return (
+        <TouchableOpacity
+            className="flex w-full flex-row items-center gap-4 align-middle"
+            onPress={() => router.push(`/psych/${therapist.id}`)}
+        >
+            {userHasImage.data ? (
+                <Image
+                    className="rounded-full"
+                    alt={t({ message: `${therapist.name}' profile picture` })}
+                    source={{
+                        uri: therapist.profilePictureUrl,
+                        width: 48,
+                        height: 48,
+                    }}
+                />
+            ) : (
+                <View className="rounded-full bg-gray-200 p-3">
+                    <AntDesign name="user" size={24} color="black" />
+                </View>
+            )}
+            <View className="flex flex-col justify-center align-middle">
+                <Text className="-mb-1 font-nunito-sans-bold text-lg">
+                    {therapist.name}
+                </Text>
+                <Text className=" font-nunito-sans text-slate-500">
+                    <Trans>
+                        <Text className="font-nunito-sans-bold">
+                            R$ {therapist.hourlyRate}{" "}
+                        </Text>
+                        |{" "}
+                        {therapist.modalities.length > 1
+                            ? "Online e presencial"
+                            : therapist.modalities.includes("ONLINE")
+                            ? "Online"
+                            : "Presencial"}
+                    </Trans>{" "}
+                    {therapist.address && currentLocation && (
+                        <Distance
+                            address={therapist.address}
+                            currentLocation={currentLocation}
+                        />
+                    )}
+                </Text>
+            </View>
+        </TouchableOpacity>
+    );
+}
+
+function Distance({
+    address,
+    currentLocation,
+}: {
+    address: Address;
+    currentLocation: { latitude: number; longitude: number };
+}) {
+    const distanceFromCurrentLocation = getDistanceFromCurrentLocation({
+        address,
+        currentLocation,
+    });
+
+    return (
+        <Text className="font-nunito-sans">
+            (
+            {distanceFromCurrentLocation && distanceFromCurrentLocation > 1000
+                ? `${(distanceFromCurrentLocation / 1000).toFixed(1)} km`
+                : `${distanceFromCurrentLocation} m`}
+            )
+        </Text>
     );
 }
 

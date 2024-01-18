@@ -4,7 +4,6 @@ import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import { BsArrowRightShort } from "react-icons/bs";
-import { HiOutlineCalendar, HiOutlineCash, HiSearch } from "react-icons/hi";
 
 import AppStore from "../../assets/app_store.png";
 import PlayStore from "../../assets/google_play.png";
