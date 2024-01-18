@@ -96,10 +96,15 @@ export default function TherapistProfile() {
                                     <LocationContent address={data?.address} />
                                 </ContentCard>
                             )}
-                        {/* <ContentCard title={t({ message: "Education" })} emoji="🎓">
-                        Psicologia Cognitiva - Universidade Federal do Paraná
-                    </ContentCard>
-                            } */}
+                        {data?.education && (
+                            <ContentCard
+                                title={t({ message: "Education" })}
+                                emoji="🎓"
+                            >
+                                {data?.education}
+                            </ContentCard>
+                        )}
+
                         {data?.methodologies &&
                             data?.methodologies.length > 0 && (
                                 <ContentCard
@@ -190,9 +195,9 @@ function ScheduleBar({
         <View
             style={{
                 flex: 1,
-                paddingHorizontal: 16,
+                paddingHorizontal: 24,
                 paddingTop: 16,
-                paddingBottom: 24,
+                paddingBottom: 32,
                 borderTopLeftRadius: 16,
                 borderTopRightRadius: 16,
                 width: "100%",

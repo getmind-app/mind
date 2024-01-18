@@ -77,7 +77,7 @@ function TherapistOptions() {
                   hourlyRate: therapist.data.hourlyRate,
                   phone: therapist.data.phone,
                   about: therapist.data.about,
-                  methodologies: therapist.data.methodologies as string[],
+                  methodologies: therapist.data.methodologies,
                   education: therapist.data.education,
               }
             : {
@@ -90,7 +90,7 @@ function TherapistOptions() {
                   phone: "",
                   about: "",
                   methodologies: [],
-                  education: [],
+                  education: "",
               },
         resolver: zodResolver(therapistSchema),
     });
@@ -106,7 +106,7 @@ function TherapistOptions() {
             hourlyRate: formData.hourlyRate,
             phone: formData.phone,
             about: formData.about,
-            methodologies: formData.methodologies as string[],
+            methodologies: formData.methodologies,
             education: formData.education,
         });
     });
@@ -196,40 +196,16 @@ function TherapistOptions() {
                         lengthLimit={250}
                     />
 
-                    <View className="gap-2 py-3">
-                        <Text className="font-nunito-sans text-lg text-slate-700">
-                            {t({ message: "Education" })}
-                        </Text>
-
-                        <View
-                            style={{
-                                flexDirection: "row",
-                                flexWrap: "wrap",
-                            }}
-                        >
-                            <TouchableOpacity
-                                style={{
-                                    paddingVertical: 8,
-                                    paddingHorizontal: 16,
-                                    marginHorizontal: 4,
-                                    marginBottom: 8,
-                                    borderRadius: 50,
-                                    borderWidth: 1,
-                                    borderColor: "#C0C0C2",
-                                    backgroundColor: "white",
-                                }}
-                            >
-                                <Text
-                                    style={{
-                                        color: "black",
-                                    }}
-                                    className="font-nunito-sans text-sm"
-                                >
-                                    {t({ message: "Add" })}
-                                </Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
+                    <FormLongTextInput
+                        title={t({ message: "Education" })}
+                        placeholder={t({
+                            message: "How was your education?",
+                        })}
+                        control={control}
+                        name="education"
+                        inputMode="text"
+                        lengthLimit={300}
+                    />
 
                     <FormOptionsInput
                         title={t({ message: "Methodologies" })}
@@ -324,14 +300,5 @@ const therapistSchema = z.object({
         .min(10, "Your phone number must be valid"),
     about: z.string().nullable(),
     methodologies: z.array(z.string()).nullable(),
-    education: z.array(
-        z.object({
-            id: z.string(),
-            degree: z.string(),
-            institution: z.string(),
-            startAt: z.date(),
-            endAt: z.date(),
-            therapistId: z.string(),
-        }),
-    ),
+    education: z.string().nullable(),
 });

@@ -46,7 +46,6 @@ export const therapistsRouter = createTRPCRouter({
                 },
                 include: {
                     address: true,
-                    education: true,
                     appointments: true,
                     hours: true,
                 },
@@ -58,7 +57,6 @@ export const therapistsRouter = createTRPCRouter({
             include: {
                 hours: true,
                 address: true,
-                education: true,
             },
         });
     }),
@@ -285,16 +283,7 @@ export const therapistsRouter = createTRPCRouter({
                 yearsOfExperience: z.string().nullable(),
                 about: z.string().nullable(),
                 methodologies: z.array(z.string()),
-                education: z.array(
-                    z.object({
-                        id: z.string(),
-                        institution: z.string(),
-                        degree: z.string(),
-                        startAt: z.date().nullable(),
-                        endAt: z.date().nullable(),
-                        therapistId: z.string(),
-                    }),
-                ),
+                education: z.string().nullable(),
             }),
         )
         .mutation(async ({ ctx, input }) => {
@@ -314,11 +303,6 @@ export const therapistsRouter = createTRPCRouter({
                     ...input,
                     methodologies: {
                         set: input.methodologies,
-                    },
-                    education: {
-                        createMany: {
-                            data: input.education,
-                        },
                     },
                 },
             });

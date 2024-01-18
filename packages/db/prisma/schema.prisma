@@ -33,20 +33,10 @@ model Therapist {
     paymentAccountStatus PaymentAccountStatus @default(UNACTIVE)
     modalities           Modality[]
     address              Address?
-    education            Education[]
+    education            String?
     methodologies        String[]
     appointments         Appointment[]
     hours                Hour[]
-}
-
-model Education {
-    id          String    @id @default(cuid())
-    institution String
-    degree      String
-    startAt     DateTime?
-    endAt       DateTime?
-    therapistId String    @unique
-    therapist   Therapist @relation(fields: [therapistId], references: [id], onDelete: Cascade)
 }
 
 model Address {
