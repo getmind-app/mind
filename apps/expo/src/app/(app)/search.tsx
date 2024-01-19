@@ -588,7 +588,7 @@ function List({
     }
 
     return data.length > 0 ? (
-        <View className="flex w-full flex-col items-start justify-center gap-y-4 pt-4">
+        <View className="flex w-full flex-col items-start justify-center gap-y-4 pt-8">
             {data.map((therapist) => (
                 <View key={therapist.id} className="w-full">
                     <TherapistProfile

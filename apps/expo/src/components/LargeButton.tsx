@@ -20,7 +20,7 @@ export function LargeButton({
                 backgroundColor:
                     props.disabled || props.loading ? "#bfdbfe" : "#3b82f6",
                 borderRadius: 10,
-                paddingVertical: 8,
+                paddingVertical: 12,
                 alignItems: "center",
                 justifyContent: "center",
             }}
