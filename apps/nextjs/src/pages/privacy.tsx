@@ -134,6 +134,23 @@ const Home: NextPage = () => {
                                 terceiros, e são mantidas enquanto a conta do
                                 usuário estiver ativa no aplicativo.
                             </p>
+                            <p className="text-lg text-slate-500">
+                                O uso e transferência de informações recebidas
+                                das APIs do Google para qualquer outro
+                                aplicativo seguirá a{" "}
+                                <Link
+                                    className="underline"
+                                    target="_blank"
+                                    href={
+                                        "https://developers.google.com/terms/api-services-user-data-policy#additional_requirements_for_specific_api_scopest"
+                                    }
+                                >
+                                    Política de Dados do Usuário dos Serviços da
+                                    API
+                                </Link>{" "}
+                                do Google, incluindo os requisitos de Uso
+                                Limitado.
+                            </p>
                             <h2 className="text-xl text-slate-800">
                                 6. ACESSO, ALTERAÇÃO E EXCLUSÃO DE INFORMAÇÕES
                             </h2>

@@ -1,5 +1,6 @@
 import {
     Image,
+    Linking,
     StyleSheet,
     Text,
     TouchableOpacity,
@@ -15,6 +16,10 @@ import { useAuthProviders } from "../hooks/auth/useAuthProviders";
 const LoginImage =
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     require("../../assets/images/login_mind.png") as ImageSourcePropType;
+
+const GoogleLogo =
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    require("../../assets/images/google_logo.png") as ImageSourcePropType;
 
 export default function SignInScreen() {
     const { onApplePress, onGooglePress } = useAuthProviders();
@@ -41,33 +46,52 @@ export default function SignInScreen() {
                 </View>
                 <TouchableOpacity onPress={onGooglePress} className="w-full">
                     <View
-                        className="mt-8  flex w-full flex-row items-center justify-center rounded-xl bg-blue-500 px-8 py-4 font-bold shadow-sm"
+                        className="mt-8 flex w-full flex-row items-center justify-center rounded-xl bg-white px-8 py-4 font-bold shadow-sm"
                         style={{ elevation: 2 }}
                     >
-                        <FontAwesome color="white" size={22} name="google" />
-                        <Text className="ml-4 font-nunito-sans text-xl text-white">
+                        <Image
+                            alt=""
+                            source={GoogleLogo}
+                            style={{ width: 22, height: 22 }}
+                            resizeMode="contain"
+                        />
+                        <Text className="ml-4 font-nunito-sans text-xl text-black">
                             <Trans>Sign in with</Trans>{" "}
                         </Text>
-                        <Text className="font-nunito-sans-bold text-xl text-white">
+                        <Text className="font-nunito-sans-bold text-xl text-black">
                             Google
                         </Text>
                     </View>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={onApplePress} className="w-full">
                     <View
-                        className="flex w-full flex-row items-center justify-center rounded-xl bg-white px-8 py-4 font-bold shadow-sm"
+                        className="flex w-full flex-row items-center justify-center rounded-xl bg-blue-500 px-8 py-4 font-bold shadow-sm"
                         style={{ elevation: 2 }}
                     >
-                        <FontAwesome size={22} name="apple" />
-                        <Text className="ml-4 font-nunito-sans text-xl">
+                        <FontAwesome size={22} name="apple" color="white" />
+                        <Text className="ml-4 font-nunito-sans text-xl text-white">
                             <Trans>Sign in with</Trans>{" "}
                         </Text>
-                        <Text className="font-nunito-sans-bold text-xl">
+                        <Text className="font-nunito-sans-bold text-xl  text-white">
                             Apple
                         </Text>
                     </View>
                 </TouchableOpacity>
             </View>
+            <Text className="mt-4 font-nunito-sans text-base text-gray-500">
+                <Trans>
+                    See our{" "}
+                    <TouchableOpacity
+                        onPress={() => {
+                            void Linking.openURL(
+                                "https://www.getmind.app/privacy",
+                            );
+                        }}
+                    >
+                        <Text className="underline">privacy policy.</Text>
+                    </TouchableOpacity>
+                </Trans>
+            </Text>
         </View>
     );
 }
