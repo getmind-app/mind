@@ -18,7 +18,6 @@ export function getTranslatedDay(day: WeekDay | string): string {
     } else if (day === "SUNDAY") {
         return t({ message: "Sunday" });
     } else {
-        // Handle the case where an invalid day is provided
         return t({ message: "Invalid Day" });
     }
 }
