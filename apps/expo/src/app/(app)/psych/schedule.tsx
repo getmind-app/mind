@@ -24,9 +24,7 @@ import { api, type RouterOutputs } from "../../../utils/api";
 import {
     type Address,
     type Appointment,
-    type Education,
     type Hour,
-    type Methodology,
     type Modality,
     type Therapist,
 } from ".prisma/client";
@@ -148,7 +146,7 @@ export default function TherapistSchedule() {
                             </BasicText>
                             <BasicText
                                 color="gray"
-                                size="sm"
+                                size="md"
                                 style={{
                                     marginBottom: 2,
                                 }}
@@ -191,9 +189,14 @@ export default function TherapistSchedule() {
                             }
                         />
                     </View>
-                    <LargeButton disabled={!allPicked} onPress={handleConfirm}>
-                        <Trans>Confirm appointment</Trans>
-                    </LargeButton>
+                    <View style={{ marginBottom: 16 }}>
+                        <LargeButton
+                            disabled={!allPicked}
+                            onPress={handleConfirm}
+                        >
+                            <Trans>Confirm appointment</Trans>
+                        </LargeButton>
+                    </View>
                 </View>
             </ScreenWrapper>
         </>
@@ -211,7 +214,7 @@ const Calendar = ({
     const [selectedDate, setSelectedDate] = useState<Date>();
 
     return (
-        <View className="rounded-lg bg-white pt-4">
+        <View className="flex flex-col gap-4 rounded-lg pt-4">
             {availableDates &&
                 availableDates.length > 0 &&
                 availableDates.map((month) => (
@@ -431,10 +434,6 @@ function HourComponent({
 type ModalityPickerProps = {
     therapist: Therapist & {
         address: Address | null;
-    } & {
-        methodologies: Methodology[];
-    } & {
-        education: Education[];
     } & {
         appointments: Appointment[];
     } & {
