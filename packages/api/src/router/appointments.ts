@@ -18,7 +18,7 @@ import { createAppointmentInCalendar } from "../helpers/createAppointmentInCalen
 import { sendPushNotification } from "../helpers/sendPushNotification";
 import { notifyAppointmentStatusChange } from "../notifications/notifyAppointmentStatusChange";
 import { payForAppointment } from "../payments/payForAppointment";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
 export const appointmentsRouter = createTRPCRouter({
     create: protectedProcedure
@@ -314,4 +314,44 @@ export const appointmentsRouter = createTRPCRouter({
                 },
             });
         }),
+    prepareTomorrowAppointments: publicProcedure.mutation(async ({ ctx }) => {
+        console.log("Preparing tomorrow appointments");
+        const now = new Date();
+        const appointmentsToBePaid = await ctx.prisma.appointment.findMany({
+            where: {
+                scheduledTo: {
+                    gte: now,
+                    lt: addHours(now, 24),
+                },
+                status: "ACCEPTED",
+                isPaid: false,
+            },
+        });
+
+        const paidAppointments: Appointment[] = [];
+        for (const appointment of appointmentsToBePaid) {
+            try {
+                await payForAppointment({
+                    appointment,
+                    prisma: ctx.prisma,
+                });
+                paidAppointments.push(appointment);
+            } catch (e) {
+                console.log("Error paying for appointment", appointment.id);
+                console.log(JSON.stringify(e, null, 2));
+                try {
+                    await ctx.prisma.appointment.update({
+                        where: {
+                            id: appointment.id,
+                        },
+                        data: {
+                            status: "CANCELED",
+                        },
+                    });
+                } catch {
+                    console.log("Error canceling appointment", appointment.id);
+                }
+            }
+        }
+    }),
 });
