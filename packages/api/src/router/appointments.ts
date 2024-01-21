@@ -1,16 +1,9 @@
 import type * as Notification from "expo-notifications";
-import clerk, { type User } from "@clerk/clerk-sdk-node";
-import { addHours, format } from "date-fns";
+import clerk from "@clerk/clerk-sdk-node";
+import { addDays, addHours, format, set } from "date-fns";
 import { z } from "zod";
 
-import {
-    type Address,
-    type Appointment,
-    type AppointmentStatus,
-    type Patient,
-    type Therapist,
-    type WeekDay,
-} from "@acme/db";
+import { type Appointment, type WeekDay } from "@acme/db";
 
 import { createFirstAppointmentsInRecurrence } from "../appointments/createFirstAppointmentsInRecurrence";
 import { cancelAppointmentInCalendar } from "../helpers/cancelAppointmentInCalendar";
@@ -351,6 +344,66 @@ export const appointmentsRouter = createTRPCRouter({
                 } catch {
                     console.log("Error canceling appointment", appointment.id);
                 }
+            }
+        }
+    }),
+    prepareNextMonthAppointments: publicProcedure.mutation(async ({ ctx }) => {
+        console.log("Preparing next month appointments");
+        const thirtyDaysFromNow = addDays(new Date(), 31);
+        const weekDay = format(
+            thirtyDaysFromNow,
+            "EEEE",
+        ).toUpperCase() as WeekDay;
+
+        const recurrentAppointmentsToSchedule =
+            await ctx.prisma.recurrence.findMany({
+                where: {
+                    status: "ACCEPTED",
+                    weekDay,
+                },
+            });
+
+        const createdAppointments: Appointment[] = [];
+        for (const recurrence of recurrentAppointmentsToSchedule) {
+            const startAtTime = new Date(recurrence.startAt);
+            const date = set(startAtTime, {
+                year: thirtyDaysFromNow.getFullYear(),
+                month: thirtyDaysFromNow.getMonth(),
+                date: thirtyDaysFromNow.getDate(),
+            });
+            try {
+                const appointment = await ctx.prisma.appointment.create({
+                    data: {
+                        scheduledTo: date,
+                        modality: recurrence.defaultModality,
+                        therapistId: recurrence.therapistId,
+                        patientId: recurrence.patientId,
+                        type: "RECURRENT",
+                        recurrenceId: recurrence.id,
+                    },
+                });
+                createdAppointments.push(appointment);
+            } catch (e) {
+                console.log("Error creating appointment", recurrence.id);
+                console.log(JSON.stringify(e, null, 2));
+            }
+        }
+
+        console.log(
+            `Created ${createdAppointments.length}, creating appointments in calendar`,
+        );
+        for (const appointment of createdAppointments) {
+            try {
+                await createAppointmentInCalendar({
+                    appointment,
+                    prisma: ctx.prisma,
+                });
+            } catch (e) {
+                console.log(
+                    "Error creating appointment in calendar",
+                    appointment.id,
+                );
+                console.log(JSON.stringify(e, null, 2));
             }
         }
     }),
