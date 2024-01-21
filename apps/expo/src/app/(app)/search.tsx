@@ -35,6 +35,9 @@ export default function SearchScreen() {
     const [modality, setModality] = useState<Modality[] | null>(null);
     const [gender, setGender] = useState<Gender[] | null>(null);
     const [distance, setDistance] = useState<number[] | null>(null);
+    const [selectedMethodologies, setSelectedMethodologies] = useState<
+        string[] | null
+    >(null);
     const [currentLocation, setCurrentLocation] = useState<{
         latitude: number;
         longitude: number;
@@ -44,6 +47,24 @@ export default function SearchScreen() {
     const debounceSearch = useDebounce(search, 500);
     const debouncePriceRange = useDebounce(priceRange, 300);
     const debouceDistance = useDebounce(distance, 300);
+    const debouceSelectedMethodologies = useDebounce(
+        selectedMethodologies,
+        300,
+    );
+    const methodologies = [
+        t({ message: "Mindfulness" }),
+        t({ message: "Psicoterapia Corporal Reichiana" }),
+        t({ message: "Cognitivo Comportamental (TCC)" }),
+        t({ message: "Psicoterapia breve focal" }),
+        t({ message: "Humanismo" }),
+        t({ message: "Behaviorista" }),
+        t({ message: "Existencial" }),
+        t({ message: "Junguiana" }),
+        t({ message: "Psicanalítica de Freud" }),
+        t({ message: "Psicanalítica de Lacan" }),
+        t({ message: "Gestalt" }),
+        t({ message: "Positiva" }),
+    ];
 
     function onOpen() {
         (async () => {
@@ -67,6 +88,20 @@ export default function SearchScreen() {
         })();
 
         modalizeRef.current?.open();
+    }
+
+    function handleUpdateMethodologies(methodology: string) {
+        const isSelected = selectedMethodologies?.includes(methodology);
+        if (isSelected) {
+            setSelectedMethodologies(
+                selectedMethodologies?.filter((m) => m !== methodology) ?? [],
+            );
+        } else {
+            setSelectedMethodologies([
+                ...(selectedMethodologies ?? []),
+                methodology,
+            ]);
+        }
     }
 
     return (
@@ -104,7 +139,13 @@ export default function SearchScreen() {
                     className="w-full"
                     showsVerticalScrollIndicator={false}
                 >
-                    {search || priceRange || gender || modality || distance ? (
+                    {search ||
+                    priceRange ||
+                    gender ||
+                    modality ||
+                    distance ||
+                    (debouceSelectedMethodologies &&
+                        debouceSelectedMethodologies.length > 0) ? (
                         <List
                             name={debounceSearch}
                             priceRange={debouncePriceRange ?? []}
@@ -114,6 +155,7 @@ export default function SearchScreen() {
                                 (debouceDistance && debouceDistance[0]) ?? null
                             }
                             currentLocation={currentLocation}
+                            methodologies={debouceSelectedMethodologies}
                         />
                     ) : (
                         <View className="flex flex-col items-center justify-center gap-2 pt-32">
@@ -132,8 +174,8 @@ export default function SearchScreen() {
             <Portal>
                 <Modalize
                     ref={modalizeRef}
-                    modalHeight={400}
-                    snapPoint={400}
+                    modalHeight={700}
+                    snapPoint={700}
                     modalStyle={{ backgroundColor: "#f8f8f8", padding: 24 }}
                 >
                     <View
@@ -239,13 +281,14 @@ export default function SearchScreen() {
                             flexDirection: "row",
                             justifyContent: "space-between",
                             alignItems: "center",
+                            paddingBottom: 16,
                         }}
                     >
                         <View style={{ flexDirection: "column", gap: 8 }}>
                             <Text className="font-nunito-sans-bold text-base ">
                                 <Trans>Gender</Trans>
                             </Text>
-                            <View className="flex flex-row items-center justify-between gap-4">
+                            <View className="flex flex-row items-center justify-between gap-3">
                                 <TouchableOpacity
                                     style={{
                                         padding: 8,
@@ -255,6 +298,10 @@ export default function SearchScreen() {
                                                 : "#f8f8f8"
                                         }`,
                                         borderRadius: 8,
+                                        borderWidth: 1,
+                                        borderColor: gender?.includes("MALE")
+                                            ? "#3b82f6"
+                                            : "#64748b",
                                         elevation: 2,
                                     }}
                                     onPress={() => {
@@ -275,7 +322,7 @@ export default function SearchScreen() {
                                 >
                                     <Trans>
                                         <Text
-                                            className={`font-nunito-sans-bold ${
+                                            className={`font-nunito-sans ${
                                                 gender?.includes("MALE")
                                                     ? "text-white"
                                                     : "text-black"
@@ -295,6 +342,10 @@ export default function SearchScreen() {
                                         }`,
                                         borderRadius: 8,
                                         elevation: 2,
+                                        borderWidth: 1,
+                                        borderColor: gender?.includes("FEMALE")
+                                            ? "#3b82f6"
+                                            : "#64748b",
                                     }}
                                     onPress={() => {
                                         if (gender?.includes("FEMALE")) {
@@ -314,7 +365,7 @@ export default function SearchScreen() {
                                 >
                                     <Trans>
                                         <Text
-                                            className={`font-nunito-sans-bold ${
+                                            className={`font-nunito-sans ${
                                                 gender?.includes("FEMALE")
                                                     ? "text-white"
                                                     : "text-black"
@@ -331,7 +382,7 @@ export default function SearchScreen() {
                             <Text className="font-nunito-sans-bold text-base ">
                                 <Trans>Modality</Trans>
                             </Text>
-                            <View className="flex flex-row items-center justify-between gap-4">
+                            <View className="flex flex-row items-center justify-between gap-3">
                                 <TouchableOpacity
                                     style={{
                                         padding: 8,
@@ -342,6 +393,12 @@ export default function SearchScreen() {
                                         }`,
                                         borderRadius: 8,
                                         elevation: 2,
+                                        borderWidth: 1,
+                                        borderColor: modality?.includes(
+                                            "ONLINE",
+                                        )
+                                            ? "#3b82f6"
+                                            : "#64748b",
                                     }}
                                     onPress={() => {
                                         if (modality?.includes("ONLINE")) {
@@ -361,7 +418,7 @@ export default function SearchScreen() {
                                 >
                                     <Trans>
                                         <Text
-                                            className={`font-nunito-sans-bold ${
+                                            className={`font-nunito-sans ${
                                                 modality?.includes("ONLINE")
                                                     ? "text-white"
                                                     : "text-black"
@@ -381,6 +438,12 @@ export default function SearchScreen() {
                                         }`,
                                         borderRadius: 8,
                                         elevation: 2,
+                                        borderWidth: 1,
+                                        borderColor: modality?.includes(
+                                            "ON_SITE",
+                                        )
+                                            ? "#3b82f6"
+                                            : "#64748b",
                                     }}
                                     onPress={() => {
                                         if (modality?.includes("ON_SITE")) {
@@ -400,7 +463,7 @@ export default function SearchScreen() {
                                 >
                                     <Trans>
                                         <Text
-                                            className={`font-nunito-sans-bold ${
+                                            className={`font-nunito-sans ${
                                                 modality?.includes("ON_SITE")
                                                     ? "text-white"
                                                     : "text-black"
@@ -412,6 +475,58 @@ export default function SearchScreen() {
                                 </TouchableOpacity>
                             </View>
                         </View>
+                    </View>
+                    <Text className="font-nunito-sans-bold text-base ">
+                        <Trans>Methodologies</Trans>
+                    </Text>
+                    <View
+                        style={{
+                            flexDirection: "row",
+                            flexWrap: "wrap",
+                            paddingTop: 8,
+                            columnGap: 8,
+                        }}
+                    >
+                        {methodologies.map((methodology) => (
+                            <TouchableOpacity
+                                key={methodology}
+                                onPress={() =>
+                                    handleUpdateMethodologies(methodology)
+                                }
+                                style={{
+                                    padding: 8,
+                                    marginBottom: 8,
+                                    borderRadius: 8,
+                                    borderWidth: 1,
+                                    elevation: 2,
+                                    borderColor:
+                                        selectedMethodologies?.includes(
+                                            methodology,
+                                        )
+                                            ? "#3b82f6"
+                                            : "#64748b",
+                                    backgroundColor:
+                                        selectedMethodologies?.includes(
+                                            methodology,
+                                        )
+                                            ? "#3b82f6"
+                                            : "#f8f8f8",
+                                }}
+                            >
+                                <Text
+                                    style={{
+                                        color: selectedMethodologies?.includes(
+                                            methodology,
+                                        )
+                                            ? "white"
+                                            : "black",
+                                    }}
+                                    className="font-nunito-sans text-sm"
+                                >
+                                    {methodology}
+                                </Text>
+                            </TouchableOpacity>
+                        ))}
                     </View>
                 </Modalize>
             </Portal>
@@ -426,6 +541,7 @@ function List({
     modalities,
     distance,
     currentLocation,
+    methodologies,
 }: {
     name: string | null;
     priceRange: number[] | null;
@@ -436,6 +552,7 @@ function List({
         latitude: number;
         longitude: number;
     } | null;
+    methodologies: string[] | null;
 }) {
     const { data, isLoading, isError } = useSearchTherapistByFilters({
         name: name,
@@ -449,6 +566,7 @@ function List({
         modalities: modalities,
         distance: distance === 20 ? null : distance,
         currentLocation: currentLocation ?? null,
+        methodologies: methodologies,
     });
 
     if (isError) {
@@ -474,7 +592,7 @@ function List({
     }
 
     return data.length > 0 ? (
-        <View className="flex w-full flex-col items-start justify-center gap-y-4 pt-4">
+        <View className="flex w-full flex-col items-start justify-center gap-y-4 pt-8">
             {data.map((therapist) => (
                 <View key={therapist.id} className="w-full">
                     <TherapistProfile

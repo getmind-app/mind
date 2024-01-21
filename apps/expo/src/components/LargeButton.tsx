@@ -42,7 +42,7 @@ export function LargeButton({
                     disabled: props.disabled || props.loading,
                 }),
                 borderRadius: 10,
-                paddingVertical: 8,
+                paddingVertical: 12,
                 alignItems: "center",
                 justifyContent: "center",
             }}

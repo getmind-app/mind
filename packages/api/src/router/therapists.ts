@@ -47,8 +47,6 @@ export const therapistsRouter = createTRPCRouter({
                 },
                 include: {
                     address: true,
-                    education: true,
-                    methodologies: true,
                     appointments: true,
                     hours: true,
                 },
@@ -85,6 +83,7 @@ export const therapistsRouter = createTRPCRouter({
                         longitude: z.number(),
                     })
                     .nullable(),
+                methodologies: z.array(z.string()).nullable(),
             }),
         )
         .query(async ({ ctx, input }) => {
@@ -125,6 +124,15 @@ export const therapistsRouter = createTRPCRouter({
                     ...whereClause,
                     modalities: {
                         hasSome: input.modalities,
+                    },
+                };
+            }
+
+            if (input.methodologies && input.methodologies.length > 0) {
+                whereClause = {
+                    ...whereClause,
+                    methodologies: {
+                        hasSome: input.methodologies,
                     },
                 };
             }
@@ -267,8 +275,10 @@ export const therapistsRouter = createTRPCRouter({
                 crp: z.string().min(1),
                 phone: z.string().min(1),
                 hourlyRate: z.number().positive(),
-                yearsOfExperience: z.string().min(1),
+                yearsOfExperience: z.string().nullable(),
                 about: z.string().nullable(),
+                methodologies: z.array(z.string()),
+                education: z.string().nullable(),
             }),
         )
         .mutation(async ({ ctx, input }) => {
@@ -278,11 +288,18 @@ export const therapistsRouter = createTRPCRouter({
                 },
             });
 
+            input.yearsOfExperience = input.yearsOfExperience ?? "0";
+
             return await ctx.prisma.therapist.update({
                 where: {
                     id: therapist.id,
                 },
-                data: input,
+                data: {
+                    ...input,
+                    methodologies: {
+                        set: input.methodologies,
+                    },
+                },
             });
         }),
     getAvailableDatesAndHours: protectedProcedure

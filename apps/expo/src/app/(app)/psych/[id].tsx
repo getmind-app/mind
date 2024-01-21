@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
-import MapView from "react-native-maps";
-import { Marker } from "react-native-svg";
+import MapView, { Marker } from "react-native-maps";
 import { type Float } from "react-native/Libraries/Types/CodegenTypes";
 import { Image } from "expo-image";
 import * as Linking from "expo-linking";
 import { useGlobalSearchParams, useRouter, useSearchParams } from "expo-router";
 import { Trans, t } from "@lingui/macro";
+import { capitalize, groupBy } from "lodash-es";
 
+import { BasicText } from "../../../components/BasicText";
 import { FullScreenLoading } from "../../../components/FullScreenLoading";
 import { Header } from "../../../components/Header";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
@@ -15,8 +16,9 @@ import formatModality from "../../../helpers/formatModality";
 import { geocode } from "../../../helpers/geocode";
 import geocodeAddress from "../../../helpers/geocodeAddress";
 import { getShareLink } from "../../../helpers/getShareLink";
+import { getTranslatedDay } from "../../../helpers/getTranslatedDay";
 import { api } from "../../../utils/api";
-import { type Address, type Modality } from ".prisma/client";
+import { type Address, type Hour, type Modality } from ".prisma/client";
 
 export default function TherapistProfile() {
     const params = useGlobalSearchParams();
@@ -32,6 +34,15 @@ export default function TherapistProfile() {
     if (isLoading) {
         return <FullScreenLoading />;
     }
+
+    // Group hours by week day but only the first and last hour
+    const groupedHours = groupBy(data?.hours, "weekDay");
+    Object.entries(groupedHours).forEach(([weekDay, hours]) => {
+        groupedHours[weekDay] = [
+            hours[0] as Hour,
+            hours[hours.length - 1] as Hour,
+        ];
+    });
 
     return (
         <>
@@ -80,6 +91,12 @@ export default function TherapistProfile() {
                         </View>
                     </View>
                     <View className="pb-32 pt-4">
+                        <ContentCard
+                            title={t({ message: "Work Hours" })}
+                            emoji="🕒"
+                        >
+                            <WorkHours {...groupedHours} />
+                        </ContentCard>
                         {data?.about && (
                             <ContentCard
                                 title={t({ message: "About" })}
@@ -97,17 +114,45 @@ export default function TherapistProfile() {
                                     <LocationContent address={data?.address} />
                                 </ContentCard>
                             )}
-                        {/* <ContentCard title={t({ message: "Education" })} emoji="🎓">
-                        Psicologia Cognitiva - Universidade Federal do Paraná
-                    </ContentCard>
-                    <ContentCard
-                        title={t({ message: "Methodologies" })}
-                        emoji="📚"
-                    >
-                        Terapia Cognitiva Comportamental, Mindfulness, Terapia
-                        Psicodinâmica
-                    </ContentCard> */}
-                        {/* COMENTADO ENQUANTO NÃO TEMOS INPUT DO TERAPEUTA */}
+                        {data?.education && (
+                            <ContentCard
+                                title={t({ message: "Education" })}
+                                emoji="🎓"
+                            >
+                                {data?.education}
+                            </ContentCard>
+                        )}
+
+                        {data?.methodologies &&
+                            data?.methodologies.length > 0 && (
+                                <ContentCard
+                                    title={t({ message: "Methodologies" })}
+                                    emoji="📚"
+
+                                    // map methodologies and make bullet points for each
+                                >
+                                    {data?.methodologies.map(
+                                        (methodology, index) => (
+                                            <View
+                                                key={index}
+                                                style={{
+                                                    flexDirection: "row",
+                                                    alignItems: "center",
+                                                }}
+                                            >
+                                                <Text
+                                                    style={{ marginRight: 8 }}
+                                                >
+                                                    •
+                                                </Text>
+                                                <Text className="font-nunito-sans text-base">
+                                                    {methodology}
+                                                </Text>
+                                            </View>
+                                        ),
+                                    )}
+                                </ContentCard>
+                            )}
                     </View>
                 </ScrollView>
             </ScreenWrapper>
@@ -118,6 +163,29 @@ export default function TherapistProfile() {
                 />
             )}
         </>
+    );
+}
+
+function WorkHours(groupedHours: { [key: string]: Hour[] }): React.ReactNode {
+    return (
+        <View
+            style={{
+                flex: 1,
+                flexDirection: "column",
+                rowGap: 4,
+            }}
+        >
+            {Object.entries(groupedHours).map(([weekDay, hours]) => (
+                <BasicText size="lg" key={weekDay}>
+                    {capitalize(getTranslatedDay(weekDay))}:{"  "}
+                    {hours.map((hour, index) => (
+                        <BasicText size="lg" key={hour.id}>
+                            {hour.startAt}h {index === 0 ? "-" : ""}{" "}
+                        </BasicText>
+                    ))}
+                </BasicText>
+            ))}
+        </View>
     );
 }
 
@@ -168,9 +236,9 @@ function ScheduleBar({
         <View
             style={{
                 flex: 1,
-                paddingHorizontal: 16,
+                paddingHorizontal: 24,
                 paddingTop: 16,
-                paddingBottom: 24,
+                paddingBottom: 32,
                 borderTopLeftRadius: 16,
                 borderTopRightRadius: 16,
                 width: "100%",
