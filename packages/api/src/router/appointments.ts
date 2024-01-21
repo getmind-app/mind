@@ -5,6 +5,7 @@ import { z } from "zod";
 
 import { type Appointment, type WeekDay } from "@acme/db";
 
+import { cancelRecurrence } from "../appointments/cancelRecurrence";
 import { createFirstAppointmentsInRecurrence } from "../appointments/createFirstAppointmentsInRecurrence";
 import { cancelAppointmentInCalendar } from "../helpers/cancelAppointmentInCalendar";
 import { createAppointmentInCalendar } from "../helpers/createAppointmentInCalendar";
@@ -239,6 +240,13 @@ export const appointmentsRouter = createTRPCRouter({
 
             if (input.status === "ACCEPTED") {
                 await createFirstAppointmentsInRecurrence({
+                    ...ctx,
+                    recurrenceId: input.recurrenceId,
+                });
+            }
+
+            if (input.status === "CANCELED") {
+                await cancelRecurrence({
                     ...ctx,
                     recurrenceId: input.recurrenceId,
                 });
