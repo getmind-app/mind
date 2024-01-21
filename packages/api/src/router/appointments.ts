@@ -346,6 +346,7 @@ export const appointmentsRouter = createTRPCRouter({
                 }
             }
         }
+        console.log(`Paid ${paidAppointments.length} appointments`);
     }),
     prepareNextMonthAppointments: publicProcedure.mutation(async ({ ctx }) => {
         console.log("Preparing next month appointments");
@@ -365,12 +366,13 @@ export const appointmentsRouter = createTRPCRouter({
 
         const createdAppointments: Appointment[] = [];
         for (const recurrence of recurrentAppointmentsToSchedule) {
-            const startAtTime = new Date(recurrence.startAt);
+            const startAtTime = new Date(recurrence.startTime);
             const date = set(startAtTime, {
                 year: thirtyDaysFromNow.getFullYear(),
                 month: thirtyDaysFromNow.getMonth(),
                 date: thirtyDaysFromNow.getDate(),
             });
+
             try {
                 const appointment = await ctx.prisma.appointment.create({
                     data: {
@@ -379,6 +381,7 @@ export const appointmentsRouter = createTRPCRouter({
                         therapistId: recurrence.therapistId,
                         patientId: recurrence.patientId,
                         type: "RECURRENT",
+                        status: "ACCEPTED",
                         recurrenceId: recurrence.id,
                     },
                 });
