@@ -20,6 +20,7 @@ import { LargeButton } from "../../../components/LargeButton";
 import { Refreshable } from "../../../components/Refreshable";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
 import { getShareLink } from "../../../helpers/getShareLink";
+import { getTranslatedDay } from "../../../helpers/getTranslatedDay";
 import { useUserRecurrences } from "../../../hooks/recurrence/useUserRecurrences";
 import { useUserIsProfessional } from "../../../hooks/user/useUserIsProfessional";
 import { api } from "../../../utils/api";
@@ -190,7 +191,7 @@ function RecurrenceCard({ recurrence }: { recurrence: Recurrence }) {
                     <Status status={recurrence.status} />
                     <TypeOfAppointment appointmentType={recurrence.frequency} />
                     <BasicText size="2xl">
-                        {recurrence.weekDay} at{" "}
+                        {getTranslatedDay(recurrence.weekDay)} at{" "}
                         {format(recurrence.startTime, "HH:mm")} -{" "}
                         {format(recurrence.endTime, "HH:mm")}
                     </BasicText>
