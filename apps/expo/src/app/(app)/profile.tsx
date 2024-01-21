@@ -90,7 +90,11 @@ export default function UserProfileScreen() {
 
             <ScrollView showsVerticalScrollIndicator={false}>
                 {isProfessional ? <ProfessionalMenuItems /> : null}
-
+                <MenuItem
+                    icon="repeat"
+                    label={t({ message: "Recurrences" })}
+                    onPress={() => router.push("/settings/recurrences")}
+                />
                 <MenuItem
                     isFirst
                     icon="notifications"
@@ -133,7 +137,6 @@ export default function UserProfileScreen() {
 function ProfessionalMenuItems() {
     const router = useRouter();
     const { data } = api.therapists.findByUserId.useQuery();
-
     if (!data) return null;
 
     return (
