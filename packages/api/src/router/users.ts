@@ -11,7 +11,7 @@ export const usersRouter = createTRPCRouter({
         .input(
             z.object({
                 metadata: z.object({
-                    role: z.enum(["patient", "professional"]),
+                    role: z.enum(["patient", "professional"]).optional(),
                     expoPushToken: z.string().optional(),
                 }),
             }),

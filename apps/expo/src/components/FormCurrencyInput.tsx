@@ -46,10 +46,11 @@ export function FormCurrencyInput<
                         <Text className="font-nunito-sans text-sm text-slate-500">
                             {value ? (
                                 <Trans>
-                                    You'll receive R$ $
+                                    You'll receive R${" "}
                                     {(value * (1 - platformFee)).toFixed(2) ??
                                         0}{" "}
-                                    for each session
+                                    ({(1 - platformFee) * 100}%) for each
+                                    session
                                 </Trans>
                             ) : (
                                 <Trans>

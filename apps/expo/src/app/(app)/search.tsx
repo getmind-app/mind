@@ -43,6 +43,7 @@ export default function SearchScreen() {
         longitude: number;
     } | null>(null);
     const modalizeRef = useRef<Modalize>(null);
+    const ref = useRef<number[] | null>(null);
     const debounceSearch = useDebounce(search, 500);
     const debouncePriceRange = useDebounce(priceRange, 300);
     const debouceDistance = useDebounce(distance, 300);
@@ -245,8 +246,11 @@ export default function SearchScreen() {
                         selectedTrackStyle={{
                             borderColor: "#3b82f6",
                         }}
+                        onSlidingComplete={() => {
+                            setPriceRange(ref.current);
+                        }}
                         onChange={(values: number[]) => {
-                            setPriceRange(values);
+                            ref.current = values;
                         }}
                     />
                     <Text className="font-nunito-sans-bold text-base ">

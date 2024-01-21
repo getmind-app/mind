@@ -25,9 +25,11 @@ export default function PaymentsSetup() {
     const therapist = api.therapists.findByUserId.useQuery();
     const updateAccountStatus = api.stripe.updateAccountStatus.useMutation();
     const linkAccount = api.stripe.linkAccount.useMutation();
+    const createStripeAccount = api.stripe.createAccount.useMutation();
     const account = api.stripe.getAccount.useQuery({
         paymentAccountId: therapist.data?.paymentAccountId ?? "",
     });
+    const therapistHasStripeAccount = therapist.data?.paymentAccountId;
     const therapistHasBankAccountLinked =
         therapist.data?.paymentAccountStatus === "ACTIVE";
 
@@ -73,8 +75,32 @@ export default function PaymentsSetup() {
                         this page to check the status after the setup.
                     </Trans>
                 </Text>
+                {!therapistHasStripeAccount && (
+                    <TouchableOpacity
+                        onPress={async () => {
+                            await createStripeAccount.mutateAsync();
+                            await therapist.refetch();
+                        }}
+                    >
+                        <View
+                            style={{
+                                elevation: 2,
+                            }}
+                            className={`mt-6 flex w-full flex-row items-center justify-center rounded-xl bg-blue-500 py-3 align-middle shadow-sm`}
+                        >
+                            <Text
+                                className={`ml-2 font-nunito-sans-bold text-lg text-white`}
+                            >
+                                <Trans>Create stripe account</Trans>
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
+                )}
                 <TouchableOpacity
-                    disabled={therapistHasBankAccountLinked}
+                    disabled={
+                        therapistHasBankAccountLinked ||
+                        !therapistHasStripeAccount
+                    }
                     onPress={async () => {
                         if (!therapistHasBankAccountLinked) {
                             const res = await linkAccount.mutateAsync({

@@ -1,5 +1,7 @@
 import { useState } from "react";
 import {
+    ActivityIndicator,
+    Alert,
     Image,
     Modal,
     Pressable,
@@ -11,25 +13,42 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
-import { Feather, FontAwesome, MaterialIcons } from "@expo/vector-icons";
+import {
+    AntDesign,
+    Feather,
+    FontAwesome,
+    MaterialIcons,
+} from "@expo/vector-icons";
 import { Trans, t } from "@lingui/macro";
-import { useLingui } from "@lingui/react";
+import { useLingui, type I18nContext } from "@lingui/react";
+import { format } from "date-fns";
+import { enUS, ptBR } from "date-fns/locale";
 
+import { BasicText } from "../../components/BasicText";
 import { Card } from "../../components/Card";
 import { CardSkeleton } from "../../components/CardSkeleton";
+import { LargeButton } from "../../components/LargeButton";
 import { Refreshable } from "../../components/Refreshable";
 import { ScreenWrapper } from "../../components/ScreenWrapper";
 import { Title } from "../../components/Title";
 import { getShareLink } from "../../helpers/getShareLink";
 import { isMoreThan24HoursLater } from "../../helpers/isMoreThan24HoursLater";
+import { useUpdateRecurrence } from "../../hooks/recurrence/useUpdateRecurrence";
+import { useUserHasProfileImage } from "../../hooks/user/useUserHasProfileImage";
 import { useUserIsProfessional } from "../../hooks/user/useUserIsProfessional";
 import { api } from "../../utils/api";
 import {
     type Appointment,
     type AppointmentStatus,
+    type AppointmentType,
     type Patient,
     type Therapist,
 } from ".prisma/client";
+
+function getLocale(lingui: I18nContext) {
+    if (lingui.i18n.locale === "pt") return ptBR;
+    return enUS;
+}
 
 export default function CalendarScreen() {
     const [refreshing, setRefreshing] = useState(false);
@@ -183,6 +202,10 @@ function AppointmentCard({
     const [open, setOpen] = useState(false);
     const isProfessional = useUserIsProfessional();
     const lingui = useLingui();
+    const patientCanCancel =
+        appointment.status == "ACCEPTED" &&
+        isMoreThan24HoursLater(appointment.scheduledTo) &&
+        !isProfessional;
 
     return (
         <Card key={appointment.id}>
@@ -198,29 +221,22 @@ function AppointmentCard({
                     }}
                 >
                     <Status status={appointment.status} />
+                    <TypeOfAppointment appointmentType={appointment.type} />
                     <Text className="pt-2 font-nunito-sans text-xl capitalize">
-                        {new Intl.DateTimeFormat(lingui.i18n.locale, {
-                            weekday: "long",
-                        }).format(new Date(appointment.scheduledTo))}
-                        , {new Date(appointment.scheduledTo).getDate()}/
-                        {new Date(appointment.scheduledTo).getMonth() + 1}
+                        {format(
+                            new Date(appointment.scheduledTo),
+                            "EEEE, dd/MM",
+                            {
+                                locale: getLocale(lingui),
+                            },
+                        )}
                     </Text>
                     <View className="flex flex-row pt-2">
                         <Text className="font-nunito-sans text-sm text-slate-500">
                             <Trans>with</Trans>
                             {"  "}
                         </Text>
-                        <Image
-                            className="rounded-full"
-                            alt={`${appointment.therapist.name}'s profile picture`}
-                            source={{
-                                uri: isProfessional
-                                    ? appointment.patient.profilePictureUrl
-                                    : appointment.therapist.profilePictureUrl,
-                                width: 20,
-                                height: 20,
-                            }}
-                        />
+                        <PatientPhoto appointment={appointment} />
                         <Text className="font-nunito-sans text-sm text-slate-500">
                             {"  "}
                             {isProfessional
@@ -247,15 +263,10 @@ function AppointmentCard({
                 </View>
                 <View className=" flex flex-col items-center justify-between">
                     <Text className="font-nunito-sans-bold text-xl text-blue-500 ">
-                        {new Date(appointment.scheduledTo).getHours()}:
-                        {new Date(appointment.scheduledTo).getMinutes() == 0
-                            ? "00"
-                            : new Date(appointment.scheduledTo).getMinutes()}
+                        {format(appointment.scheduledTo, "HH:mm")}
                     </Text>
                     {(appointment.status == "PENDENT" && isProfessional) ||
-                    (appointment.status == "ACCEPTED" &&
-                        isMoreThan24HoursLater(appointment.scheduledTo) &&
-                        !isProfessional) ? (
+                    patientCanCancel ? (
                         <TouchableOpacity onPress={() => setOpen(!open)}>
                             {open ? (
                                 <Feather
@@ -293,7 +304,7 @@ function TherapistOptions({
     appointment: Appointment & { therapist: Therapist };
 }) {
     return (
-        <View className="flex flex-col gap-2 pl-2 pt-2">
+        <View className="flex flex-col gap-2 pl-2 pt-4">
             {appointment.status === "PENDENT" ? (
                 <SessionConfirmation appointment={appointment} />
             ) : null}
@@ -321,15 +332,16 @@ function SessionConfirmation({
     appointment: Appointment & { therapist: Therapist };
 }) {
     const utils = api.useContext();
+    const updateRecurrence = useUpdateRecurrence();
 
-    const { mutate } = api.appointments.update.useMutation({
+    const { mutateAsync, isLoading } = api.appointments.update.useMutation({
         onSuccess: async () => {
             await utils.appointments.findAll.invalidate();
         },
     });
 
-    const handleSessionConfirmation = (newStatus: AppointmentStatus) => {
-        mutate({
+    const handleSessionConfirmation = async (newStatus: AppointmentStatus) => {
+        await mutateAsync({
             id: appointment.id,
             scheduledTo: appointment.scheduledTo,
             modality: appointment.modality,
@@ -340,34 +352,147 @@ function SessionConfirmation({
         });
     };
 
+    const isMutating = isLoading || updateRecurrence.isLoading;
+
     return (
-        <View className="flex flex-row items-center pt-4 align-middle">
-            <Text className="text-base">
-                <Trans>Accept the session?</Trans>
+        <View
+            style={{
+                flex: 1,
+                alignItems: "flex-start",
+                gap: 12,
+            }}
+        >
+            <Text
+                style={{
+                    flex: 1,
+                }}
+                className="text-base"
+            >
+                <Trans>Options</Trans>
             </Text>
-            <View className="flex flex-row gap-2 pl-3">
-                <TouchableOpacity
+            <View
+                style={{
+                    flex: 1,
+                    gap: 8,
+                    width: "100%",
+                }}
+            >
+                {appointment.type === "FIRST_IN_RECURRENCE" && (
+                    <LargeButton
+                        disabled={isMutating}
+                        onPress={() => {
+                            Alert.alert(
+                                t({ message: "Confirm recurrence acceptance" }),
+                                t({
+                                    message: `After accepting the recurrence, weekly events will be added to your calendar. 
+                                        Recurrent appointments are approved by default and can be canceled up until 24 hours before the session.`,
+                                }),
+                                [
+                                    {
+                                        text: t({ message: "Cancel" }),
+                                        style: "cancel",
+                                    },
+                                    {
+                                        text: t({ message: "Accept" }),
+                                        onPress: async () => {
+                                            await handleSessionConfirmation(
+                                                "ACCEPTED",
+                                            );
+                                            if (appointment.recurrenceId) {
+                                                await updateRecurrence.mutateAsync(
+                                                    {
+                                                        recurrenceId:
+                                                            appointment.recurrenceId,
+                                                        status: "ACCEPTED",
+                                                    },
+                                                );
+                                            }
+                                        },
+                                    },
+                                ],
+                            );
+                        }}
+                    >
+                        <Trans>Accept session and recurrence </Trans>
+                    </LargeButton>
+                )}
+                <LargeButton
+                    disabled={isMutating}
                     onPress={() => {
-                        handleSessionConfirmation("ACCEPTED");
+                        Alert.alert(
+                            t({
+                                message: "Confirm session acceptance",
+                            }),
+                            t({
+                                message: `After accepting the session, an event will be created in your calendar.${
+                                    appointment.recurrenceId
+                                        ? "Accepting a single session will refuse the patient's recurrence request."
+                                        : ""
+                                }`,
+                            }),
+                            [
+                                {
+                                    text: t({ message: "Cancel" }),
+                                    style: "cancel",
+                                },
+                                {
+                                    text: t({ message: "Accept" }),
+                                    onPress: async () => {
+                                        await handleSessionConfirmation(
+                                            "ACCEPTED",
+                                        );
+                                        if (appointment.recurrenceId) {
+                                            await updateRecurrence.mutateAsync({
+                                                recurrenceId:
+                                                    appointment.recurrenceId,
+                                                status: "REJECTED",
+                                            });
+                                        }
+                                    },
+                                },
+                            ],
+                        );
                     }}
                 >
-                    <View className="rounded-lg bg-green-400 shadow-sm">
-                        <Text className="px-3 py-2 text-white">
-                            <Trans>Yes</Trans>
-                        </Text>
-                    </View>
-                </TouchableOpacity>
-                <TouchableOpacity
+                    <Trans>
+                        {appointment.type === "FIRST_IN_RECURRENCE"
+                            ? "Accept single session"
+                            : "Accept session"}
+                    </Trans>
+                </LargeButton>
+                <LargeButton
+                    color="red"
+                    disabled={isMutating}
                     onPress={() => {
-                        handleSessionConfirmation("REJECTED");
+                        Alert.alert(
+                            t({ message: "Confirm session rejection" }),
+                            t({ message: "This action can't be undone" }),
+                            [
+                                {
+                                    text: t({ message: "Cancel" }),
+                                    style: "cancel",
+                                },
+                                {
+                                    text: t({ message: "Reject" }),
+                                    onPress: async () => {
+                                        await handleSessionConfirmation(
+                                            "REJECTED",
+                                        );
+                                        if (appointment.recurrenceId) {
+                                            await updateRecurrence.mutateAsync({
+                                                recurrenceId:
+                                                    appointment.recurrenceId,
+                                                status: "REJECTED",
+                                            });
+                                        }
+                                    },
+                                },
+                            ],
+                        );
                     }}
                 >
-                    <View className="rounded-lg bg-red-400 shadow-sm">
-                        <Text className="px-3 py-2 text-white">
-                            <Trans>No</Trans>
-                        </Text>
-                    </View>
-                </TouchableOpacity>
+                    <Trans>Refuse session</Trans>
+                </LargeButton>
             </View>
         </View>
     );
@@ -491,5 +616,57 @@ function Status({ status }: { status: AppointmentStatus }) {
                 {label}
             </Text>
         </View>
+    );
+}
+
+const appointmentMapper: {
+    [key in AppointmentType]: string;
+} = {
+    FIRST_IN_RECURRENCE: t({ message: "First in recurrence" }),
+    SINGLE: t({ message: "Single" }),
+    RECURRENT: t({ message: "Recurrent" }),
+    SINGLE_REPEATED: t({ message: "Repeated" }),
+};
+
+function TypeOfAppointment({
+    appointmentType,
+}: {
+    appointmentType: AppointmentType;
+}) {
+    return (
+        <BasicText color="black">
+            {appointmentMapper[appointmentType]}
+        </BasicText>
+    );
+}
+
+function PatientPhoto({
+    appointment,
+}: {
+    appointment: Appointment & { therapist: Therapist } & { patient: Patient };
+}) {
+    const { data, isLoading } = useUserHasProfileImage({
+        userId: appointment.patient.userId,
+    });
+
+    if (isLoading) return <ActivityIndicator />;
+
+    if (!data)
+        return (
+            <View className={`rounded-full bg-blue-100 p-[2px]`}>
+                <AntDesign name="user" size={20} />
+            </View>
+        );
+
+    return (
+        <Image
+            className="rounded-full"
+            alt={`${appointment.therapist.name}'s profile picture`}
+            source={{
+                uri: appointment.patient.profilePictureUrl,
+                width: 20,
+                height: 20,
+            }}
+        />
     );
 }

@@ -67,17 +67,6 @@ export default function SessionPayment() {
             Alert.alert("Error", error.message);
         } else {
             setReady(true);
-
-            // TODO: é pra estarmos atualizando o appointment aqui?
-            await updateAppointment.mutateAsync({
-                id: String(appointmentId),
-                isPaid: true,
-                modality: data.modality,
-                patientId: data.patient.id,
-                scheduledTo: data.scheduledTo,
-                status: data.status,
-                therapistId: data.therapist.id,
-            });
         }
     }
 
