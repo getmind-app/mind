@@ -51,6 +51,16 @@ export const createAppointmentInCalendar = async ({
 
     return newAppointment;
 };
+
+const appointmentTypeToEmoji: {
+    [key in Appointment["type"]]: string;
+} = {
+    FIRST_IN_RECURRENCE: "🔹",
+    RECURRENT: "🔵",
+    SINGLE: "🟡",
+    SINGLE_REPEATED: "🟢",
+};
+
 function makeRequestBody(
     patient: Patient,
     therapist: Therapist & { address: Address | null },
@@ -60,7 +70,9 @@ function makeRequestBody(
     therapistEmail: string,
 ): calendar_v3.Schema$Event {
     return {
-        summary: `Sessão ${patient.name} e ${therapist.name}`,
+        summary: `${appointmentTypeToEmoji[appointment.type]} Sessão ${
+            patient.name
+        } e ${therapist.name}`,
         description: `Conversa ${modality} de ${patient.name} com ${therapistPronoun} terapeuta ${therapist.name}`,
         start: {
             dateTime: appointment.scheduledTo.toISOString(),
