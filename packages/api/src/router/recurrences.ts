@@ -18,4 +18,23 @@ export const recurrenceRouter = createTRPCRouter({
                 scheduledTo: input.scheduledTo,
             }));
         }),
+    allUserRecurrences: protectedProcedure
+        .input(z.object({ userRole: z.enum(["professional", "patient"]) }))
+        .query(async ({ ctx, input }) => {
+            try {
+                return await ctx.prisma.recurrence.findMany({
+                    where: {
+                        ...(input.userRole === "professional"
+                            ? { therapistId: ctx.auth.user?.id }
+                            : { patientId: ctx.auth.user?.id }),
+                    },
+                    include: {
+                        therapist: true,
+                        patient: true,
+                    },
+                });
+            } catch (error) {
+                console.log(error);
+            }
+        }),
 });
