@@ -61,7 +61,7 @@ function makeRequestBody(
 ): calendar_v3.Schema$Event {
     return {
         summary: `Sessão ${patient.name} e ${therapist.name}`,
-        description: `Conversa ${modality} d${therapistPronoun} ${patient.name} com ${therapistPronoun} terapeuta ${therapist.name}`,
+        description: `Conversa ${modality} de ${patient.name} com ${therapistPronoun} terapeuta ${therapist.name}`,
         start: {
             dateTime: appointment.scheduledTo.toISOString(),
             timeZone: "America/Sao_Paulo",
