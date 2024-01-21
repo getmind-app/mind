@@ -55,7 +55,7 @@ export const createAppointmentInCalendar = async ({
 const appointmentTypeToEmoji: {
     [key in Appointment["type"]]: string;
 } = {
-    FIRST_IN_RECURRENCE: "🔹",
+    FIRST_IN_RECURRENCE: "🔷",
     RECURRENT: "🔵",
     SINGLE: "🟡",
     SINGLE_REPEATED: "🟢",
