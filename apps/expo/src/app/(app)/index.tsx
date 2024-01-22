@@ -20,7 +20,9 @@ import { useUser } from "@clerk/clerk-expo";
 import { AntDesign, FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import { Trans, t } from "@lingui/macro";
 import { useLingui } from "@lingui/react";
+import { format } from "date-fns";
 
+import { BasicText } from "../../components/BasicText";
 import { Card } from "../../components/Card";
 import { CardSkeleton } from "../../components/CardSkeleton";
 import DefaultHomeCard from "../../components/DefaultHomeCard";
@@ -28,6 +30,7 @@ import { Refreshable } from "../../components/Refreshable";
 import { ScreenWrapper } from "../../components/ScreenWrapper";
 import { Title } from "../../components/Title";
 import geocodeAddress from "../../helpers/geocodeAddress";
+import { getLocale } from "../../helpers/getLocale";
 import { registerForPushNotificationsAsync } from "../../helpers/registerForPushNotifications";
 import { useUserHasProfileImage } from "../../hooks/user/useUserHasProfileImage";
 import { useUserIsProfessional } from "../../hooks/user/useUserIsProfessional";
@@ -207,21 +210,20 @@ function NextAppointment() {
                 >
                     <View className="p-6">
                         <View className="flex w-full flex-row justify-between">
-                            <Text className="font-nunito-sans text-xl">
-                                {new Intl.DateTimeFormat(lingui.i18n.locale, {
-                                    weekday: "long",
-                                }).format(
+                            <BasicText
+                                size="2xl"
+                                style={{
+                                    textTransform: "capitalize",
+                                }}
+                            >
+                                {format(
                                     new Date(appointment.data.scheduledTo),
+                                    "EEEE, dd/MM",
+                                    {
+                                        locale: getLocale(lingui),
+                                    },
                                 )}
-                                ,{" "}
-                                {new Date(
-                                    appointment.data.scheduledTo,
-                                ).getDate()}
-                                /
-                                {new Date(
-                                    appointment.data.scheduledTo,
-                                ).getMonth() + 1}
-                            </Text>
+                            </BasicText>
                             <Text className="font-nunito-sans-bold text-xl text-blue-500 ">
                                 {new Date(
                                     appointment.data.scheduledTo,
