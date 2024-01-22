@@ -256,7 +256,9 @@ function AppointmentCard({
                                         : "text-red-500"
                                 }`}
                             >
-                                {appointment.isPaid ? "Paid" : "Not paid"}
+                                {appointment.isPaid
+                                    ? t({ message: "Paid" })
+                                    : t({ message: "Not paid" })}
                             </Text>
                         </View>
                     )}
@@ -573,36 +575,36 @@ function SessionCancel({
     );
 }
 
-const statusMapper: {
-    [key in AppointmentStatus]: {
-        color: string;
-        circleColor: string;
-        label: string;
-    };
-} = {
-    ACCEPTED: {
-        color: "green-600",
-        circleColor: "green",
-        label: t({ message: "ACCEPTED" }),
-    },
-    PENDENT: {
-        color: "yellow-300",
-        circleColor: "yellow",
-        label: t({ message: "PENDENT" }),
-    },
-    REJECTED: {
-        color: "red-500",
-        circleColor: "red",
-        label: t({ message: "REJECTED" }),
-    },
-    CANCELED: {
-        color: "red-500",
-        circleColor: "red",
-        label: t({ message: "CANCELED" }),
-    },
-};
-
 function Status({ status }: { status: AppointmentStatus }) {
+    const statusMapper: {
+        [key in AppointmentStatus]: {
+            color: string;
+            circleColor: string;
+            label: string;
+        };
+    } = {
+        ACCEPTED: {
+            color: "green-600",
+            circleColor: "green",
+            label: t({ message: "ACCEPTED" }),
+        },
+        PENDENT: {
+            color: "yellow-300",
+            circleColor: "yellow",
+            label: t({ message: "PENDENT" }),
+        },
+        REJECTED: {
+            color: "red-500",
+            circleColor: "red",
+            label: t({ message: "REJECTED" }),
+        },
+        CANCELED: {
+            color: "red-500",
+            circleColor: "red",
+            label: t({ message: "CANCELED" }),
+        },
+    };
+
     const textColor = statusMapper[status].color;
     const circleColor = statusMapper[status].circleColor;
     const label = statusMapper[status].label;
@@ -619,20 +621,20 @@ function Status({ status }: { status: AppointmentStatus }) {
     );
 }
 
-const appointmentMapper: {
-    [key in AppointmentType]: string;
-} = {
-    FIRST_IN_RECURRENCE: t({ message: "First in recurrence" }),
-    SINGLE: t({ message: "Single" }),
-    RECURRENT: t({ message: "Recurrent" }),
-    SINGLE_REPEATED: t({ message: "Repeated" }),
-};
-
 function TypeOfAppointment({
     appointmentType,
 }: {
     appointmentType: AppointmentType;
 }) {
+    const appointmentMapper: {
+        [key in AppointmentType]: string;
+    } = {
+        FIRST_IN_RECURRENCE: t({ message: "First in recurrence" }),
+        SINGLE: t({ message: "Single" }),
+        RECURRENT: t({ message: "Recurrent" }),
+        SINGLE_REPEATED: t({ message: "Repeated" }),
+    };
+
     return (
         <BasicText color="black">
             {appointmentMapper[appointmentType]}

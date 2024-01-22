@@ -303,36 +303,35 @@ function CancelRecurrence({ recurrence }: { recurrence: Recurrence }) {
     );
 }
 
-const statusMapper: {
-    [key in RecurrenceStatus]: {
-        color: string;
-        circleColor: string;
-        label: string;
-    };
-} = {
-    ACCEPTED: {
-        color: "green-600",
-        circleColor: "green",
-        label: t({ message: "ACCEPTED" }),
-    },
-    PENDENT: {
-        color: "yellow-300",
-        circleColor: "yellow",
-        label: t({ message: "PENDENT" }),
-    },
-    REJECTED: {
-        color: "red-500",
-        circleColor: "red",
-        label: t({ message: "REJECTED" }),
-    },
-    CANCELED: {
-        color: "red-500",
-        circleColor: "red",
-        label: t({ message: "CANCELED" }),
-    },
-};
-
 function Status({ status }: { status: RecurrenceStatus }) {
+    const statusMapper: {
+        [key in RecurrenceStatus]: {
+            color: string;
+            circleColor: string;
+            label: string;
+        };
+    } = {
+        ACCEPTED: {
+            color: "green-600",
+            circleColor: "green",
+            label: t({ message: "ACCEPTED" }),
+        },
+        PENDENT: {
+            color: "yellow-300",
+            circleColor: "yellow",
+            label: t({ message: "PENDENT" }),
+        },
+        REJECTED: {
+            color: "red-500",
+            circleColor: "red",
+            label: t({ message: "REJECTED" }),
+        },
+        CANCELED: {
+            color: "red-500",
+            circleColor: "red",
+            label: t({ message: "CANCELED" }),
+        },
+    };
     const textColor = statusMapper[status].color;
     const circleColor = statusMapper[status].circleColor;
     const label = statusMapper[status].label;
@@ -349,20 +348,20 @@ function Status({ status }: { status: RecurrenceStatus }) {
     );
 }
 
-const frequencyMapper: {
-    [key in Frequency]: string;
-} = {
-    BIWEEKLY: t({ message: "Biweekly" }),
-    CUSTOM: t({ message: "Custom" }),
-    MONTHLY: t({ message: "Monthly" }),
-    WEEKLY: t({ message: "Weekly" }),
-};
-
 function TypeOfAppointment({
     appointmentType,
 }: {
     appointmentType: Frequency;
 }) {
+    const frequencyMapper: {
+        [key in Frequency]: string;
+    } = {
+        BIWEEKLY: t({ message: "Biweekly" }),
+        CUSTOM: t({ message: "Custom" }),
+        MONTHLY: t({ message: "Monthly" }),
+        WEEKLY: t({ message: "Weekly" }),
+    };
+
     return (
         <BasicText color="black">{frequencyMapper[appointmentType]}</BasicText>
     );
