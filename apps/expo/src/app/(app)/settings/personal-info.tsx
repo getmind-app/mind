@@ -6,6 +6,7 @@ import {
     Text,
     View,
 } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
 import { useRouter } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,6 +18,8 @@ import { z } from "zod";
 
 import { FormCurrencyInput } from "../../../components/FormCurrencyInput";
 import { FormDateInput } from "../../../components/FormDateInput";
+import { FormLongTextInput } from "../../../components/FormLongTextInput";
+import { FormOptionsInput } from "../../../components/FormOptionsInput";
 import { FormTextInput } from "../../../components/FormTextInput";
 import { Header } from "../../../components/Header";
 import { LargeButton } from "../../../components/LargeButton";
@@ -62,7 +65,7 @@ function TherapistOptions() {
     const {
         control,
         handleSubmit,
-        formState: { isValid, isDirty, isSubmitting },
+        formState: { isSubmitting },
     } = useForm<NonNullable<typeof therapist.data>>({
         defaultValues: therapist.data
             ? {
@@ -74,6 +77,8 @@ function TherapistOptions() {
                   hourlyRate: therapist.data.hourlyRate,
                   phone: therapist.data.phone,
                   about: therapist.data.about,
+                  methodologies: therapist.data.methodologies,
+                  education: therapist.data.education,
               }
             : {
                   name: "",
@@ -84,6 +89,8 @@ function TherapistOptions() {
                   hourlyRate: 100,
                   phone: "",
                   about: "",
+                  methodologies: [],
+                  education: "",
               },
         resolver: zodResolver(therapistSchema),
     });
@@ -99,6 +106,8 @@ function TherapistOptions() {
             hourlyRate: formData.hourlyRate,
             phone: formData.phone,
             about: formData.about,
+            methodologies: formData.methodologies,
+            education: formData.education,
         });
     });
 
@@ -112,80 +121,120 @@ function TherapistOptions() {
                 className="min-h-max"
                 showsVerticalScrollIndicator={false}
             >
-                <Text className="font-nunito-sans-bold text-3xl">
-                    <Trans>Personal info</Trans>
-                </Text>
-                <FormTextInput
-                    control={control}
-                    name="name"
-                    title={t({ message: "Full Name" })}
-                    placeholder={t({
-                        message: "John Doe",
-                        comment: "Psych Onboard Full Name Placeholder",
-                    })}
-                />
-                <FormDateInput
-                    title={t({ message: "Birthday" })}
-                    name="dateOfBirth"
-                    control={control}
-                    show={showBirthdayPicker}
-                    handleChange={() => setShowBirthdayPicker(false)}
-                    onValuePress={() =>
-                        setShowBirthdayPicker(!showBirthdayPicker)
-                    }
-                    maximumDate={DateTime.local()
-                        .minus({ years: 18 })
-                        .toJSDate()}
-                    minimumDate={DateTime.local(1900).toJSDate()}
-                />
-                <FormTextInput
-                    control={control}
-                    name="document"
-                    title={t({ message: "Document (CPF)" })}
-                    placeholder="123.456.789-01"
-                    mask="999.999.999-99"
-                    inputMode="numeric"
-                />
-                <FormTextInput
-                    control={control}
-                    name="phone"
-                    title={t({ message: "Phone" })}
-                    placeholder="(11) 91234-5678"
-                    mask="(99) 99999-9999"
-                    inputMode="numeric"
-                />
-                <FormTextInput
-                    control={control}
-                    name="crp"
-                    title={t({ message: "CRP" })}
-                    placeholder="01/23456"
-                    mask="99/999999"
-                    inputMode="numeric"
-                />
-                <FormTextInput
-                    title={t({ message: "Experience" })}
-                    placeholder="2"
-                    unit={t({ message: "years" })}
-                    control={control}
-                    name="yearsOfExperience"
-                    inputMode="numeric"
-                />
-                <FormTextInput
-                    title={t({ message: "About you" })}
-                    placeholder={t({
-                        message: "Tell us about yourself",
-                    })}
-                    control={control}
-                    name="about"
-                    inputMode="text"
-                />
-                <FormCurrencyInput
-                    name="hourlyRate"
-                    control={control}
-                    title={t({ message: "Hourly Rate" })}
-                />
+                <View style={{ paddingBottom: 32 }}>
+                    <Text className="font-nunito-sans-bold text-3xl">
+                        <Trans>Personal info</Trans>
+                    </Text>
+                    <FormTextInput
+                        control={control}
+                        name="name"
+                        title={t({ message: "Full Name" })}
+                        placeholder={t({
+                            message: "John Doe",
+                            comment: "Psych Onboard Full Name Placeholder",
+                        })}
+                    />
+                    <FormDateInput
+                        title={t({ message: "Birthday" })}
+                        name="dateOfBirth"
+                        control={control}
+                        show={showBirthdayPicker}
+                        handleChange={() => setShowBirthdayPicker(false)}
+                        onValuePress={() =>
+                            setShowBirthdayPicker(!showBirthdayPicker)
+                        }
+                        maximumDate={DateTime.local()
+                            .minus({ years: 18 })
+                            .toJSDate()}
+                        minimumDate={DateTime.local(1900).toJSDate()}
+                    />
+                    <FormTextInput
+                        control={control}
+                        name="document"
+                        title={t({ message: "Document (CPF)" })}
+                        placeholder="123.456.789-01"
+                        mask="999.999.999-99"
+                        inputMode="numeric"
+                    />
+                    <FormTextInput
+                        control={control}
+                        name="phone"
+                        title={t({ message: "Phone" })}
+                        placeholder="(11) 91234-5678"
+                        mask="(99) 99999-9999"
+                        inputMode="numeric"
+                    />
+                    <FormTextInput
+                        control={control}
+                        name="crp"
+                        title={t({ message: "CRP" })}
+                        placeholder="01/23456"
+                        mask="99/999999"
+                        inputMode="numeric"
+                    />
+                    <FormTextInput
+                        title={t({ message: "Experience" })}
+                        placeholder="2"
+                        unit={t({ message: "years" })}
+                        control={control}
+                        name="yearsOfExperience"
+                        inputMode="numeric"
+                    />
+                    <FormCurrencyInput
+                        name="hourlyRate"
+                        control={control}
+                        title={t({ message: "Hourly Rate" })}
+                    />
+                    <FormLongTextInput
+                        title={t({ message: "About you" })}
+                        placeholder={t({
+                            message: "Tell us about yourself",
+                        })}
+                        control={control}
+                        name="about"
+                        inputMode="text"
+                        lengthLimit={250}
+                    />
+
+                    <FormLongTextInput
+                        title={t({ message: "Education" })}
+                        placeholder={t({
+                            message: "How was your education?",
+                        })}
+                        control={control}
+                        name="education"
+                        inputMode="text"
+                        lengthLimit={300}
+                    />
+
+                    <FormOptionsInput
+                        title={t({ message: "Methodologies" })}
+                        options={[
+                            t({ message: "Mindfulness" }),
+                            t({ message: "Psicoterapia Corporal Reichiana" }),
+                            t({
+                                message: "Cognitivo Comportamental (TCC)",
+                            }),
+                            t({ message: "Psicoterapia Breve Focal" }),
+                            t({ message: "Humanismo" }),
+                            t({ message: "Behaviorista" }),
+                            t({ message: "Existencial" }),
+                            t({ message: "Junguiana" }),
+                            t({ message: "Psicanalítica de Freud" }),
+                            t({ message: "Psicanalítica de Lacan" }),
+                            t({ message: "Gestalt" }),
+                            t({ message: "Positiva" }),
+                        ]}
+                        control={control}
+                        name="methodologies"
+                    />
+                </View>
             </ScrollView>
-            <LargeButton onPress={onSubmit} loading={isSubmitting}>
+            <LargeButton
+                onPress={onSubmit}
+                loading={isSubmitting}
+                disabled={!isValid || !isDirty}
+            >
                 <Trans>Update</Trans>
             </LargeButton>
         </>
@@ -250,4 +299,6 @@ const therapistSchema = z.object({
         })
         .min(10, "Your phone number must be valid"),
     about: z.string().nullable(),
+    methodologies: z.array(z.string()).nullable(),
+    education: z.string().nullable(),
 });

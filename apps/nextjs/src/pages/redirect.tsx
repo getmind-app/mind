@@ -13,6 +13,7 @@ const Redirect: NextPage = () => {
 };
 export default Redirect;
 
+// eslint-disable-next-line @typescript-eslint/require-await
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const { redirectUrl } = context.query;
 

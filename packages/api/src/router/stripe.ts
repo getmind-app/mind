@@ -1,3 +1,4 @@
+import clerkClient from "@clerk/clerk-sdk-node";
 import { Stripe } from "stripe";
 import { z } from "zod";
 
@@ -97,6 +98,7 @@ export const stripeRouter = createTRPCRouter({
             apiVersion: "2023-08-16",
         });
 
+        const user = await clerkClient.users.getUser(ctx.auth.userId);
         const therapist = await ctx.prisma.therapist.findUnique({
             where: {
                 userId: ctx.auth.userId,
@@ -111,21 +113,20 @@ export const stripeRouter = createTRPCRouter({
             business_type: "individual",
             country: "BR",
             default_currency: "brl",
-            email: ctx.auth.user?.emailAddresses[0]?.emailAddress,
+            email: user.emailAddresses[0]?.emailAddress,
             individual: {
-                email: ctx.auth.user?.emailAddresses[0]?.emailAddress,
+                email: user.emailAddresses[0]?.emailAddress,
                 gender: therapist?.gender.toLowerCase(),
                 first_name: therapist?.name.split(" ")[0],
                 last_name: therapist?.name.split(" ")[1],
                 id_number: therapist?.document,
                 dob: {
                     day: therapist?.dateOfBirth?.getDate() ?? 1,
-                    month: therapist?.dateOfBirth?.getMonth() ?? 1,
+                    month: (therapist?.dateOfBirth?.getMonth() ?? 0) + 1,
                     year: therapist?.dateOfBirth?.getFullYear() ?? 1990,
                 },
             },
         });
-
         return await ctx.prisma.therapist.update({
             where: {
                 userId: ctx.auth.userId,

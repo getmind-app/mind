@@ -67,15 +67,6 @@ export default function SessionPayment() {
             Alert.alert("Error", error.message);
         } else {
             setReady(true);
-            await updateAppointment.mutateAsync({
-                id: String(appointmentId),
-                isPaid: true,
-                modality: data.modality,
-                patientId: data.patient.id,
-                scheduledTo: data.scheduledTo,
-                status: data.status,
-                therapistId: data.therapist.id,
-            });
         }
     }
 

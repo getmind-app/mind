@@ -3,8 +3,9 @@ generator client {
 }
 
 datasource db {
-    provider = "postgresql"
-    url      = env("DATABASE_URL")
+    provider  = "postgresql"
+    url       = env("DATABASE_URL")
+    directUrl = env("DIRECT_DATABASE_URL")
 }
 
 model Note {
@@ -33,28 +34,11 @@ model Therapist {
     paymentAccountStatus PaymentAccountStatus @default(UNACTIVE)
     modalities           Modality[]
     address              Address?
-    education            Education[]
-    methodologies        Methodology[]
+    education            String?
+    methodologies        String[]
     appointments         Appointment[]
     hours                Hour[]
-}
-
-model Methodology {
-    id          String    @id @default(cuid())
-    name        String
-    description String
-    therapistId String    @unique
-    therapist   Therapist @relation(fields: [therapistId], references: [id], onDelete: Cascade)
-}
-
-model Education {
-    id          String    @id @default(cuid())
-    institution String
-    degree      String
-    startAt     DateTime?
-    endAt       DateTime?
-    therapistId String    @unique
-    therapist   Therapist @relation(fields: [therapistId], references: [id], onDelete: Cascade)
+    recurrences          Recurrence[]
 }
 
 model Address {
@@ -74,18 +58,21 @@ model Address {
 }
 
 model Appointment {
-    id          String            @id @default(cuid())
-    scheduledTo DateTime
-    scheduledAt DateTime          @default(now())
-    modality    Modality
-    status      AppointmentStatus @default(PENDENT)
-    link        String?
-    isPaid      Boolean           @default(false)
-    eventId     String?
-    patientId   String
-    patient     Patient           @relation(fields: [patientId], references: [id], onDelete: Cascade)
-    therapistId String
-    therapist   Therapist         @relation(fields: [therapistId], references: [id], onDelete: Cascade)
+    id           String            @id @default(cuid())
+    scheduledTo  DateTime
+    scheduledAt  DateTime          @default(now())
+    modality     Modality
+    status       AppointmentStatus @default(PENDENT)
+    link         String?
+    isPaid       Boolean           @default(false)
+    eventId      String?
+    patientId    String
+    patient      Patient           @relation(fields: [patientId], references: [id], onDelete: Cascade)
+    therapistId  String
+    therapist    Therapist         @relation(fields: [therapistId], references: [id], onDelete: Cascade)
+    recurrence   Recurrence?       @relation(fields: [recurrenceId], references: [id], onDelete: Cascade)
+    recurrenceId String?
+    type         AppointmentType
 }
 
 model Hour {
@@ -105,12 +92,37 @@ model Patient {
     userId            String        @unique
     paymentAccountId  String?
     appointments      Appointment[]
+    Recurrence        Recurrence[]
 }
 
 model Email {
     id        String   @id @default(cuid())
     email     String   @unique
     createdAt DateTime @default(now())
+}
+
+model Recurrence {
+    id              String           @id @default(cuid())
+    createdAt       DateTime         @default(now())
+    startAt         DateTime         @db.Date
+    startTime       DateTime         @db.Time
+    endTime         DateTime         @db.Time
+    weekDay         WeekDay
+    patientId       String
+    patient         Patient          @relation(fields: [patientId], references: [id], onDelete: Cascade)
+    therapistId     String
+    therapist       Therapist        @relation(fields: [therapistId], references: [id], onDelete: Cascade)
+    defaultModality Modality
+    status          RecurrenceStatus @default(PENDENT)
+    frequency       Frequency        @default(WEEKLY)
+    Appointment     Appointment[]
+}
+
+enum Frequency {
+    WEEKLY
+    BIWEEKLY
+    MONTHLY
+    CUSTOM
 }
 
 enum Modality {
@@ -123,11 +135,25 @@ enum Gender {
     MALE
 }
 
+enum RecurrenceStatus {
+    PENDENT
+    ACCEPTED
+    REJECTED
+    CANCELED
+}
+
 enum AppointmentStatus {
     PENDENT
     ACCEPTED
     REJECTED
     CANCELED
+}
+
+enum AppointmentType {
+    SINGLE
+    SINGLE_REPEATED
+    RECURRENT
+    FIRST_IN_RECURRENCE
 }
 
 enum PaymentAccountStatus {

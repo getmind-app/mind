@@ -3,6 +3,7 @@ import {
     Image,
     Linking,
     ScrollView,
+    Switch,
     Text,
     TouchableOpacity,
     View,
@@ -10,6 +11,7 @@ import {
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Trans } from "@lingui/macro";
 import { useLingui } from "@lingui/react";
+import { setHours, setMilliseconds, setMinutes, setSeconds } from "date-fns";
 import { atom, useAtom } from "jotai";
 
 import { AnimatedCard } from "../../../components/Accordion";
@@ -20,13 +22,12 @@ import { LargeButton } from "../../../components/LargeButton";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
 import geocodeAddress from "../../../helpers/geocodeAddress";
 import { getMonthInLocale } from "../../../helpers/getMonthInLocale";
+import { useRecurrenceCanHappen } from "../../../hooks/recurrence/useRecurrenceCanHappen";
 import { api, type RouterOutputs } from "../../../utils/api";
 import {
     type Address,
     type Appointment,
-    type Education,
     type Hour,
-    type Methodology,
     type Modality,
     type Therapist,
 } from ".prisma/client";
@@ -35,10 +36,12 @@ const appointmentAtom = atom<{
     date: Date | null;
     hour: string | null;
     modality: Modality | null;
+    repeat: boolean;
 }>({
     date: null,
     hour: null,
     modality: null,
+    repeat: false,
 });
 
 type therapistAvailableDates =
@@ -55,7 +58,7 @@ export default function TherapistSchedule() {
             id: String(id),
         });
 
-    const { mutate } = api.appointments.create.useMutation({
+    const { mutateAsync } = api.appointments.create.useMutation({
         onSuccess: (appointment) => {
             router.push({
                 pathname: "/psych/payment",
@@ -75,24 +78,34 @@ export default function TherapistSchedule() {
         );
     }, [appointment]);
 
-    function handleConfirm() {
-        if (!appointment.date || !appointment.hour || !appointment.modality) {
+    const completeDate = useMemo(() => {
+        if (!appointment.date || !appointment.hour) return null;
+
+        const [hour, minutes] = appointment.hour
+            .split(":")
+            .map((v) => parseInt(v)) as [number, number];
+        return setHours(
+            setMinutes(
+                setSeconds(setMilliseconds(appointment.date, 0), 0),
+                minutes,
+            ),
+            hour,
+        );
+    }, [appointment.date, appointment.hour]);
+
+    async function handleConfirm() {
+        if (!completeDate || !appointment.modality) {
             throw new Error("Missing form data");
+        } else if (!data?.hourlyRate) {
+            throw new Error("Missing hourly rate");
         }
 
-        const [hour, minutes] = appointment.hour.split(":");
-
-        mutate({
-            scheduledTo: new Date(
-                appointment.date.getFullYear(),
-                appointment.date.getMonth(),
-                appointment.date.getDate(),
-                parseInt(String(hour)),
-                parseInt(String(minutes)),
-            ),
+        await mutateAsync({
+            scheduledTo: completeDate,
             modality: appointment.modality,
             therapistId: String(id),
             patientId: String(patient?.id),
+            repeat: appointment.repeat,
         });
     }
 
@@ -145,7 +158,7 @@ export default function TherapistSchedule() {
                             </BasicText>
                             <BasicText
                                 color="gray"
-                                size="sm"
+                                size="md"
                                 style={{
                                     marginBottom: 2,
                                 }}
@@ -187,10 +200,26 @@ export default function TherapistSchedule() {
                                 })
                             }
                         />
+                        <RecurrenceOptions
+                            scheduledTo={completeDate}
+                            therapistId={data.id}
+                            repeat={appointment.repeat}
+                            onToggle={() => {
+                                setAppointment({
+                                    ...appointment,
+                                    repeat: !appointment.repeat,
+                                });
+                            }}
+                        />
                     </View>
-                    <LargeButton disabled={!allPicked} onPress={handleConfirm}>
-                        <Trans>Confirm appointment</Trans>
-                    </LargeButton>
+                    <View style={{ marginBottom: 16 }}>
+                        <LargeButton
+                            disabled={!allPicked}
+                            onPress={handleConfirm}
+                        >
+                            <Trans>Confirm appointment</Trans>
+                        </LargeButton>
+                    </View>
                 </View>
             </ScreenWrapper>
         </>
@@ -208,7 +237,7 @@ const Calendar = ({
     const [selectedDate, setSelectedDate] = useState<Date>();
 
     return (
-        <View className="rounded-lg bg-white pt-4">
+        <View className="flex flex-col gap-4 rounded-lg pt-4">
             {availableDates &&
                 availableDates.length > 0 &&
                 availableDates.map((month) => (
@@ -429,10 +458,6 @@ type ModalityPickerProps = {
     therapist: Therapist & {
         address: Address | null;
     } & {
-        methodologies: Methodology[];
-    } & {
-        education: Education[];
-    } & {
         appointments: Appointment[];
     } & {
         hours: Hour[];
@@ -526,7 +551,6 @@ function ModalityPicker({
                     color="gray"
                     size="sm"
                 >
-                    {/* TODO: Translate */}
                     <Trans>
                         {therapist.name}&apos;s sessions happen online!
                     </Trans>
@@ -576,5 +600,71 @@ function ModalityPicker({
                 </View>
             )}
         </AnimatedCard>
+    );
+}
+
+type RecurrenceOptionsProps = {
+    repeat: boolean;
+    onToggle: () => void;
+    scheduledTo: Date | null;
+    therapistId: string;
+};
+
+function RecurrenceOptions({
+    repeat,
+    onToggle,
+    scheduledTo,
+    therapistId,
+}: RecurrenceOptionsProps) {
+    const recurrenceCanHappen = useRecurrenceCanHappen({
+        scheduledTo,
+        therapistId,
+    });
+    return (
+        <View
+            className={`relative mt-3 rounded-2xl bg-white p-3 ${
+                !recurrenceCanHappen.data && "opacity-50"
+            }`}
+        >
+            <TouchableOpacity
+                disabled={!recurrenceCanHappen.data}
+                className={"rounded"}
+                onPress={onToggle}
+            >
+                <View
+                    style={{
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                    }}
+                >
+                    <View>
+                        <BasicText size="2xl">
+                            <Trans>Repeat weekly</Trans>
+                        </BasicText>
+                        <BasicText
+                            color="gray"
+                            size="sm"
+                            style={{
+                                marginBottom: 2,
+                                maxWidth: 260,
+                            }}
+                        >
+                            <Trans>
+                                This appointment will be automatically added to
+                                your calendar and charged every week.
+                                {"\n"}You can cancel it anytime.
+                            </Trans>
+                        </BasicText>
+                    </View>
+                    <Switch
+                        disabled={!recurrenceCanHappen.data}
+                        value={repeat}
+                        onChange={onToggle}
+                        trackColor={{ false: "#767577", true: "#2185EE" }}
+                    />
+                </View>
+            </TouchableOpacity>
+        </View>
     );
 }

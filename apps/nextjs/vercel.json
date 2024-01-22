@@ -1,0 +1,12 @@
+{
+    "crons": [
+        {
+            "path": "/api/trpc/appointments.prepareTomorrowAppointments",
+            "schedule": "0 * * * *"
+        },
+        {
+            "path": "/api/trpc/appointments.prepareNextMonthAppointments",
+            "schedule": "0 8 * * *"
+        }
+    ]
+}

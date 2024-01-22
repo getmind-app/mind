@@ -1,4 +1,5 @@
-import { google } from "googleapis";
+import { addHours } from "date-fns";
+import { google, type calendar_v3 } from "googleapis";
 
 import {
     type Address,
@@ -7,36 +8,78 @@ import {
     type Therapist,
 } from "@acme/db";
 
+import { getTherapistAndPatient } from "../appointments/getTherapistAndPatient";
+import { type TrpcContext } from "../trpc";
+import { getUser } from "../users/getUser";
 import { getOAuth2GoogleClient } from "./getOAuth2GoogleClient";
 
-export const createAppointmentInCalendar = async (
-    therapist: Therapist & { address: Address },
-    therapistEmail: string,
-    appointment: Appointment,
-    patient: Patient,
-) => {
+export const createAppointmentInCalendar = async ({
+    appointment,
+    prisma,
+}: {
+    appointment: Appointment;
+    prisma: TrpcContext["prisma"];
+}) => {
     const calendar = google.calendar({
         version: "v3",
         auth: await getOAuth2GoogleClient(),
     });
+    const [therapist, patient] = await getTherapistAndPatient({
+        prisma,
+        appointment,
+    });
+    const therapistUser = await getUser(therapist.userId);
 
     const modality =
         appointment.modality === "ONLINE" ? "online" : "presencial";
     const therapistPronoun = therapist.gender === "MALE" ? "o" : "a";
 
-    // end date is 1 hour after start date
-    const endDate = new Date(appointment.scheduledTo);
-    endDate.setHours(endDate.getHours() + 1);
+    const requestBody = makeRequestBody(
+        patient,
+        therapist,
+        modality,
+        therapistPronoun,
+        appointment,
+        String(therapistUser.emailAddresses[0]?.emailAddress),
+    );
 
-    const requestBody: any = {
-        summary: `Sessão ${patient.name} e ${therapist.name}`,
-        description: `Conversa ${modality} do(a) ${patient.name} com ${therapistPronoun} terapeuta ${therapist.name}`,
+    const newAppointment = await calendar.events.insert({
+        calendarId: "primary",
+        conferenceDataVersion: 1,
+        requestBody,
+    });
+
+    return newAppointment;
+};
+
+const appointmentTypeToEmoji: {
+    [key in Appointment["type"]]: string;
+} = {
+    FIRST_IN_RECURRENCE: "🔷",
+    RECURRENT: "🔵",
+    SINGLE: "🟡",
+    SINGLE_REPEATED: "🟢",
+};
+
+function makeRequestBody(
+    patient: Patient,
+    therapist: Therapist & { address: Address | null },
+    modality: "online" | "presencial",
+    therapistPronoun: string,
+    appointment: Appointment,
+    therapistEmail: string,
+): calendar_v3.Schema$Event {
+    return {
+        summary: `${appointmentTypeToEmoji[appointment.type]} Sessão ${
+            patient.name
+        } e ${therapist.name}`,
+        description: `Conversa ${modality} de ${patient.name} com ${therapistPronoun} terapeuta ${therapist.name}`,
         start: {
             dateTime: appointment.scheduledTo.toISOString(),
             timeZone: "America/Sao_Paulo",
         },
         end: {
-            dateTime: endDate.toISOString(),
+            dateTime: addHours(appointment.scheduledTo, 1).toISOString(),
             timeZone: "America/Sao_Paulo",
         },
         attendees: [
@@ -61,28 +104,19 @@ export const createAppointmentInCalendar = async (
                 },
             ],
         },
+        ...(modality === "online"
+            ? {
+                  conferenceData: {
+                      createRequest: {
+                          requestId: appointment.id,
+                          conferenceSolutionKey: {
+                              type: "hangoutsMeet",
+                          },
+                      },
+                  },
+              }
+            : {
+                  location: `${therapist.address?.street}, ${therapist.address?.number} - ${therapist.address?.neighborhood}`,
+              }),
     };
-
-    // Check if the modality is "ONLINE" and add conferenceData accordingly
-    if (appointment.modality === "ONLINE") {
-        requestBody.conferenceDataVersion = 1;
-        requestBody.conferenceData = {
-            createRequest: {
-                requestId: appointment.id,
-                conferenceSolutionKey: {
-                    type: "hangoutsMeet",
-                },
-            },
-        };
-    } else {
-        requestBody.location = `${therapist.address.street}, ${therapist.address.number} - ${therapist.address.neighborhood}`;
-    }
-
-    const newAppointment = await calendar.events.insert({
-        calendarId: "primary",
-        conferenceDataVersion: 1,
-        requestBody,
-    });
-
-    return newAppointment;
-};
+}

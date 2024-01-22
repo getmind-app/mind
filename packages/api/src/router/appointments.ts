@@ -1,14 +1,18 @@
 import type * as Notification from "expo-notifications";
 import clerk from "@clerk/clerk-sdk-node";
-import Stripe from "stripe";
+import { addDays, addHours, format, set } from "date-fns";
 import { z } from "zod";
 
-import { type Address, type Appointment, type Therapist } from "@acme/db";
+import { type Appointment, type WeekDay } from "@acme/db";
 
+import { cancelRecurrence } from "../appointments/cancelRecurrence";
+import { createFirstAppointmentsInRecurrence } from "../appointments/createFirstAppointmentsInRecurrence";
 import { cancelAppointmentInCalendar } from "../helpers/cancelAppointmentInCalendar";
 import { createAppointmentInCalendar } from "../helpers/createAppointmentInCalendar";
 import { sendPushNotification } from "../helpers/sendPushNotification";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { notifyAppointmentStatusChange } from "../notifications/notifyAppointmentStatusChange";
+import { payForAppointment } from "../payments/payForAppointment";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
 export const appointmentsRouter = createTRPCRouter({
     create: protectedProcedure
@@ -18,6 +22,7 @@ export const appointmentsRouter = createTRPCRouter({
                 modality: z.enum(["ONLINE", "ON_SITE"]),
                 therapistId: z.string().min(1),
                 patientId: z.string().min(1),
+                repeat: z.boolean(),
             }),
         )
         .mutation(async ({ ctx, input }) => {
@@ -35,18 +40,59 @@ export const appointmentsRouter = createTRPCRouter({
                 }),
             ]);
 
-            const therapistUser = await clerk.users.getUser(
-                therapist?.userId ?? "",
-            );
+            if (!therapist?.userId) {
+                throw new Error("Couldn't find therapist");
+            }
 
-            await sendPushNotification({
-                expoPushToken: therapistUser.publicMetadata
-                    .expoPushToken as Notification.ExpoPushToken,
-                title: "Nova sessão! 🎉",
-                body: `${patient?.name} quer marcar um horário com você.`,
+            if (!patient?.userId) {
+                throw new Error("Couldn't find patient");
+            }
+
+            const therapistUser = await clerk.users.getUser(therapist.userId);
+            let recurrenceId = null;
+
+            if (input.repeat) {
+                const recurrence = await ctx.prisma.recurrence.create({
+                    data: {
+                        defaultModality: input.modality,
+                        therapistId: input.therapistId,
+                        patientId: input.patientId,
+                        startTime: input.scheduledTo,
+                        startAt: input.scheduledTo,
+                        endTime: addHours(input.scheduledTo, 1),
+                        weekDay: format(
+                            input.scheduledTo,
+                            "EEEE",
+                        ).toUpperCase() as WeekDay,
+                    },
+                });
+                recurrenceId = recurrence.id;
+
+                await sendPushNotification({
+                    expoPushToken: therapistUser.publicMetadata
+                        .expoPushToken as Notification.ExpoPushToken,
+                    title: "Nova recorrência! 🔵",
+                    body: `${patient?.name} quer marcar sessões semanais com você.`,
+                });
+            } else {
+                await sendPushNotification({
+                    expoPushToken: therapistUser.publicMetadata
+                        .expoPushToken as Notification.ExpoPushToken,
+                    title: "Nova sessão! 🎉",
+                    body: `${patient?.name} quer marcar um horário com você.`,
+                });
+            }
+
+            return await ctx.prisma.appointment.create({
+                data: {
+                    modality: input.modality,
+                    scheduledTo: input.scheduledTo,
+                    therapistId: input.therapistId,
+                    patientId: input.patientId,
+                    type: input.repeat ? "FIRST_IN_RECURRENCE" : "SINGLE",
+                    recurrenceId,
+                },
             });
-
-            return await ctx.prisma.appointment.create({ data: input });
         }),
     findNextUserAppointment: protectedProcedure.query(async ({ ctx }) => {
         let foundAppointment;
@@ -175,7 +221,39 @@ export const appointmentsRouter = createTRPCRouter({
             return foundAppointment;
         }
     }),
-    // TODO: esse endpoint precisa ser refatorado urgentemente kkkkkkk
+    updateRecurrence: protectedProcedure
+        .input(
+            z.object({
+                recurrenceId: z.string().min(1),
+                status: z.enum(["PENDENT", "ACCEPTED", "REJECTED", "CANCELED"]),
+            }),
+        )
+        .mutation(async ({ ctx, input }) => {
+            const recurrence = await ctx.prisma.recurrence.update({
+                where: {
+                    id: input.recurrenceId,
+                },
+                data: {
+                    status: input.status,
+                },
+            });
+
+            if (input.status === "ACCEPTED") {
+                await createFirstAppointmentsInRecurrence({
+                    ...ctx,
+                    recurrenceId: input.recurrenceId,
+                });
+            }
+
+            if (input.status === "CANCELED") {
+                await cancelRecurrence({
+                    ...ctx,
+                    recurrenceId: input.recurrenceId,
+                });
+            }
+
+            return recurrence;
+        }),
     update: protectedProcedure
         .input(
             z.object({
@@ -189,164 +267,38 @@ export const appointmentsRouter = createTRPCRouter({
             }),
         )
         .mutation(async ({ ctx, input }) => {
-            let calendarEvent;
+            if (input.status === "PENDENT") {
+                throw new Error("Cannot update appointment status to PENDENT");
+            }
 
-            if (input.status !== "PENDENT") {
-                const therapist = await ctx.prisma.therapist.findUnique({
-                    where: {
-                        id: input.therapistId,
-                    },
-                    include: {
-                        address: true,
-                    },
-                });
+            const appointment = await ctx.prisma.appointment.findUniqueOrThrow({
+                where: {
+                    id: input.id,
+                },
+            });
 
-                const patient = await ctx.prisma.patient.findUnique({
-                    where: {
-                        id: input.patientId,
-                    },
-                });
+            let calendarEvent: null | Awaited<
+                ReturnType<typeof createAppointmentInCalendar>
+            > = null;
 
-                const patientUser = await clerk.users.getUser(
-                    patient?.userId ?? "",
-                );
+            if (input.status === "ACCEPTED") {
+                await payForAppointment({ appointment, prisma: ctx.prisma });
 
-                const therapistUser = await clerk.users.getUser(
-                    therapist?.userId ?? "",
-                );
-
-                const appointment = await ctx.prisma.appointment.findUnique({
-                    where: {
-                        id: input.id,
-                    },
-                });
-
-                const notificationMapper: {
-                    [key in "ACCEPTED" | "REJECTED" | "CANCELED"]: {
-                        title: string;
-                        body: string;
-                        sendTo: Notification.ExpoPushToken;
-                    };
-                } = {
-                    ACCEPTED: {
-                        title: "Sessão confirmada! 🎉",
-                        body: `${
-                            therapist?.name
-                        } aceitou sua sessão no dia ${new Date(
-                            input.scheduledTo,
-                        ).getDate()} às ${new Date(
-                            input.scheduledTo,
-                        ).getHours()}h.`,
-                        sendTo: patientUser.publicMetadata
-                            .expoPushToken as Notification.ExpoPushToken,
-                    },
-                    REJECTED: {
-                        title: "Sessão cancelada ❌",
-                        body: `${
-                            therapist?.name
-                        } não vai poder atender você no dia ${new Date(
-                            input.scheduledTo,
-                        ).getDate()} às ${new Date(
-                            input.scheduledTo,
-                        ).getHours()}h.`,
-                        sendTo: patientUser.publicMetadata
-                            .expoPushToken as Notification.ExpoPushToken,
-                    },
-                    CANCELED: {
-                        title: "Sessão cancelada ❌",
-                        body: `${
-                            patient?.name
-                        } cancelou a sessão no dia ${new Date(
-                            input.scheduledTo,
-                        ).getDate()} às ${new Date(
-                            input.scheduledTo,
-                        ).getHours()}h.`,
-                        sendTo: therapistUser.publicMetadata
-                            .expoPushToken as Notification.ExpoPushToken,
-                    },
-                };
-
-                if (input.status === "ACCEPTED") {
-                    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-                        apiVersion: "2023-08-16",
-                    });
-
-                    if (!therapist?.paymentAccountId) {
-                        throw new Error(
-                            "Missing payment account id for therapist",
-                        );
-                    }
-
-                    if (!patient?.paymentAccountId) {
-                        throw new Error(
-                            "Missing payment account id for patient",
-                        );
-                    }
-
-                    if (!therapist?.hourlyRate) {
-                        throw new Error(
-                            "Missing payment account id for patient",
-                        );
-                    }
-
-                    if (!process.env.FIXED_APPLICATION_FEE) {
-                        throw new Error("Missing application fee");
-                    }
-
-                    const paymentMethod =
-                        await stripe.customers.listPaymentMethods(
-                            patient.paymentAccountId,
-                            {
-                                limit: 1,
-                            },
-                        );
-
-                    if (!paymentMethod.data || !paymentMethod.data[0]) {
-                        throw new Error("Missing payment method");
-                    }
-
-                    const paymentResponse = await stripe.paymentIntents.create({
-                        customer: patient.paymentAccountId,
-                        confirm: true,
-                        description: "Appointment payment",
-                        currency: "brl",
-                        amount: therapist.hourlyRate * 100,
-                        payment_method: paymentMethod.data[0].id,
-                        transfer_data: {
-                            destination: therapist.paymentAccountId,
-                        },
-                        automatic_payment_methods: {
-                            enabled: true,
-                            allow_redirects: "never",
-                        },
-                        application_fee_amount:
-                            parseFloat(process.env.FIXED_APPLICATION_FEE) *
-                            100 *
-                            therapist.hourlyRate,
-                    });
-
-                    if (paymentResponse.status !== "succeeded") {
-                        throw new Error("Payment failed");
-                    }
-
-                    calendarEvent = await createAppointmentInCalendar(
-                        therapist as Therapist & { address: Address },
-                        therapistUser.emailAddresses[0]?.emailAddress ?? "",
-                        appointment as Appointment,
-                        patient,
-                    );
-                } else if (input.status === "CANCELED") {
-                    await cancelAppointmentInCalendar(
-                        appointment?.eventId ?? "",
-                    );
-                }
-
-                await sendPushNotification({
-                    expoPushToken: notificationMapper[input.status].sendTo,
-                    title: notificationMapper[input.status]["title"],
-                    body: notificationMapper[input.status]["body"],
+                calendarEvent = await createAppointmentInCalendar({
+                    appointment,
+                    prisma: ctx.prisma,
                 });
             }
+
+            if (input.status === "CANCELED") {
+                await cancelAppointmentInCalendar(appointment.eventId ?? "");
+            }
+
+            await notifyAppointmentStatusChange({
+                newStatus: input.status,
+                appointment,
+                prisma: ctx.prisma,
+            });
 
             return await ctx.prisma.appointment.update({
                 where: {
@@ -354,9 +306,116 @@ export const appointmentsRouter = createTRPCRouter({
                 },
                 data: {
                     ...input,
-                    link: calendarEvent?.data?.hangoutLink,
-                    eventId: calendarEvent?.data?.id,
+                    ...(calendarEvent
+                        ? {
+                              link: calendarEvent.data.hangoutLink,
+                              eventId: calendarEvent.data.id,
+                          }
+                        : {}),
                 },
             });
         }),
+    prepareTomorrowAppointments: publicProcedure.mutation(async ({ ctx }) => {
+        console.log("Preparing tomorrow appointments");
+        const now = new Date();
+        const appointmentsToBePaid = await ctx.prisma.appointment.findMany({
+            where: {
+                scheduledTo: {
+                    gte: now,
+                    lt: addHours(now, 24),
+                },
+                status: "ACCEPTED",
+                isPaid: false,
+            },
+        });
+
+        const paidAppointments: Appointment[] = [];
+        for (const appointment of appointmentsToBePaid) {
+            try {
+                await payForAppointment({
+                    appointment,
+                    prisma: ctx.prisma,
+                });
+                paidAppointments.push(appointment);
+            } catch (e) {
+                console.log("Error paying for appointment", appointment.id);
+                console.log(JSON.stringify(e, null, 2));
+                try {
+                    await ctx.prisma.appointment.update({
+                        where: {
+                            id: appointment.id,
+                        },
+                        data: {
+                            status: "CANCELED",
+                        },
+                    });
+                } catch {
+                    console.log("Error canceling appointment", appointment.id);
+                }
+            }
+        }
+        console.log(`Paid ${paidAppointments.length} appointments`);
+    }),
+    prepareNextMonthAppointments: publicProcedure.mutation(async ({ ctx }) => {
+        console.log("Preparing next month appointments");
+        const thirtyDaysFromNow = addDays(new Date(), 31);
+        const weekDay = format(
+            thirtyDaysFromNow,
+            "EEEE",
+        ).toUpperCase() as WeekDay;
+
+        const recurrentAppointmentsToSchedule =
+            await ctx.prisma.recurrence.findMany({
+                where: {
+                    status: "ACCEPTED",
+                    weekDay,
+                },
+            });
+
+        const createdAppointments: Appointment[] = [];
+        for (const recurrence of recurrentAppointmentsToSchedule) {
+            const startAtTime = new Date(recurrence.startTime);
+            const date = set(startAtTime, {
+                year: thirtyDaysFromNow.getFullYear(),
+                month: thirtyDaysFromNow.getMonth(),
+                date: thirtyDaysFromNow.getDate(),
+            });
+
+            try {
+                const appointment = await ctx.prisma.appointment.create({
+                    data: {
+                        scheduledTo: date,
+                        modality: recurrence.defaultModality,
+                        therapistId: recurrence.therapistId,
+                        patientId: recurrence.patientId,
+                        type: "RECURRENT",
+                        status: "ACCEPTED",
+                        recurrenceId: recurrence.id,
+                    },
+                });
+                createdAppointments.push(appointment);
+            } catch (e) {
+                console.log("Error creating appointment", recurrence.id);
+                console.log(JSON.stringify(e, null, 2));
+            }
+        }
+
+        console.log(
+            `Created ${createdAppointments.length}, creating appointments in calendar`,
+        );
+        for (const appointment of createdAppointments) {
+            try {
+                await createAppointmentInCalendar({
+                    appointment,
+                    prisma: ctx.prisma,
+                });
+            } catch (e) {
+                console.log(
+                    "Error creating appointment in calendar",
+                    appointment.id,
+                );
+                console.log(JSON.stringify(e, null, 2));
+            }
+        }
+    }),
 });

@@ -2,6 +2,7 @@ import { appointmentsRouter } from "./router/appointments";
 import { authRouter } from "./router/auth";
 import { notesRouter } from "./router/notes";
 import { patientsRouter } from "./router/patients";
+import { recurrenceRouter } from "./router/recurrences";
 import { stripeRouter } from "./router/stripe";
 import { therapistsRouter } from "./router/therapists";
 import { usersRouter } from "./router/users";
@@ -17,6 +18,7 @@ export const appRouter = createTRPCRouter({
     patients: patientsRouter,
     stripe: stripeRouter,
     waitlist: waitlistRouter,
+    recurrences: recurrenceRouter,
 });
 
 // export type definition of API

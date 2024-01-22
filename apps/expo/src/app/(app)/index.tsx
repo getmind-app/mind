@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
+    ActivityIndicator,
     Alert,
     Image,
     Linking,
@@ -16,10 +17,12 @@ import {
     useTrackingPermissions,
 } from "expo-tracking-transparency";
 import { useUser } from "@clerk/clerk-expo";
-import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
+import { AntDesign, FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import { Trans, t } from "@lingui/macro";
 import { useLingui } from "@lingui/react";
+import { format } from "date-fns";
 
+import { BasicText } from "../../components/BasicText";
 import { Card } from "../../components/Card";
 import { CardSkeleton } from "../../components/CardSkeleton";
 import DefaultHomeCard from "../../components/DefaultHomeCard";
@@ -27,7 +30,9 @@ import { Refreshable } from "../../components/Refreshable";
 import { ScreenWrapper } from "../../components/ScreenWrapper";
 import { Title } from "../../components/Title";
 import geocodeAddress from "../../helpers/geocodeAddress";
+import { getLocale } from "../../helpers/getLocale";
 import { registerForPushNotificationsAsync } from "../../helpers/registerForPushNotifications";
+import { useUserHasProfileImage } from "../../hooks/user/useUserHasProfileImage";
 import { useUserIsProfessional } from "../../hooks/user/useUserIsProfessional";
 import { useUserMutations } from "../../hooks/user/useUserMutations";
 import { api } from "../../utils/api";
@@ -150,6 +155,41 @@ export default function Index() {
     );
 }
 
+function UserPhoto({
+    userId,
+    alt,
+    url,
+}: {
+    userId: string;
+    alt: string;
+    url: string;
+}) {
+    const { data, isLoading } = useUserHasProfileImage({
+        userId,
+    });
+
+    if (isLoading) return <ActivityIndicator />;
+
+    if (!data)
+        return (
+            <View className={`rounded-full bg-slate-200 p-[4px]`}>
+                <AntDesign name="user" size={24} />
+            </View>
+        );
+
+    return (
+        <Image
+            className="flex items-center justify-center rounded-full"
+            alt={alt}
+            source={{
+                uri: url,
+                width: 32,
+                height: 32,
+            }}
+        />
+    );
+}
+
 function NextAppointment() {
     const router = useRouter();
     const isProfessional = useUserIsProfessional();
@@ -170,21 +210,20 @@ function NextAppointment() {
                 >
                     <View className="p-6">
                         <View className="flex w-full flex-row justify-between">
-                            <Text className="font-nunito-sans text-xl">
-                                {new Intl.DateTimeFormat(lingui.i18n.locale, {
-                                    weekday: "long",
-                                }).format(
+                            <BasicText
+                                size="2xl"
+                                style={{
+                                    textTransform: "capitalize",
+                                }}
+                            >
+                                {format(
                                     new Date(appointment.data.scheduledTo),
+                                    "EEEE, dd/MM",
+                                    {
+                                        locale: getLocale(lingui),
+                                    },
                                 )}
-                                ,{" "}
-                                {new Date(
-                                    appointment.data.scheduledTo,
-                                ).getDate()}
-                                /
-                                {new Date(
-                                    appointment.data.scheduledTo,
-                                ).getMonth() + 1}
-                            </Text>
+                            </BasicText>
                             <Text className="font-nunito-sans-bold text-xl text-blue-500 ">
                                 {new Date(
                                     appointment.data.scheduledTo,
@@ -237,33 +276,40 @@ function NextAppointment() {
                         <View className="flex w-full flex-row items-center justify-between pt-4 align-middle">
                             <View className="flex flex-row items-center align-middle">
                                 <View className="flex items-center justify-center overflow-hidden rounded-full align-middle">
-                                    <TouchableOpacity
-                                        onPress={() =>
-                                            router.push(
-                                                "/psych/" +
-                                                    appointment.data?.therapist
-                                                        .id,
-                                            )
-                                        }
-                                    >
-                                        <Image
-                                            className="flex items-center justify-center rounded-full"
-                                            alt={
-                                                isProfessional
-                                                    ? "Patient"
-                                                    : "Therapist"
+                                    {isProfessional ? (
+                                        <UserPhoto
+                                            userId={
+                                                appointment.data.patient.userId
                                             }
-                                            source={{
-                                                uri: isProfessional
-                                                    ? appointment.data.patient
-                                                          .profilePictureUrl
-                                                    : appointment.data.therapist
-                                                          .profilePictureUrl,
-                                                width: 32,
-                                                height: 32,
-                                            }}
+                                            alt={"Patient"}
+                                            url={
+                                                appointment.data.patient
+                                                    .profilePictureUrl
+                                            }
                                         />
-                                    </TouchableOpacity>
+                                    ) : (
+                                        <TouchableOpacity
+                                            onPress={() =>
+                                                router.push(
+                                                    "/psych/" +
+                                                        appointment.data
+                                                            ?.therapist.id,
+                                                )
+                                            }
+                                        >
+                                            <UserPhoto
+                                                userId={
+                                                    appointment.data.therapist
+                                                        .userId
+                                                }
+                                                alt={"Therapist"}
+                                                url={
+                                                    appointment.data.therapist
+                                                        .profilePictureUrl
+                                                }
+                                            />
+                                        </TouchableOpacity>
+                                    )}
                                 </View>
                                 <Text className="pl-2 font-nunito-sans text-xl">
                                     {isProfessional

@@ -95,24 +95,29 @@ export default function EditPsychProfile() {
             });
         }
 
-        mutate({
-            ...data,
-            userId: String(user?.id),
-            profilePictureUrl: image?.publicUrl ?? user?.imageUrl ?? "",
-            dateOfBirth: data.birthday,
-            gender: data.gender,
-            hourlyRate: parseInt(data.hourlyRate),
-            crp: data.crp.replaceAll("/", ""),
-            document: data.document.replaceAll("-", "").replaceAll(".", ""),
-            phone: data.phone
-                .replaceAll("(", "")
-                .replaceAll(")", "")
-                .replaceAll("-", ""),
-            modalities: data.modalities,
-        });
+
+        try {
+            await mutateAsync({
+                ...data,
+                userId: String(user?.id),
+                profilePictureUrl: image?.publicUrl ?? user?.imageUrl ?? "",
+                dateOfBirth: data.birthday,
+                gender: data.gender,
+                hourlyRate: parseInt(data.hourlyRate),
+                crp: data.crp.replaceAll("/", ""),
+                document: data.document.replaceAll("-", "").replaceAll(".", ""),
+                phone: data.phone
+                    .replaceAll("(", "")
+                    .replaceAll(")", "")
+                    .replaceAll("-", ""),
+                modalities: data.modalities,
+            });
+        } catch (error) {
+            console.error(error);
+        }
     });
 
-    const { mutate, isLoading } = api.therapists.create.useMutation({
+    const { mutateAsync, isLoading } = api.therapists.create.useMutation({
         onSuccess: async () => {
             await user?.reload();
             await createAccount.mutateAsync();

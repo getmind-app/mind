@@ -8,6 +8,7 @@ export function useSearchTherapistByFilters({
     modalities,
     distance,
     currentLocation,
+    methodologies,
 }: {
     name: string | null;
     priceRange: {
@@ -21,6 +22,7 @@ export function useSearchTherapistByFilters({
         latitude: number;
         longitude: number;
     } | null;
+    methodologies: string[] | null;
 }) {
     const therapistByNameQuery = api.therapists.findWithFilters.useQuery(
         {
@@ -30,6 +32,7 @@ export function useSearchTherapistByFilters({
             modalities,
             distance,
             currentLocation,
+            methodologies,
         },
         {
             refetchOnMount: false,

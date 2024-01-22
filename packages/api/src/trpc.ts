@@ -33,6 +33,8 @@ type AuthContextProps = {
     auth: SignedInAuthObject | SignedOutAuthObject;
 };
 
+export type TrpcContext = inferAsyncReturnType<typeof createContext>;
+
 export const createContextInner = async ({ auth }: AuthContextProps) => {
     return {
         auth,

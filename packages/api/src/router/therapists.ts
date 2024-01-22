@@ -1,6 +1,7 @@
+import { isSameDay, isSameHour } from "date-fns";
 import { z } from "zod";
 
-import { type Therapist, type WeekDay } from "@acme/db";
+import { type Appointment, type Therapist, type WeekDay } from "@acme/db";
 
 import calculateBoundingBox from "../helpers/calculateBoundingBox";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
@@ -46,8 +47,6 @@ export const therapistsRouter = createTRPCRouter({
                 },
                 include: {
                     address: true,
-                    education: true,
-                    methodologies: true,
                     appointments: true,
                     hours: true,
                 },
@@ -84,6 +83,7 @@ export const therapistsRouter = createTRPCRouter({
                         longitude: z.number(),
                     })
                     .nullable(),
+                methodologies: z.array(z.string()).nullable(),
             }),
         )
         .query(async ({ ctx, input }) => {
@@ -124,6 +124,15 @@ export const therapistsRouter = createTRPCRouter({
                     ...whereClause,
                     modalities: {
                         hasSome: input.modalities,
+                    },
+                };
+            }
+
+            if (input.methodologies && input.methodologies.length > 0) {
+                whereClause = {
+                    ...whereClause,
+                    methodologies: {
+                        hasSome: input.methodologies,
                     },
                 };
             }
@@ -266,8 +275,10 @@ export const therapistsRouter = createTRPCRouter({
                 crp: z.string().min(1),
                 phone: z.string().min(1),
                 hourlyRate: z.number().positive(),
-                yearsOfExperience: z.string().min(1),
+                yearsOfExperience: z.string().nullable(),
                 about: z.string().nullable(),
+                methodologies: z.array(z.string()),
+                education: z.string().nullable(),
             }),
         )
         .mutation(async ({ ctx, input }) => {
@@ -277,11 +288,18 @@ export const therapistsRouter = createTRPCRouter({
                 },
             });
 
+            input.yearsOfExperience = input.yearsOfExperience ?? "0";
+
             return await ctx.prisma.therapist.update({
                 where: {
                     id: therapist.id,
                 },
-                data: input,
+                data: {
+                    ...input,
+                    methodologies: {
+                        set: input.methodologies,
+                    },
+                },
             });
         }),
     getAvailableDatesAndHours: protectedProcedure
@@ -303,6 +321,48 @@ export const therapistsRouter = createTRPCRouter({
 
             return getAvailableDatesAndHours(therapist);
         }),
+    pendentRecurrences: protectedProcedure.query(async ({ ctx }) => {
+        const therapist = await ctx.prisma.therapist.findUniqueOrThrow({
+            where: {
+                userId: ctx.auth.userId,
+            },
+        });
+
+        if (!therapist) {
+            throw new Error("Therapist not found");
+        }
+
+        const recurrences = await ctx.prisma.recurrence.findMany({
+            where: {
+                status: "PENDENT",
+                therapistId: therapist.id,
+            },
+        });
+
+        return recurrences;
+    }),
+    recurrences: protectedProcedure.query(async ({ ctx }) => {
+        const therapist = await ctx.prisma.therapist.findUniqueOrThrow({
+            where: {
+                userId: ctx.auth.userId,
+            },
+        });
+
+        if (!therapist) {
+            throw new Error("Therapist not found");
+        }
+        const recurrences = await ctx.prisma.recurrence.findMany({
+            where: {
+                therapistId: therapist.id,
+            },
+            include: {
+                therapist: true,
+                patient: true,
+            },
+        });
+
+        return recurrences;
+    }),
 });
 
 const getAvailableDatesAndHours = (
@@ -358,23 +418,22 @@ const getAvailableDatesAndHours = (
             // If there is, remove it from the available hours
 
             for (let i = 0; i < therapist.appointments.length; i++) {
-                const appointment = therapist.appointments[i];
+                const appointment = therapist.appointments[i] as Appointment;
 
                 if (
-                    appointment?.scheduledTo.getDate() ===
-                        currentDateCopy.getDate() &&
-                    appointment?.scheduledTo.getMonth() ===
-                        currentDateCopy.getMonth() &&
-                    appointment.scheduledTo.getFullYear() ===
-                        currentDateCopy.getFullYear() &&
-                    appointment.status === "ACCEPTED"
+                    isSameDay(appointment.scheduledTo, currentDateCopy) &&
+                    isSameHour(appointment.scheduledTo, currentDateCopy) &&
+                    ["ACCEPTED", "PENDING"].includes(appointment.status)
                 ) {
-                    const appointmentHour = appointment.scheduledTo.getHours();
+                    {
+                        const appointmentHour =
+                            appointment.scheduledTo.getHours();
 
-                    const index = hours.indexOf(appointmentHour);
+                        const index = hours.indexOf(appointmentHour);
 
-                    if (index > -1) {
-                        hours.splice(index, 1);
+                        if (index > -1) {
+                            hours.splice(index, 1);
+                        }
                     }
                 }
             }
