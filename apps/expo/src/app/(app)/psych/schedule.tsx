@@ -647,7 +647,7 @@ function RecurrenceOptions({
                             size="sm"
                             style={{
                                 marginBottom: 2,
-                                maxWidth: 320,
+                                maxWidth: 260,
                             }}
                         >
                             <Trans>
@@ -661,6 +661,7 @@ function RecurrenceOptions({
                         disabled={!recurrenceCanHappen.data}
                         value={repeat}
                         onChange={onToggle}
+                        trackColor={{ false: "#767577", true: "#2185EE" }}
                     />
                 </View>
             </TouchableOpacity>

@@ -332,7 +332,6 @@ function LocationContent({ address }: { address: Address }) {
                     >
                         <Marker
                             // TODO: remove this
-                            // @ts-expect-error
                             coordinate={{
                                 latitude: location.latitude,
                                 longitude: location.longitude,

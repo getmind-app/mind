@@ -128,7 +128,9 @@ export default function EditPatientProfile() {
                                 onPress={pickImageAsync}
                                 className="mb-2 mt-4 flex h-24 w-24 flex-row items-center justify-center rounded-full bg-gray-200"
                             >
-                                {userHasProfileImage.data || selectedImage ? (
+                                {userHasProfileImage.data ||
+                                selectedImage ||
+                                !userHasProfileImage.isLoading ? (
                                     <Image
                                         className="rounded-full"
                                         alt={`${user?.firstName} profile picture`}
