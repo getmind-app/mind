@@ -5,7 +5,6 @@ import { z } from "zod";
 
 import { type Appointment, type WeekDay } from "@acme/db";
 
-
 import { cancelRecurrence } from "../appointments/cancelRecurrence";
 import { createFirstAppointmentsInRecurrence } from "../appointments/createFirstAppointmentsInRecurrence";
 import { cancelAppointmentInCalendar } from "../helpers/cancelAppointmentInCalendar";
@@ -22,7 +21,6 @@ export const appointmentsRouter = createTRPCRouter({
                 scheduledTo: z.date(),
                 modality: z.enum(["ONLINE", "ON_SITE"]),
                 therapistId: z.string().min(1),
-                hourlyRate: z.number(),
                 patientId: z.string().min(1),
                 repeat: z.boolean(),
             }),

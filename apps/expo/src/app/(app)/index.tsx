@@ -169,8 +169,8 @@ function UserPhoto({
 
     if (!data)
         return (
-            <View className={`rounded-full bg-blue-100 p-[2px]`}>
-                <AntDesign name="user" size={32} />
+            <View className={`rounded-full bg-slate-200 p-[4px]`}>
+                <AntDesign name="user" size={24} />
             </View>
         );
 

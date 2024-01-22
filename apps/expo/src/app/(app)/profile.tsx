@@ -113,15 +113,15 @@ export default function UserProfileScreen() {
             <ScrollView showsVerticalScrollIndicator={false}>
                 {isProfessional ? <ProfessionalMenuItems /> : null}
                 <MenuItem
-                    icon="repeat"
-                    label={t({ message: "Recurrences" })}
-                    onPress={() => router.push("/settings/recurrences")}
-                />
-                <MenuItem
                     isFirst
                     icon="notifications"
                     label={t({ message: "Notifications" })}
                     onPress={() => router.push("/settings/notifications")}
+                />
+                <MenuItem
+                    icon="repeat"
+                    label={t({ message: "Recurrences" })}
+                    onPress={() => router.push("/settings/recurrences")}
                 />
                 <MenuItem
                     isLast
