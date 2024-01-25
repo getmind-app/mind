@@ -41,10 +41,12 @@ export const appointmentsRouter = createTRPCRouter({
             ]);
 
             if (!therapist?.userId) {
+                console.error("Couldn't find therapist");
                 throw new Error("Couldn't find therapist");
             }
 
             if (!patient?.userId) {
+                console.error("Couldn't find patient");
                 throw new Error("Couldn't find patient");
             }
 
