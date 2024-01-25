@@ -209,7 +209,13 @@ function ContentCard({
                 </View>
             </View>
             <View className="pb-1 pt-2">
-                <Text className="font-nunito-sans text-base">{children}</Text>
+                {typeof children === "string" ? (
+                    <Text className="font-nunito-sans text-base">
+                        {children}
+                    </Text>
+                ) : (
+                    children
+                )}
             </View>
         </View>
     );
