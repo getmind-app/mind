@@ -15,7 +15,7 @@
         "ios": "expo run:ios"
     },
     "dependencies": {
-        "@clerk/clerk-expo": "^0.19.9",
+        "@clerk/clerk-expo": "^0.19.30",
         "@expo-google-fonts/nunito-sans": "^0.2.3",
         "@expo/metro-config": "~0.10.0",
         "@expo/vector-icons": "^13.0.0",

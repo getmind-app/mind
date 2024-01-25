@@ -25,7 +25,7 @@ const defineConfig = (): ExpoConfig => ({
     name: "Mind",
     slug: "mind",
     scheme: "mind",
-    version: "2.1.0",
+    version: "2.1.2",
     orientation: "portrait",
     owner: "mind-therapy",
     icon: "./assets/icon.png",
@@ -40,7 +40,7 @@ const defineConfig = (): ExpoConfig => ({
     },
     assetBundlePatterns: ["**/*", "assets/*"],
     ios: {
-        buildNumber: "11",
+        buildNumber: "16",
         supportsTablet: true,
         bundleIdentifier: "app.getmind",
         infoPlist: {
@@ -88,7 +88,7 @@ const defineConfig = (): ExpoConfig => ({
         eas: {
             projectId: "99018e7e-9e9a-4064-82d0-dc3cfa6457d5",
         },
-        ...profileConstants[process.env.PROFILE as Profile],
+        ...profileConstants["dev"],
     },
     plugins: [
         "./expo-plugins/with-modify-gradle.js",
