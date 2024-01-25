@@ -236,7 +236,10 @@ function AppointmentCard({
                             <Trans>with</Trans>
                             {"  "}
                         </Text>
-                        <PatientPhoto appointment={appointment} />
+                        <UserPhoto
+                            appointment={appointment}
+                            role={isProfessional ? "patient" : "therapist"}
+                        />
                         <Text className="font-nunito-sans text-sm text-slate-500">
                             {"  "}
                             {isProfessional
@@ -642,13 +645,15 @@ function TypeOfAppointment({
     );
 }
 
-function PatientPhoto({
+function UserPhoto({
     appointment,
+    role,
 }: {
     appointment: Appointment & { therapist: Therapist } & { patient: Patient };
+    role: "patient" | "therapist";
 }) {
     const { data, isLoading } = useUserHasProfileImage({
-        userId: appointment.patient.userId,
+        userId: appointment[role].userId,
     });
 
     if (isLoading) return <ActivityIndicator />;
@@ -663,9 +668,9 @@ function PatientPhoto({
     return (
         <Image
             className="rounded-full"
-            alt={`${appointment.therapist.name}'s profile picture`}
+            alt={`${appointment[role].name}'s profile picture`}
             source={{
-                uri: appointment.patient.profilePictureUrl,
+                uri: appointment[role].profilePictureUrl,
                 width: 20,
                 height: 20,
             }}
