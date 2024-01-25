@@ -153,9 +153,8 @@ export const appointmentsRouter = createTRPCRouter({
                     scheduledTo: "desc",
                 },
             });
-
-            return foundAppointment;
         }
+        return foundAppointment;
     }),
     findById: protectedProcedure
         .input(
@@ -219,9 +218,8 @@ export const appointmentsRouter = createTRPCRouter({
                     scheduledTo: "desc",
                 },
             });
-
-            return foundAppointment;
         }
+        return foundAppointment;
     }),
     updateRecurrence: protectedProcedure
         .input(
