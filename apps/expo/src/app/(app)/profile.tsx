@@ -102,12 +102,7 @@ export default function UserProfileScreen() {
                         </View>
                     </View>
                 </View>
-                {isProfessional && (
-                    <ShareLink
-                        therapistId={user?.id ?? ""}
-                        therapistName={user?.firstName ?? ""}
-                    />
-                )}
+                {isProfessional && <ShareLink />}
             </View>
 
             <ScrollView showsVerticalScrollIndicator={false}>
@@ -237,15 +232,11 @@ function MenuItem(props: {
     );
 }
 
-function ShareLink({
-    therapistId,
-    therapistName,
-}: {
-    therapistId: string;
-    therapistName: string;
-}) {
+function ShareLink() {
+    const { data: therapist } = api.therapists.findByUserId.useQuery();
+
     const handleShareLink = async () => {
-        await getShareLink({ id: therapistId, name: therapistName });
+        await getShareLink({ id: therapist?.id, name: therapist?.name });
     };
 
     return (
