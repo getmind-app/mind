@@ -6,7 +6,6 @@ import {
     Text,
     View,
 } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import { useRouter } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -65,7 +64,7 @@ function TherapistOptions() {
     const {
         control,
         handleSubmit,
-        formState: { isSubmitting },
+        formState: { isSubmitting, isValid, isDirty },
     } = useForm<NonNullable<typeof therapist.data>>({
         defaultValues: therapist.data
             ? {
