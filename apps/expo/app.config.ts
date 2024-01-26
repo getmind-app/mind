@@ -40,7 +40,7 @@ const defineConfig = (): ExpoConfig => ({
     },
     assetBundlePatterns: ["**/*", "assets/*"],
     ios: {
-        buildNumber: "16",
+        buildNumber: "17",
         supportsTablet: true,
         bundleIdentifier: "app.getmind",
         infoPlist: {
@@ -68,7 +68,7 @@ const defineConfig = (): ExpoConfig => ({
         },
         package: "app.getmind",
         googleServicesFile: "./google-services.json",
-        versionCode: 7,
+        versionCode: 8,
         intentFilters: [
             {
                 action: "VIEW",

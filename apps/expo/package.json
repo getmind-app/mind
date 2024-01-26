@@ -6,6 +6,8 @@
         "clean": "git clean -xdf .expo .turbo node_modules",
         "dev:android": "expo start --android --go",
         "dev:ios": "expo start --ios --go",
+        "build-prod:android": "export PROFILE='production' && eas build --platform 'android' --profile='production' --local",
+        "build-prod:ios": "export PROFILE='production' && eas build --platform 'ios' --profile='production' --non-interactive",
         "lint": "eslint .",
         "lint:fix": "pnpm lint --fix",
         "type-check": "tsc --noEmit",
