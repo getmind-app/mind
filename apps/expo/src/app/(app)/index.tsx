@@ -62,7 +62,7 @@ export default function Index() {
 
     useEffect(() => {
         (async () => {
-            if (!trackingStatus?.granted && trackingStatus?.canAskAgain) {
+            if (!trackingStatus?.granted) {
                 await requestTrackingPermissionsAsync();
             }
 
