@@ -12,10 +12,7 @@ import {
 import * as Location from "expo-location";
 import * as Notifications from "expo-notifications";
 import { useRouter } from "expo-router";
-import {
-    requestTrackingPermissionsAsync,
-    useTrackingPermissions,
-} from "expo-tracking-transparency";
+import { requestTrackingPermissionsAsync } from "expo-tracking-transparency";
 import { useUser } from "@clerk/clerk-expo";
 import { AntDesign, FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import { Trans, t } from "@lingui/macro";
@@ -43,7 +40,6 @@ export default function Index() {
     const { user } = useUser();
     const { setMetadata } = useUserMutations();
     const [refreshing, setRefreshing] = useState(false);
-    const [trackingStatus] = useTrackingPermissions();
     const [locationStatus] = Location.useBackgroundPermissions();
     const notificationListener = useRef<Notifications.Subscription>();
     const responseListener = useRef<Notifications.Subscription>();
@@ -62,9 +58,7 @@ export default function Index() {
 
     useEffect(() => {
         (async () => {
-            if (!trackingStatus?.granted) {
-                await requestTrackingPermissionsAsync();
-            }
+            await requestTrackingPermissionsAsync();
 
             if (!locationStatus?.granted) {
                 const { status } =
