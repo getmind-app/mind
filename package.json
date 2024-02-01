@@ -48,7 +48,7 @@
         "react-native": "^0.72.5",
         "react-native-web": "~0.18.12",
         "stripe": "^13.3.0",
-        "turbo": "^1.8.8",
+        "turbo": "^1.12.2",
         "typescript": "^5.0.3"
     },
     "devDependencies": {
