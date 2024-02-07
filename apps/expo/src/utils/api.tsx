@@ -28,7 +28,10 @@ const getBaseUrl = () => {
      * baseUrl to your production API URL.
      */
     const localhost = Constants.expoConfig?.hostUri?.split(":")[0];
+
     if (!localhost) {
+        console.log("localhost not found");
+
         return "https://getmind.app";
     }
     return `http://${localhost}:3000`;

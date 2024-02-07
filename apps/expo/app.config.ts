@@ -40,7 +40,7 @@ const defineConfig = (): ExpoConfig => ({
     },
     assetBundlePatterns: ["**/*", "assets/*"],
     ios: {
-        buildNumber: "20",
+        buildNumber: "22",
         supportsTablet: true,
         bundleIdentifier: "app.getmind",
         infoPlist: {
@@ -88,7 +88,7 @@ const defineConfig = (): ExpoConfig => ({
         eas: {
             projectId: "99018e7e-9e9a-4064-82d0-dc3cfa6457d5",
         },
-        ...profileConstants["dev"],
+        ...profileConstants[process.env.PROFILE as Profile],
     },
     plugins: [
         "./expo-plugins/with-modify-gradle.js",

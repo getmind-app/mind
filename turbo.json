@@ -50,6 +50,7 @@
         "VERCEL",
         "VERCEL_URL",
         "FIXED_APPLICATION_FEE",
-        "SCHEDULE_USER_ID"
+        "SCHEDULE_USER_ID",
+        "PROFILE"
     ]
 }
