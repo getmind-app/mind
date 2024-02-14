@@ -47,7 +47,7 @@ const appointmentAtom = atom<{
 type therapistAvailableDates =
     RouterOutputs["therapists"]["getAvailableDatesAndHours"];
 
-export default function TherapistSchedule() {
+export default function AppointmentSchedulingScreen() {
     const [appointment, setAppointment] = useAtom(appointmentAtom);
     const router = useRouter();
     const { id } = useLocalSearchParams();
@@ -61,7 +61,7 @@ export default function TherapistSchedule() {
     const { mutateAsync } = api.appointments.create.useMutation({
         onSuccess: (appointment) => {
             router.push({
-                pathname: "/psych/payment",
+                pathname: "/psych/finish",
                 params: { appointmentId: appointment.id },
             });
         },
