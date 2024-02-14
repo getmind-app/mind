@@ -15,7 +15,7 @@ function handleMode(x: string) {
     if (x === "ON_SITE") return t({ message: "In Person" });
 }
 
-export default function SessionPayment() {
+export default function AppointmentPaymentScreen() {
     const router = useRouter();
     const { appointmentId } = useLocalSearchParams();
     const updateAppointment = api.appointments.update.useMutation();
@@ -106,6 +106,8 @@ export default function SessionPayment() {
     if (!data) {
         return <Text>Impossible scenario, missing session data</Text>;
     }
+
+    return <Text>This is currently disabled</Text>;
 
     return (
         <>
