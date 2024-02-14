@@ -1,17 +1,22 @@
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useRouter, useSearchParams } from "expo-router";
+import { useGlobalSearchParams, useRouter } from "expo-router";
 import { Trans } from "@lingui/macro";
 
+import { FullScreenLoading } from "../../../components/FullScreenLoading";
 import { api } from "../../../utils/api";
 
-export default function SessionFinishAppointment() {
+export default function FinishAppointmentSchedulingScreen() {
     const router = useRouter();
-    const { appointmentId } = useSearchParams();
+    const { appointmentId } = useGlobalSearchParams();
 
-    const { data } = api.appointments.findById.useQuery({
+    const { data, isLoading } = api.appointments.findById.useQuery({
         id: String(appointmentId),
     });
+
+    if (isLoading) {
+        return <FullScreenLoading />;
+    }
 
     return (
         <SafeAreaView className="h-full bg-off-white">
