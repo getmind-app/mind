@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
     ActivityIndicator,
     Alert,
@@ -21,12 +21,21 @@ import {
 } from "@expo/vector-icons";
 import { Trans, t } from "@lingui/macro";
 import { useLingui, type I18nContext } from "@lingui/react";
-import { format } from "date-fns";
+import {
+    add,
+    endOfDay,
+    endOfDecade,
+    endOfWeek,
+    format,
+    isWithinInterval,
+    startOfDay,
+} from "date-fns";
 import { enUS, ptBR } from "date-fns/locale";
 
 import { BasicText } from "../../components/BasicText";
 import { Card } from "../../components/Card";
 import { CardSkeleton } from "../../components/CardSkeleton";
+import { ExclusiveTagFilter } from "../../components/ExclusiveTagFilter";
 import { LargeButton } from "../../components/LargeButton";
 import { Refreshable } from "../../components/Refreshable";
 import { ScreenWrapper } from "../../components/ScreenWrapper";
@@ -50,16 +59,56 @@ function getLocale(lingui: I18nContext) {
     return enUS;
 }
 
+type Period = "TODAY" | "TOMORROW" | "LATER_THIS_WEEK" | "ALL";
+
+const todayEndOfDay = endOfDay(new Date());
+const todayStartOfDay = startOfDay(new Date());
+
+const periodToInterval: {
+    [key in Period]: {
+        start: Date;
+        end: Date;
+    };
+} = {
+    TODAY: {
+        start: todayStartOfDay,
+        end: todayEndOfDay,
+    },
+    TOMORROW: {
+        start: add(todayStartOfDay, { days: 1 }),
+        end: add(todayEndOfDay, { days: 1 }),
+    },
+    LATER_THIS_WEEK: {
+        start: todayEndOfDay,
+        end: endOfWeek(todayEndOfDay, { weekStartsOn: 1 }),
+    },
+    ALL: {
+        start: todayStartOfDay,
+        end: endOfDecade(todayEndOfDay),
+    },
+};
+
 export default function CalendarScreen() {
     const [refreshing, setRefreshing] = useState(false);
     const utils = api.useContext();
     const { user } = useUser();
+    const [period, setPeriod] = useState<Period>("TODAY");
 
     const {
         data: appointments,
         isLoading,
         isError,
     } = api.appointments.findAll.useQuery();
+
+    const filteredAppointment = useMemo(() => {
+        if (!appointments) return [];
+        return appointments.filter((appointment) =>
+            isWithinInterval(
+                new Date(appointment.scheduledTo),
+                periodToInterval[period],
+            ),
+        );
+    }, [appointments, period]);
 
     const onRefresh = async () => {
         setRefreshing(true);
@@ -93,8 +142,38 @@ export default function CalendarScreen() {
 
     return (
         <BaseLayout refreshing={refreshing} onRefresh={onRefresh}>
+            <View
+                style={{
+                    flex: 1,
+                    flexDirection: "row",
+                    gap: 8,
+                }}
+            >
+                <ExclusiveTagFilter
+                    onChange={(value) => setPeriod(value as Period)}
+                    defaultValue="TODAY"
+                    tags={[
+                        {
+                            label: t({ message: "Today" }),
+                            value: "TODAY",
+                        },
+                        {
+                            label: t({ message: "Tomorrow" }),
+                            value: "TOMORROW",
+                        },
+                        {
+                            label: t({ message: "Later this week" }),
+                            value: "LATER_THIS_WEEK",
+                        },
+                        {
+                            label: t({ message: "All" }),
+                            value: "ALL",
+                        },
+                    ]}
+                />
+            </View>
             <View className="pb-20">
-                {appointments.map((appoinment) =>
+                {filteredAppointment.map((appoinment) =>
                     user ? (
                         <AppointmentCard
                             key={appoinment.id}
