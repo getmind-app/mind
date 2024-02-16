@@ -32,6 +32,7 @@ export function FormDateInput<
     error,
     mode = "date",
     valueDisplayFunction = formatISODate,
+    required,
     ...otherProps
 }: FormDateProps &
     Omit<DatePickerProps, "value"> & {
@@ -44,6 +45,7 @@ export function FormDateInput<
         error?: string;
         valueDisplayFunction?: (date: Date) => string;
         mode?: "date" | "time";
+        required?: boolean;
     }) {
     return (
         <Controller
@@ -53,7 +55,7 @@ export function FormDateInput<
                 <>
                     <View className="gap-2 py-3">
                         <Text className="font-nunito-sans text-lg text-slate-700">
-                            {title}
+                            {required ? `${title} *` : title}
                         </Text>
                         <View
                             className={`flex flex-row items-center rounded border border-off-white px-2 ${
