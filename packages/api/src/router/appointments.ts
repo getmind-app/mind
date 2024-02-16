@@ -318,6 +318,8 @@ export const appointmentsRouter = createTRPCRouter({
             });
         }),
     prepareTomorrowAppointments: publicProcedure.mutation(async ({ ctx }) => {
+        console.log("prepareTomorrowAppointments is currently disabled");
+        return null;
         console.log("Preparing tomorrow appointments");
         const now = new Date();
         const appointmentsToBePaid = await ctx.prisma.appointment.findMany({

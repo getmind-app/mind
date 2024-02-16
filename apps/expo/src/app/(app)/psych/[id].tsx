@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import { type Float } from "react-native/Libraries/Types/CodegenTypes";
-import { Image } from "expo-image";
 import * as Linking from "expo-linking";
 import { useGlobalSearchParams, useRouter, useSearchParams } from "expo-router";
 import { Trans, t } from "@lingui/macro";
@@ -12,6 +11,7 @@ import { BasicText } from "../../../components/BasicText";
 import { FullScreenLoading } from "../../../components/FullScreenLoading";
 import { Header } from "../../../components/Header";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
+import { UserPhoto } from "../../../components/UserPhotos";
 import formatModality from "../../../helpers/formatModality";
 import { geocode } from "../../../helpers/geocode";
 import geocodeAddress from "../../../helpers/geocodeAddress";
@@ -35,6 +35,10 @@ export default function TherapistProfile() {
         return <FullScreenLoading />;
     }
 
+    if (!data) {
+        return <Text>Profile not found</Text>;
+    }
+
     // Group hours by week day but only the first and last hour
     const groupedHours = groupBy(data?.hours, "weekDay");
     Object.entries(groupedHours).forEach(([weekDay, hours]) => {
@@ -56,11 +60,12 @@ export default function TherapistProfile() {
             <ScreenWrapper>
                 <ScrollView>
                     <View className="flex flex-row items-center gap-x-6">
-                        <Image
-                            alt="Profile picture"
-                            className="h-28 w-28 rounded-full"
-                            source={data?.profilePictureUrl}
-                            contentFit="cover"
+                        <UserPhoto
+                            userId={data?.userId}
+                            url={data?.profilePictureUrl}
+                            alt={`${data?.name} profile picture`}
+                            width={128}
+                            height={128}
                         />
                         <View className="gap-y-2">
                             <Text className="font-nunito-sans-bold text-3xl font-bold">

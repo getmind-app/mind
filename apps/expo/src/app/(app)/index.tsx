@@ -29,15 +29,15 @@ import DefaultHomeCard from "../../components/DefaultHomeCard";
 import { Refreshable } from "../../components/Refreshable";
 import { ScreenWrapper } from "../../components/ScreenWrapper";
 import { Title } from "../../components/Title";
+import { UserPhoto } from "../../components/UserPhotos";
 import geocodeAddress from "../../helpers/geocodeAddress";
 import { getLocale } from "../../helpers/getLocale";
 import { registerForPushNotificationsAsync } from "../../helpers/registerForPushNotifications";
-import { useUserHasProfileImage } from "../../hooks/user/useUserHasProfileImage";
 import { useUserIsProfessional } from "../../hooks/user/useUserIsProfessional";
 import { useUserMutations } from "../../hooks/user/useUserMutations";
 import { api } from "../../utils/api";
 
-export default function Index() {
+export default function HomeScreen() {
     const router = useRouter();
     const utils = api.useContext();
     const { user } = useUser();
@@ -152,41 +152,6 @@ export default function Index() {
                 <LastNotes />
             </Refreshable>
         </ScreenWrapper>
-    );
-}
-
-function UserPhoto({
-    userId,
-    alt,
-    url,
-}: {
-    userId: string;
-    alt: string;
-    url: string;
-}) {
-    const { data, isLoading } = useUserHasProfileImage({
-        userId,
-    });
-
-    if (isLoading) return <ActivityIndicator />;
-
-    if (!data)
-        return (
-            <View className={`rounded-full bg-slate-200 p-[4px]`}>
-                <AntDesign name="user" size={24} />
-            </View>
-        );
-
-    return (
-        <Image
-            className="flex items-center justify-center rounded-full"
-            alt={alt}
-            source={{
-                uri: url,
-                width: 32,
-                height: 32,
-            }}
-        />
     );
 }
 
