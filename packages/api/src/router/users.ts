@@ -43,6 +43,8 @@ export const usersRouter = createTRPCRouter({
             const user = await clerk.users.getUser(input.userId);
             const { ok } = await fetch(user.imageUrl);
 
+            console.log("userHasProfileImage", ok);
+
             return ok;
         }),
     clearMetadata: protectedProcedure.mutation(async ({ ctx }) => {

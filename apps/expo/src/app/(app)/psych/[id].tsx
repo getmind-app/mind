@@ -55,7 +55,6 @@ export default function TherapistProfile() {
                 onShare={() =>
                     void getShareLink({ id: data?.id, name: data?.name })
                 }
-                onBack={() => router.push({ pathname: "/search" })}
             />
             <ScreenWrapper>
                 <ScrollView>

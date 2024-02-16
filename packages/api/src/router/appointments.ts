@@ -123,7 +123,7 @@ export const appointmentsRouter = createTRPCRouter({
                     patient: true,
                 },
                 orderBy: {
-                    scheduledTo: "desc",
+                    scheduledTo: "asc",
                 },
             });
         } else {
@@ -150,7 +150,7 @@ export const appointmentsRouter = createTRPCRouter({
                     patient: true,
                 },
                 orderBy: {
-                    scheduledTo: "desc",
+                    scheduledTo: "asc",
                 },
             });
         }
