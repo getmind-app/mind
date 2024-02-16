@@ -8,12 +8,6 @@ export default function SettingsLayout() {
             }}
         >
             <Stack.Screen
-                name="personal-info"
-                options={{
-                    title: "Personal Info",
-                }}
-            />
-            <Stack.Screen
                 name="address"
                 options={{
                     title: "Address",
