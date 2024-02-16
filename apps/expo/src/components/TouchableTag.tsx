@@ -1,17 +1,16 @@
-import { useState } from "react";
-import { Text, TouchableOpacity } from "react-native";
+import {
+    Text,
+    TouchableOpacity,
+    type TouchableOpacityProps,
+} from "react-native";
 
 export function TouchableTag({
-    onPress,
+    checked,
     children,
-    defaultChecked = false,
+    ...rest
 }: {
-    onPress: ({ checked }: { checked: boolean }) => void;
-    children: React.ReactNode;
-    defaultChecked?: boolean;
-}) {
-    const [checked, setChecked] = useState(defaultChecked);
-
+    checked: boolean;
+} & TouchableOpacityProps) {
     return (
         <TouchableOpacity
             style={{
@@ -22,10 +21,7 @@ export function TouchableTag({
                 borderColor: checked ? "#3b82f6" : "#64748b",
                 elevation: 2,
             }}
-            onPress={() => {
-                setChecked(!checked);
-                onPress({ checked });
-            }}
+            {...rest}
         >
             <Text
                 className={`font-nunito-sans ${
