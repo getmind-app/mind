@@ -29,7 +29,7 @@ import { Title } from "../../../components/Title";
 import { api } from "../../../utils/api";
 import { type Gender, type Modality } from ".prisma/client";
 
-export default function EditPsychProfile() {
+export default function NewPsychScreen() {
     const { user } = useUser();
     const router = useRouter();
     const createAccount = api.stripe.createAccount.useMutation();
