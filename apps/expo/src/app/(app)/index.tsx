@@ -33,12 +33,11 @@ import { UserPhoto } from "../../components/UserPhotos";
 import geocodeAddress from "../../helpers/geocodeAddress";
 import { getLocale } from "../../helpers/getLocale";
 import { registerForPushNotificationsAsync } from "../../helpers/registerForPushNotifications";
-import { useUserHasProfileImage } from "../../hooks/user/useUserHasProfileImage";
 import { useUserIsProfessional } from "../../hooks/user/useUserIsProfessional";
 import { useUserMutations } from "../../hooks/user/useUserMutations";
 import { api } from "../../utils/api";
 
-export default function Index() {
+export default function HomeScreen() {
     const router = useRouter();
     const utils = api.useContext();
     const { user } = useUser();
