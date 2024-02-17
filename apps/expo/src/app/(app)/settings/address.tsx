@@ -237,6 +237,7 @@ export default function Address() {
                                         altitude: 1000,
                                         zoom: 15,
                                     }}
+                                    scrollEnabled={false}
                                 >
                                     <Marker
                                         coordinate={{
