@@ -340,6 +340,7 @@ function LocationContent({ address }: { address: Address }) {
                             altitude: 1000,
                             zoom: 15,
                         }}
+                        scrollEnabled={false}
                     >
                         <Marker
                             // TODO: remove this
