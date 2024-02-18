@@ -175,12 +175,10 @@ export const appointmentsRouter = createTRPCRouter({
         }),
     findAll: protectedProcedure.query(async ({ ctx }) => {
         let foundAppointment;
-        console.log("auth", JSON.stringify(ctx.auth, null, 2));
         if (ctx.auth.user?.publicMetadata?.role === "professional") {
             const therapist = await ctx.prisma.therapist.findFirst({
                 where: { userId: ctx.auth.userId },
             });
-            console.log("therapist", JSON.stringify(therapist, null, 2));
             foundAppointment = await ctx.prisma.appointment.findMany({
                 where: {
                     therapistId: therapist?.id,
@@ -201,8 +199,6 @@ export const appointmentsRouter = createTRPCRouter({
             const patient = await ctx.prisma.patient.findFirst({
                 where: { userId: ctx.auth.userId },
             });
-            console.log("patient", JSON.stringify(patient, null, 2));
-
             foundAppointment = await ctx.prisma.appointment.findMany({
                 where: {
                     patientId: patient?.id,
@@ -220,7 +216,6 @@ export const appointmentsRouter = createTRPCRouter({
                 },
             });
         }
-        console.log("appointments", JSON.stringify(foundAppointment, null, 2));
         return foundAppointment;
     }),
     updateRecurrence: protectedProcedure

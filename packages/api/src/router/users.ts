@@ -43,7 +43,37 @@ export const usersRouter = createTRPCRouter({
             const user = await clerk.users.getUser(input.userId);
             const { ok } = await fetch(user.imageUrl);
 
-            return ok;
+            return {
+                ok,
+                imageUrl: user.imageUrl,
+            };
+        }),
+    updateProfileImage: protectedProcedure
+        .input(z.object({ url: z.string() }))
+        .mutation(async ({ input, ctx }) => {
+            const user = await clerk.users.getUser(ctx.auth.userId);
+
+            const isProfessional = user.publicMetadata?.role === "professional";
+
+            if (isProfessional) {
+                return ctx.prisma.therapist.update({
+                    where: {
+                        userId: ctx.auth.userId,
+                    },
+                    data: {
+                        profilePictureUrl: input.url,
+                    },
+                });
+            }
+
+            return ctx.prisma.patient.update({
+                where: {
+                    userId: ctx.auth.userId,
+                },
+                data: {
+                    profilePictureUrl: input.url,
+                },
+            });
         }),
     clearMetadata: protectedProcedure.mutation(async ({ ctx }) => {
         try {

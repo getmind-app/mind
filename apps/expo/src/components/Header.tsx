@@ -4,13 +4,12 @@ import { MaterialIcons } from "@expo/vector-icons";
 
 type HeaderProps = {
     title?: string;
-    share?: boolean;
     goBack?: boolean;
     onShare?: () => void;
     onBack?: () => void;
 };
 
-export const Header = ({ title, share, onShare, onBack }: HeaderProps) => {
+export const Header = ({ title, onShare, onBack }: HeaderProps) => {
     const router = useRouter();
 
     function handleBack() {
@@ -32,7 +31,7 @@ export const Header = ({ title, share, onShare, onBack }: HeaderProps) => {
                     />
                 ),
                 headerRight: () =>
-                    share && (
+                    onShare && (
                         <View className="pr-4">
                             <TouchableOpacity onPress={() => onShare?.()}>
                                 <MaterialIcons size={24} name="ios-share" />

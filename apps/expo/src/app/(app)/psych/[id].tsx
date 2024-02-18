@@ -51,24 +51,22 @@ export default function TherapistProfile() {
     return (
         <>
             <Header
-                share
                 onShare={() =>
                     void getShareLink({ id: data?.id, name: data?.name })
                 }
-                onBack={() => router.push({ pathname: "/search" })}
             />
             <ScreenWrapper>
                 <ScrollView>
-                    <View className="flex flex-row items-center gap-x-6">
+                    <View className="flex flex-row items-center">
                         <UserPhoto
                             userId={data?.userId}
                             url={data?.profilePictureUrl}
                             alt={`${data?.name} profile picture`}
-                            width={128}
-                            height={128}
+                            width={data?.yearsOfExperience ? 96 : 72}
+                            height={data?.yearsOfExperience ? 96 : 72}
                         />
-                        <View className="gap-y-2">
-                            <Text className="font-nunito-sans-bold text-3xl font-bold">
+                        <View className="ml-4">
+                            <Text className="font-nunito-sans-bold text-2xl font-bold">
                                 {data?.name}
                             </Text>
                             <View className="flex flex-col">
@@ -95,7 +93,7 @@ export default function TherapistProfile() {
                             </View>
                         </View>
                     </View>
-                    <View className="pb-32 pt-4">
+                    <View className="pb-32">
                         <ContentCard
                             title={t({ message: "Work Hours" })}
                             emoji="🕒"

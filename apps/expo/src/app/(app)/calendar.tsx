@@ -31,6 +31,7 @@ import { LargeButton } from "../../components/LargeButton";
 import { Refreshable } from "../../components/Refreshable";
 import { ScreenWrapper } from "../../components/ScreenWrapper";
 import { Title } from "../../components/Title";
+import { UserPhoto } from "../../components/UserPhotos";
 import { getShareLink } from "../../helpers/getShareLink";
 import { isMoreThan24HoursLater } from "../../helpers/isMoreThan24HoursLater";
 import { useUpdateRecurrence } from "../../hooks/recurrence/useUpdateRecurrence";
@@ -237,8 +238,24 @@ function AppointmentCard({
                             {"  "}
                         </Text>
                         <UserPhoto
-                            appointment={appointment}
-                            role={isProfessional ? "patient" : "therapist"}
+                            userId={
+                                isProfessional
+                                    ? appointment.patient.userId
+                                    : appointment.therapist.userId
+                            }
+                            alt={
+                                isProfessional
+                                    ? appointment.patient.name
+                                    : appointment.therapist.name
+                            }
+                            url={
+                                isProfessional
+                                    ? appointment.patient.profilePictureUrl
+                                    : appointment.therapist.profilePictureUrl
+                            }
+                            width={20}
+                            height={20}
+                            iconSize={12}
                         />
                         <Text className="font-nunito-sans text-sm text-slate-500">
                             {"  "}
@@ -642,38 +659,5 @@ function TypeOfAppointment({
         <BasicText color="black">
             {appointmentMapper[appointmentType]}
         </BasicText>
-    );
-}
-
-function UserPhoto({
-    appointment,
-    role,
-}: {
-    appointment: Appointment & { therapist: Therapist } & { patient: Patient };
-    role: "patient" | "therapist";
-}) {
-    const { data, isLoading } = useUserHasProfileImage({
-        userId: appointment[role].userId,
-    });
-
-    if (isLoading) return <ActivityIndicator />;
-
-    if (!data)
-        return (
-            <View className={`rounded-full bg-blue-100 p-[2px]`}>
-                <AntDesign name="user" size={20} />
-            </View>
-        );
-
-    return (
-        <Image
-            className="rounded-full"
-            alt={`${appointment[role].name}'s profile picture`}
-            source={{
-                uri: appointment[role].profilePictureUrl,
-                width: 20,
-                height: 20,
-            }}
-        />
     );
 }

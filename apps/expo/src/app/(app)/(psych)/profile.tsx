@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
     Image,
     KeyboardAvoidingView,
@@ -94,7 +94,6 @@ export default function EditPsychProfile() {
                 lastName: data.name.split(" ")[1],
             });
         }
-
 
         try {
             await mutateAsync({

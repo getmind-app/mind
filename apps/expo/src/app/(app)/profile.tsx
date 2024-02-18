@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
     Image,
     Platform,
@@ -15,6 +16,7 @@ import { t } from "@lingui/macro";
 
 import { ScreenWrapper } from "../../components/ScreenWrapper";
 import { getShareLink } from "../../helpers/getShareLink";
+import { useUpdateProfilePicture } from "../../hooks/user/useUpdateProfilePicture";
 import { useUserHasProfileImage } from "../../hooks/user/useUserHasProfileImage";
 import { useUserIsProfessional } from "../../hooks/user/useUserIsProfessional";
 import { api } from "../../utils/api";
@@ -25,6 +27,8 @@ export default function UserProfileScreen() {
     const { mutateAsync } = api.users.clearMetadata.useMutation({});
     const userHasProfileImage = useUserHasProfileImage({ userId: null });
     const isProfessional = useUserIsProfessional();
+    const updateProfileImage = useUpdateProfilePicture();
+    const [imageUpdated, setImageUpdated] = useState(false);
 
     async function clearUserMetaData(): Promise<void> {
         console.log("Clearing user metadata");
@@ -43,10 +47,21 @@ export default function UserProfileScreen() {
 
         if (result.canceled) return;
 
-        await user?.setProfileImage({
+        const image = await user?.setProfileImage({
             file: `data:image/png;base64,${result.assets[0]?.base64}`,
         });
+
+        if (image && image.publicUrl) {
+            setImageUpdated(true);
+            await updateProfileImage.mutateAsync({ url: image.publicUrl });
+        }
     };
+
+    useEffect(() => {
+        return () => {
+            setImageUpdated(false);
+        };
+    }, []);
 
     return (
         <ScreenWrapper>
@@ -59,7 +74,7 @@ export default function UserProfileScreen() {
             >
                 <View className="flex flex-row items-center gap-x-4 pt-4 align-middle">
                     <TouchableOpacity onPress={() => pickImageAsync()}>
-                        {userHasProfileImage.data ? (
+                        {userHasProfileImage.data || imageUpdated ? (
                             <Image
                                 className="rounded-full"
                                 alt={`${user?.firstName}'s profile picture`}
@@ -226,7 +241,7 @@ function MenuItem(props: {
                         />
                     )}
                 </View>
-                <MaterialIcons size={24} name="chevron-right" />
+                <MaterialIcons size={24} name="chevron-right" color={"gray"} />
             </View>
         </TouchableOpacity>
     );
