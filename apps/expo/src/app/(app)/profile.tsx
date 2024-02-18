@@ -1,4 +1,6 @@
+import { useEffect, useState } from "react";
 import {
+    ActivityIndicator,
     Image,
     Platform,
     ScrollView,
@@ -23,8 +25,11 @@ export default function UserProfileScreen() {
     const router = useRouter();
     const { user, signOut } = useClerk();
     const { mutateAsync } = api.users.clearMetadata.useMutation({});
-    const userHasProfileImage = useUserHasProfileImage({ userId: null });
+    const userHasProfileImage = useUserHasProfileImage({
+        userId: String(user?.id),
+    });
     const isProfessional = useUserIsProfessional();
+    const [imageUpdated, setImageUpdated] = useState(false);
 
     async function clearUserMetaData(): Promise<void> {
         console.log("Clearing user metadata");
@@ -43,10 +48,25 @@ export default function UserProfileScreen() {
 
         if (result.canceled) return;
 
-        await user?.setProfileImage({
-            file: `data:image/png;base64,${result.assets[0]?.base64}`,
-        });
+        await user
+            ?.setProfileImage({
+                file: `data:image/png;base64,${result.assets[0]?.base64}`,
+            })
+            .then(() => {
+                setImageUpdated(true);
+            });
     };
+
+    // log every change to user
+    useEffect(() => {
+        console.log("User changed", user?.imageUrl, user?.firstName, user?.id);
+    }, [user]);
+
+    useEffect(() => {
+        return () => {
+            setImageUpdated(false);
+        };
+    }, []);
 
     return (
         <ScreenWrapper>
@@ -59,7 +79,7 @@ export default function UserProfileScreen() {
             >
                 <View className="flex flex-row items-center gap-x-4 pt-4 align-middle">
                     <TouchableOpacity onPress={() => pickImageAsync()}>
-                        {userHasProfileImage.data ? (
+                        {userHasProfileImage.data || imageUpdated ? (
                             <Image
                                 className="rounded-full"
                                 alt={`${user?.firstName}'s profile picture`}
@@ -69,6 +89,16 @@ export default function UserProfileScreen() {
                                     height: 72,
                                 }}
                             />
+                        ) : userHasProfileImage.isLoading ? (
+                            <View
+                                style={{
+                                    backgroundColor: "#e5e7eb",
+                                    padding: 24,
+                                    borderRadius: 100,
+                                }}
+                            >
+                                <ActivityIndicator size={24} />
+                            </View>
                         ) : (
                             <View
                                 style={{
