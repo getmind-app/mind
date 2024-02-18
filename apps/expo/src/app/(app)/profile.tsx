@@ -33,13 +33,6 @@ export default function UserProfileScreen() {
     const updateProfileImage = useUpdateProfilePicture();
     const [imageUpdated, setImageUpdated] = useState(false);
 
-    async function clearUserMetaData(): Promise<void> {
-        console.log("Clearing user metadata");
-        await mutateAsync();
-        await user?.reload();
-        router.replace("/onboard");
-    }
-
     const pickImageAsync = async () => {
         const result = await ImagePicker.launchImageLibraryAsync({
             allowsEditing: true,
@@ -134,7 +127,7 @@ export default function UserProfileScreen() {
             </View>
 
             <ScrollView showsVerticalScrollIndicator={false}>
-                {isProfessional ? <ProfessionalMenuItems /> : null}
+                {isProfessional ? <ProfessionalOptions /> : null}
                 <MenuItem
                     isFirst
                     icon="notifications"
@@ -153,33 +146,50 @@ export default function UserProfileScreen() {
                     onPress={signOut}
                 />
 
-                {process.env.NODE_ENV === "development" ? (
-                    <>
-                        <Text className="mt-4 font-nunito-sans-bold text-2xl text-red-500">
-                            Development only
-                        </Text>
-                        <MenuItem
-                            isFirst={true}
-                            icon="refresh"
-                            label={t({ message: "Reset user metadata" })}
-                            onPress={clearUserMetaData}
-                        />
-                        <MenuItem
-                            isLast={true}
-                            icon="person"
-                            label={"Patient Profile"}
-                            onPress={() => {
-                                router.push("/(patient)/profile");
-                            }}
-                        />
-                    </>
-                ) : null}
+                {process.env.NODE_ENV === "development" && (
+                    <DevelopmentOptions />
+                )}
             </ScrollView>
         </ScreenWrapper>
     );
 }
 
-function ProfessionalMenuItems() {
+function DevelopmentOptions() {
+    const { mutateAsync } = api.users.clearMetadata.useMutation({});
+    const router = useRouter();
+    const { user } = useClerk();
+
+    async function clearUserMetaData(): Promise<void> {
+        console.log("Clearing user metadata");
+        await mutateAsync();
+        await user?.reload();
+        router.replace("/onboard");
+    }
+
+    return (
+        <>
+            <Text className="mt-4 font-nunito-sans-bold text-2xl text-red-500">
+                Development only
+            </Text>
+            <MenuItem
+                isFirst={true}
+                icon="refresh"
+                label={t({ message: "Reset user metadata" })}
+                onPress={clearUserMetaData}
+            />
+            <MenuItem
+                isLast={true}
+                icon="person"
+                label={"Patient Profile"}
+                onPress={() => {
+                    router.push("/(patient)/update-profile");
+                }}
+            />
+        </>
+    );
+}
+
+function ProfessionalOptions() {
     const router = useRouter();
     const { data } = api.therapists.findByUserId.useQuery();
     if (!data) return null;
@@ -190,7 +200,7 @@ function ProfessionalMenuItems() {
                 icon="person-outline"
                 isFirst={true}
                 label={t({ message: "Personal info" })}
-                onPress={() => router.push("/settings/personal-info")}
+                onPress={() => router.push("/(psych)/update-profile")}
             />
             {data.modalities.includes("ON_SITE") && (
                 <MenuItem
@@ -209,7 +219,7 @@ function ProfessionalMenuItems() {
                 icon="attach-money"
                 label={t({ message: "Setup Payments" })}
                 onPress={() => router.push("/(psych)/payments-setup")}
-                alert={data.paymentAccountStatus !== "ACTIVE"}
+                alert={!!data.pixKey}
             />
         </>
     );

@@ -22,6 +22,7 @@ export function FormCurrencyInput<
     name,
     rules,
     platformFee,
+    required,
 }: FormInputProps & {
     control: Control<TFieldValues>;
     name: TName;
@@ -31,6 +32,7 @@ export function FormCurrencyInput<
     >;
     error?: string;
     platformFee?: number;
+    required?: boolean;
 }) {
     return (
         <Controller
@@ -40,7 +42,7 @@ export function FormCurrencyInput<
             render={({ field: { onChange, onBlur, value }, fieldState }) => (
                 <View className="gap-2 py-3">
                     <Text className="font-nunito-sans text-lg text-slate-700">
-                        {title}
+                        {required ? `${title} *` : title}
                     </Text>
                     {platformFee && (
                         <Text className="font-nunito-sans text-sm text-slate-500">

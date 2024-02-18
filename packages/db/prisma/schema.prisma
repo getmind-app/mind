@@ -31,6 +31,7 @@ model Therapist {
     profilePictureUrl    String
     userId               String               @unique
     paymentAccountId     String?
+    pixKey               String?
     paymentAccountStatus PaymentAccountStatus @default(UNACTIVE)
     modalities           Modality[]
     address              Address?

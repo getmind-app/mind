@@ -24,7 +24,8 @@ export function LongTextInput<T extends string>({
         // TODO: add length limit
         <View className="gap-2 py-3">
             <Text className="font-nunito-sans text-lg text-slate-700">
-                {title} {lengthLimit ? `(${value?.length}/${lengthLimit})` : ""}
+                {title}{" "}
+                {lengthLimit ? `(${value?.length ?? 0}/${lengthLimit})` : ""}
             </Text>
             {/* input that grows as user type more */}
             <View
