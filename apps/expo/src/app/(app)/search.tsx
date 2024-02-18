@@ -12,7 +12,7 @@ import { Modalize } from "react-native-modalize";
 import { Portal } from "react-native-portalize";
 import * as Location from "expo-location";
 import { useRouter } from "expo-router";
-import { AntDesign, MaterialIcons } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 import { Trans, t } from "@lingui/macro";
 
 import {
@@ -24,9 +24,9 @@ import {
 import { ProfileSkeleton } from "../../components/ProfileSkeleton";
 import { ScreenWrapper } from "../../components/ScreenWrapper";
 import { Title } from "../../components/Title";
+import { UserPhoto } from "../../components/UserPhotos";
 import getDistanceFromCurrentLocation from "../../helpers/getDistanceFromCurrentLocation";
 import { useSearchTherapistByFilters } from "../../hooks/search/useSearchTherapistByFilters";
-import { useUserHasProfileImage } from "../../hooks/user/useUserHasProfileImage";
 import { useDebounce } from "../../hooks/util/useDebounce";
 
 export default function SearchScreen() {
@@ -624,34 +624,25 @@ function TherapistProfile({
     therapist: Therapist & { address: Address | null };
     currentLocation: { latitude: number; longitude: number } | null;
 }) {
-    const userHasImage = useUserHasProfileImage({ userId: therapist.userId });
     const router = useRouter();
 
     return (
         <TouchableOpacity
-            className="flex w-full flex-row items-center gap-4 align-middle"
+            className="flex w-full flex-row"
             onPress={() => router.push(`/psych/${therapist.id}`)}
         >
-            {userHasImage.data ? (
-                <Image
-                    className="rounded-full"
-                    alt={t({ message: `${therapist.name}' profile picture` })}
-                    source={{
-                        uri: therapist.profilePictureUrl,
-                        width: 48,
-                        height: 48,
-                    }}
-                />
-            ) : (
-                <View className="rounded-full bg-gray-200 p-3">
-                    <AntDesign name="user" size={24} color="black" />
-                </View>
-            )}
-            <View className="flex flex-col justify-center align-middle">
+            <UserPhoto
+                userId={therapist.userId}
+                alt={therapist.name}
+                url={therapist.profilePictureUrl}
+                width={40}
+                height={40}
+            />
+            <View className="ml-3 flex flex-col justify-center  align-middle">
                 <Text className="-mb-1 font-nunito-sans-bold text-lg">
                     {therapist.name}
                 </Text>
-                <Text className=" font-nunito-sans text-slate-500">
+                <Text className="font-nunito-sans text-xs text-slate-500">
                     <Trans>
                         <Text className="font-nunito-sans-bold">
                             R$ {therapist.hourlyRate}{" "}

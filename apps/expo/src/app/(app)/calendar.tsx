@@ -1,6 +1,5 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
-    ActivityIndicator,
     Alert,
     Image,
     Modal,
@@ -13,28 +12,32 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
-import {
-    AntDesign,
-    Feather,
-    FontAwesome,
-    MaterialIcons,
-} from "@expo/vector-icons";
+import { Feather, FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import { Trans, t } from "@lingui/macro";
 import { useLingui, type I18nContext } from "@lingui/react";
-import { format } from "date-fns";
+import {
+    add,
+    endOfDay,
+    endOfDecade,
+    endOfWeek,
+    format,
+    isWithinInterval,
+    startOfDay,
+} from "date-fns";
 import { enUS, ptBR } from "date-fns/locale";
 
 import { BasicText } from "../../components/BasicText";
 import { Card } from "../../components/Card";
 import { CardSkeleton } from "../../components/CardSkeleton";
+import { ExclusiveTagFilter } from "../../components/ExclusiveTagFilter";
 import { LargeButton } from "../../components/LargeButton";
 import { Refreshable } from "../../components/Refreshable";
 import { ScreenWrapper } from "../../components/ScreenWrapper";
 import { Title } from "../../components/Title";
+import { UserPhoto } from "../../components/UserPhotos";
 import { getShareLink } from "../../helpers/getShareLink";
 import { isMoreThan24HoursLater } from "../../helpers/isMoreThan24HoursLater";
 import { useUpdateRecurrence } from "../../hooks/recurrence/useUpdateRecurrence";
-import { useUserHasProfileImage } from "../../hooks/user/useUserHasProfileImage";
 import { useUserIsProfessional } from "../../hooks/user/useUserIsProfessional";
 import { api } from "../../utils/api";
 import {
@@ -50,16 +53,58 @@ function getLocale(lingui: I18nContext) {
     return enUS;
 }
 
+type Period = "TODAY" | "TOMORROW" | "LATER_THIS_WEEK" | "ALL";
+
+const todayEndOfDay = endOfDay(new Date());
+const todayStartOfDay = startOfDay(new Date());
+
+const periodToInterval: {
+    [key in Period]: {
+        start: Date;
+        end: Date;
+    };
+} = {
+    TODAY: {
+        start: todayStartOfDay,
+        end: todayEndOfDay,
+    },
+    TOMORROW: {
+        start: add(todayStartOfDay, { days: 1 }),
+        end: add(todayEndOfDay, { days: 1 }),
+    },
+    LATER_THIS_WEEK: {
+        start: todayEndOfDay,
+        end: endOfWeek(todayEndOfDay, { weekStartsOn: 1 }),
+    },
+    ALL: {
+        start: todayStartOfDay,
+        end: endOfDecade(todayEndOfDay),
+    },
+};
+
 export default function CalendarScreen() {
     const [refreshing, setRefreshing] = useState(false);
     const utils = api.useContext();
     const { user } = useUser();
+    const [period, setPeriod] = useState<Period>("TODAY");
 
     const {
         data: appointments,
         isLoading,
         isError,
     } = api.appointments.findAll.useQuery();
+
+    const filteredAppointment = useMemo(() => {
+        if (!appointments) return [];
+        return appointments.filter((appointment) =>
+            isWithinInterval(
+                new Date(appointment.scheduledTo),
+                periodToInterval[period],
+            ),
+        );
+    }, [appointments, period]);
+
+    console.log(filteredAppointment);
 
     const onRefresh = async () => {
         setRefreshing(true);
@@ -93,15 +138,59 @@ export default function CalendarScreen() {
 
     return (
         <BaseLayout refreshing={refreshing} onRefresh={onRefresh}>
+            <View
+                style={{
+                    flex: 1,
+                    flexDirection: "row",
+                    gap: 8,
+                    marginVertical: 8,
+                }}
+            >
+                <ExclusiveTagFilter
+                    onChange={(value) => setPeriod(value as Period)}
+                    defaultValue="TODAY"
+                    tags={[
+                        {
+                            label: t({ message: "Today" }),
+                            value: "TODAY",
+                        },
+                        {
+                            label: t({ message: "Tomorrow" }),
+                            value: "TOMORROW",
+                        },
+                        {
+                            label: t({ message: "Later this week" }),
+                            value: "LATER_THIS_WEEK",
+                        },
+                        {
+                            label: t({ message: "All" }),
+                            value: "ALL",
+                        },
+                    ]}
+                />
+            </View>
             <View className="pb-20">
-                {appointments.map((appoinment) =>
-                    user ? (
-                        <AppointmentCard
-                            key={appoinment.id}
-                            appointment={appoinment}
-                            metadata={user.publicMetadata}
+                {filteredAppointment.length === 0 ? (
+                    <View className="flex flex-col items-center justify-center gap-2 pt-32">
+                        <Image
+                            className="h-40 w-40"
+                            alt={`No therapists picture`}
+                            source={require("../../../assets/images/girl_dog.png")}
                         />
-                    ) : null,
+                        <Text className="font-nunito-sans-bold text-xl text-slate-500">
+                            <Trans>No appointments found!</Trans>
+                        </Text>
+                    </View>
+                ) : (
+                    filteredAppointment.map((appoinment) =>
+                        user ? (
+                            <AppointmentCard
+                                key={appoinment.id}
+                                appointment={appoinment}
+                                metadata={user.publicMetadata}
+                            />
+                        ) : null,
+                    )
                 )}
             </View>
         </BaseLayout>
@@ -237,8 +326,24 @@ function AppointmentCard({
                             {"  "}
                         </Text>
                         <UserPhoto
-                            appointment={appointment}
-                            role={isProfessional ? "patient" : "therapist"}
+                            userId={
+                                isProfessional
+                                    ? appointment.patient.userId
+                                    : appointment.therapist.userId
+                            }
+                            alt={
+                                isProfessional
+                                    ? appointment.patient.name
+                                    : appointment.therapist.name
+                            }
+                            url={
+                                isProfessional
+                                    ? appointment.patient.profilePictureUrl
+                                    : appointment.therapist.profilePictureUrl
+                            }
+                            width={20}
+                            height={20}
+                            iconSize={12}
                         />
                         <Text className="font-nunito-sans text-sm text-slate-500">
                             {"  "}
@@ -642,38 +747,5 @@ function TypeOfAppointment({
         <BasicText color="black">
             {appointmentMapper[appointmentType]}
         </BasicText>
-    );
-}
-
-function UserPhoto({
-    appointment,
-    role,
-}: {
-    appointment: Appointment & { therapist: Therapist } & { patient: Patient };
-    role: "patient" | "therapist";
-}) {
-    const { data, isLoading } = useUserHasProfileImage({
-        userId: appointment[role].userId,
-    });
-
-    if (isLoading) return <ActivityIndicator />;
-
-    if (!data)
-        return (
-            <View className={`rounded-full bg-blue-100 p-[2px]`}>
-                <AntDesign name="user" size={20} />
-            </View>
-        );
-
-    return (
-        <Image
-            className="rounded-full"
-            alt={`${appointment[role].name}'s profile picture`}
-            source={{
-                uri: appointment[role].profilePictureUrl,
-                width: 20,
-                height: 20,
-            }}
-        />
     );
 }

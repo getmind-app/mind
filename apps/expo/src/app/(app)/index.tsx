@@ -1,8 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
-    ActivityIndicator,
     Alert,
-    Image,
     Linking,
     RefreshControl,
     Text,
@@ -17,7 +15,7 @@ import {
     useTrackingPermissions,
 } from "expo-tracking-transparency";
 import { useUser } from "@clerk/clerk-expo";
-import { AntDesign, FontAwesome, MaterialIcons } from "@expo/vector-icons";
+import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import { Trans, t } from "@lingui/macro";
 import { useLingui } from "@lingui/react";
 import { format } from "date-fns";
