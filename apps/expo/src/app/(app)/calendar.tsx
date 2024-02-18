@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import {
     Alert,
+    Image,
     Modal,
     Pressable,
     RefreshControl,
@@ -85,7 +86,7 @@ export default function CalendarScreen() {
     const [refreshing, setRefreshing] = useState(false);
     const utils = api.useContext();
     const { user } = useUser();
-    const [period, setPeriod] = useState<Period>("ALL");
+    const [period, setPeriod] = useState<Period>("TODAY");
 
     const {
         data: appointments,
@@ -102,6 +103,8 @@ export default function CalendarScreen() {
             ),
         );
     }, [appointments, period]);
+
+    console.log(filteredAppointment);
 
     const onRefresh = async () => {
         setRefreshing(true);
@@ -145,7 +148,7 @@ export default function CalendarScreen() {
             >
                 <ExclusiveTagFilter
                     onChange={(value) => setPeriod(value as Period)}
-                    defaultValue="ALL"
+                    defaultValue="TODAY"
                     tags={[
                         {
                             label: t({ message: "Today" }),
@@ -167,14 +170,27 @@ export default function CalendarScreen() {
                 />
             </View>
             <View className="pb-20">
-                {filteredAppointment.map((appoinment) =>
-                    user ? (
-                        <AppointmentCard
-                            key={appoinment.id}
-                            appointment={appoinment}
-                            metadata={user.publicMetadata}
+                {filteredAppointment.length === 0 ? (
+                    <View className="flex flex-col items-center justify-center gap-2 pt-32">
+                        <Image
+                            className="h-40 w-40"
+                            alt={`No therapists picture`}
+                            source={require("../../../assets/images/girl_dog.png")}
                         />
-                    ) : null,
+                        <Text className="font-nunito-sans-bold text-xl text-slate-500">
+                            <Trans>No appointments found!</Trans>
+                        </Text>
+                    </View>
+                ) : (
+                    filteredAppointment.map((appoinment) =>
+                        user ? (
+                            <AppointmentCard
+                                key={appoinment.id}
+                                appointment={appoinment}
+                                metadata={user.publicMetadata}
+                            />
+                        ) : null,
+                    )
                 )}
             </View>
         </BaseLayout>
