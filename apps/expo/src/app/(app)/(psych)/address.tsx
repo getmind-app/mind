@@ -260,6 +260,7 @@ export default function OnboardAddressScreen() {
                                         altitude: 1000,
                                         zoom: 15,
                                     }}
+                                    scrollEnabled={false}
                                 >
                                     <Marker
                                         coordinate={{

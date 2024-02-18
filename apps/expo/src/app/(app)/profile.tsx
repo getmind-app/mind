@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import {
+    ActivityIndicator,
     Image,
     Platform,
     ScrollView,
@@ -25,7 +26,9 @@ export default function UserProfileScreen() {
     const router = useRouter();
     const { user, signOut } = useClerk();
     const { mutateAsync } = api.users.clearMetadata.useMutation({});
-    const userHasProfileImage = useUserHasProfileImage({ userId: null });
+    const userHasProfileImage = useUserHasProfileImage({
+        userId: String(user?.id),
+    });
     const isProfessional = useUserIsProfessional();
     const updateProfileImage = useUpdateProfilePicture();
     const [imageUpdated, setImageUpdated] = useState(false);
@@ -84,6 +87,16 @@ export default function UserProfileScreen() {
                                     height: 72,
                                 }}
                             />
+                        ) : userHasProfileImage.isLoading ? (
+                            <View
+                                style={{
+                                    backgroundColor: "#e5e7eb",
+                                    padding: 24,
+                                    borderRadius: 100,
+                                }}
+                            >
+                                <ActivityIndicator size={24} />
+                            </View>
                         ) : (
                             <View
                                 style={{
