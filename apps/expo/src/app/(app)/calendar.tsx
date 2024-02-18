@@ -1,8 +1,6 @@
 import { useMemo, useState } from "react";
 import {
-    ActivityIndicator,
     Alert,
-    Image,
     Modal,
     Pressable,
     RefreshControl,
@@ -13,12 +11,7 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
-import {
-    AntDesign,
-    Feather,
-    FontAwesome,
-    MaterialIcons,
-} from "@expo/vector-icons";
+import { Feather, FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import { Trans, t } from "@lingui/macro";
 import { useLingui, type I18nContext } from "@lingui/react";
 import {
@@ -44,7 +37,6 @@ import { UserPhoto } from "../../components/UserPhotos";
 import { getShareLink } from "../../helpers/getShareLink";
 import { isMoreThan24HoursLater } from "../../helpers/isMoreThan24HoursLater";
 import { useUpdateRecurrence } from "../../hooks/recurrence/useUpdateRecurrence";
-import { useUserHasProfileImage } from "../../hooks/user/useUserHasProfileImage";
 import { useUserIsProfessional } from "../../hooks/user/useUserIsProfessional";
 import { api } from "../../utils/api";
 import {
@@ -93,7 +85,7 @@ export default function CalendarScreen() {
     const [refreshing, setRefreshing] = useState(false);
     const utils = api.useContext();
     const { user } = useUser();
-    const [period, setPeriod] = useState<Period>("TODAY");
+    const [period, setPeriod] = useState<Period>("ALL");
 
     const {
         data: appointments,
@@ -148,11 +140,12 @@ export default function CalendarScreen() {
                     flex: 1,
                     flexDirection: "row",
                     gap: 8,
+                    marginVertical: 8,
                 }}
             >
                 <ExclusiveTagFilter
                     onChange={(value) => setPeriod(value as Period)}
-                    defaultValue="TODAY"
+                    defaultValue="ALL"
                     tags={[
                         {
                             label: t({ message: "Today" }),

@@ -8,7 +8,6 @@ export function ExclusiveTagFilter<
     tags,
     onChange,
     defaultValue,
-    a,
 }: {
     tags: T;
     onChange?: (value: string) => void;
@@ -20,6 +19,7 @@ export function ExclusiveTagFilter<
 
     return tags.map(({ label, value }) => (
         <TouchableTag
+            key={value}
             checked={selected === value}
             onPress={() => {
                 setSelected(value);
