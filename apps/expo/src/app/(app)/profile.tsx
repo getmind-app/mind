@@ -17,6 +17,7 @@ import { t } from "@lingui/macro";
 
 import { ScreenWrapper } from "../../components/ScreenWrapper";
 import { getShareLink } from "../../helpers/getShareLink";
+import { useUpdateProfilePicture } from "../../hooks/user/useUpdateProfilePicture";
 import { useUserHasProfileImage } from "../../hooks/user/useUserHasProfileImage";
 import { useUserIsProfessional } from "../../hooks/user/useUserIsProfessional";
 import { api } from "../../utils/api";
@@ -29,6 +30,7 @@ export default function UserProfileScreen() {
         userId: String(user?.id),
     });
     const isProfessional = useUserIsProfessional();
+    const updateProfileImage = useUpdateProfilePicture();
     const [imageUpdated, setImageUpdated] = useState(false);
 
     async function clearUserMetaData(): Promise<void> {
@@ -48,19 +50,15 @@ export default function UserProfileScreen() {
 
         if (result.canceled) return;
 
-        await user
-            ?.setProfileImage({
-                file: `data:image/png;base64,${result.assets[0]?.base64}`,
-            })
-            .then(() => {
-                setImageUpdated(true);
-            });
-    };
+        const image = await user?.setProfileImage({
+            file: `data:image/png;base64,${result.assets[0]?.base64}`,
+        });
 
-    // log every change to user
-    useEffect(() => {
-        console.log("User changed", user?.imageUrl, user?.firstName, user?.id);
-    }, [user]);
+        if (image && image.publicUrl) {
+            setImageUpdated(true);
+            await updateProfileImage.mutateAsync({ url: image.publicUrl });
+        }
+    };
 
     useEffect(() => {
         return () => {
@@ -256,7 +254,7 @@ function MenuItem(props: {
                         />
                     )}
                 </View>
-                <MaterialIcons size={24} name="chevron-right" />
+                <MaterialIcons size={24} name="chevron-right" color={"gray"} />
             </View>
         </TouchableOpacity>
     );
