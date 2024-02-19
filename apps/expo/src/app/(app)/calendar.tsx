@@ -175,6 +175,7 @@ export default function CalendarScreen() {
                         <Image
                             className="h-40 w-40"
                             alt={`No therapists picture`}
+                            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                             source={require("../../../assets/images/girl_dog.png")}
                         />
                         <Text className="font-nunito-sans-bold text-xl text-slate-500">
@@ -230,16 +231,16 @@ function EmptyState() {
 
     return (
         <View className="mt-4 rounded-xl bg-white shadow-sm">
-            <View className=" px-6 pt-6">
-                <Text className="font-nunito-sans text-lg">
+            <View className="px-6 pt-6">
+                <BasicText size="xl" style={{ marginBottom: 2 }}>
                     <Trans>Your appointments will show up here</Trans>
-                </Text>
-                <Text className="font-nunito-sans text-sm text-slate-500">
-                    <Trans>
-                        Options for canceling and rescheduling will also be
-                        available
-                    </Trans>
-                </Text>
+                </BasicText>
+                <BasicText color="gray">
+                    {t({
+                        message:
+                            "Options for cancelling and rescheduling will also be available.",
+                    })}
+                </BasicText>
             </View>
             {isProfessional ? (
                 <TouchableOpacity
@@ -250,11 +251,14 @@ function EmptyState() {
                         })
                     }
                 >
-                    <View className="mt-6 flex w-full flex-row items-center justify-center rounded-b-xl bg-blue-500 py-3 align-middle">
+                    <View
+                        className="mt-6 flex w-full flex-row items-center justify-center rounded-bl-xl rounded-br-xl bg-blue-500 py-3 align-middle shadow-sm"
+                        style={{ elevation: 2, gap: 8 }}
+                    >
                         <MaterialIcons size={24} color="white" name="link" />
-                        <Text className="ml-2 font-nunito-sans-bold text-lg text-white">
+                        <BasicText color="white" size="xl" fontWeight="bold">
                             <Trans>Share your link</Trans>
-                        </Text>
+                        </BasicText>
                     </View>
                 </TouchableOpacity>
             ) : (

@@ -87,9 +87,7 @@ export const therapistsRouter = createTRPCRouter({
             }),
         )
         .query(async ({ ctx, input }) => {
-            let whereClause: Record<string, unknown> = {
-                paymentAccountStatus: "ACTIVE",
-            };
+            let whereClause: Record<string, unknown> = {};
 
             const orderByClause: Record<string, unknown> = {};
 

@@ -28,6 +28,7 @@ import { Refreshable } from "../../components/Refreshable";
 import { ScreenWrapper } from "../../components/ScreenWrapper";
 import { Title } from "../../components/Title";
 import { UserPhoto } from "../../components/UserPhotos";
+import { Warning } from "../../components/Warning";
 import geocodeAddress from "../../helpers/geocodeAddress";
 import { getLocale } from "../../helpers/getLocale";
 import { registerForPushNotificationsAsync } from "../../helpers/registerForPushNotifications";
@@ -43,6 +44,7 @@ export default function HomeScreen() {
     const [refreshing, setRefreshing] = useState(false);
     const [trackingStatus] = useTrackingPermissions();
     const [locationStatus] = Location.useBackgroundPermissions();
+    const isProfessional = useUserIsProfessional();
     const notificationListener = useRef<Notifications.Subscription>();
     const responseListener = useRef<Notifications.Subscription>();
     const [expoPushToken, setExpoPushToken] =
@@ -120,11 +122,7 @@ export default function HomeScreen() {
     }, []);
 
     return (
-        <ScreenWrapper
-            style={{
-                paddingHorizontal: 14,
-            }}
-        >
+        <ScreenWrapper>
             <Refreshable
                 refreshControl={
                     <RefreshControl
@@ -133,8 +131,8 @@ export default function HomeScreen() {
                     />
                 }
             >
+                {isProfessional && <SetUpWorkHoursWarning />}
                 <Title title={t({ message: "Next session" })} />
-
                 <NextAppointment />
                 <View className="mb-2 flex flex-row items-center justify-between pt-8 align-middle">
                     <Title title={t({ message: "Last notes" })} />
@@ -254,9 +252,7 @@ function NextAppointment() {
                                         <TouchableOpacity
                                             onPress={() =>
                                                 router.push(
-                                                    "/psych/" +
-                                                        appointment.data
-                                                            ?.therapist.id,
+                                                    `/psych/${appointment.data?.therapist.id}`,
                                                 )
                                             }
                                         >
@@ -399,6 +395,28 @@ function LastNotes() {
                         </TouchableOpacity>
                     </View>
                 </Card>
+            )}
+        </>
+    );
+}
+
+function SetUpWorkHoursWarning() {
+    const router = useRouter();
+    const hasSetUpWorkHours = api.hours.hasSetUpWorkHours.useQuery();
+
+    return (
+        <>
+            {!hasSetUpWorkHours.data?.hasSetUpWorkHours && (
+                <View style={{ marginBottom: 12 }}>
+                    <Warning
+                        title={t({ message: "Set up your work hours" })}
+                        description={t({
+                            message:
+                                "You need to set up your work hours to receive appointments",
+                        })}
+                        action={() => router.push("/settings/available-hours")}
+                    />
+                </View>
             )}
         </>
     );
