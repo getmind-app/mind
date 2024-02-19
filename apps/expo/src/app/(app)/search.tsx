@@ -21,6 +21,7 @@ import {
     type Modality,
     type Therapist,
 } from "../../../../../packages/db";
+import { BasicText } from "../../components/BasicText";
 import { ProfileSkeleton } from "../../components/ProfileSkeleton";
 import { ScreenWrapper } from "../../components/ScreenWrapper";
 import { Title } from "../../components/Title";
@@ -608,6 +609,7 @@ function List({
             <Image
                 className="h-40 w-40"
                 alt={`No therapists picture`}
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                 source={require("../../../assets/images/girl_dog.png")}
             />
             <Text className="font-nunito-sans-bold text-xl text-slate-500">
@@ -638,15 +640,15 @@ function TherapistProfile({
                 width={40}
                 height={40}
             />
-            <View className="ml-3 flex flex-col justify-center  align-middle">
-                <Text className="-mb-1 font-nunito-sans-bold text-lg">
+            <View className="ml-3 flex flex-col">
+                <BasicText fontWeight="bold" size="lg" className="-mb-1">
                     {therapist.name}
-                </Text>
-                <Text className="font-nunito-sans text-xs text-slate-500">
+                </BasicText>
+                <BasicText size="sm" color="gray">
                     <Trans>
-                        <Text className="font-nunito-sans-bold">
+                        <BasicText size="sm" fontWeight="bold" color="gray">
                             R$ {therapist.hourlyRate}{" "}
-                        </Text>
+                        </BasicText>
                         |{" "}
                         {therapist.modalities.length > 1
                             ? "Online e presencial"
@@ -660,7 +662,7 @@ function TherapistProfile({
                             currentLocation={currentLocation}
                         />
                     )}
-                </Text>
+                </BasicText>
             </View>
         </TouchableOpacity>
     );

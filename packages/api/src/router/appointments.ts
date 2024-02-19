@@ -99,7 +99,9 @@ export const appointmentsRouter = createTRPCRouter({
     findNextUserAppointment: protectedProcedure.query(async ({ ctx }) => {
         let foundAppointment;
 
-        if (ctx.auth.user?.publicMetadata?.role === "professional") {
+        const user = await clerk.users.getUser(ctx.auth.userId);
+
+        if (user.publicMetadata.role === "professional") {
             const therapist = await ctx.prisma.therapist.findFirst({
                 where: { userId: ctx.auth.userId },
             });
@@ -154,6 +156,7 @@ export const appointmentsRouter = createTRPCRouter({
                 },
             });
         }
+
         return foundAppointment;
     }),
     findById: protectedProcedure
@@ -174,12 +177,16 @@ export const appointmentsRouter = createTRPCRouter({
             });
         }),
     findAll: protectedProcedure.query(async ({ ctx }) => {
-        let foundAppointment;
-        if (ctx.auth.user?.publicMetadata?.role === "professional") {
+        let foundAppointments;
+
+        const user = await clerk.users.getUser(ctx.auth.userId);
+
+        if (user.publicMetadata.role === "professional") {
             const therapist = await ctx.prisma.therapist.findFirst({
                 where: { userId: ctx.auth.userId },
             });
-            foundAppointment = await ctx.prisma.appointment.findMany({
+
+            foundAppointments = await ctx.prisma.appointment.findMany({
                 where: {
                     therapistId: therapist?.id,
                 },
@@ -199,7 +206,7 @@ export const appointmentsRouter = createTRPCRouter({
             const patient = await ctx.prisma.patient.findFirst({
                 where: { userId: ctx.auth.userId },
             });
-            foundAppointment = await ctx.prisma.appointment.findMany({
+            foundAppointments = await ctx.prisma.appointment.findMany({
                 where: {
                     patientId: patient?.id,
                 },
@@ -216,7 +223,7 @@ export const appointmentsRouter = createTRPCRouter({
                 },
             });
         }
-        return foundAppointment;
+        return foundAppointments;
     }),
     updateRecurrence: protectedProcedure
         .input(
