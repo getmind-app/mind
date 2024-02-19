@@ -1,35 +1,39 @@
-import { Text } from "react-native";
 import { Redirect, Stack } from "expo-router";
-import { useUser } from "@clerk/clerk-expo";
+
+import { useUserIsProfessional } from "../../../hooks/user/useUserIsProfessional";
 
 export default function PsychLayout() {
-    const { user } = useUser();
+    const isProfessional = useUserIsProfessional();
 
-    if (!user) {
-        return <Text>Loading...</Text>;
-    }
-
-    const isPsych = user.publicMetadata?.role === "professional";
-    if (!isPsych) {
+    if (!isProfessional) {
         return <Redirect href="/" />;
     }
 
     return (
-        <Stack>
+        <Stack
+            screenOptions={{
+                headerBackVisible: false,
+            }}
+        >
             <Stack.Screen
                 name="profile"
                 options={{
                     title: "Edit profile",
-                    headerShown: false,
+                }}
+            />
+            <Stack.Screen
+                name="update-profile"
+                options={{
+                    title: "Edit profile",
                 }}
             />
             <Stack.Screen
                 name="address"
                 options={{
                     title: "Address input",
-                    headerShown: false,
                 }}
             />
+            <Stack.Screen name="payments-setup" />
         </Stack>
     );
 }

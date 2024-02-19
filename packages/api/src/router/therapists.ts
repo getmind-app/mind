@@ -1,7 +1,12 @@
 import { isSameDay, isSameHour } from "date-fns";
 import { z } from "zod";
 
-import { type Appointment, type Therapist, type WeekDay } from "@acme/db";
+import {
+    type Appointment,
+    type Prisma,
+    type Therapist,
+    type WeekDay,
+} from "@acme/db";
 
 import calculateBoundingBox from "../helpers/calculateBoundingBox";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
@@ -20,6 +25,7 @@ export const therapistsRouter = createTRPCRouter({
                 modalities: z.array(z.enum(["ONLINE", "ON_SITE"])),
                 userId: z.string().min(1),
                 profilePictureUrl: z.string().min(1),
+                pixKey: z.string().optional(),
             }),
         )
         .mutation(async ({ ctx, input }) => {
@@ -87,11 +93,12 @@ export const therapistsRouter = createTRPCRouter({
             }),
         )
         .query(async ({ ctx, input }) => {
-            let whereClause: Record<string, unknown> = {
+            let whereClause: Prisma.TherapistWhereInput = {
                 paymentAccountStatus: "ACTIVE",
             };
 
-            const orderByClause: Record<string, unknown> = {};
+            const orderByClause: Prisma.TherapistOrderByWithAggregationInput =
+                {};
 
             if (input.name && input.name.length > 0) {
                 whereClause = {
@@ -269,16 +276,17 @@ export const therapistsRouter = createTRPCRouter({
     update: protectedProcedure
         .input(
             z.object({
-                name: z.string().min(1),
-                dateOfBirth: z.date(),
-                document: z.string().min(1),
-                crp: z.string().min(1),
-                phone: z.string().min(1),
-                hourlyRate: z.number().positive(),
-                yearsOfExperience: z.string().nullable(),
-                about: z.string().nullable(),
-                methodologies: z.array(z.string()),
-                education: z.string().nullable(),
+                name: z.string().min(1).optional(),
+                dateOfBirth: z.date().optional(),
+                document: z.string().min(1).optional(),
+                crp: z.string().min(1).optional(),
+                phone: z.string().min(1).optional(),
+                hourlyRate: z.number().positive().optional(),
+                yearsOfExperience: z.string().optional(),
+                about: z.string().optional().nullable(),
+                methodologies: z.array(z.string()).optional(),
+                education: z.string().optional().nullable(),
+                pixKey: z.string().optional().nullable(),
             }),
         )
         .mutation(async ({ ctx, input }) => {
@@ -296,9 +304,13 @@ export const therapistsRouter = createTRPCRouter({
                 },
                 data: {
                     ...input,
-                    methodologies: {
-                        set: input.methodologies,
-                    },
+                    ...(input.methodologies
+                        ? {
+                              methodologies: {
+                                  set: input.methodologies,
+                              },
+                          }
+                        : {}),
                 },
             });
         }),

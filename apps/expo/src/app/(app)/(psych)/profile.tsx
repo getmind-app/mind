@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
     Image,
     KeyboardAvoidingView,
@@ -29,7 +29,7 @@ import { Title } from "../../../components/Title";
 import { api } from "../../../utils/api";
 import { type Gender, type Modality } from ".prisma/client";
 
-export default function EditPsychProfile() {
+export default function NewPsychScreen() {
     const { user } = useUser();
     const router = useRouter();
     const createAccount = api.stripe.createAccount.useMutation();
@@ -248,7 +248,6 @@ export default function EditPsychProfile() {
                         placeholder={t({
                             message: "E-mail, CPF, phone number",
                         })}
-                        inputMode="numeric"
                     />
                     <Controller
                         control={control}

@@ -8,14 +8,13 @@ import { Header } from "../../../components/Header";
 import { Refreshable } from "../../../components/Refreshable";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
 import { Title } from "../../../components/Title";
-import { api } from "../../../utils/api";
+import { useTherapistByUserId } from "../../../hooks/therapist/useTherapistByUserId";
 
 export default function AvailableHours() {
     const [refreshing, setRefreshing] = useState(false);
-    const utils = api.useContext();
-    const { data, isLoading } = api.therapists.findByUserId.useQuery();
+    const therapist = useTherapistByUserId();
 
-    if (!data || isLoading)
+    if (!therapist.data || therapist.isLoading)
         return (
             <View className="mx-4 mt-12">
                 <CardSkeleton />
@@ -24,7 +23,7 @@ export default function AvailableHours() {
 
     const onRefresh = async () => {
         setRefreshing(true);
-        await utils.therapists.findByUserId.invalidate();
+        await therapist.refetch();
         setRefreshing(false);
     };
 
@@ -46,7 +45,7 @@ export default function AvailableHours() {
                             Set available hours for your appointments.
                         </Trans>
                     </Text>
-                    <AvailableHoursPicker data={data} />
+                    <AvailableHoursPicker data={therapist.data} />
                 </Refreshable>
             </ScreenWrapper>
         </>

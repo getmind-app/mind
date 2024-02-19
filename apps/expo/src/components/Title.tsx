@@ -1,5 +1,9 @@
-import { Text } from "react-native";
+import { BasicText } from "./BasicText";
 
 export const Title = ({ title }: { title: string }): JSX.Element => {
-    return <Text className="font-nunito-sans-bold text-3xl">{title}</Text>;
+    return (
+        <BasicText size="3xl" fontWeight="bold">
+            {title}
+        </BasicText>
+    );
 };

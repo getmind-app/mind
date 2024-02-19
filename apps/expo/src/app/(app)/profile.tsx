@@ -1,4 +1,6 @@
+import { useEffect, useState } from "react";
 import {
+    ActivityIndicator,
     Image,
     Platform,
     ScrollView,
@@ -15,6 +17,7 @@ import { t } from "@lingui/macro";
 
 import { ScreenWrapper } from "../../components/ScreenWrapper";
 import { getShareLink } from "../../helpers/getShareLink";
+import { useUpdateProfilePicture } from "../../hooks/user/useUpdateProfilePicture";
 import { useUserHasProfileImage } from "../../hooks/user/useUserHasProfileImage";
 import { useUserIsProfessional } from "../../hooks/user/useUserIsProfessional";
 import { api } from "../../utils/api";
@@ -23,15 +26,12 @@ export default function UserProfileScreen() {
     const router = useRouter();
     const { user, signOut } = useClerk();
     const { mutateAsync } = api.users.clearMetadata.useMutation({});
-    const userHasProfileImage = useUserHasProfileImage({ userId: null });
+    const userHasProfileImage = useUserHasProfileImage({
+        userId: String(user?.id),
+    });
     const isProfessional = useUserIsProfessional();
-
-    async function clearUserMetaData(): Promise<void> {
-        console.log("Clearing user metadata");
-        await mutateAsync();
-        await user?.reload();
-        router.replace("/onboard");
-    }
+    const updateProfileImage = useUpdateProfilePicture();
+    const [imageUpdated, setImageUpdated] = useState(false);
 
     const pickImageAsync = async () => {
         const result = await ImagePicker.launchImageLibraryAsync({
@@ -43,10 +43,21 @@ export default function UserProfileScreen() {
 
         if (result.canceled) return;
 
-        await user?.setProfileImage({
+        const image = await user?.setProfileImage({
             file: `data:image/png;base64,${result.assets[0]?.base64}`,
         });
+
+        if (image && image.publicUrl) {
+            setImageUpdated(true);
+            await updateProfileImage.mutateAsync({ url: image.publicUrl });
+        }
     };
+
+    useEffect(() => {
+        return () => {
+            setImageUpdated(false);
+        };
+    }, []);
 
     return (
         <ScreenWrapper>
@@ -59,7 +70,7 @@ export default function UserProfileScreen() {
             >
                 <View className="flex flex-row items-center gap-x-4 pt-4 align-middle">
                     <TouchableOpacity onPress={() => pickImageAsync()}>
-                        {userHasProfileImage.data ? (
+                        {userHasProfileImage.data || imageUpdated ? (
                             <Image
                                 className="rounded-full"
                                 alt={`${user?.firstName}'s profile picture`}
@@ -69,6 +80,16 @@ export default function UserProfileScreen() {
                                     height: 72,
                                 }}
                             />
+                        ) : userHasProfileImage.isLoading ? (
+                            <View
+                                style={{
+                                    backgroundColor: "#e5e7eb",
+                                    padding: 24,
+                                    borderRadius: 100,
+                                }}
+                            >
+                                <ActivityIndicator size={24} />
+                            </View>
                         ) : (
                             <View
                                 style={{
@@ -106,7 +127,7 @@ export default function UserProfileScreen() {
             </View>
 
             <ScrollView showsVerticalScrollIndicator={false}>
-                {isProfessional ? <ProfessionalMenuItems /> : null}
+                {isProfessional ? <ProfessionalOptions /> : null}
                 <MenuItem
                     isFirst
                     icon="notifications"
@@ -125,33 +146,50 @@ export default function UserProfileScreen() {
                     onPress={signOut}
                 />
 
-                {process.env.NODE_ENV === "development" ? (
-                    <>
-                        <Text className="mt-4 font-nunito-sans-bold text-2xl text-red-500">
-                            Development only
-                        </Text>
-                        <MenuItem
-                            isFirst={true}
-                            icon="refresh"
-                            label={t({ message: "Reset user metadata" })}
-                            onPress={clearUserMetaData}
-                        />
-                        <MenuItem
-                            isLast={true}
-                            icon="person"
-                            label={"Patient Profile"}
-                            onPress={() => {
-                                router.push("/(patient)/profile");
-                            }}
-                        />
-                    </>
-                ) : null}
+                {process.env.NODE_ENV === "development" && (
+                    <DevelopmentOptions />
+                )}
             </ScrollView>
         </ScreenWrapper>
     );
 }
 
-function ProfessionalMenuItems() {
+function DevelopmentOptions() {
+    const { mutateAsync } = api.users.clearMetadata.useMutation({});
+    const router = useRouter();
+    const { user } = useClerk();
+
+    async function clearUserMetaData(): Promise<void> {
+        console.log("Clearing user metadata");
+        await mutateAsync();
+        await user?.reload();
+        router.replace("/onboard");
+    }
+
+    return (
+        <>
+            <Text className="mt-4 font-nunito-sans-bold text-2xl text-red-500">
+                Development only
+            </Text>
+            <MenuItem
+                isFirst={true}
+                icon="refresh"
+                label={t({ message: "Reset user metadata" })}
+                onPress={clearUserMetaData}
+            />
+            <MenuItem
+                isLast={true}
+                icon="person"
+                label={"Patient Profile"}
+                onPress={() => {
+                    router.push("/(patient)/update-profile");
+                }}
+            />
+        </>
+    );
+}
+
+function ProfessionalOptions() {
     const router = useRouter();
     const { data } = api.therapists.findByUserId.useQuery();
     if (!data) return null;
@@ -162,7 +200,7 @@ function ProfessionalMenuItems() {
                 icon="person-outline"
                 isFirst={true}
                 label={t({ message: "Personal info" })}
-                onPress={() => router.push("/settings/personal-info")}
+                onPress={() => router.push("/(psych)/update-profile")}
             />
             {data.modalities.includes("ON_SITE") && (
                 <MenuItem
@@ -181,7 +219,7 @@ function ProfessionalMenuItems() {
                 icon="attach-money"
                 label={t({ message: "Setup Payments" })}
                 onPress={() => router.push("/(psych)/payments-setup")}
-                alert={data.paymentAccountStatus !== "ACTIVE"}
+                alert={!data.pixKey}
             />
         </>
     );
@@ -226,7 +264,7 @@ function MenuItem(props: {
                         />
                     )}
                 </View>
-                <MaterialIcons size={24} name="chevron-right" />
+                <MaterialIcons size={24} name="chevron-right" color={"gray"} />
             </View>
         </TouchableOpacity>
     );

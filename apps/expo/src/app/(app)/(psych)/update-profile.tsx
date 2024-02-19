@@ -24,12 +24,9 @@ import { Header } from "../../../components/Header";
 import { LargeButton } from "../../../components/LargeButton";
 import { ProfileSkeleton } from "../../../components/ProfileSkeleton";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
-import { useUserIsProfessional } from "../../../hooks/user/useUserIsProfessional";
 import { api } from "../../../utils/api";
 
 export default function PersonalInfo() {
-    const isProfessional = useUserIsProfessional();
-
     return (
         <>
             <Header />
@@ -38,7 +35,7 @@ export default function PersonalInfo() {
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
             >
                 <ScreenWrapper>
-                    {isProfessional ? <TherapistOptions /> : <PatientOptions />}
+                    <TherapistOptions />
                 </ScreenWrapper>
             </KeyboardAvoidingView>
         </>
@@ -237,20 +234,6 @@ function TherapistOptions() {
                 <Trans>Update</Trans>
             </LargeButton>
         </>
-    );
-}
-
-function PatientOptions() {
-    const { data: patient, isLoading } = api.patients.findByUserId.useQuery();
-
-    if (!patient || isLoading) {
-        return <ProfileSkeleton />;
-    }
-
-    return (
-        <View className="flex flex-col gap-y-4">
-            <Text>No need to update anything in the patient now</Text>
-        </View>
     );
 }
 

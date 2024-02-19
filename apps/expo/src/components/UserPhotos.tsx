@@ -9,11 +9,11 @@ export function UserPhoto({
     url,
     width = 32,
     height = 32,
-    iconSize = 24,
+    iconSize = 20,
 }: {
     userId: string;
     alt: string;
-    url: string;
+    url?: string;
     width?: number;
     height?: number;
     iconSize?: number;
@@ -24,9 +24,12 @@ export function UserPhoto({
 
     if (isLoading) return <ActivityIndicator />;
 
-    if (!data)
+    if (!data?.ok)
         return (
-            <View className={`rounded-full bg-slate-200 p-[4px]`}>
+            <View
+                className={`flex items-center justify-center rounded-full bg-slate-200`}
+                style={{ width, height }}
+            >
                 <AntDesign name="user" size={iconSize} />
             </View>
         );
@@ -36,7 +39,7 @@ export function UserPhoto({
             className="flex items-center justify-center rounded-full"
             alt={alt}
             source={{
-                uri: url,
+                uri: url ?? data.imageUrl,
                 width,
                 height,
             }}
