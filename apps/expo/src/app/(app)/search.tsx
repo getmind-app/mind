@@ -12,7 +12,7 @@ import { Modalize } from "react-native-modalize";
 import { Portal } from "react-native-portalize";
 import * as Location from "expo-location";
 import { useRouter } from "expo-router";
-import { AntDesign, MaterialIcons } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 import { Trans, t } from "@lingui/macro";
 
 import {
@@ -21,12 +21,13 @@ import {
     type Modality,
     type Therapist,
 } from "../../../../../packages/db";
+import { BasicText } from "../../components/BasicText";
 import { ProfileSkeleton } from "../../components/ProfileSkeleton";
 import { ScreenWrapper } from "../../components/ScreenWrapper";
 import { Title } from "../../components/Title";
+import { UserPhoto } from "../../components/UserPhotos";
 import getDistanceFromCurrentLocation from "../../helpers/getDistanceFromCurrentLocation";
 import { useSearchTherapistByFilters } from "../../hooks/search/useSearchTherapistByFilters";
-import { useUserHasProfileImage } from "../../hooks/user/useUserHasProfileImage";
 import { useDebounce } from "../../hooks/util/useDebounce";
 
 export default function SearchScreen() {
@@ -608,6 +609,7 @@ function List({
             <Image
                 className="h-40 w-40"
                 alt={`No therapists picture`}
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                 source={require("../../../assets/images/girl_dog.png")}
             />
             <Text className="font-nunito-sans-bold text-xl text-slate-500">
@@ -624,38 +626,29 @@ function TherapistProfile({
     therapist: Therapist & { address: Address | null };
     currentLocation: { latitude: number; longitude: number } | null;
 }) {
-    const userHasImage = useUserHasProfileImage({ userId: therapist.userId });
     const router = useRouter();
 
     return (
         <TouchableOpacity
-            className="flex w-full flex-row items-center gap-4 align-middle"
+            className="flex w-full flex-row"
             onPress={() => router.push(`/psych/${therapist.id}`)}
         >
-            {userHasImage.data ? (
-                <Image
-                    className="rounded-full"
-                    alt={t({ message: `${therapist.name}' profile picture` })}
-                    source={{
-                        uri: therapist.profilePictureUrl,
-                        width: 48,
-                        height: 48,
-                    }}
-                />
-            ) : (
-                <View className="rounded-full bg-gray-200 p-3">
-                    <AntDesign name="user" size={24} color="black" />
-                </View>
-            )}
-            <View className="flex flex-col justify-center align-middle">
-                <Text className="-mb-1 font-nunito-sans-bold text-lg">
+            <UserPhoto
+                userId={therapist.userId}
+                alt={therapist.name}
+                url={therapist.profilePictureUrl}
+                width={40}
+                height={40}
+            />
+            <View className="ml-3 flex flex-col">
+                <BasicText fontWeight="bold" size="lg" className="-mb-1">
                     {therapist.name}
-                </Text>
-                <Text className=" font-nunito-sans text-slate-500">
+                </BasicText>
+                <BasicText size="sm" color="gray">
                     <Trans>
-                        <Text className="font-nunito-sans-bold">
+                        <BasicText size="sm" fontWeight="bold" color="gray">
                             R$ {therapist.hourlyRate}{" "}
-                        </Text>
+                        </BasicText>
                         |{" "}
                         {therapist.modalities.length > 1
                             ? "Online e presencial"
@@ -669,7 +662,7 @@ function TherapistProfile({
                             currentLocation={currentLocation}
                         />
                     )}
-                </Text>
+                </BasicText>
             </View>
         </TouchableOpacity>
     );

@@ -39,7 +39,7 @@ function DefaultTherapistHomeCard() {
     if (!therapist.data) {
         return (
             <BasicText color="yellow">
-                <Trans>Couldn't find therapist</Trans>
+                <Trans>Couldn`&apos;`t find therapist</Trans>
             </BasicText>
         );
     }
@@ -47,7 +47,7 @@ function DefaultTherapistHomeCard() {
     if (!user) {
         return (
             <BasicText color="yellow">
-                <Trans>Couldn't find user</Trans>
+                <Trans>Couldn`&apos;`t find user</Trans>
             </BasicText>
         );
     }
@@ -55,7 +55,7 @@ function DefaultTherapistHomeCard() {
     return (
         <View className="mt-4 rounded-xl bg-white shadow-sm">
             <View className="px-6 pt-6">
-                <BasicText size="2xl">
+                <BasicText size="2xl" style={{ marginBottom: 2 }}>
                     <Trans>Nothing for now!</Trans>
                 </BasicText>
                 <BasicText color="gray">
@@ -79,7 +79,7 @@ function DefaultTherapistHomeCard() {
                     style={{ elevation: 2, gap: 8 }}
                 >
                     <MaterialIcons size={24} color="white" name="link" />
-                    <BasicText color="white" size="2xl" fontWeight="bold">
+                    <BasicText color="white" size="xl" fontWeight="bold">
                         <Trans>Share your link</Trans>
                     </BasicText>
                 </View>

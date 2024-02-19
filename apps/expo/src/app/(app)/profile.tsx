@@ -1,4 +1,6 @@
+import { useEffect, useState } from "react";
 import {
+    ActivityIndicator,
     Image,
     Platform,
     ScrollView,
@@ -15,6 +17,7 @@ import { t } from "@lingui/macro";
 
 import { ScreenWrapper } from "../../components/ScreenWrapper";
 import { getShareLink } from "../../helpers/getShareLink";
+import { useUpdateProfilePicture } from "../../hooks/user/useUpdateProfilePicture";
 import { useUserHasProfileImage } from "../../hooks/user/useUserHasProfileImage";
 import { useUserIsProfessional } from "../../hooks/user/useUserIsProfessional";
 import { api } from "../../utils/api";
@@ -22,8 +25,13 @@ import { api } from "../../utils/api";
 export default function UserProfileScreen() {
     const router = useRouter();
     const { user, signOut } = useClerk();
-    const userHasProfileImage = useUserHasProfileImage({ userId: null });
+    const { mutateAsync } = api.users.clearMetadata.useMutation({});
+    const userHasProfileImage = useUserHasProfileImage({
+        userId: String(user?.id),
+    });
     const isProfessional = useUserIsProfessional();
+    const updateProfileImage = useUpdateProfilePicture();
+    const [imageUpdated, setImageUpdated] = useState(false);
 
     const pickImageAsync = async () => {
         const result = await ImagePicker.launchImageLibraryAsync({
@@ -35,10 +43,21 @@ export default function UserProfileScreen() {
 
         if (result.canceled) return;
 
-        await user?.setProfileImage({
+        const image = await user?.setProfileImage({
             file: `data:image/png;base64,${result.assets[0]?.base64}`,
         });
+
+        if (image && image.publicUrl) {
+            setImageUpdated(true);
+            await updateProfileImage.mutateAsync({ url: image.publicUrl });
+        }
     };
+
+    useEffect(() => {
+        return () => {
+            setImageUpdated(false);
+        };
+    }, []);
 
     return (
         <ScreenWrapper>
@@ -51,7 +70,7 @@ export default function UserProfileScreen() {
             >
                 <View className="flex flex-row items-center gap-x-4 pt-4 align-middle">
                     <TouchableOpacity onPress={() => pickImageAsync()}>
-                        {userHasProfileImage.data ? (
+                        {userHasProfileImage.data || imageUpdated ? (
                             <Image
                                 className="rounded-full"
                                 alt={`${user?.firstName}'s profile picture`}
@@ -61,6 +80,16 @@ export default function UserProfileScreen() {
                                     height: 72,
                                 }}
                             />
+                        ) : userHasProfileImage.isLoading ? (
+                            <View
+                                style={{
+                                    backgroundColor: "#e5e7eb",
+                                    padding: 24,
+                                    borderRadius: 100,
+                                }}
+                            >
+                                <ActivityIndicator size={24} />
+                            </View>
                         ) : (
                             <View
                                 style={{
@@ -235,7 +264,7 @@ function MenuItem(props: {
                         />
                     )}
                 </View>
-                <MaterialIcons size={24} name="chevron-right" />
+                <MaterialIcons size={24} name="chevron-right" color={"gray"} />
             </View>
         </TouchableOpacity>
     );

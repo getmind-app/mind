@@ -99,7 +99,9 @@ export const appointmentsRouter = createTRPCRouter({
     findNextUserAppointment: protectedProcedure.query(async ({ ctx }) => {
         let foundAppointment;
 
-        if (ctx.auth.user?.publicMetadata?.role === "professional") {
+        const user = await clerk.users.getUser(ctx.auth.userId);
+
+        if (user.publicMetadata.role === "professional") {
             const therapist = await ctx.prisma.therapist.findFirst({
                 where: { userId: ctx.auth.userId },
             });
@@ -123,7 +125,7 @@ export const appointmentsRouter = createTRPCRouter({
                     patient: true,
                 },
                 orderBy: {
-                    scheduledTo: "desc",
+                    scheduledTo: "asc",
                 },
             });
         } else {
@@ -150,10 +152,11 @@ export const appointmentsRouter = createTRPCRouter({
                     patient: true,
                 },
                 orderBy: {
-                    scheduledTo: "desc",
+                    scheduledTo: "asc",
                 },
             });
         }
+
         return foundAppointment;
     }),
     findById: protectedProcedure
@@ -174,14 +177,16 @@ export const appointmentsRouter = createTRPCRouter({
             });
         }),
     findAll: protectedProcedure.query(async ({ ctx }) => {
-        let foundAppointment;
-        console.log("auth", JSON.stringify(ctx.auth, null, 2));
-        if (ctx.auth.user?.publicMetadata?.role === "professional") {
+        let foundAppointments;
+
+        const user = await clerk.users.getUser(ctx.auth.userId);
+
+        if (user.publicMetadata.role === "professional") {
             const therapist = await ctx.prisma.therapist.findFirst({
                 where: { userId: ctx.auth.userId },
             });
-            console.log("therapist", JSON.stringify(therapist, null, 2));
-            foundAppointment = await ctx.prisma.appointment.findMany({
+
+            foundAppointments = await ctx.prisma.appointment.findMany({
                 where: {
                     therapistId: therapist?.id,
                 },
@@ -201,9 +206,7 @@ export const appointmentsRouter = createTRPCRouter({
             const patient = await ctx.prisma.patient.findFirst({
                 where: { userId: ctx.auth.userId },
             });
-            console.log("patient", JSON.stringify(patient, null, 2));
-
-            foundAppointment = await ctx.prisma.appointment.findMany({
+            foundAppointments = await ctx.prisma.appointment.findMany({
                 where: {
                     patientId: patient?.id,
                 },
@@ -220,8 +223,7 @@ export const appointmentsRouter = createTRPCRouter({
                 },
             });
         }
-        console.log("appointments", JSON.stringify(foundAppointment, null, 2));
-        return foundAppointment;
+        return foundAppointments;
     }),
     updateRecurrence: protectedProcedure
         .input(
