@@ -1,18 +1,13 @@
 import { useState } from "react";
-import {
-    LayoutAnimation,
-    RefreshControl,
-    Text,
-    TouchableOpacity,
-    View,
-} from "react-native";
-import * as Linking from "expo-linking";
-import * as WebBrowser from "expo-web-browser";
-import { FontAwesome } from "@expo/vector-icons";
+import { LayoutAnimation, RefreshControl, Text, View } from "react-native";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Trans, t } from "@lingui/macro";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 import { CardSkeleton } from "../../../components/CardSkeleton";
-import { Header } from "../../../components/Header";
+import { FormTextInput } from "../../../components/FormTextInput";
+import { LargeButton } from "../../../components/LargeButton";
 import { Refreshable } from "../../../components/Refreshable";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
 import { Title } from "../../../components/Title";
@@ -23,15 +18,28 @@ export default function PaymentsSetup() {
 
     const [refreshing, setRefreshing] = useState(false);
     const therapist = api.therapists.findByUserId.useQuery();
-    const updateAccountStatus = api.stripe.updateAccountStatus.useMutation();
-    const linkAccount = api.stripe.linkAccount.useMutation();
-    const createStripeAccount = api.stripe.createAccount.useMutation();
+    const updateTherapist = api.therapists.update.useMutation();
     const account = api.stripe.getAccount.useQuery({
         paymentAccountId: therapist.data?.paymentAccountId ?? "",
     });
-    const therapistHasStripeAccount = therapist.data?.paymentAccountId;
-    const therapistHasBankAccountLinked =
-        therapist.data?.paymentAccountStatus === "ACTIVE";
+
+    const {
+        control,
+        handleSubmit,
+        formState: { isValid, isDirty },
+    } = useForm<{
+        pixKey: string;
+    }>({
+        defaultValues: {
+            pixKey: therapist.data?.pixKey ?? "",
+        },
+        resolver: zodResolver(
+            z.object({
+                pixKey: z.string().min(7),
+            }),
+        ),
+        mode: "all",
+    });
 
     if (!therapist.data || therapist.isLoading)
         return (
@@ -47,13 +55,22 @@ export default function PaymentsSetup() {
             await account.refetch();
 
             if (account.data?.external_accounts?.data[0]?.status === "new") {
-                await updateAccountStatus.mutateAsync();
                 await therapist.refetch();
             }
         } finally {
             setRefreshing(false);
         }
     };
+
+    const onSubmit = handleSubmit(async ({ pixKey }) => {
+        try {
+            await updateTherapist.mutateAsync({
+                pixKey,
+            });
+        } catch (error) {
+            console.error(error);
+        }
+    });
 
     return (
         <ScreenWrapper>
@@ -65,104 +82,27 @@ export default function PaymentsSetup() {
                     />
                 }
             >
-                <Header />
                 <Title title={t({ message: "Payments Setup" })} />
                 <Text className="pb-4 font-nunito-sans text-base text-slate-500">
                     <Trans>
-                        We use Stripe as our payment provider. To receive
-                        payments from Mind you must setup an account. The
-                        proccess can take a couple minutes, so you can refresh
-                        this page to check the status after the setup.
+                        You can configure a pix key to help your clients on
+                        paying for your appointments
                     </Trans>
                 </Text>
-                {!therapistHasStripeAccount && (
-                    <TouchableOpacity
-                        onPress={async () => {
-                            await createStripeAccount.mutateAsync();
-                            await therapist.refetch();
-                        }}
-                    >
-                        <View
-                            style={{
-                                elevation: 2,
-                            }}
-                            className={`mt-6 flex w-full flex-row items-center justify-center rounded-xl bg-blue-500 py-3 align-middle shadow-sm`}
-                        >
-                            <Text
-                                className={`ml-2 font-nunito-sans-bold text-lg text-white`}
-                            >
-                                <Trans>Create stripe account</Trans>
-                            </Text>
-                        </View>
-                    </TouchableOpacity>
-                )}
-                <TouchableOpacity
-                    disabled={
-                        therapistHasBankAccountLinked ||
-                        !therapistHasStripeAccount
-                    }
-                    onPress={async () => {
-                        if (!therapistHasBankAccountLinked) {
-                            const res = await linkAccount.mutateAsync({
-                                therapistPaymentAccountId:
-                                    therapist?.data?.paymentAccountId ?? "",
-                            });
-                            await WebBrowser.openAuthSessionAsync(
-                                `${res.url}?linkingUri=${Linking.createURL(
-                                    "/?",
-                                )}`,
-                            );
 
-                            await account.refetch();
-
-                            if (
-                                account.data?.external_accounts?.data.length &&
-                                account.data?.external_accounts?.data.length > 0
-                            ) {
-                                await updateAccountStatus.mutateAsync();
-                                await therapist.refetch();
-                            }
-                        } else {
-                            throw new Error("No payment account id");
-                        }
-                    }}
-                >
-                    <View
-                        style={{
-                            elevation: 2,
-                        }}
-                        className={`mt-6 flex w-full flex-row items-center justify-center rounded-xl ${
-                            therapistHasBankAccountLinked
-                                ? "bg-gray-200"
-                                : "bg-blue-500"
-                        }  py-3 align-middle shadow-sm`}
-                    >
-                        <FontAwesome
-                            size={16}
-                            color={`${
-                                therapistHasBankAccountLinked
-                                    ? "green"
-                                    : "white"
-                            }`}
-                            name={`${
-                                therapistHasBankAccountLinked ? "check" : "link"
-                            }`}
-                        />
-                        <Text
-                            className={`ml-2 font-nunito-sans-bold text-lg ${
-                                therapistHasBankAccountLinked
-                                    ? "text-black"
-                                    : "text-white"
-                            }`}
-                        >
-                            {therapistHasBankAccountLinked ? (
-                                <Trans>Bank account linked</Trans>
-                            ) : (
-                                <Trans>Link Accounts</Trans>
-                            )}
-                        </Text>
-                    </View>
-                </TouchableOpacity>
+                <FormTextInput
+                    required
+                    control={control}
+                    name="pixKey"
+                    title={t({ message: "Pix key" })}
+                    placeholder={t({
+                        message: "CPF, E-mail or phone number",
+                        comment: "Psych payments setup pix key placeholder",
+                    })}
+                />
+                <LargeButton onPress={onSubmit} disabled={!isValid && isDirty}>
+                    Save
+                </LargeButton>
             </Refreshable>
         </ScreenWrapper>
     );
