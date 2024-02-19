@@ -11,13 +11,14 @@ import { LargeButton } from "../../../components/LargeButton";
 import { Refreshable } from "../../../components/Refreshable";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
 import { Title } from "../../../components/Title";
+import { useTherapistByUserId } from "../../../hooks/therapist/useTherapistByUserId";
 import { api } from "../../../utils/api";
 
 export default function PaymentsSetup() {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 
     const [refreshing, setRefreshing] = useState(false);
-    const therapist = api.therapists.findByUserId.useQuery();
+    const therapist = useTherapistByUserId();
     const updateTherapist = api.therapists.update.useMutation();
     const account = api.stripe.getAccount.useQuery({
         paymentAccountId: therapist.data?.paymentAccountId ?? "",
@@ -52,11 +53,6 @@ export default function PaymentsSetup() {
         setRefreshing(true);
         try {
             await therapist.refetch();
-            await account.refetch();
-
-            if (account.data?.external_accounts?.data[0]?.status === "new") {
-                await therapist.refetch();
-            }
         } finally {
             setRefreshing(false);
         }
@@ -67,6 +63,7 @@ export default function PaymentsSetup() {
             await updateTherapist.mutateAsync({
                 pixKey,
             });
+            await therapist.refetch();
         } catch (error) {
             console.error(error);
         }
