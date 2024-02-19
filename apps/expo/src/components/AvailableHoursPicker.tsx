@@ -12,6 +12,7 @@ import { groupBy } from "lodash-es";
 import { DateTime } from "luxon";
 import { useForm } from "react-hook-form";
 
+import { useTherapistByUserId } from "../hooks/therapist/useTherapistByUserId";
 import { api } from "../utils/api";
 import { FormDateInput } from "./FormDateInput";
 import { LargeButton } from "./LargeButton";
@@ -73,14 +74,14 @@ export const AvailableHoursPicker = ({
 };
 
 function AddHours({ setVisible }: { setVisible: (visible: boolean) => void }) {
-    const utils = api.useContext();
     const [selectedDays, setSelectedDays] = useState<WeekDay[]>([]);
     const [showStartHourPicker, setShowStartHourPicker] = useState(false);
     const [showEndHourPicker, setShowEndHourPicker] = useState(false);
+    const therapist = useTherapistByUserId();
 
     const setTherapistHours = api.therapists.setAvailableHours.useMutation({
         async onSuccess() {
-            await utils.therapists.findByUserId.invalidate();
+            await therapist.refetch();
             setVisible(false);
         },
     });
