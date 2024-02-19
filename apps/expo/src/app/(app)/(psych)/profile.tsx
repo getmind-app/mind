@@ -248,7 +248,6 @@ export default function NewPsychScreen() {
                         placeholder={t({
                             message: "E-mail, CPF, phone number",
                         })}
-                        inputMode="numeric"
                     />
                     <Controller
                         control={control}

@@ -7,10 +7,12 @@ export const colors = {
     red: "#EF4444",
     primaryBlue: "#3B82F6",
     yellow: "#FBBF24",
+    green: "#16a34a",
+    transparent: "transparent",
 };
 
 export function disabledColor(color: string) {
-    return lightenHexColor(color, 30);
+    return lightenHexColor(color, 50);
 }
 
 function lightenHexColor(hex: string, amount: number): string {

@@ -29,6 +29,7 @@ import { enUS, ptBR } from "date-fns/locale";
 import { BasicText } from "../../components/BasicText";
 import { Card } from "../../components/Card";
 import { CardSkeleton } from "../../components/CardSkeleton";
+import { CopyButton } from "../../components/CopyButton";
 import { ExclusiveTagFilter } from "../../components/ExclusiveTagFilter";
 import { LargeButton } from "../../components/LargeButton";
 import { Refreshable } from "../../components/Refreshable";
@@ -399,9 +400,10 @@ function AppointmentCard({
                     ) : null}
                 </View>
             </View>
+            {!isProfessional && <CopyPixKeyButton appointment={appointment} />}
             {open ? (
                 <View className="mt-4 border-t-[1px] border-slate-500/10">
-                    {metadata.role == "professional" ? (
+                    {isProfessional ? (
                         <TherapistOptions appointment={appointment} />
                     ) : (
                         <PatientOptions appointment={appointment} />
@@ -751,5 +753,19 @@ function TypeOfAppointment({
         <BasicText color="black">
             {appointmentMapper[appointmentType]}
         </BasicText>
+    );
+}
+
+function CopyPixKeyButton({
+    appointment,
+}: {
+    appointment: Appointment & { therapist: Therapist };
+}) {
+    if (!appointment.therapist.pixKey) return null;
+
+    return (
+        <CopyButton stringToCopy={appointment.therapist.pixKey}>
+            <Trans>Copy pix key</Trans>
+        </CopyButton>
     );
 }

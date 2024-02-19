@@ -219,7 +219,7 @@ function ProfessionalOptions() {
                 icon="attach-money"
                 label={t({ message: "Setup Payments" })}
                 onPress={() => router.push("/(psych)/payments-setup")}
-                alert={!!data.pixKey}
+                alert={!data.pixKey}
             />
         </>
     );
