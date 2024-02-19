@@ -10,7 +10,7 @@ export const colors = {
 };
 
 export function disabledColor(color: string) {
-    return lightenHexColor(color, 30);
+    return lightenHexColor(color, 50);
 }
 
 function lightenHexColor(hex: string, amount: number): string {
