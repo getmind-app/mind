@@ -276,15 +276,15 @@ export const therapistsRouter = createTRPCRouter({
     update: protectedProcedure
         .input(
             z.object({
-                name: z.string().min(1).optional().nullable(),
-                dateOfBirth: z.date().optional().nullable(),
-                document: z.string().min(1).optional().nullable(),
-                crp: z.string().min(1).optional().nullable(),
-                phone: z.string().min(1).optional().nullable(),
-                hourlyRate: z.number().positive().optional().nullable(),
-                yearsOfExperience: z.string().optional().nullable(),
+                name: z.string().min(1).optional(),
+                dateOfBirth: z.date().optional(),
+                document: z.string().min(1).optional(),
+                crp: z.string().min(1).optional(),
+                phone: z.string().min(1).optional(),
+                hourlyRate: z.number().positive().optional(),
+                yearsOfExperience: z.string().optional(),
                 about: z.string().optional().nullable(),
-                methodologies: z.array(z.string()).optional().nullable(),
+                methodologies: z.array(z.string()).optional(),
                 education: z.string().optional().nullable(),
                 pixKey: z.string().optional().nullable(),
             }),
@@ -304,9 +304,13 @@ export const therapistsRouter = createTRPCRouter({
                 },
                 data: {
                     ...input,
-                    methodologies: {
-                        set: input.methodologies,
-                    },
+                    ...(input.methodologies
+                        ? {
+                              methodologies: {
+                                  set: input.methodologies,
+                              },
+                          }
+                        : {}),
                 },
             });
         }),
