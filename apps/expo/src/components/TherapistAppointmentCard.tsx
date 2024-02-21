@@ -15,8 +15,10 @@ import { getLocale } from "../helpers/getLocale";
 import { useUpdateRecurrence } from "../hooks/recurrence/useUpdateRecurrence";
 import { api } from "../utils/api";
 import { AppointmentStatus } from "./AppointmentStatus";
+import { BasicText } from "./BasicText";
 import { Card } from "./Card";
 import { LargeButton } from "./LargeButton";
+import { SmallButton } from "./SmallButton";
 import { TypeOfAppointment } from "./TypeOfAppointment";
 import { UserPhoto } from "./UserPhotos";
 
@@ -27,6 +29,34 @@ export function TherapistAppointmentCard({
 }) {
     const [open, setOpen] = useState(false);
     const lingui = useLingui();
+    const checkAsPaid = api.appointments.checkAppointmentAsPaid.useMutation();
+    const checkAsNotPaid =
+        api.appointments.checkAppointmentAsNotPaid.useMutation();
+    const [canUndo, setCanUndo] = useState(false);
+
+    async function handlePaid() {
+        try {
+            await checkAsPaid.mutateAsync({ id: appointment.id });
+            setCanUndo(true);
+        } catch (e) {
+            setCanUndo(false);
+            Alert.alert(t({ message: "Failed to check appointment as paid" }));
+            console.error(e);
+        }
+    }
+
+    async function handleUndoPaid() {
+        try {
+            await checkAsNotPaid.mutateAsync({ id: appointment.id });
+            setCanUndo(false);
+        } catch (e) {
+            setCanUndo(true);
+            Alert.alert(
+                t({ message: "Failed to undo check appointment as paid" }),
+            );
+            console.error(e);
+        }
+    }
 
     return (
         <Card key={appointment.id}>
@@ -41,9 +71,29 @@ export function TherapistAppointmentCard({
                         flex: 3,
                     }}
                 >
-                    <AppointmentStatus status={appointment.status} />
+                    <View
+                        style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                        }}
+                    >
+                        <AppointmentStatus status={appointment.status} />
+                        <BasicText
+                            fontWeight="bold"
+                            color="primaryBlue"
+                            size="2xl"
+                        >
+                            {format(appointment.scheduledTo, "HH:mm")}
+                        </BasicText>
+                    </View>
                     <TypeOfAppointment appointmentType={appointment.type} />
-                    <Text className="pt-2 font-nunito-sans text-xl capitalize">
+                    <BasicText
+                        size="xl"
+                        style={{
+                            textTransform: "capitalize",
+                        }}
+                    >
                         {format(
                             new Date(appointment.scheduledTo),
                             "EEEE, dd/MM",
@@ -51,7 +101,7 @@ export function TherapistAppointmentCard({
                                 locale: getLocale(lingui),
                             },
                         )}
-                    </Text>
+                    </BasicText>
                     <View className="flex flex-row pt-2">
                         <Text className="font-nunito-sans text-sm text-slate-500">
                             <Trans>with</Trans>
@@ -74,43 +124,85 @@ export function TherapistAppointmentCard({
                         </Text>
                     </View>
                     {appointment.status == "ACCEPTED" && (
-                        <View>
-                            <Text
-                                className={`fontnunito-sans pt-2 ${
-                                    appointment.isPaid
-                                        ? "text-green-500"
-                                        : "text-red-500"
-                                }`}
-                            >
-                                {appointment.isPaid
-                                    ? t({ message: "Paid" })
-                                    : t({ message: "Not paid" })}
-                            </Text>
+                        <View
+                            style={{
+                                flexDirection: "row",
+                                alignItems: "center",
+                                justifyContent: "space-between",
+                                flex: 1,
+                            }}
+                        >
+                            {appointment.isPaid || canUndo ? (
+                                <View
+                                    style={{
+                                        flexDirection: "row",
+                                        alignItems: "center",
+                                        justifyContent: "space-between",
+                                        gap: 8,
+                                        flex: 1,
+                                        marginTop: 8,
+                                    }}
+                                >
+                                    <BasicText color="green">
+                                        {t({ message: "Paid" })}
+                                    </BasicText>
+                                    <SmallButton
+                                        color="lightGray"
+                                        disabled={checkAsNotPaid.isLoading}
+                                        onPress={handleUndoPaid}
+                                    >
+                                        <Trans>Uncheck</Trans>
+                                    </SmallButton>
+                                </View>
+                            ) : (
+                                <View
+                                    style={{
+                                        flexDirection: "row",
+                                        alignItems: "center",
+                                        justifyContent: "space-between",
+                                        gap: 8,
+                                        flex: 1,
+                                        marginTop: 8,
+                                    }}
+                                >
+                                    <BasicText color="red">
+                                        {t({ message: "Not paid" })}
+                                    </BasicText>
+
+                                    <SmallButton
+                                        disabled={checkAsPaid.isLoading}
+                                        onPress={handlePaid}
+                                    >
+                                        <Trans>Check as paid</Trans>
+                                    </SmallButton>
+                                </View>
+                            )}
                         </View>
                     )}
                 </View>
-                <View className=" flex flex-col items-center justify-between">
-                    <Text className="font-nunito-sans-bold text-xl text-blue-500 ">
-                        {format(appointment.scheduledTo, "HH:mm")}
-                    </Text>
-                    {appointment.status == "PENDENT" ? (
-                        <TouchableOpacity onPress={() => setOpen(!open)}>
-                            {open ? (
-                                <Feather
-                                    size={24}
-                                    color="#64748b"
-                                    name="chevron-up"
-                                />
-                            ) : (
-                                <Feather
-                                    size={24}
-                                    color="#64748b"
-                                    name="chevron-down"
-                                />
-                            )}
-                        </TouchableOpacity>
-                    ) : null}
-                </View>
+            </View>
+            <View
+                style={{
+                    alignSelf: "flex-end",
+                }}
+            >
+                {appointment.status == "PENDENT" ? (
+                    <TouchableOpacity onPress={() => setOpen(!open)}>
+                        {open ? (
+                            <Feather
+                                size={24}
+                                color="#64748b"
+                                name="chevron-up"
+                            />
+                        ) : (
+                            <Feather
+                                size={24}
+                                color="#64748b"
+                                name="chevron-down"
+                            />
+                        )}
+                    </TouchableOpacity>
+                ) : null}
             </View>
             {open ? (
                 <View className="mt-4 border-t-[1px] border-slate-500/10">
