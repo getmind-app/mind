@@ -406,18 +406,21 @@ function SetUpWorkHoursWarning() {
 
     return (
         <>
-            {!hasSetUpWorkHours.data?.hasSetUpWorkHours && (
-                <View style={{ marginBottom: 12 }}>
-                    <Warning
-                        title={t({ message: "Set up your work hours" })}
-                        description={t({
-                            message:
-                                "You need to set up your work hours to receive appointments",
-                        })}
-                        action={() => router.push("/settings/available-hours")}
-                    />
-                </View>
-            )}
+            {!hasSetUpWorkHours.data?.hasSetUpWorkHours &&
+                !hasSetUpWorkHours.isLoading && (
+                    <View style={{ marginBottom: 12 }}>
+                        <Warning
+                            title={t({ message: "Set up your work hours" })}
+                            description={t({
+                                message:
+                                    "You need to set up your work hours to receive appointments",
+                            })}
+                            action={() =>
+                                router.push("/settings/available-hours")
+                            }
+                        />
+                    </View>
+                )}
         </>
     );
 }
