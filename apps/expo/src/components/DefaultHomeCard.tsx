@@ -4,10 +4,12 @@ import { useUser } from "@clerk/clerk-expo";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import { Trans, t } from "@lingui/macro";
 
+import { type Therapist } from "../../../../packages/db";
 import { getShareLink } from "../helpers/getShareLink";
 import { useUserIsProfessional } from "../hooks/user/useUserIsProfessional";
 import { api } from "../utils/api";
 import { BasicText } from "./BasicText";
+import { CheckBox } from "./CheckBox";
 
 export default function DefaultHomeCard() {
     const userIsProfessional = useUserIsProfessional();
@@ -61,9 +63,12 @@ function DefaultTherapistHomeCard() {
                 <BasicText color="gray">
                     {t({
                         message:
-                            "Share your profile with your patients to get some appointments.",
+                            "Here are a few things you can do to get started:",
                     })}
                 </BasicText>
+                {!therapist.data.pixKey || !therapist.data.about ? (
+                    <SetupGuide therapist={therapist.data} />
+                ) : null}
             </View>
 
             <TouchableOpacity
@@ -119,6 +124,47 @@ function DefaultPatientHomeCard() {
                     </BasicText>
                 </View>
             </TouchableOpacity>
+        </View>
+    );
+}
+
+function SetupGuide({ therapist }: { therapist: Therapist }) {
+    const router = useRouter();
+
+    return (
+        <View style={{ marginTop: 16, flex: 1, gap: 12 }}>
+            {therapist.pixKey ? (
+                <CheckBox
+                    checked={true}
+                    label={t({
+                        message: "Pix key added!",
+                    })}
+                />
+            ) : (
+                <CheckBox
+                    checked={false}
+                    label={t({
+                        message: "Add a pix key to receive payments",
+                    })}
+                    action={() => router.push("/(psych)/payments-setup")}
+                />
+            )}
+            {therapist.about ? (
+                <CheckBox
+                    checked={true}
+                    label={t({
+                        message: "About section added!",
+                    })}
+                />
+            ) : (
+                <CheckBox
+                    checked={false}
+                    label={t({
+                        message: "Write a bit about yourself",
+                    })}
+                    action={() => router.push("/(psych)/update-profile")}
+                />
+            )}
         </View>
     );
 }
