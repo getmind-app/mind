@@ -7,6 +7,7 @@ import {
 export function TouchableTag({
     checked,
     children,
+    style,
     ...rest
 }: {
     checked: boolean;
@@ -20,6 +21,7 @@ export function TouchableTag({
                 borderWidth: 1,
                 borderColor: checked ? "#3b82f6" : "#64748b",
                 elevation: 2,
+                ...(style as object),
             }}
             {...rest}
         >
