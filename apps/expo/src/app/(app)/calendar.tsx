@@ -31,13 +31,16 @@ import { getShareLink } from "../../helpers/getShareLink";
 import { useUserIsProfessional } from "../../hooks/user/useUserIsProfessional";
 import { api } from "../../utils/api";
 
-type Period = "TODAY" | "TOMORROW" | "LATER_THIS_WEEK" | "ALL";
+type MetadataBasedFilter = "NOT_PAID" | "PENDENT";
+type TimeBasedFilter = "TODAY" | "TOMORROW" | "LATER_THIS_WEEK" | "ALL";
+
+type Tags = TimeBasedFilter | MetadataBasedFilter;
 
 const todayEndOfDay = endOfDay(new Date());
 const todayStartOfDay = startOfDay(new Date());
 
 const periodToInterval: {
-    [key in Period]: {
+    [key in TimeBasedFilter]: {
         start: Date;
         end: Date;
     };
@@ -64,7 +67,7 @@ export default function CalendarScreen() {
     const [refreshing, setRefreshing] = useState(false);
     const utils = api.useContext();
     const { user } = useUser();
-    const [period, setPeriod] = useState<Period>("TODAY");
+    const [tagFilter, setTagFilted] = useState<Tags>("TODAY");
     const isProfessional = useUserIsProfessional();
 
     const {
@@ -75,13 +78,27 @@ export default function CalendarScreen() {
 
     const filteredAppointment = useMemo(() => {
         if (!appointments) return [];
+
+        if (tagFilter === "NOT_PAID") {
+            return appointments.filter(
+                (appointment) =>
+                    appointment.status === "ACCEPTED" && !appointment.isPaid,
+            );
+        }
+
+        if (tagFilter === "PENDENT") {
+            return appointments.filter(
+                (appointment) => appointment.status === "PENDENT",
+            );
+        }
+
         return appointments.filter((appointment) =>
             isWithinInterval(
                 new Date(appointment.scheduledTo),
-                periodToInterval[period],
+                periodToInterval[tagFilter],
             ),
         );
-    }, [appointments, period]);
+    }, [appointments, tagFilter]);
 
     const onRefresh = async () => {
         setRefreshing(true);
@@ -124,9 +141,21 @@ export default function CalendarScreen() {
                 }}
             >
                 <ExclusiveTagFilter
-                    onChange={(value) => setPeriod(value as Period)}
+                    onChange={(value) => setTagFilted(value as Tags)}
                     defaultValue="TODAY"
                     tags={[
+                        ...(isProfessional
+                            ? [
+                                  {
+                                      label: t({ message: "Not paid" }),
+                                      value: "NOT_PAID",
+                                  },
+                                  {
+                                      label: t({ message: "Pendent" }),
+                                      value: "PENDENT",
+                                  },
+                              ]
+                            : []),
                         {
                             label: t({ message: "Today" }),
                             value: "TODAY",
