@@ -133,38 +133,32 @@ function SetupGuide({ therapist }: { therapist: Therapist }) {
 
     return (
         <View style={{ marginTop: 16, flex: 1, gap: 12 }}>
-            {therapist.pixKey ? (
-                <CheckBox
-                    checked={true}
-                    label={t({
-                        message: "Pix key added!",
-                    })}
-                />
-            ) : (
-                <CheckBox
-                    checked={false}
-                    label={t({
-                        message: "Add a pix key to receive payments",
-                    })}
-                    action={() => router.push("/(psych)/payments-setup")}
-                />
-            )}
-            {therapist.about ? (
-                <CheckBox
-                    checked={true}
-                    label={t({
-                        message: "About section added!",
-                    })}
-                />
-            ) : (
-                <CheckBox
-                    checked={false}
-                    label={t({
-                        message: "Write a bit about yourself",
-                    })}
-                    action={() => router.push("/(psych)/update-profile")}
-                />
-            )}
+            <CheckBox
+                checked={therapist.pixKey}
+                label={t({
+                    message: therapist.pixKey
+                        ? "Pix key added!"
+                        : "Add a pix key to receive payments",
+                })}
+                action={
+                    therapist.pixKey
+                        ? undefined
+                        : () => router.push("/(psych)/payments-setup")
+                }
+            />
+            <CheckBox
+                checked={therapist.about ? true : false}
+                label={t({
+                    message: therapist.about
+                        ? "About section added!"
+                        : "Write a bit about yourself",
+                })}
+                action={
+                    therapist.about
+                        ? undefined
+                        : () => router.push("/(psych)/update-profile")
+                }
+            />
         </View>
     );
 }
