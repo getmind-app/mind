@@ -1,8 +1,10 @@
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { t } from "@lingui/macro";
 
 import { type AppointmentStatus as AppointmentStatusType } from "../../../../packages/db";
+import { type Color } from "../utils/colors";
+import { BasicText } from "./BasicText";
 
 export function AppointmentStatus({
     status,
@@ -11,45 +13,43 @@ export function AppointmentStatus({
 }) {
     const statusMapper: {
         [key in AppointmentStatusType]: {
-            color: string;
-            circleColor: string;
+            color: Color;
             label: string;
         };
     } = {
         ACCEPTED: {
-            color: "green-600",
-            circleColor: "green",
+            color: "green",
             label: t({ message: "ACCEPTED" }),
         },
         PENDENT: {
-            color: "yellow-300",
-            circleColor: "yellow",
+            color: "yellow",
             label: t({ message: "PENDENT" }),
         },
         REJECTED: {
-            color: "red-500",
-            circleColor: "red",
+            color: "red",
             label: t({ message: "REJECTED" }),
         },
         CANCELED: {
-            color: "red-500",
-            circleColor: "red",
+            color: "red",
             label: t({ message: "CANCELED" }),
         },
     };
 
-    const textColor = statusMapper[status].color;
-    const circleColor = statusMapper[status].circleColor;
     const label = statusMapper[status].label;
+    const color = statusMapper[status].color;
 
     return (
-        <View className="flex flex-row items-center align-middle">
-            <FontAwesome size={12} name="circle" color={circleColor} />
-            <Text
-                className={`text-${textColor} pl-2 font-nunito-sans-bold text-base`}
-            >
+        <View
+            style={{
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 8,
+            }}
+        >
+            <FontAwesome size={12} name="circle" color={color} />
+            <BasicText size="lg" fontWeight="bold">
                 {label}
-            </Text>
+            </BasicText>
         </View>
     );
 }
