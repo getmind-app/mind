@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { ScrollView } from "react-native";
 
 import { TouchableTag } from "./TouchableTag";
 
@@ -17,18 +18,23 @@ export function ExclusiveTagFilter<
         defaultValue || null,
     );
 
-    return tags.map(({ label, value }) => (
-        <TouchableTag
-            key={value}
-            checked={selected === value}
-            onPress={() => {
-                setSelected(value);
-                if (onChange) {
-                    onChange(value);
-                }
-            }}
-        >
-            {label}
-        </TouchableTag>
-    ));
+    return (
+        <ScrollView horizontal>
+            {tags.map(({ label, value }) => (
+                <TouchableTag
+                    key={value}
+                    checked={selected === value}
+                    onPress={() => {
+                        setSelected(value);
+                        if (onChange) {
+                            onChange(value);
+                        }
+                    }}
+                    style={{ marginRight: 8 }}
+                >
+                    {label}
+                </TouchableTag>
+            ))}
+        </ScrollView>
+    );
 }
