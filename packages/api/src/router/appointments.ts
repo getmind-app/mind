@@ -1,6 +1,14 @@
 import type * as Notification from "expo-notifications";
 import clerk from "@clerk/clerk-sdk-node";
-import { addDays, addHours, format, set } from "date-fns";
+import {
+    addDays,
+    addHours,
+    endOfDay,
+    format,
+    getHours,
+    set,
+    startOfDay,
+} from "date-fns";
 import { z } from "zod";
 
 import { type Appointment, type WeekDay } from "@acme/db";
@@ -199,7 +207,7 @@ export const appointmentsRouter = createTRPCRouter({
                     patient: true,
                 },
                 orderBy: {
-                    scheduledTo: "desc",
+                    scheduledTo: "asc",
                 },
             });
         } else {
@@ -219,7 +227,7 @@ export const appointmentsRouter = createTRPCRouter({
                     patient: true,
                 },
                 orderBy: {
-                    scheduledTo: "desc",
+                    scheduledTo: "asc",
                 },
             });
         }
@@ -351,7 +359,139 @@ export const appointmentsRouter = createTRPCRouter({
                 },
             });
         }),
+    requestReschedule: protectedProcedure
+        .input(
+            z.object({
+                id: z.string().min(1),
+            }),
+        )
+        .mutation(async ({ ctx, input }) => {
+            return await ctx.prisma.appointment.update({
+                where: {
+                    id: input.id,
+                },
+                data: {
+                    rescheduleRequested: true,
+                },
+            });
+        }),
+    similarHoursBasedOnAppointment: protectedProcedure
+        .input(
+            z.object({
+                id: z.string().min(1),
+            }),
+        )
+        .query(async ({ ctx, input }) => {
+            const appointment = await ctx.prisma.appointment.findUnique({
+                where: {
+                    id: input.id,
+                },
+            });
 
+            if (!appointment) {
+                throw new Error("Appointment not found");
+            }
+
+            const therapistHours = await ctx.prisma.hour.findMany({
+                take: 10,
+                where: {
+                    therapistId: appointment.therapistId,
+                    OR: [
+                        {
+                            weekDay: format(
+                                appointment.scheduledTo,
+                                "EEEE",
+                            ).toUpperCase() as WeekDay,
+                        },
+                        {
+                            startAt: {
+                                lte: getHours(appointment.scheduledTo) + 1,
+                                gte: getHours(appointment.scheduledTo) - 1,
+                            },
+                            NOT: {
+                                weekDay: format(
+                                    appointment.scheduledTo,
+                                    "EEEE",
+                                ).toUpperCase() as WeekDay,
+                            },
+                        },
+                    ],
+                },
+            });
+
+            const similarAppointmentsOnDifferentDays =
+                await ctx.prisma.appointment.findMany({
+                    where: {
+                        therapistId: appointment.therapistId,
+                        scheduledTo: {
+                            gte: addDays(appointment.scheduledTo, -2),
+                            lte: addDays(appointment.scheduledTo, 2),
+                        },
+                        NOT: {
+                            scheduledTo: {
+                                gte: startOfDay(appointment.scheduledTo),
+                                lte: endOfDay(appointment.scheduledTo),
+                            },
+                        },
+                    },
+                });
+
+            const appointmentsOnTheSameDay =
+                await ctx.prisma.appointment.findMany({
+                    where: {
+                        therapistId: appointment.therapistId,
+                        scheduledTo: {
+                            gte: startOfDay(appointment.scheduledTo),
+                            lte: endOfDay(appointment.scheduledTo),
+                        },
+                    },
+                });
+
+            console.log(appointmentsOnTheSameDay);
+
+            const availableHoursOnDifferentDays = therapistHours
+                .filter(
+                    (hour) =>
+                        !(
+                            hour.weekDay ===
+                            (format(
+                                appointment.scheduledTo,
+                                "EEEE",
+                            ).toUpperCase() as WeekDay)
+                        ),
+                )
+                .filter((hour) => {
+                    const isHourAvailable =
+                        !similarAppointmentsOnDifferentDays.some(
+                            (appointment) =>
+                                getHours(appointment.scheduledTo) ===
+                                hour.startAt,
+                        );
+                    return isHourAvailable;
+                });
+
+            const availableHoursOnTheSameDay = therapistHours
+                .filter(
+                    (hour) =>
+                        hour.weekDay ===
+                        (format(
+                            appointment.scheduledTo,
+                            "EEEE",
+                        ).toUpperCase() as WeekDay),
+                )
+                .filter((hour) => {
+                    const isHourAvailable = !appointmentsOnTheSameDay.some(
+                        (appointment) =>
+                            getHours(appointment.scheduledTo) === hour.startAt,
+                    );
+                    return isHourAvailable;
+                });
+
+            return {
+                availableHoursOnTheSameDay,
+                availableHoursOnTheDifferentDays: availableHoursOnDifferentDays,
+            };
+        }),
     prepareTomorrowAppointments: publicProcedure.mutation(async ({ ctx }) => {
         console.log("prepareTomorrowAppointments is currently disabled");
         return null;

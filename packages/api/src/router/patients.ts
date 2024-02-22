@@ -37,4 +37,21 @@ export const patientsRouter = createTRPCRouter({
             },
         });
     }),
+    appointmentsToReschedule: protectedProcedure.query(async ({ ctx }) => {
+        const patient = await ctx.prisma.patient.findUniqueOrThrow({
+            where: {
+                userId: ctx.auth.userId,
+            },
+        });
+
+        return await ctx.prisma.appointment.findMany({
+            where: {
+                patientId: patient.id,
+                rescheduleRequested: true,
+            },
+            include: {
+                therapist: true,
+            },
+        });
+    }),
 });
