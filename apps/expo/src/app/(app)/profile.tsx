@@ -25,7 +25,6 @@ import { api } from "../../utils/api";
 export default function UserProfileScreen() {
     const router = useRouter();
     const { user, signOut } = useClerk();
-    const { mutateAsync } = api.users.clearMetadata.useMutation({});
     const userHasProfileImage = useUserHasProfileImage({
         userId: String(user?.id),
     });
@@ -178,11 +177,18 @@ function DevelopmentOptions() {
                 onPress={clearUserMetaData}
             />
             <MenuItem
-                isLast={true}
                 icon="person"
                 label={"Patient Profile"}
                 onPress={() => {
                     router.push("/(patient)/update-profile");
+                }}
+            />
+            <MenuItem
+                isLast={true}
+                icon="person"
+                label={"Patient Onboard"}
+                onPress={() => {
+                    router.push("/(patient)/profile");
                 }}
             />
         </>

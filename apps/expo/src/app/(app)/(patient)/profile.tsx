@@ -13,6 +13,7 @@ import { useUser } from "@clerk/clerk-expo";
 import { AntDesign } from "@expo/vector-icons";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Trans, t } from "@lingui/macro";
+import { cpf } from "cpf-cnpj-validator";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -42,6 +43,7 @@ export default function EditPatientProfile() {
         formState: { isValid },
     } = useForm<{
         name: string;
+        document: string;
         profilePicture: string;
     }>({
         defaultValues: {
@@ -75,6 +77,7 @@ export default function EditPatientProfile() {
         await createPatient.mutateAsync({
             name: data.name,
             email: String(user?.emailAddresses[0]?.emailAddress),
+            document: data.document,
             profilePictureUrl: image?.publicUrl ?? user?.imageUrl ?? "",
             userId: String(user?.id),
         });
@@ -153,11 +156,21 @@ export default function EditPatientProfile() {
                             </TouchableOpacity>
                         </View>
                         <FormTextInput
+                            required
                             control={control}
                             name="name"
                             title={t({ message: "Name" })}
                             placeholder="John Doe"
                             inputMode="text"
+                        />
+                        <FormTextInput
+                            required
+                            control={control}
+                            name="document"
+                            title={t({ message: "Document (CPF)" })}
+                            placeholder="123.456.789-01"
+                            mask="999.999.999-99"
+                            inputMode="numeric"
                         />
                     </View>
                     <LargeButton
@@ -179,6 +192,14 @@ const schema = z.object({
             required_error: "Full name is required",
         })
         .min(2, "Full name must be at least 2 characters"),
+    document: z
+        .string({
+            required_error: "The document is required",
+        })
+        .min(11, "Your document must be 11 characters long")
+        .refine((value) => cpf.isValid(value), {
+            message: "Must be a valid CPF",
+        }),
     profilePicture: z
         .string({
             required_error: "Profile picture is required",
