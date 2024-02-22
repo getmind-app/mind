@@ -25,6 +25,7 @@ import { Card } from "../../components/Card";
 import { CardSkeleton } from "../../components/CardSkeleton";
 import DefaultHomeCard from "../../components/DefaultHomeCard";
 import { Refreshable } from "../../components/Refreshable";
+import { RescheduleAppointments } from "../../components/RescheduleAppointments";
 import { ScreenWrapper } from "../../components/ScreenWrapper";
 import { SmallButton } from "../../components/SmallButton";
 import { Title } from "../../components/Title";
@@ -133,6 +134,7 @@ export default function HomeScreen() {
                 }
             >
                 {isProfessional && <SetUpWorkHoursWarning />}
+                {!isProfessional && <RescheduleAppointments />}
                 <Title title={t({ message: "Next session" })} />
                 <NextAppointment />
                 <View className="mb-2 flex flex-row items-center justify-between pt-8 align-middle">
