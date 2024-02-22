@@ -2,10 +2,12 @@ import { Text } from "react-native";
 
 import { colors, type Color } from "../utils/colors";
 
+export type BasicTextSizes = "sm" | "md" | "lg" | "xl" | "2xl" | "3xl";
+
 type BasicTextProps = ConstructorParameters<typeof Text>[0] & {
     fontWeight?: "bold" | "normal";
     color?: Color;
-    size?: "sm" | "md" | "lg" | "xl" | "2xl" | "3xl";
+    size?: BasicTextSizes;
 };
 
 const sizeMapper: {
@@ -17,6 +19,17 @@ const sizeMapper: {
     xl: 18,
     "2xl": 20,
     "3xl": 24,
+};
+
+const lineHeightMapper: {
+    [key in NonNullable<BasicTextProps["size"]>]: number;
+} = {
+    sm: 16,
+    md: 20,
+    lg: 24,
+    xl: 28,
+    "2xl": 32,
+    "3xl": 36,
 };
 
 export function BasicText({
@@ -34,6 +47,7 @@ export function BasicText({
                 : "NunitoSans_400Regular",
         color: colors[color],
         fontSize: sizeMapper[size] ?? "md",
+        lineHeight: lineHeightMapper[size] ?? "md",
     };
 
     return (

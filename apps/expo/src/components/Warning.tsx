@@ -24,7 +24,6 @@ export function Warning({
                     paddingVertical: 16,
                     paddingHorizontal: 20,
                     borderRadius: 12,
-                    elevation: 2,
                     width: "100%",
                 }}
             >

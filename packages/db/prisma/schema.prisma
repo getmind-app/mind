@@ -66,6 +66,7 @@ model Appointment {
     status       AppointmentStatus @default(PENDENT)
     link         String?
     isPaid       Boolean           @default(false)
+    paidAt       DateTime?
     eventId      String?
     patientId    String
     patient      Patient           @relation(fields: [patientId], references: [id], onDelete: Cascade)

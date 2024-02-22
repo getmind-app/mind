@@ -286,8 +286,6 @@ export const appointmentsRouter = createTRPCRouter({
             > = null;
 
             if (input.status === "ACCEPTED") {
-                await payForAppointment({ appointment, prisma: ctx.prisma });
-
                 calendarEvent = await createAppointmentInCalendar({
                     appointment,
                     prisma: ctx.prisma,
@@ -319,6 +317,41 @@ export const appointmentsRouter = createTRPCRouter({
                 },
             });
         }),
+    checkAppointmentAsPaid: protectedProcedure
+        .input(
+            z.object({
+                id: z.string().min(1),
+            }),
+        )
+        .mutation(async ({ ctx, input }) => {
+            return await ctx.prisma.appointment.update({
+                where: {
+                    id: input.id,
+                },
+                data: {
+                    isPaid: true,
+                    paidAt: new Date(),
+                },
+            });
+        }),
+    checkAppointmentAsNotPaid: protectedProcedure
+        .input(
+            z.object({
+                id: z.string().min(1),
+            }),
+        )
+        .mutation(async ({ ctx, input }) => {
+            return await ctx.prisma.appointment.update({
+                where: {
+                    id: input.id,
+                },
+                data: {
+                    isPaid: false,
+                    paidAt: null,
+                },
+            });
+        }),
+
     prepareTomorrowAppointments: publicProcedure.mutation(async ({ ctx }) => {
         console.log("prepareTomorrowAppointments is currently disabled");
         return null;
