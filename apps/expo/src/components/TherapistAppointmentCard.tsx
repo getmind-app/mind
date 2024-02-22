@@ -29,6 +29,7 @@ export function TherapistAppointmentCard({
 }) {
     const [open, setOpen] = useState(false);
     const lingui = useLingui();
+    const requestReschedule = api.appointments.requestReschedule.useMutation();
     const checkAsPaid = api.appointments.checkAppointmentAsPaid.useMutation();
     const checkAsNotPaid =
         api.appointments.checkAppointmentAsNotPaid.useMutation();
@@ -87,7 +88,24 @@ export function TherapistAppointmentCard({
                             {format(appointment.scheduledTo, "HH:mm")}
                         </BasicText>
                     </View>
-                    <TypeOfAppointment appointmentType={appointment.type} />
+                    <View
+                        style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                        }}
+                    >
+                        <TypeOfAppointment appointmentType={appointment.type} />
+                        {appointment.isPaid || canUndo ? (
+                            <BasicText color="green">
+                                {t({ message: "Paid" })}
+                            </BasicText>
+                        ) : (
+                            <BasicText color="red">
+                                {t({ message: "Not paid" })}
+                            </BasicText>
+                        )}
+                    </View>
                     <BasicText
                         size="xl"
                         style={{
@@ -102,11 +120,17 @@ export function TherapistAppointmentCard({
                             },
                         )}
                     </BasicText>
-                    <View className="flex flex-row pt-2">
-                        <Text className="font-nunito-sans text-sm text-slate-500">
+                    <View
+                        style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                            gap: 8,
+                        }}
+                    >
+                        <BasicText size="sm" color="gray">
                             <Trans>with</Trans>
                             {"  "}
-                        </Text>
+                        </BasicText>
                         <UserPhoto
                             userId={appointment.patient.userId}
                             alt={appointment.patient.name}
@@ -115,13 +139,13 @@ export function TherapistAppointmentCard({
                             height={20}
                             iconSize={12}
                         />
-                        <Text className="font-nunito-sans text-sm text-slate-500">
+                        <BasicText size="sm" color="gray">
                             {"  "}
                             {appointment.patient.name}{" "}
                             {appointment.modality === "ONLINE"
                                 ? t({ message: "via Google Meet" })
                                 : t({ message: "in person" })}
-                        </Text>
+                        </BasicText>
                     </View>
                     {appointment.status == "ACCEPTED" && (
                         <View
@@ -130,52 +154,49 @@ export function TherapistAppointmentCard({
                                 alignItems: "center",
                                 justifyContent: "space-between",
                                 flex: 1,
+                                marginTop: 8,
                             }}
                         >
-                            {appointment.isPaid || canUndo ? (
-                                <View
-                                    style={{
-                                        flexDirection: "row",
-                                        alignItems: "center",
-                                        justifyContent: "space-between",
-                                        gap: 8,
-                                        flex: 1,
-                                        marginTop: 8,
-                                    }}
-                                >
-                                    <BasicText color="green">
-                                        {t({ message: "Paid" })}
-                                    </BasicText>
-                                    <SmallButton
-                                        color="lightGray"
-                                        disabled={checkAsNotPaid.isLoading}
-                                        onPress={handleUndoPaid}
-                                    >
-                                        <Trans>Uncheck</Trans>
-                                    </SmallButton>
-                                </View>
-                            ) : (
-                                <View
-                                    style={{
-                                        flexDirection: "row",
-                                        alignItems: "center",
-                                        justifyContent: "space-between",
-                                        gap: 8,
-                                        flex: 1,
-                                        marginTop: 8,
-                                    }}
-                                >
-                                    <BasicText color="red">
-                                        {t({ message: "Not paid" })}
-                                    </BasicText>
+                            <SmallButton
+                                color="yellow"
+                                disabled={requestReschedule.isLoading}
+                                onPress={async function () {
+                                    try {
+                                        await requestReschedule.mutateAsync({
+                                            id: appointment.id,
+                                        });
+                                    } catch (e) {
+                                        console.error(e);
+                                        Alert.alert(
+                                            t({
+                                                message:
+                                                    "Failed to request reschedule",
+                                            }),
+                                        );
+                                    }
+                                }}
+                                textSize="sm"
+                            >
+                                <Trans>Request reschedule</Trans>
+                            </SmallButton>
 
-                                    <SmallButton
-                                        disabled={checkAsPaid.isLoading}
-                                        onPress={handlePaid}
-                                    >
-                                        <Trans>Check as paid</Trans>
-                                    </SmallButton>
-                                </View>
+                            {appointment.isPaid || canUndo ? (
+                                <SmallButton
+                                    color="lightGray"
+                                    disabled={checkAsNotPaid.isLoading}
+                                    onPress={handleUndoPaid}
+                                    textSize="sm"
+                                >
+                                    <Trans>Uncheck</Trans>
+                                </SmallButton>
+                            ) : (
+                                <SmallButton
+                                    disabled={checkAsPaid.isLoading}
+                                    onPress={handlePaid}
+                                    textSize="sm"
+                                >
+                                    <Trans>Check as paid</Trans>
+                                </SmallButton>
                             )}
                         </View>
                     )}
