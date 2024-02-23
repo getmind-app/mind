@@ -25,6 +25,12 @@ export default function SettingsLayout() {
                     title: "Recurrences",
                 }}
             />
+            <Stack.Screen
+                name="finances"
+                options={{
+                    title: "Finances",
+                }}
+            />
         </Stack>
     );
 }
