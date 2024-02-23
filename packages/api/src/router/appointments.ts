@@ -11,7 +11,7 @@ import {
 } from "date-fns";
 import { z } from "zod";
 
-import { type Appointment, type WeekDay } from "@acme/db";
+import { type Appointment, type Hour, type WeekDay } from "@acme/db";
 
 import { cancelRecurrence } from "../appointments/cancelRecurrence";
 import { createFirstAppointmentsInRecurrence } from "../appointments/createFirstAppointmentsInRecurrence";
@@ -30,6 +30,7 @@ export const appointmentsRouter = createTRPCRouter({
                 modality: z.enum(["ONLINE", "ON_SITE"]),
                 therapistId: z.string().min(1),
                 patientId: z.string().min(1),
+                hourId: z.string().min(1),
                 repeat: z.boolean(),
             }),
         )
@@ -67,6 +68,7 @@ export const appointmentsRouter = createTRPCRouter({
                         defaultModality: input.modality,
                         therapistId: input.therapistId,
                         patientId: input.patientId,
+                        hourId: input.hourId,
                         startTime: input.scheduledTo,
                         startAt: input.scheduledTo,
                         endTime: addHours(input.scheduledTo, 1),
@@ -96,6 +98,7 @@ export const appointmentsRouter = createTRPCRouter({
             return await ctx.prisma.appointment.create({
                 data: {
                     modality: input.modality,
+                    hourId: input.hourId,
                     scheduledTo: input.scheduledTo,
                     therapistId: input.therapistId,
                     patientId: input.patientId,
@@ -393,16 +396,17 @@ export const appointmentsRouter = createTRPCRouter({
             }
 
             const therapistHours = await ctx.prisma.hour.findMany({
-                take: 10,
                 where: {
                     therapistId: appointment.therapistId,
                     OR: [
+                        // Same day, different hours
                         {
                             weekDay: format(
                                 appointment.scheduledTo,
                                 "EEEE",
                             ).toUpperCase() as WeekDay,
                         },
+                        // Different days, same hour
                         {
                             startAt: {
                                 lte: getHours(appointment.scheduledTo) + 1,
@@ -447,8 +451,6 @@ export const appointmentsRouter = createTRPCRouter({
                     },
                 });
 
-            console.log(appointmentsOnTheSameDay);
-
             const availableHoursOnDifferentDays = therapistHours
                 .filter(
                     (hour) =>
@@ -468,17 +470,26 @@ export const appointmentsRouter = createTRPCRouter({
                                 hour.startAt,
                         );
                     return isHourAvailable;
-                });
+                })
+                .reduce((acc, hour) => {
+                    if (acc[hour.weekDay]) {
+                        (acc[hour.weekDay] as Hour[]).push(hour);
+                    } else {
+                        acc[hour.weekDay] = [hour];
+                    }
+                    return acc;
+                }, {} as { [key: string]: Hour[] });
 
             const availableHoursOnTheSameDay = therapistHours
-                .filter(
-                    (hour) =>
+                .filter((hour) => {
+                    return (
                         hour.weekDay ===
                         (format(
                             appointment.scheduledTo,
                             "EEEE",
-                        ).toUpperCase() as WeekDay),
-                )
+                        ).toUpperCase() as WeekDay)
+                    );
+                })
                 .filter((hour) => {
                     const isHourAvailable = !appointmentsOnTheSameDay.some(
                         (appointment) =>
@@ -489,7 +500,7 @@ export const appointmentsRouter = createTRPCRouter({
 
             return {
                 availableHoursOnTheSameDay,
-                availableHoursOnTheDifferentDays: availableHoursOnDifferentDays,
+                availableHoursOnDifferentDays,
             };
         }),
     prepareTomorrowAppointments: publicProcedure.mutation(async ({ ctx }) => {
@@ -564,6 +575,7 @@ export const appointmentsRouter = createTRPCRouter({
                 const appointment = await ctx.prisma.appointment.create({
                     data: {
                         scheduledTo: date,
+                        hourId: recurrence.hourId,
                         modality: recurrence.defaultModality,
                         therapistId: recurrence.therapistId,
                         patientId: recurrence.patientId,
