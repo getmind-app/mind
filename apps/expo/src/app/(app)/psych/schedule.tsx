@@ -37,8 +37,10 @@ const appointmentAtom = atom<{
     hour: string | null;
     modality: Modality | null;
     repeat: boolean;
+    hourId: string | null;
 }>({
     date: null,
+    hourId: null,
     hour: null,
     modality: null,
     repeat: false,
@@ -98,6 +100,8 @@ export default function AppointmentSchedulingScreen() {
             throw new Error("Missing form data");
         } else if (!data?.hourlyRate) {
             throw new Error("Missing hourly rate");
+        } else if (!appointment.hourId) {
+            throw new Error("Missing hour id");
         }
 
         await mutateAsync({
@@ -106,6 +110,7 @@ export default function AppointmentSchedulingScreen() {
             therapistId: String(id),
             patientId: String(patient?.id),
             repeat: appointment.repeat,
+            hourId: appointment.hourId,
         });
     }
 
@@ -182,10 +187,11 @@ export default function AppointmentSchedulingScreen() {
                             date={appointment.date}
                             therapistAppointments={data.appointments}
                             therapistHours={data.hours}
-                            onSelect={(newHour) =>
+                            onSelect={({ newHour, hourId }) =>
                                 setAppointment({
                                     ...appointment,
                                     hour: newHour,
+                                    hourId,
                                 })
                             }
                         />
@@ -316,7 +322,13 @@ type HourPickerProps = {
     hour: string | null;
     therapistHours: Hour[];
     therapistAppointments: Appointment[];
-    onSelect: (n: string) => void;
+    onSelect: ({
+        newHour,
+        hourId,
+    }: {
+        newHour: string;
+        hourId: string;
+    }) => void;
 };
 
 function HourPicker({
@@ -364,8 +376,7 @@ function HourPicker({
             );
 
             return !isAppointmentMatch;
-        })
-        .map((h) => h.startAt);
+        });
 
     return (
         <AnimatedCard
@@ -408,15 +419,20 @@ function HourPicker({
                         </BasicText>
                     )}
                     {date &&
-                        availableHours.map((n, i) => (
+                        availableHours.map((selectedHour, i) => (
                             <HourComponent
                                 key={i}
-                                number={`${n}:00`}
-                                onPress={(v) => {
-                                    onSelect(v);
+                                number={`${selectedHour.startAt}:00`}
+                                onPress={(value) => {
+                                    onSelect({
+                                        newHour: value,
+                                        hourId: selectedHour.id,
+                                    });
                                     setExpanded(false);
                                 }}
-                                isSelected={hour === `${n}:00`}
+                                isSelected={
+                                    hour === `${selectedHour.startAt}:00`
+                                }
                             />
                         ))}
                 </View>
