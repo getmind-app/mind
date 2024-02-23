@@ -15,61 +15,66 @@ export function CheckBox({
     action?: () => void;
 }) {
     return (
-        <View
-            style={{
-                flex: 1,
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-between",
-            }}
+        <TouchableOpacity
+            onPress={action ? action : undefined}
+            disabled={!action}
         >
             <View
                 style={{
+                    flex: 1,
                     flexDirection: "row",
                     alignItems: "center",
+                    justifyContent: "space-between",
                 }}
             >
                 <View
                     style={{
-                        justifyContent: "center",
+                        flexDirection: "row",
                         alignItems: "center",
-                        borderRadius: 100,
-                        width: 24,
-                        height: 24,
-                        borderWidth: 2,
-                        borderColor: colors.primaryBlue,
                     }}
                 >
-                    {checked && (
-                        <View
-                            style={{
-                                width: 12,
-                                height: 12,
-                                borderRadius: 100,
-                                backgroundColor: colors.primaryBlue,
-                            }}
-                        />
-                    )}
+                    <View
+                        style={{
+                            justifyContent: "center",
+                            alignItems: "center",
+                            borderRadius: 100,
+                            width: 24,
+                            height: 24,
+                            borderWidth: 2,
+                            borderColor: colors.primaryBlue,
+                        }}
+                    >
+                        {checked && (
+                            <View
+                                style={{
+                                    width: 12,
+                                    height: 12,
+                                    borderRadius: 100,
+                                    backgroundColor: colors.primaryBlue,
+                                }}
+                            />
+                        )}
+                    </View>
+                    <BasicText
+                        style={{
+                            marginLeft: 10,
+                            textDecorationLine: checked
+                                ? "line-through"
+                                : "none",
+                        }}
+                        color={checked ? "gray" : "black"}
+                    >
+                        {label}
+                    </BasicText>
                 </View>
-                <BasicText
-                    style={{
-                        marginLeft: 10,
-                        textDecorationLine: checked ? "line-through" : "none",
-                    }}
-                    color={checked ? "gray" : "black"}
-                >
-                    {label}
-                </BasicText>
-            </View>
-            {!checked && action && (
-                <TouchableOpacity onPress={action}>
+                {!checked && action && (
                     <FontAwesome
                         name="chevron-right"
                         size={12}
                         color={colors.primaryBlue}
                     />
-                </TouchableOpacity>
-            )}
-        </View>
+                )}
+            </View>
+        </TouchableOpacity>
     );
 }

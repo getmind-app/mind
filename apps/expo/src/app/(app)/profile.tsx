@@ -15,6 +15,7 @@ import { AntDesign, MaterialIcons } from "@expo/vector-icons";
 import { type Icon } from "@expo/vector-icons/build/createIconSet";
 import { t } from "@lingui/macro";
 
+import { BasicText } from "../../components/BasicText";
 import { ScreenWrapper } from "../../components/ScreenWrapper";
 import { getShareLink } from "../../helpers/getShareLink";
 import { useUpdateProfilePicture } from "../../hooks/user/useUpdateProfilePicture";
@@ -25,7 +26,6 @@ import { api } from "../../utils/api";
 export default function UserProfileScreen() {
     const router = useRouter();
     const { user, signOut } = useClerk();
-    const { mutateAsync } = api.users.clearMetadata.useMutation({});
     const userHasProfileImage = useUserHasProfileImage({
         userId: String(user?.id),
     });
@@ -109,17 +109,21 @@ export default function UserProfileScreen() {
                     <View className="flex flex-col">
                         <View>
                             {user?.firstName && (
-                                <Text className="font-nunito-sans-bold text-3xl">
+                                <BasicText size="3xl" fontWeight="bold">
                                     {user?.firstName}
-                                </Text>
+                                </BasicText>
                             )}
                         </View>
                         <View>
-                            <Text className="pl-1 font-nunito-sans text-lg text-slate-500">
+                            <BasicText
+                                size="lg"
+                                color="gray"
+                                style={{ marginLeft: 2 }}
+                            >
                                 {isProfessional
                                     ? t({ message: "Professional" })
                                     : t({ message: "Patient" })}
-                            </Text>
+                            </BasicText>
                         </View>
                     </View>
                 </View>
@@ -139,6 +143,13 @@ export default function UserProfileScreen() {
                     label={t({ message: "Recurrences" })}
                     onPress={() => router.push("/settings/recurrences")}
                 />
+                {isProfessional ? (
+                    <MenuItem
+                        icon="attach-money"
+                        label={t({ message: "Finances" })}
+                        onPress={() => router.push("/settings/finances")}
+                    />
+                ) : null}
                 <MenuItem
                     isLast
                     icon="logout"
@@ -178,11 +189,18 @@ function DevelopmentOptions() {
                 onPress={clearUserMetaData}
             />
             <MenuItem
-                isLast={true}
                 icon="person"
                 label={"Patient Profile"}
                 onPress={() => {
                     router.push("/(patient)/update-profile");
+                }}
+            />
+            <MenuItem
+                isLast={true}
+                icon="person"
+                label={"Patient Onboard"}
+                onPress={() => {
+                    router.push("/(patient)/profile");
                 }}
             />
         </>
@@ -214,6 +232,7 @@ function ProfessionalOptions() {
                 label={t({ message: "Available hours" })}
                 onPress={() => router.push("/settings/available-hours")}
             />
+
             <MenuItem
                 isLast
                 icon="attach-money"

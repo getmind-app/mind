@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import {
     Image,
     Linking,
+    Platform,
     ScrollView,
     Switch,
     Text,
@@ -118,7 +119,7 @@ export default function AppointmentSchedulingScreen() {
     return (
         <>
             <Header />
-            <ScreenWrapper>
+            <ScreenWrapper paddingTop={Platform.OS === "android" ? 48 : 32}>
                 <View
                     style={{
                         flex: 1,
