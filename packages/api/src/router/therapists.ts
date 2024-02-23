@@ -1,8 +1,18 @@
-import { isSameDay, isSameHour } from "date-fns";
+import {
+    addDays,
+    format,
+    isSameDay,
+    isSameHour,
+    isSaturday,
+    isSunday,
+    isWeekend,
+    startOfDay,
+} from "date-fns";
 import { z } from "zod";
 
 import {
     type Appointment,
+    type Hour,
     type Prisma,
     type Therapist,
     type WeekDay,
@@ -94,7 +104,7 @@ export const therapistsRouter = createTRPCRouter({
         )
         .query(async ({ ctx, input }) => {
             let whereClause: Prisma.TherapistWhereInput = {
-                paymentAccountStatus: "ACTIVE",
+                // paymentAccountStatus: "ACTIVE",
             };
 
             const orderByClause: Prisma.TherapistOrderByWithAggregationInput =
@@ -379,8 +389,8 @@ export const therapistsRouter = createTRPCRouter({
 
 const getAvailableDatesAndHours = (
     therapist: Therapist & {
-        hours: { startAt: number; weekDay: WeekDay }[];
-        appointments: { scheduledTo: Date; status: string }[];
+        hours: Hour[];
+        appointments: Appointment[];
     },
 ) => {
     const weekDayMap: Record<WeekDay, number> = {
@@ -396,79 +406,78 @@ const getAvailableDatesAndHours = (
         monthIndex: number;
         dates: {
             date: Date;
-            hours: number[];
+            hours: Hour[];
         }[];
     }[] = [];
 
-    const currentDate = new Date();
-    const thirtyDaysFromNow = new Date(currentDate);
-    thirtyDaysFromNow.setDate(currentDate.getDate() + 30);
-
-    const currentDateCopy = new Date(currentDate);
+    const currentDate = startOfDay(new Date());
+    const thirtyDaysFromNow = addDays(currentDate, 30);
+    let runningDay = new Date(currentDate);
 
     const availableDatesAndHoursForCurrentMonth = [];
     const availableDatesAndHoursForNextMonth = [];
 
-    while (currentDateCopy <= thirtyDaysFromNow) {
-        if (
-            currentDateCopy.getDay() !== 0 && // Sunday
-            currentDateCopy.getDay() !== 6 && // Saturday
-            therapist.hours.some(
-                // Therapist works on this day
-                (hour) => weekDayMap[hour.weekDay] === currentDateCopy.getDay(),
-            )
-        ) {
-            // The hours that this therapist works on this day
-            const hours = therapist.hours
-                .filter(
-                    (hour) =>
-                        weekDayMap[hour.weekDay] === currentDateCopy.getDay(),
-                )
-                .map((hour) => hour.startAt);
+    while (runningDay <= thirtyDaysFromNow) {
+        const runningDayWeekDay = format(runningDay, "EEEE").toUpperCase();
+        const therapistWorksOnThisDay = therapist.hours.some(
+            (hour) => hour.weekDay === runningDayWeekDay,
+        );
 
-            // Check every hour if there is an appointment
-            // If there is, remove it from the available hours
+        if (isWeekend(runningDay)) {
+            runningDay = addDays(runningDay, 1);
+            continue;
+        }
+        if (!therapistWorksOnThisDay) {
+            runningDay = addDays(runningDay, 1);
+            continue;
+        }
 
-            for (let i = 0; i < therapist.appointments.length; i++) {
-                const appointment = therapist.appointments[i] as Appointment;
+        // The hours that this therapist works on this day
+        const hours = therapist.hours.filter((hour) => {
+            runningDayWeekDay === hour.weekDay;
+        });
 
-                if (
-                    isSameDay(appointment.scheduledTo, currentDateCopy) &&
-                    isSameHour(appointment.scheduledTo, currentDateCopy) &&
-                    ["ACCEPTED", "PENDING"].includes(appointment.status)
-                ) {
-                    {
-                        const appointmentHour =
-                            appointment.scheduledTo.getHours();
+        // Check every hour if there is an appointment
+        // If there is, remove it from the available hours
+        for (let i = 0; i < therapist.hours.length; i++) {
+            const currentHour = therapist.hours[i] as Hour;
+            const appointmentConflict = therapist.appointments.some(
+                (appointment) =>
+                    isSameDay(appointment.scheduledTo, runningDay) &&
+                    appointment.scheduledTo.getHours() ===
+                        currentHour.startAt &&
+                    ["ACCEPTED", "PENDING"].includes(appointment.status),
+            );
 
-                        const index = hours.indexOf(appointmentHour);
+            if (appointmentConflict) {
+                const index = hours
+                    .map((hour) => hour.startAt)
+                    .indexOf(currentHour.startAt);
 
-                        if (index > -1) {
-                            hours.splice(index, 1);
-                        }
-                    }
+                if (index > -1) {
+                    hours.splice(index, 1);
                 }
             }
-
-            // Remove all days that have no available hours
-            if (hours.length === 0) {
-                currentDateCopy.setDate(currentDateCopy.getDate() + 1);
-                continue;
-            }
-
-            if (currentDateCopy.getMonth() === currentDate.getMonth()) {
-                availableDatesAndHoursForCurrentMonth.push({
-                    date: new Date(currentDateCopy),
-                    hours,
-                });
-            } else {
-                availableDatesAndHoursForNextMonth.push({
-                    date: new Date(currentDateCopy),
-                    hours,
-                });
-            }
         }
-        currentDateCopy.setDate(currentDateCopy.getDate() + 1);
+
+        // Remove all days that have no available hours
+        if (hours.length === 0) {
+            runningDay = addDays(runningDay, 1);
+            continue;
+        }
+
+        if (runningDay.getMonth() === currentDate.getMonth()) {
+            availableDatesAndHoursForCurrentMonth.push({
+                date: runningDay,
+                hours,
+            });
+        } else {
+            availableDatesAndHoursForNextMonth.push({
+                date: runningDay,
+                hours,
+            });
+        }
+        runningDay = addDays(runningDay, 1);
     }
 
     availableDatesAndHoursInCurrentAndNextMonth.push({
