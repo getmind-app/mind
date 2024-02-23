@@ -11,7 +11,7 @@ import { type Appointment, type Therapist } from "../../../../packages/db";
 import { getLocale } from "../helpers/getLocale";
 import { api } from "../utils/api";
 import { BasicText } from "./BasicText";
-import { Title } from "./Title";
+import { SmallButton } from "./SmallButton";
 
 export function RescheduleAppointments() {
     const { user } = useClerk();
@@ -52,6 +52,9 @@ export function RescheduleAppointments() {
 
     return (
         <>
+            {/* <SmallButton onPress={() => modalizeRef.current?.open()}>
+                <BasicText>Open reschedules</BasicText>
+            </SmallButton> */}
             <Portal>
                 <Modalize
                     modalStyle={{ backgroundColor: "#f8f8f8", padding: 24 }}
@@ -89,8 +92,6 @@ function RescheduleAppointmentRequest({
             id: appointment.id,
         });
 
-    console.log(suggestedHours.data);
-
     return (
         <View
             style={{
@@ -126,31 +127,37 @@ function RescheduleAppointmentRequest({
             </BasicText>
             <View
                 style={{
-                    flexDirection: "column",
+                    flexDirection: "row",
+                    flexWrap: "wrap",
+                    gap: 6,
                 }}
             >
                 {suggestedHours.data?.availableHoursOnTheSameDay.map((hour) => (
-                    <BasicText key={hour.id} size="lg">
-                        {hour.startAt} - {hour.weekDay}
-                    </BasicText>
+                    <SmallButton>{hour.startAt}:00</SmallButton>
                 ))}
             </View>
             <BasicText size="lg" fontWeight="bold">
                 <Trans>Similar hours on the different days</Trans>
             </BasicText>
-            <View
-                style={{
-                    flexDirection: "column",
-                }}
-            >
-                {suggestedHours.data?.availableHoursOnTheDifferentDays.map(
-                    (hour) => (
-                        <BasicText key={hour.id} size="lg">
-                            {hour.startAt} - {hour.weekDay}
-                        </BasicText>
-                    ),
-                )}
-            </View>
+
+            {Object.entries(
+                suggestedHours.data?.availableHoursOnDifferentDays ?? {},
+            ).map(([weekday, hours]) => (
+                <>
+                    <BasicText>{weekday}</BasicText>
+                    <View
+                        style={{
+                            flexDirection: "row",
+                            flexWrap: "wrap",
+                            gap: 6,
+                        }}
+                    >
+                        {hours.map((hour) => (
+                            <SmallButton>{hour.startAt}:00</SmallButton>
+                        ))}
+                    </View>
+                </>
+            ))}
         </View>
     );
 }
