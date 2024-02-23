@@ -15,6 +15,7 @@ import { AntDesign, MaterialIcons } from "@expo/vector-icons";
 import { type Icon } from "@expo/vector-icons/build/createIconSet";
 import { t } from "@lingui/macro";
 
+import { BasicText } from "../../components/BasicText";
 import { ScreenWrapper } from "../../components/ScreenWrapper";
 import { getShareLink } from "../../helpers/getShareLink";
 import { useUpdateProfilePicture } from "../../hooks/user/useUpdateProfilePicture";
@@ -108,17 +109,21 @@ export default function UserProfileScreen() {
                     <View className="flex flex-col">
                         <View>
                             {user?.firstName && (
-                                <Text className="font-nunito-sans-bold text-3xl">
+                                <BasicText size="3xl" fontWeight="bold">
                                     {user?.firstName}
-                                </Text>
+                                </BasicText>
                             )}
                         </View>
                         <View>
-                            <Text className="pl-1 font-nunito-sans text-lg text-slate-500">
+                            <BasicText
+                                size="lg"
+                                color="gray"
+                                style={{ marginLeft: 2 }}
+                            >
                                 {isProfessional
                                     ? t({ message: "Professional" })
                                     : t({ message: "Patient" })}
-                            </Text>
+                            </BasicText>
                         </View>
                     </View>
                 </View>
@@ -219,6 +224,11 @@ function ProfessionalOptions() {
                 icon="timer"
                 label={t({ message: "Available hours" })}
                 onPress={() => router.push("/settings/available-hours")}
+            />
+            <MenuItem
+                icon="description"
+                label={t({ message: "Report" })}
+                onPress={() => router.push("/settings/report")}
             />
             <MenuItem
                 isLast
