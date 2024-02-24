@@ -41,6 +41,7 @@ export async function createFirstAppointmentsInRecurrence({
                 therapistId: recurrence.therapistId,
                 status: "ACCEPTED",
                 type: "RECURRENT",
+                hourId: recurrence.hourId,
             },
         });
 
