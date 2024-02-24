@@ -95,6 +95,7 @@ export const appointmentsRouter = createTRPCRouter({
 
             return await ctx.prisma.appointment.create({
                 data: {
+                    rate: therapist.hourlyRate,
                     modality: input.modality,
                     scheduledTo: input.scheduledTo,
                     therapistId: input.therapistId,
@@ -549,6 +550,9 @@ export const appointmentsRouter = createTRPCRouter({
                     status: "ACCEPTED",
                     weekDay,
                 },
+                include: {
+                    therapist: true,
+                },
             });
 
         const createdAppointments: Appointment[] = [];
@@ -563,6 +567,7 @@ export const appointmentsRouter = createTRPCRouter({
             try {
                 const appointment = await ctx.prisma.appointment.create({
                     data: {
+                        rate: recurrence.therapist.hourlyRate,
                         scheduledTo: date,
                         modality: recurrence.defaultModality,
                         therapistId: recurrence.therapistId,
