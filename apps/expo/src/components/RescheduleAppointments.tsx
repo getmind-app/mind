@@ -61,7 +61,7 @@ export function RescheduleAppointments() {
                     ref={modalizeRef}
                 >
                     <BasicText
-                        size="xl"
+                        size="2xl"
                         fontWeight="bold"
                         style={{
                             marginBottom: 24,
@@ -122,7 +122,7 @@ function RescheduleAppointmentRequest({
                     one
                 </Trans>
             </BasicText>
-            <BasicText size="lg" fontWeight="bold">
+            <BasicText size="xl" fontWeight="bold">
                 <Trans>Other hours on the same day</Trans>
             </BasicText>
             <View
@@ -132,19 +132,25 @@ function RescheduleAppointmentRequest({
                     gap: 6,
                 }}
             >
-                {suggestedHours.data?.availableHoursOnTheSameDay.map((hour) => (
-                    <SmallButton>{hour.startAt}:00</SmallButton>
-                ))}
+                {suggestedHours.data?.availableHoursOnTheSameDay.map(
+                    (hour, index) => (
+                        <SmallButton key={`${hour.id}-${index}`}>
+                            {hour.startAt}:00
+                        </SmallButton>
+                    ),
+                )}
             </View>
-            <BasicText size="lg" fontWeight="bold">
-                <Trans>Similar hours on the different days</Trans>
+            <BasicText size="xl" fontWeight="bold">
+                <Trans>Similar hours on the different day</Trans>
             </BasicText>
 
-            {Object.entries(
-                suggestedHours.data?.availableHoursOnDifferentDays ?? {},
-            ).map(([weekday, hours]) => (
+            {suggestedHours.data?.availableHoursOnDifferentDays.map((date) => (
                 <>
-                    <BasicText>{weekday}</BasicText>
+                    <BasicText size="lg">
+                        {format(date.date, "EEEE - dd/MM", {
+                            locale: getLocale(lingui),
+                        })}
+                    </BasicText>
                     <View
                         style={{
                             flexDirection: "row",
@@ -152,8 +158,10 @@ function RescheduleAppointmentRequest({
                             gap: 6,
                         }}
                     >
-                        {hours.map((hour) => (
-                            <SmallButton>{hour.startAt}:00</SmallButton>
+                        {date.hours.map((hour, index) => (
+                            <SmallButton key={`${hour.id}-${index}`}>
+                                {hour.startAt}:00
+                            </SmallButton>
                         ))}
                     </View>
                 </>
