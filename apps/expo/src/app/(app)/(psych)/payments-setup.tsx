@@ -20,9 +20,6 @@ export default function PaymentsSetup() {
     const [refreshing, setRefreshing] = useState(false);
     const therapist = useTherapistByUserId();
     const updateTherapist = api.therapists.update.useMutation();
-    const account = api.stripe.getAccount.useQuery({
-        paymentAccountId: therapist.data?.paymentAccountId ?? "",
-    });
 
     const {
         control,
