@@ -245,74 +245,76 @@ const Calendar = ({
     return (
         <View className="flex flex-col gap-4 rounded-lg pt-4">
             {availableDates &&
-                availableDates.length > 0 &&
-                availableDates.map((month) => (
-                    <View
-                        key={month.month}
-                        style={{
-                            paddingLeft: 4,
-                        }}
-                    >
-                        <BasicText
+                Object.values(availableDates).length > 0 &&
+                Object.entries(availableDates).map(
+                    ([monthIndex, availableDays]) => (
+                        <View
+                            key={monthIndex}
                             style={{
-                                textTransform: "capitalize",
-                                paddingBottom: 4,
+                                paddingLeft: 4,
                             }}
-                            size="lg"
                         >
-                            {getMonthInLocale({
-                                locale: lingui.i18n.locale,
-                                monthIndex: month.monthIndex,
-                            })}
-                        </BasicText>
-                        <ScrollView horizontal={true}>
-                            {month.dates.length === 0 ? (
-                                <BasicText
-                                    style={{
-                                        paddingLeft: 4,
-                                    }}
-                                    color="gray"
-                                    size="sm"
-                                >
-                                    <Trans>
-                                        No dates available for this month
-                                    </Trans>
-                                </BasicText>
-                            ) : (
-                                month.dates.map((day) => (
-                                    <TouchableOpacity
-                                        key={day.date.getDate()}
-                                        className={`mr-2 flex w-16 rounded-lg ${
-                                            day.date.getMonth() ===
-                                                selectedDate?.getMonth() &&
-                                            day.date.getDate() ===
-                                                selectedDate?.getDate()
-                                                ? "bg-[#2185EE]"
-                                                : "bg-off-white"
-                                        }`}
-                                        onPress={() => {
-                                            onSelect(day.date);
-                                            setSelectedDate(day.date);
+                            <BasicText
+                                style={{
+                                    textTransform: "capitalize",
+                                    paddingBottom: 4,
+                                }}
+                                size="lg"
+                            >
+                                {getMonthInLocale({
+                                    locale: lingui.i18n.locale,
+                                    monthIndex: parseInt(monthIndex),
+                                })}
+                            </BasicText>
+                            <ScrollView horizontal={true}>
+                                {availableDays.length === 0 ? (
+                                    <BasicText
+                                        style={{
+                                            paddingLeft: 4,
                                         }}
+                                        color="gray"
+                                        size="sm"
                                     >
-                                        <Text
-                                            className={`p-3 text-center font-nunito-sans text-sm ${
+                                        <Trans>
+                                            No dates available for this month
+                                        </Trans>
+                                    </BasicText>
+                                ) : (
+                                    availableDays.map((day) => (
+                                        <TouchableOpacity
+                                            key={day.date.getDate()}
+                                            className={`mr-2 flex w-16 rounded-lg ${
                                                 day.date.getMonth() ===
                                                     selectedDate?.getMonth() &&
                                                 day.date.getDate() ===
                                                     selectedDate?.getDate()
-                                                    ? "font-nunito-sans-bold text-white"
-                                                    : ""
+                                                    ? "bg-[#2185EE]"
+                                                    : "bg-off-white"
                                             }`}
+                                            onPress={() => {
+                                                onSelect(day.date);
+                                                setSelectedDate(day.date);
+                                            }}
                                         >
-                                            {day.date.getDate()}
-                                        </Text>
-                                    </TouchableOpacity>
-                                ))
-                            )}
-                        </ScrollView>
-                    </View>
-                ))}
+                                            <Text
+                                                className={`p-3 text-center font-nunito-sans text-sm ${
+                                                    day.date.getMonth() ===
+                                                        selectedDate?.getMonth() &&
+                                                    day.date.getDate() ===
+                                                        selectedDate?.getDate()
+                                                        ? "font-nunito-sans-bold text-white"
+                                                        : ""
+                                                }`}
+                                            >
+                                                {day.date.getDate()}
+                                            </Text>
+                                        </TouchableOpacity>
+                                    ))
+                                )}
+                            </ScrollView>
+                        </View>
+                    ),
+                )}
         </View>
     );
 };
