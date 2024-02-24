@@ -24,32 +24,6 @@ export function PatientCard({ patient }: { patient: PatientReport }) {
                     flex: 3,
                 }}
             >
-                {/* <View
-                    style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                    }}
-                >
-                    <BasicText
-                        size="xl"
-                        style={{
-                            textTransform: "capitalize",
-                        }}
-                    >
-                        {format(
-                            new Date(appointment.scheduledTo),
-                            "EEEE, dd/MM",
-                            {
-                                locale: getLocale(lingui),
-                            },
-                        )}
-                    </BasicText>
-                    <BasicText fontWeight="bold" color="primaryBlue" size="2xl">
-                        {format(appointment.scheduledTo, "HH:mm")}
-                    </BasicText>
-                </View> */}
-
                 <View
                     style={{
                         flexDirection: "row",
@@ -85,7 +59,7 @@ export function PatientCard({ patient }: { patient: PatientReport }) {
                         style={{
                             flexDirection: "row",
                             alignItems: "center",
-                            gap: 16,
+                            gap: 12,
                         }}
                     >
                         <BasicText

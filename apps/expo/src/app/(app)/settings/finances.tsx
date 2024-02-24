@@ -4,6 +4,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import { useUser } from "@clerk/clerk-expo";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Trans, t } from "@lingui/macro";
+import { cpf } from "cpf-cnpj-validator";
 import {
     endOfMonth,
     endOfWeek,
@@ -145,12 +146,14 @@ export default function FinancesScreen() {
                     flex: 1,
                     flexDirection: "row",
                     justifyContent: "space-between",
+                    marginBottom: 8,
+                    marginTop: 8,
                 }}
             >
                 <View
                     style={{
                         flexDirection: "row",
-                        marginBottom: 8,
+                        marginLeft: 8,
                     }}
                 >
                     <BasicText size="2xl" fontWeight="bold">
@@ -166,15 +169,13 @@ export default function FinancesScreen() {
                     style={{ paddingRight: 16 }}
                     onPress={async () => {
                         await Share.share({
-                            message:
-                                // share report
-                                t({
-                                    message: getShareReportMessage(
-                                        filteredPatients as PatientReport[],
-                                        periodToInterval[tagFilter].start,
-                                        periodToInterval[tagFilter].end,
-                                    ),
-                                }),
+                            message: t({
+                                message: getShareReportMessage(
+                                    filteredPatients as PatientReport[],
+                                    periodToInterval[tagFilter].start,
+                                    periodToInterval[tagFilter].end,
+                                ),
+                            }),
                         }).catch((error) =>
                             Alert.alert(
                                 t({
@@ -281,7 +282,9 @@ function getShareReportMessage(
 
     ${patients.map((patient) => {
         return `
-${patient.patientName} - R$ ${patient.total}
+${patient.patientName} - ${cpf.format(patient.patientDocument)} - R$ ${
+            patient.total
+        }
 ${patient.appointments.map((appointment) => {
     return `
 - ${format(new Date(appointment.scheduledTo), "dd/MM")} - R$ ${

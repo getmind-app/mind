@@ -64,12 +64,12 @@ export const financesRouter = createTRPCRouter({
         >((acc, appointment) => {
             if (acc[appointment.patientId]) {
                 (acc[appointment.patientId] as PatientReport).total +=
-                    appointment.therapist.hourlyRate;
+                    appointment.rate;
 
                 acc[appointment.patientId]?.appointments.push({
                     id: appointment.id,
                     scheduledTo: appointment.scheduledTo,
-                    amount: appointment.therapist.hourlyRate,
+                    amount: appointment.rate,
                     paidAt: appointment.paidAt ?? undefined,
                 });
             } else {
@@ -79,12 +79,12 @@ export const financesRouter = createTRPCRouter({
                     patientDocument: appointment.patient.document,
                     patientProfilePicture:
                         appointment.patient.profilePictureUrl,
-                    total: appointment.therapist.hourlyRate,
+                    total: appointment.rate,
                     appointments: [
                         {
                             id: appointment.id,
                             scheduledTo: appointment.scheduledTo,
-                            amount: appointment.therapist.hourlyRate,
+                            amount: appointment.rate,
                             paidAt: appointment.paidAt ?? undefined,
                         },
                     ],
