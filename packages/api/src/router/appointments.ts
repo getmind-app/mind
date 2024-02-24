@@ -1,17 +1,9 @@
 import type * as Notification from "expo-notifications";
 import clerk from "@clerk/clerk-sdk-node";
-import {
-    addDays,
-    addHours,
-    endOfDay,
-    format,
-    getHours,
-    set,
-    startOfDay,
-} from "date-fns";
+import { addDays, addHours, format, getHours, isSameDay, set } from "date-fns";
 import { z } from "zod";
 
-import { type Appointment, type Hour, type WeekDay } from "@acme/db";
+import { type Appointment, type WeekDay } from "@acme/db";
 
 import { cancelRecurrence } from "../appointments/cancelRecurrence";
 import { createFirstAppointmentsInRecurrence } from "../appointments/createFirstAppointmentsInRecurrence";
@@ -20,6 +12,7 @@ import { createAppointmentInCalendar } from "../helpers/createAppointmentInCalen
 import { sendPushNotification } from "../helpers/sendPushNotification";
 import { notifyAppointmentStatusChange } from "../notifications/notifyAppointmentStatusChange";
 import { payForAppointment } from "../payments/payForAppointment";
+import { getAvailableDatesAndHours } from "../therapist/getAvailableDatesAndHours";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
 export const appointmentsRouter = createTRPCRouter({
@@ -395,108 +388,72 @@ export const appointmentsRouter = createTRPCRouter({
                 throw new Error("Appointment not found");
             }
 
-            const therapistHours = await ctx.prisma.hour.findMany({
+            const therapist = await ctx.prisma.therapist.findUniqueOrThrow({
                 where: {
-                    therapistId: appointment.therapistId,
-                    OR: [
-                        // Same day, different hours
-                        {
-                            weekDay: format(
-                                appointment.scheduledTo,
-                                "EEEE",
-                            ).toUpperCase() as WeekDay,
-                        },
-                        // Different days, same hour
-                        {
-                            startAt: {
-                                lte: getHours(appointment.scheduledTo) + 1,
-                                gte: getHours(appointment.scheduledTo) - 1,
+                    id: appointment.therapistId,
+                },
+                include: {
+                    appointments: {
+                        where: {
+                            status: {
+                                in: ["ACCEPTED", "PENDENT"],
                             },
-                            NOT: {
-                                weekDay: format(
-                                    appointment.scheduledTo,
-                                    "EEEE",
-                                ).toUpperCase() as WeekDay,
+                            scheduledTo: {
+                                gte: addDays(appointment.scheduledTo, -3),
+                                lte: addDays(appointment.scheduledTo, 3),
                             },
                         },
-                    ],
+                    },
+                    hours: {
+                        where: {
+                            OR: [
+                                // Same day, different hours
+                                {
+                                    weekDay: format(
+                                        appointment.scheduledTo,
+                                        "EEEE",
+                                    ).toUpperCase() as WeekDay,
+                                },
+                                // Different days, same hour
+                                {
+                                    startAt: {
+                                        lte:
+                                            getHours(appointment.scheduledTo) +
+                                            1,
+                                        gte:
+                                            getHours(appointment.scheduledTo) -
+                                            1,
+                                    },
+                                    NOT: {
+                                        weekDay: format(
+                                            appointment.scheduledTo,
+                                            "EEEE",
+                                        ).toUpperCase() as WeekDay,
+                                    },
+                                },
+                            ],
+                        },
+                    },
                 },
             });
 
-            const similarAppointmentsOnDifferentDays =
-                await ctx.prisma.appointment.findMany({
-                    where: {
-                        therapistId: appointment.therapistId,
-                        scheduledTo: {
-                            gte: addDays(appointment.scheduledTo, -2),
-                            lte: addDays(appointment.scheduledTo, 2),
-                        },
-                        NOT: {
-                            scheduledTo: {
-                                gte: startOfDay(appointment.scheduledTo),
-                                lte: endOfDay(appointment.scheduledTo),
-                            },
-                        },
-                    },
-                });
+            const availableDatesAndHours = getAvailableDatesAndHours({
+                therapist,
+                numberOfDays: 7,
+                startingDate: addDays(appointment.scheduledTo, -3),
+            });
+            const allAvailableDates = Object.values(
+                availableDatesAndHours,
+            ).flat();
 
-            const appointmentsOnTheSameDay =
-                await ctx.prisma.appointment.findMany({
-                    where: {
-                        therapistId: appointment.therapistId,
-                        scheduledTo: {
-                            gte: startOfDay(appointment.scheduledTo),
-                            lte: endOfDay(appointment.scheduledTo),
-                        },
-                    },
-                });
+            const availableHoursOnTheSameDay = allAvailableDates
+                .filter((date) => isSameDay(date.date, appointment.scheduledTo))
+                .map((date) => date.hours)
+                .flat();
 
-            const availableHoursOnDifferentDays = therapistHours
-                .filter(
-                    (hour) =>
-                        !(
-                            hour.weekDay ===
-                            (format(
-                                appointment.scheduledTo,
-                                "EEEE",
-                            ).toUpperCase() as WeekDay)
-                        ),
-                )
-                .filter((hour) => {
-                    const isHourAvailable =
-                        !similarAppointmentsOnDifferentDays.some(
-                            (appointment) =>
-                                getHours(appointment.scheduledTo) ===
-                                hour.startAt,
-                        );
-                    return isHourAvailable;
-                })
-                .reduce((acc, hour) => {
-                    if (acc[hour.weekDay]) {
-                        (acc[hour.weekDay] as Hour[]).push(hour);
-                    } else {
-                        acc[hour.weekDay] = [hour];
-                    }
-                    return acc;
-                }, {} as { [key: string]: Hour[] });
-
-            const availableHoursOnTheSameDay = therapistHours
-                .filter((hour) => {
-                    return (
-                        hour.weekDay ===
-                        (format(
-                            appointment.scheduledTo,
-                            "EEEE",
-                        ).toUpperCase() as WeekDay)
-                    );
-                })
-                .filter((hour) => {
-                    const isHourAvailable = !appointmentsOnTheSameDay.some(
-                        (appointment) =>
-                            getHours(appointment.scheduledTo) === hour.startAt,
-                    );
-                    return isHourAvailable;
-                });
+            const availableHoursOnDifferentDays = allAvailableDates.filter(
+                (date) => !isSameDay(date.date, appointment.scheduledTo),
+            );
 
             return {
                 availableHoursOnTheSameDay,
