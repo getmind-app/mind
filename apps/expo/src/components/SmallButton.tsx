@@ -11,6 +11,7 @@ export function SmallButton({
     color = "primaryBlue",
     disabled = false,
     textSize = "md",
+    textColor = "white",
     ...props
 }: TouchableOpacityProps & {
     loading?: boolean;
@@ -18,6 +19,7 @@ export function SmallButton({
     disabled?: boolean;
     color?: Color;
     textSize?: BasicTextSizes;
+    textColor?: Color;
 }) {
     return (
         <TouchableOpacity
@@ -56,7 +58,7 @@ export function SmallButton({
                         position: "relative",
                     }}
                     fontWeight="bold"
-                    color="white"
+                    color={textColor}
                     size={textSize}
                 >
                     {children}
