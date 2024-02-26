@@ -1,14 +1,10 @@
-import { isSameDay, isSameHour } from "date-fns";
+import { addDays } from "date-fns";
 import { z } from "zod";
 
-import {
-    type Appointment,
-    type Prisma,
-    type Therapist,
-    type WeekDay,
-} from "@acme/db";
+import { type Prisma, type WeekDay } from "@acme/db";
 
 import calculateBoundingBox from "../helpers/calculateBoundingBox";
+import { getAvailableDatesAndHours } from "../therapist/getAvailableDatesAndHours";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const therapistsRouter = createTRPCRouter({
@@ -94,7 +90,7 @@ export const therapistsRouter = createTRPCRouter({
         )
         .query(async ({ ctx, input }) => {
             let whereClause: Prisma.TherapistWhereInput = {
-                paymentAccountStatus: "ACTIVE",
+                // paymentAccountStatus: "ACTIVE",
             };
 
             const orderByClause: Prisma.TherapistOrderByWithAggregationInput =
@@ -201,33 +197,44 @@ export const therapistsRouter = createTRPCRouter({
                 where: {
                     userId: ctx.auth.userId,
                 },
+                include: {
+                    hours: {
+                        where: {
+                            OR: input.days.map((day) => ({
+                                weekDay: day as WeekDay,
+                            })),
+                        },
+                    },
+                },
             });
 
-            const hoursToCreate: {
-                startAt: number;
-                weekDay: WeekDay;
-                therapistId: string;
-            }[] = [];
+            const newHours: Prisma.HourCreateManyInput[] = [];
 
             for (let i = 0; i < input.days.length; i++) {
-                await ctx.prisma.hour.deleteMany({
-                    where: {
-                        weekDay: input.days[i] as WeekDay,
-                        therapistId: therapist.id,
-                    },
-                });
+                const day = input.days[i] as WeekDay;
+                const therapistHoursOnThisDay = therapist.hours.filter(
+                    (hour) => hour.weekDay === day,
+                );
 
                 for (let j = 0; j < numberOfHourBlocks; j++) {
-                    hoursToCreate.push({
-                        startAt: input.startHour + j,
-                        weekDay: input.days[i] as WeekDay,
-                        therapistId: therapist.id,
-                    });
+                    const startAt = input.startHour + j;
+
+                    const hourAlreadyExists = therapistHoursOnThisDay.some(
+                        (hour) => hour.startAt === startAt,
+                    );
+
+                    if (!hourAlreadyExists) {
+                        newHours.push({
+                            startAt,
+                            weekDay: day,
+                            therapistId: therapist.id,
+                        });
+                    }
                 }
             }
 
             return await ctx.prisma.hour.createMany({
-                data: hoursToCreate,
+                data: newHours,
             });
         }),
     updateAddress: protectedProcedure
@@ -327,11 +334,21 @@ export const therapistsRouter = createTRPCRouter({
                 },
                 include: {
                     hours: true,
-                    appointments: true,
+                    appointments: {
+                        where: {
+                            status: {
+                                in: ["ACCEPTED", "PENDENT"],
+                            },
+                            scheduledTo: {
+                                gte: new Date(),
+                                lte: addDays(new Date(), 30),
+                            },
+                        },
+                    },
                 },
             });
 
-            return getAvailableDatesAndHours(therapist);
+            return getAvailableDatesAndHours({ therapist });
         }),
     pendentRecurrences: protectedProcedure.query(async ({ ctx }) => {
         const therapist = await ctx.prisma.therapist.findUniqueOrThrow({
@@ -376,112 +393,3 @@ export const therapistsRouter = createTRPCRouter({
         return recurrences;
     }),
 });
-
-const getAvailableDatesAndHours = (
-    therapist: Therapist & {
-        hours: { startAt: number; weekDay: WeekDay }[];
-        appointments: { scheduledTo: Date; status: string }[];
-    },
-) => {
-    const weekDayMap: Record<WeekDay, number> = {
-        MONDAY: 1,
-        TUESDAY: 2,
-        WEDNESDAY: 3,
-        THURSDAY: 4,
-        FRIDAY: 5,
-    };
-
-    const availableDatesAndHoursInCurrentAndNextMonth: {
-        month: string;
-        monthIndex: number;
-        dates: {
-            date: Date;
-            hours: number[];
-        }[];
-    }[] = [];
-
-    const currentDate = new Date();
-    const thirtyDaysFromNow = new Date(currentDate);
-    thirtyDaysFromNow.setDate(currentDate.getDate() + 30);
-
-    const currentDateCopy = new Date(currentDate);
-
-    const availableDatesAndHoursForCurrentMonth = [];
-    const availableDatesAndHoursForNextMonth = [];
-
-    while (currentDateCopy <= thirtyDaysFromNow) {
-        if (
-            currentDateCopy.getDay() !== 0 && // Sunday
-            currentDateCopy.getDay() !== 6 && // Saturday
-            therapist.hours.some(
-                // Therapist works on this day
-                (hour) => weekDayMap[hour.weekDay] === currentDateCopy.getDay(),
-            )
-        ) {
-            // The hours that this therapist works on this day
-            const hours = therapist.hours
-                .filter(
-                    (hour) =>
-                        weekDayMap[hour.weekDay] === currentDateCopy.getDay(),
-                )
-                .map((hour) => hour.startAt);
-
-            // Check every hour if there is an appointment
-            // If there is, remove it from the available hours
-
-            for (let i = 0; i < therapist.appointments.length; i++) {
-                const appointment = therapist.appointments[i] as Appointment;
-
-                if (
-                    isSameDay(appointment.scheduledTo, currentDateCopy) &&
-                    isSameHour(appointment.scheduledTo, currentDateCopy) &&
-                    ["ACCEPTED", "PENDING"].includes(appointment.status)
-                ) {
-                    {
-                        const appointmentHour =
-                            appointment.scheduledTo.getHours();
-
-                        const index = hours.indexOf(appointmentHour);
-
-                        if (index > -1) {
-                            hours.splice(index, 1);
-                        }
-                    }
-                }
-            }
-
-            // Remove all days that have no available hours
-            if (hours.length === 0) {
-                currentDateCopy.setDate(currentDateCopy.getDate() + 1);
-                continue;
-            }
-
-            if (currentDateCopy.getMonth() === currentDate.getMonth()) {
-                availableDatesAndHoursForCurrentMonth.push({
-                    date: new Date(currentDateCopy),
-                    hours,
-                });
-            } else {
-                availableDatesAndHoursForNextMonth.push({
-                    date: new Date(currentDateCopy),
-                    hours,
-                });
-            }
-        }
-        currentDateCopy.setDate(currentDateCopy.getDate() + 1);
-    }
-
-    availableDatesAndHoursInCurrentAndNextMonth.push({
-        month: currentDate.toLocaleString("default", { month: "long" }),
-        monthIndex: currentDate.getMonth(),
-        dates: availableDatesAndHoursForCurrentMonth,
-    });
-
-    availableDatesAndHoursInCurrentAndNextMonth.push({
-        month: thirtyDaysFromNow.toLocaleString("default", { month: "long" }),
-        monthIndex: thirtyDaysFromNow.getMonth(),
-        dates: availableDatesAndHoursForNextMonth,
-    });
-
-    return availableDatesAndHoursInCurrentAndNextMonth;
-};

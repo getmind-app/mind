@@ -134,7 +134,7 @@ function SetupGuide({ therapist }: { therapist: Therapist }) {
     return (
         <View style={{ marginTop: 16, flex: 1, gap: 12 }}>
             <CheckBox
-                checked={therapist.pixKey ? true : false}
+                checked={!!therapist.pixKey}
                 label={t({
                     message: therapist.pixKey
                         ? "Pix key added!"

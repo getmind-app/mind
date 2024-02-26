@@ -124,7 +124,7 @@ export function TherapistAppointmentCard({
                         style={{
                             flexDirection: "row",
                             alignItems: "center",
-                            gap: 1,
+                            gap: 8,
                         }}
                     >
                         <BasicText size="sm" color="gray">

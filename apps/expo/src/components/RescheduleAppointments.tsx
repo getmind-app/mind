@@ -11,7 +11,7 @@ import { type Appointment, type Therapist } from "../../../../packages/db";
 import { getLocale } from "../helpers/getLocale";
 import { api } from "../utils/api";
 import { BasicText } from "./BasicText";
-import { Title } from "./Title";
+import { SmallButton } from "./SmallButton";
 
 export function RescheduleAppointments() {
     const { user } = useClerk();
@@ -88,9 +88,6 @@ function RescheduleAppointmentRequest({
         api.appointments.similarHoursBasedOnAppointment.useQuery({
             id: appointment.id,
         });
-
-    console.log(suggestedHours.data);
-
     return (
         <View
             style={{
@@ -126,31 +123,45 @@ function RescheduleAppointmentRequest({
             </BasicText>
             <View
                 style={{
-                    flexDirection: "column",
+                    flexDirection: "row",
+                    flexWrap: "wrap",
+                    gap: 6,
                 }}
             >
-                {suggestedHours.data?.availableHoursOnTheSameDay.map((hour) => (
-                    <BasicText key={hour.id} size="lg">
-                        {hour.startAt} - {hour.weekDay}
-                    </BasicText>
-                ))}
-            </View>
-            <BasicText size="lg" fontWeight="bold">
-                <Trans>Similar hours on the different days</Trans>
-            </BasicText>
-            <View
-                style={{
-                    flexDirection: "column",
-                }}
-            >
-                {suggestedHours.data?.availableHoursOnTheDifferentDays.map(
-                    (hour) => (
-                        <BasicText key={hour.id} size="lg">
-                            {hour.startAt} - {hour.weekDay}
-                        </BasicText>
+                {suggestedHours.data?.availableHoursOnTheSameDay.map(
+                    (hour, index) => (
+                        <SmallButton key={`${hour.id}-${index}`}>
+                            {hour.startAt}:00
+                        </SmallButton>
                     ),
                 )}
             </View>
+            <BasicText size="xl" fontWeight="bold">
+                <Trans>Similar hours on the different day</Trans>
+            </BasicText>
+
+            {suggestedHours.data?.availableHoursOnDifferentDays.map((date) => (
+                <>
+                    <BasicText size="lg">
+                        {format(date.date, "EEEE - dd/MM", {
+                            locale: getLocale(lingui),
+                        })}
+                    </BasicText>
+                    <View
+                        style={{
+                            flexDirection: "row",
+                            flexWrap: "wrap",
+                            gap: 6,
+                        }}
+                    >
+                        {date.hours.map((hour, index) => (
+                            <SmallButton key={`${hour.id}-${index}`}>
+                                {hour.startAt}:00
+                            </SmallButton>
+                        ))}
+                    </View>
+                </>
+            ))}
         </View>
     );
 }
