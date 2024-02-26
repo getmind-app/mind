@@ -57,8 +57,7 @@ export default function HomeScreen() {
 
     const onRefresh = async () => {
         setRefreshing(true);
-        await utils.appointments.findNextUserAppointment.invalidate();
-        await utils.notes.findByUserId.invalidate();
+        await utils.invalidate();
         setRefreshing(false);
     };
 
