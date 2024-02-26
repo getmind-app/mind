@@ -77,8 +77,11 @@ export const notesRouter = createTRPCRouter({
             }),
         )
         .query(async ({ ctx, input }) => {
-            return await ctx.prisma.note.findUnique({
+            return await ctx.prisma.note.findUniqueOrThrow({
                 where: { id: input.id },
+                include: {
+                    patient: true,
+                },
             });
         }),
 });
