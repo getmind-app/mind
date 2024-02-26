@@ -52,16 +52,13 @@ export function RescheduleAppointments() {
 
     return (
         <>
-            {/* <SmallButton onPress={() => modalizeRef.current?.open()}>
-                <BasicText>Open reschedules</BasicText>
-            </SmallButton> */}
             <Portal>
                 <Modalize
                     modalStyle={{ backgroundColor: "#f8f8f8", padding: 24 }}
                     ref={modalizeRef}
                 >
                     <BasicText
-                        size="2xl"
+                        size="xl"
                         fontWeight="bold"
                         style={{
                             marginBottom: 24,
@@ -91,7 +88,6 @@ function RescheduleAppointmentRequest({
         api.appointments.similarHoursBasedOnAppointment.useQuery({
             id: appointment.id,
         });
-
     return (
         <View
             style={{
@@ -122,7 +118,7 @@ function RescheduleAppointmentRequest({
                     one
                 </Trans>
             </BasicText>
-            <BasicText size="xl" fontWeight="bold">
+            <BasicText size="lg" fontWeight="bold">
                 <Trans>Other hours on the same day</Trans>
             </BasicText>
             <View

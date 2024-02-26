@@ -2,11 +2,13 @@ import React, { useEffect, useRef, useState } from "react";
 import {
     Alert,
     Linking,
+    Platform,
     RefreshControl,
     Text,
     TouchableOpacity,
     View,
 } from "react-native";
+import * as Device from "expo-device";
 import * as Location from "expo-location";
 import * as Notifications from "expo-notifications";
 import { useRouter } from "expo-router";
@@ -85,7 +87,8 @@ export default function HomeScreen() {
 
             if (
                 !notificationPermission.granted &&
-                notificationPermission.canAskAgain
+                notificationPermission.canAskAgain &&
+                Device.isDevice
             ) {
                 await registerForPushNotificationsAsync().then((token) =>
                     setExpoPushToken(token ?? null),

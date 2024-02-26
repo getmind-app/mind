@@ -11,7 +11,7 @@ export function UserPhoto({
     height = 32,
     iconSize = 20,
 }: {
-    userId: string;
+    userId: string | null;
     alt: string;
     url?: string;
     width?: number;
