@@ -113,10 +113,7 @@ function TherapistOptions() {
 
     return (
         <>
-            <ScrollView
-                className="min-h-max"
-                showsVerticalScrollIndicator={false}
-            >
+            <ScrollView showsVerticalScrollIndicator={false}>
                 <View style={{ paddingBottom: 32 }}>
                     <Text className="font-nunito-sans-bold text-3xl">
                         <Trans>Personal info</Trans>
