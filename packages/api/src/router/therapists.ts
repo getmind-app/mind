@@ -1,4 +1,4 @@
-import { addDays } from "date-fns";
+import { addDays, endOfDay, startOfDay } from "date-fns";
 import { z } from "zod";
 
 import { type Prisma, type WeekDay } from "@acme/db";
@@ -391,5 +391,36 @@ export const therapistsRouter = createTRPCRouter({
         });
 
         return recurrences;
+    }),
+    appointmentsPreview: protectedProcedure.query(async ({ ctx }) => {
+        const therapist = await ctx.prisma.therapist.findUniqueOrThrow({
+            where: {
+                userId: ctx.auth.userId,
+            },
+        });
+
+        const [pendentAppointments, appointmentsToday] = await Promise.all([
+            ctx.prisma.appointment.count({
+                where: {
+                    therapistId: therapist.id,
+                    status: "PENDENT",
+                },
+            }),
+            ctx.prisma.appointment.count({
+                where: {
+                    therapistId: therapist.id,
+                    status: "ACCEPTED",
+                    scheduledTo: {
+                        gte: startOfDay(new Date()),
+                        lte: endOfDay(new Date()),
+                    },
+                },
+            }),
+        ]);
+
+        return {
+            pendentAppointments,
+            appointmentsToday,
+        };
     }),
 });

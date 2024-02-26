@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import {
     Alert,
     Linking,
-    Platform,
     RefreshControl,
     Text,
     TouchableOpacity,
@@ -39,6 +38,7 @@ import { registerForPushNotificationsAsync } from "../../helpers/registerForPush
 import { useUserIsProfessional } from "../../hooks/user/useUserIsProfessional";
 import { useUserMutations } from "../../hooks/user/useUserMutations";
 import { api } from "../../utils/api";
+import { colors } from "../../utils/colors";
 
 export default function HomeScreen() {
     const router = useRouter();
@@ -59,8 +59,7 @@ export default function HomeScreen() {
 
     const onRefresh = async () => {
         setRefreshing(true);
-        await utils.appointments.findNextUserAppointment.invalidate();
-        await utils.notes.findByUserId.invalidate();
+        await utils.invalidate();
         setRefreshing(false);
     };
 
@@ -140,6 +139,7 @@ export default function HomeScreen() {
                 {!isProfessional && <RescheduleAppointments />}
                 <Title title={t({ message: "Next session" })} />
                 <NextAppointment />
+                {isProfessional && <AppointmentsPreview />}
                 <View className="mb-2 flex flex-row items-center justify-between pt-8 align-middle">
                     <Title title={t({ message: "Last notes" })} />
 
@@ -427,5 +427,69 @@ function SetUpWorkHoursWarning() {
                     </View>
                 )}
         </>
+    );
+}
+
+function AppointmentsPreview() {
+    const preview = api.therapists.appointmentsPreview.useQuery();
+
+    if (preview.isLoading) return null;
+
+    if (preview.isError)
+        return (
+            <BasicText color="red">
+                <Trans>Failed to get appointments data</Trans>
+            </BasicText>
+        );
+
+    return (
+        <View
+            style={{
+                marginTop: 12,
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 12,
+                // justifyContent: "space-between",
+            }}
+        >
+            <View
+                style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: 4,
+                }}
+            >
+                <View
+                    style={{
+                        borderRadius: 8,
+                        width: 8,
+                        height: 8,
+                        backgroundColor: colors.green,
+                    }}
+                />
+                <BasicText fontWeight="bold" color="green">
+                    {preview.data?.appointmentsToday} today
+                </BasicText>
+            </View>
+            <View
+                style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: 4,
+                }}
+            >
+                <View
+                    style={{
+                        borderRadius: 8,
+                        width: 8,
+                        height: 8,
+                        backgroundColor: colors.yellow,
+                    }}
+                />
+                <BasicText fontWeight="bold" color="yellow">
+                    {preview.data?.pendentAppointments} pendent
+                </BasicText>
+            </View>
+        </View>
     );
 }
