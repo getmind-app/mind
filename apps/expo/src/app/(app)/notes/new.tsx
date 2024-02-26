@@ -1,30 +1,33 @@
 import { useState } from "react";
 import {
-    ActivityIndicator,
+    Alert,
     KeyboardAvoidingView,
     Platform,
     ScrollView,
-    Text,
     TextInput,
-    TouchableOpacity,
     View,
 } from "react-native";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { Trans, t } from "@lingui/macro";
 
 import { Header } from "../../../components/Header";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
+import { SmallButton } from "../../../components/SmallButton";
 import { Title } from "../../../components/Title";
+import { UserPhoto } from "../../../components/UserPhotos";
+import { useUserIsProfessional } from "../../../hooks/user/useUserIsProfessional";
 import { api } from "../../../utils/api";
 
 export default function NewNote() {
     const router = useRouter();
+    const params = useLocalSearchParams();
     const [content, setContent] = useState("");
     const utils = api.useContext();
+    const isProfessional = useUserIsProfessional();
     // todo: dont use junky solution
     const isValid = content && content.length > 1;
 
-    const { mutate, isLoading } = api.notes.create.useMutation({
+    const { mutateAsync, isLoading } = api.notes.create.useMutation({
         onSuccess: async () => {
             await utils.notes.findByUserId.invalidate();
             router.push({
@@ -33,11 +36,20 @@ export default function NewNote() {
         },
     });
 
-    function handleNewNote() {
+    async function handleNewNote() {
         if (isValid) {
-            mutate({
-                content: content,
-            });
+            try {
+                await mutateAsync({
+                    content: content,
+                    patientId: String(params.patientUserId),
+                });
+                setContent("");
+            } catch {
+                Alert.alert(
+                    t({ message: "Error" }),
+                    t({ message: "An error occurred while creating the note" }),
+                );
+            }
         }
     }
 
@@ -57,26 +69,37 @@ export default function NewNote() {
                     showsVerticalScrollIndicator={false}
                 >
                     <View
-                        className={`flex flex-row items-center justify-between`}
+                        style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                            gap: 12,
+                            justifyContent: "space-between",
+                        }}
                     >
-                        <Title title={t({ message: "New note" })} />
-                        <TouchableOpacity
-                            onPress={handleNewNote}
-                            disabled={isLoading}
+                        <View
+                            style={{
+                                flexDirection: "row",
+                                alignItems: "center",
+                                gap: 12,
+                            }}
                         >
-                            <View
-                                className={`rounded-xl bg-blue-500 ${
-                                    (isLoading || !isValid) && "opacity-75"
-                                }`}
-                            >
-                                <View className="flex flex-row items-center gap-2 px-4 py-2 align-middle">
-                                    <Text className="font-nunito-sans-bold text-base text-white">
-                                        <Trans>Create</Trans>
-                                    </Text>
-                                    {isLoading && <ActivityIndicator />}
-                                </View>
-                            </View>
-                        </TouchableOpacity>
+                            <Title title={t({ message: "New note" })} />
+                            {isProfessional && (
+                                <UserPhoto
+                                    userId={String(params.patientUserId)}
+                                    alt={"Patient's photo"}
+                                />
+                            )}
+                        </View>
+                        <SmallButton
+                            style={{
+                                alignSelf: "center",
+                            }}
+                            onPress={handleNewNote}
+                            disabled={isLoading || !isValid}
+                        >
+                            <Trans>Create</Trans>
+                        </SmallButton>
                     </View>
                     <TextInput
                         className="w-full py-4 font-nunito-sans text-lg"
