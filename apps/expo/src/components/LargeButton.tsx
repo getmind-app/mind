@@ -24,6 +24,7 @@ export function LargeButton({
         <TouchableOpacity
             style={{
                 flex: 1,
+                minHeight: 48,
                 backgroundColor: disabled
                     ? disabledColor(colors[color])
                     : colors[color],
