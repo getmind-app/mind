@@ -1,21 +1,26 @@
-import { useEffect, useRef } from "react";
-import { Alert, View } from "react-native";
-import { Modalize } from "react-native-modalize";
+import { useEffect, useState } from "react";
+import { Alert, Dimensions, View } from "react-native";
+import { Modalize, useModalize } from "react-native-modalize";
 import { Portal } from "react-native-portalize";
 import { useClerk } from "@clerk/clerk-expo";
 import { Trans, t } from "@lingui/macro";
 import { useLingui } from "@lingui/react";
-import { format } from "date-fns";
+import { format, startOfDay } from "date-fns";
 
-import { type Appointment, type Therapist } from "../../../../packages/db";
+import {
+    type Appointment,
+    type Hour,
+    type Therapist,
+} from "../../../../packages/db";
 import { getLocale } from "../helpers/getLocale";
 import { api } from "../utils/api";
 import { BasicText } from "./BasicText";
+import { LargeButton } from "./LargeButton";
 import { SmallButton } from "./SmallButton";
 
 export function RescheduleAppointments() {
     const { user } = useClerk();
-    const modalizeRef = useRef<Modalize>(null);
+    const { ref, open, close } = useModalize();
 
     const appointmentsToReschedule =
         api.patients.appointmentsToReschedule.useQuery();
@@ -23,12 +28,17 @@ export function RescheduleAppointments() {
     useEffect(() => {
         if (
             appointmentsToReschedule.data &&
-            appointmentsToReschedule.data?.length > 0 &&
-            modalizeRef.current
+            appointmentsToReschedule.data?.length > 0
         ) {
-            modalizeRef.current?.open();
+            // junky solutions to a problem i shouldn't have
+            // but checking ref.current wasn't working
+            setTimeout(() => {
+                open();
+            }, 1000);
+        } else {
+            close();
         }
-    }, [appointmentsToReschedule.data, modalizeRef.current]);
+    }, [appointmentsToReschedule.data, appointmentsToReschedule.isLoading]);
 
     if (!user) {
         return null;
@@ -46,19 +56,29 @@ export function RescheduleAppointments() {
         return null;
     }
 
-    if (!appointmentsToReschedule.data) {
+    if (
+        !appointmentsToReschedule.data ||
+        appointmentsToReschedule.data.length === 0
+    ) {
         return null;
+    }
+
+    async function handleReschedule() {
+        await appointmentsToReschedule.refetch();
     }
 
     return (
         <>
-            {/* <SmallButton onPress={() => modalizeRef.current?.open()}>
-                <BasicText>Open reschedules</BasicText>
-            </SmallButton> */}
             <Portal>
                 <Modalize
                     modalStyle={{ backgroundColor: "#f8f8f8", padding: 24 }}
-                    ref={modalizeRef}
+                    ref={ref}
+                    modalHeight={Dimensions.get("window").height * 0.8}
+                    alwaysOpen={Dimensions.get("window").height * 0.8}
+                    closeOnOverlayTap={false}
+                    closeSnapPointStraightEnabled={false}
+                    withHandle={false}
+                    withOverlay={true}
                 >
                     <BasicText
                         size="2xl"
@@ -69,12 +89,22 @@ export function RescheduleAppointments() {
                     >
                         <Trans>Reschedule requests</Trans>
                     </BasicText>
-                    {appointmentsToReschedule.data.map((appointment) => (
-                        <RescheduleAppointmentRequest
-                            key={appointment.id}
-                            appointment={appointment}
-                        />
-                    ))}
+                    <View
+                        style={{
+                            gap: 32,
+                            paddingBottom: 32,
+                        }}
+                    >
+                        {appointmentsToReschedule.data.map(
+                            (appointment, index) => (
+                                <RescheduleAppointmentRequest
+                                    key={`${appointment.id}-${index}`}
+                                    appointment={appointment}
+                                    onReschedule={handleReschedule}
+                                />
+                            ),
+                        )}
+                    </View>
                 </Modalize>
             </Portal>
         </>
@@ -83,14 +113,80 @@ export function RescheduleAppointments() {
 
 function RescheduleAppointmentRequest({
     appointment,
+    onReschedule,
 }: {
     appointment: Appointment & { therapist: Therapist };
+    onReschedule: () => void;
 }) {
     const lingui = useLingui();
+    const closeRescheduleRequest =
+        api.appointments.closeRescheduleRequest.useMutation();
     const suggestedHours =
         api.appointments.similarHoursBasedOnAppointment.useQuery({
             id: appointment.id,
         });
+    const [selectedDayAndHour, setSelectedHourId] = useState<{
+        date: Date;
+        hourId: string;
+    } | null>(null);
+
+    function handleHourSelection({
+        hourId,
+        date,
+    }: {
+        hourId: string;
+        date: Date;
+    }) {
+        setSelectedHourId({
+            hourId,
+            date,
+        });
+    }
+
+    async function saveNewHour() {
+        if (!selectedDayAndHour) {
+            return;
+        }
+
+        try {
+            await closeRescheduleRequest.mutateAsync({
+                appointmentId: appointment.id,
+                newHourId: selectedDayAndHour.hourId,
+                newDate: selectedDayAndHour.date,
+            });
+            onReschedule();
+        } catch (e) {
+            console.error(e);
+
+            Alert.alert(
+                t({ message: "Error" }),
+                t({
+                    message:
+                        "An error occurred while trying to reschedule your appointment",
+                }),
+            );
+        }
+    }
+
+    async function keepCurrent() {
+        try {
+            await closeRescheduleRequest.mutateAsync({
+                appointmentId: appointment.id,
+                keepCurrentHour: true,
+            });
+            onReschedule();
+        } catch (e) {
+            console.error(e);
+
+            Alert.alert(
+                t({ message: "Error" }),
+                t({
+                    message:
+                        "An error occurred while trying to update your appointment",
+                }),
+            );
+        }
+    }
 
     return (
         <View
@@ -116,7 +212,7 @@ function RescheduleAppointmentRequest({
                     )}
                 </Trans>
             </BasicText>
-            <BasicText size="lg">
+            <BasicText size="md">
                 <Trans>
                     Pick another hour for your appointment or keep the current
                     one
@@ -134,9 +230,17 @@ function RescheduleAppointmentRequest({
             >
                 {suggestedHours.data?.availableHoursOnTheSameDay.map(
                     (hour, index) => (
-                        <SmallButton key={`${hour.id}-${index}`}>
-                            {hour.startAt}:00
-                        </SmallButton>
+                        <HourButton
+                            key={`${hour.id}-${index}`}
+                            hour={hour}
+                            isSelected={selectedDayAndHour?.hourId === hour.id}
+                            onPress={({ hourId }) =>
+                                handleHourSelection({
+                                    hourId,
+                                    date: startOfDay(appointment.scheduledTo),
+                                })
+                            }
+                        />
                     ),
                 )}
             </View>
@@ -159,13 +263,76 @@ function RescheduleAppointmentRequest({
                         }}
                     >
                         {date.hours.map((hour, index) => (
-                            <SmallButton key={`${hour.id}-${index}`}>
-                                {hour.startAt}:00
-                            </SmallButton>
+                            <HourButton
+                                key={`${hour.id}-${index}`}
+                                hour={hour}
+                                isSelected={
+                                    selectedDayAndHour?.hourId === hour.id
+                                }
+                                onPress={({ hourId }) =>
+                                    handleHourSelection({
+                                        hourId,
+                                        date: startOfDay(date.date),
+                                    })
+                                }
+                            />
                         ))}
                     </View>
                 </>
             ))}
+            <View
+                style={{
+                    flexDirection: "row",
+                    gap: 12,
+                    marginTop: 24,
+                }}
+            >
+                <LargeButton
+                    style={{
+                        flex: 0.3,
+                    }}
+                    textSize="md"
+                    color="gray"
+                    onPress={keepCurrent}
+                    disabled={closeRescheduleRequest.isLoading}
+                >
+                    Keep current
+                </LargeButton>
+                <LargeButton
+                    style={{
+                        flex: 0.7,
+                    }}
+                    textSize="md"
+                    onPress={saveNewHour}
+                    disabled={
+                        !selectedDayAndHour || closeRescheduleRequest.isLoading
+                    }
+                >
+                    Save
+                </LargeButton>
+            </View>
         </View>
+    );
+}
+
+function HourButton({
+    hour,
+    onPress,
+    isSelected,
+}: {
+    hour: Hour;
+    onPress: ({ hourId }: { hourId: string }) => void;
+    isSelected: boolean;
+}) {
+    return (
+        <SmallButton
+            onPress={() => {
+                onPress({ hourId: hour.id });
+            }}
+            color={isSelected ? "primaryBlue" : "lightGray"}
+            textColor={isSelected ? "white" : "black"}
+        >
+            {hour.startAt}:00
+        </SmallButton>
     );
 }
