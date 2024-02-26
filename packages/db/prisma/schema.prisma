@@ -11,10 +11,11 @@ datasource db {
 model Note {
     id        String   @id @default(cuid())
     patientId String
+    patient   Patient  @relation(fields: [patientId], references: [id], onDelete: NoAction)
     files     Bytes[]
     content   String
-    createdAt DateTime @default(now())
     userId    String
+    createdAt DateTime @default(now())
 }
 
 model Therapist {
@@ -104,6 +105,7 @@ model Patient {
     paymentAccountId  String?
     appointments      Appointment[]
     Recurrence        Recurrence[]
+    Note              Note[]
 }
 
 model Email {

@@ -392,6 +392,25 @@ export const therapistsRouter = createTRPCRouter({
 
         return recurrences;
     }),
+    allPatients: protectedProcedure.query(async ({ ctx }) => {
+        const therapist = await ctx.prisma.therapist.findUniqueOrThrow({
+            where: {
+                userId: ctx.auth.userId,
+            },
+        });
+
+        const patients = await ctx.prisma.patient.findMany({
+            where: {
+                appointments: {
+                    some: {
+                        therapistId: therapist.id,
+                    },
+                },
+            },
+        });
+
+        return patients;
+    }),
     appointmentsPreview: protectedProcedure.query(async ({ ctx }) => {
         const therapist = await ctx.prisma.therapist.findUniqueOrThrow({
             where: {
