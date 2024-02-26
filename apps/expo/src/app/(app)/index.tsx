@@ -56,6 +56,7 @@ export default function HomeScreen() {
     const [, setNotification] = useState<Notifications.Notification | boolean>(
         false,
     );
+    const nextAppointment = api.appointments.findNextUserAppointment.useQuery();
 
     const onRefresh = async () => {
         setRefreshing(true);
@@ -144,7 +145,16 @@ export default function HomeScreen() {
                     <Title title={t({ message: "Last notes" })} />
 
                     <SmallButton
-                        onPress={() => router.push("/notes/new")}
+                        onPress={() =>
+                            router.push({
+                                pathname: "/notes/new",
+                                params: {
+                                    patientId: nextAppointment.data?.patientId,
+                                    patientUserId:
+                                        nextAppointment.data?.patient.userId,
+                                },
+                            })
+                        }
                         textSize="lg"
                     >
                         New
@@ -161,13 +171,13 @@ function NextAppointment() {
     const isProfessional = useUserIsProfessional();
     const lingui = useLingui();
 
-    const appointment = api.appointments.findNextUserAppointment.useQuery();
+    const nextAppointment = api.appointments.findNextUserAppointment.useQuery();
 
-    if (appointment.isLoading) return <CardSkeleton />;
+    if (nextAppointment.isLoading) return <CardSkeleton />;
 
     return (
         <>
-            {appointment.data && appointment.data.therapistId ? (
+            {nextAppointment.data && nextAppointment.data.therapistId ? (
                 <View
                     style={{
                         elevation: 2,
@@ -183,29 +193,26 @@ function NextAppointment() {
                                 }}
                             >
                                 {format(
-                                    new Date(appointment.data.scheduledTo),
+                                    new Date(nextAppointment.data.scheduledTo),
                                     "EEEE, dd/MM",
                                     {
                                         locale: getLocale(lingui),
                                     },
                                 )}
                             </BasicText>
-                            <Text className="font-nunito-sans-bold text-xl text-blue-500 ">
-                                {new Date(
-                                    appointment.data.scheduledTo,
-                                ).getHours()}
-                                :
-                                {new Date(
-                                    appointment.data.scheduledTo,
-                                ).getMinutes() == 0
-                                    ? "00"
-                                    : new Date(
-                                          appointment.data.scheduledTo,
-                                      ).getMinutes()}
-                            </Text>
+                            <BasicText
+                                color="primaryBlue"
+                                fontWeight="bold"
+                                size="2xl"
+                            >
+                                {format(
+                                    nextAppointment.data.scheduledTo,
+                                    "HH:mm",
+                                )}
+                            </BasicText>
                         </View>
                         <Text className="font-nunito-sans text-sm text-slate-500">
-                            {appointment.data.modality === "ONLINE" ? (
+                            {nextAppointment.data.modality === "ONLINE" ? (
                                 "via Google Meet"
                             ) : (
                                 <Text>
@@ -214,8 +221,8 @@ function NextAppointment() {
                                         <TouchableOpacity
                                             onPress={() =>
                                                 geocodeAddress(
-                                                    appointment.data?.therapist
-                                                        ?.address,
+                                                    nextAppointment.data
+                                                        ?.therapist?.address,
                                                 ).then((link) =>
                                                     Linking.openURL(
                                                         link ? link : "",
@@ -225,13 +232,15 @@ function NextAppointment() {
                                         >
                                             <Text>
                                                 {
-                                                    appointment.data.therapist
-                                                        .address?.street
+                                                    nextAppointment.data
+                                                        .therapist.address
+                                                        ?.street
                                                 }
                                                 ,{" "}
                                                 {
-                                                    appointment.data.therapist
-                                                        .address?.number
+                                                    nextAppointment.data
+                                                        .therapist.address
+                                                        ?.number
                                                 }
                                             </Text>
                                         </TouchableOpacity>
@@ -245,11 +254,12 @@ function NextAppointment() {
                                     {isProfessional ? (
                                         <UserPhoto
                                             userId={
-                                                appointment.data.patient.userId
+                                                nextAppointment.data.patient
+                                                    .userId
                                             }
                                             alt={"Patient"}
                                             url={
-                                                appointment.data.patient
+                                                nextAppointment.data.patient
                                                     .profilePictureUrl
                                             }
                                         />
@@ -257,18 +267,19 @@ function NextAppointment() {
                                         <TouchableOpacity
                                             onPress={() =>
                                                 router.push(
-                                                    `/psych/${appointment.data?.therapist.id}`,
+                                                    `/psych/${nextAppointment.data?.therapist.id}`,
                                                 )
                                             }
                                         >
                                             <UserPhoto
                                                 userId={
-                                                    appointment.data.therapist
-                                                        .userId
+                                                    nextAppointment.data
+                                                        .therapist.userId
                                                 }
                                                 alt={"Therapist"}
                                                 url={
-                                                    appointment.data.therapist
+                                                    nextAppointment.data
+                                                        .therapist
                                                         .profilePictureUrl
                                                 }
                                             />
@@ -277,23 +288,23 @@ function NextAppointment() {
                                 </View>
                                 <Text className="pl-2 font-nunito-sans text-xl">
                                     {isProfessional
-                                        ? appointment.data.patient.name
-                                        : appointment.data.therapist.name}
+                                        ? nextAppointment.data.patient.name
+                                        : nextAppointment.data.therapist.name}
                                 </Text>
                             </View>
                         </View>
                     </View>
                     <TouchableOpacity
                         onPress={async () => {
-                            if (appointment.data?.modality === "ONLINE") {
+                            if (nextAppointment.data?.modality === "ONLINE") {
                                 Linking.openURL(
-                                    appointment?.data?.link as string,
+                                    nextAppointment?.data?.link as string,
                                 );
                                 return;
                             }
 
                             const mapsLink = await geocodeAddress(
-                                appointment.data?.therapist.address,
+                                nextAppointment.data?.therapist.address,
                             );
                             Linking.openURL(mapsLink as string);
                         }}
@@ -303,13 +314,13 @@ function NextAppointment() {
                                 size={16}
                                 color="white"
                                 name={`${
-                                    appointment.data.modality === "ONLINE"
+                                    nextAppointment.data.modality === "ONLINE"
                                         ? "video-camera"
                                         : "car"
                                 }`}
                             />
                             <Text className="ml-4 font-nunito-sans-bold text-lg text-white">
-                                {appointment.data.modality === "ONLINE"
+                                {nextAppointment.data.modality === "ONLINE"
                                     ? t({ message: "Join the meeting" })
                                     : t({ message: "Get directions" })}
                             </Text>
@@ -334,47 +345,47 @@ function LastNotes() {
     return (
         <>
             {data && data.length > 0 ? (
-                data.map(
-                    ({
-                        id,
-                        content,
-                        createdAt,
-                    }: {
-                        id: string;
-                        content: string;
-                        createdAt: Date;
-                    }) => (
-                        <Card key={id}>
-                            <View className="flex w-full flex-row items-center justify-between align-middle">
-                                <View className="flex w-64 flex-col">
-                                    <Text className="font-nunito-sans-bold text-xl capitalize text-slate-500">
-                                        <Text className="text-blue-500">
-                                            {createdAt.getDate()}
-                                        </Text>{" "}
-                                        {createdAt.toLocaleString(
-                                            lingui.i18n.locale,
-                                            {
-                                                month: "long",
-                                            },
-                                        )}
-                                    </Text>
-                                    <Text className="pt-2 font-nunito-sans text-base">
-                                        {content}
-                                    </Text>
-                                </View>
-                                <TouchableOpacity
-                                    onPress={() => router.push("/notes/" + id)}
+                data.map(({ id, content, createdAt }) => (
+                    <Card key={id}>
+                        <View className="flex w-full flex-row items-center justify-between align-middle">
+                            <View className="flex w-64 flex-col">
+                                <View
+                                    style={{
+                                        flexDirection: "row",
+                                        gap: 8,
+                                    }}
                                 >
-                                    <MaterialIcons
-                                        size={32}
-                                        name="chevron-right"
-                                        color="#3b82f6"
-                                    />
-                                </TouchableOpacity>
+                                    <BasicText
+                                        color="primaryBlue"
+                                        fontWeight="bold"
+                                        size="2xl"
+                                    >
+                                        {createdAt.getDate()}
+                                    </BasicText>
+                                    <BasicText
+                                        color="gray"
+                                        fontWeight="bold"
+                                        size="2xl"
+                                    >
+                                        {format(createdAt, "LLLL", {
+                                            locale: getLocale(lingui),
+                                        })}
+                                    </BasicText>
+                                </View>
+                                <BasicText size="lg">{content}</BasicText>
                             </View>
-                        </Card>
-                    ),
-                )
+                            <TouchableOpacity
+                                onPress={() => router.push("/notes/" + id)}
+                            >
+                                <MaterialIcons
+                                    size={32}
+                                    name="chevron-right"
+                                    color="#3b82f6"
+                                />
+                            </TouchableOpacity>
+                        </View>
+                    </Card>
+                ))
             ) : (
                 <Card>
                     <View className="flex w-full flex-row items-center justify-between gap-2 align-middle">
