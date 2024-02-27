@@ -25,6 +25,7 @@ import { BasicText } from "../../components/BasicText";
 import { Card } from "../../components/Card";
 import { CardSkeleton } from "../../components/CardSkeleton";
 import DefaultHomeCard from "../../components/DefaultHomeCard";
+import { NoteCard } from "../../components/NoteCard";
 import { Refreshable } from "../../components/Refreshable";
 import { RescheduleAppointments } from "../../components/RescheduleAppointments";
 import { ScreenWrapper } from "../../components/ScreenWrapper";
@@ -344,7 +345,6 @@ function NextAppointment() {
 
 function LastNotes() {
     const router = useRouter();
-    const lingui = useLingui();
 
     const { data, isLoading } = api.notes.findByUserId.useQuery();
 
@@ -353,47 +353,7 @@ function LastNotes() {
     return (
         <>
             {data && data.length > 0 ? (
-                data.map(({ id, content, createdAt }) => (
-                    <Card key={id}>
-                        <View className="flex w-full flex-row items-center justify-between align-middle">
-                            <View className="flex w-64 flex-col">
-                                <View
-                                    style={{
-                                        flexDirection: "row",
-                                        gap: 8,
-                                    }}
-                                >
-                                    <BasicText
-                                        color="primaryBlue"
-                                        fontWeight="bold"
-                                        size="2xl"
-                                    >
-                                        {createdAt.getDate()}
-                                    </BasicText>
-                                    <BasicText
-                                        color="gray"
-                                        fontWeight="bold"
-                                        size="2xl"
-                                    >
-                                        {format(createdAt, "LLLL", {
-                                            locale: getLocale(lingui),
-                                        })}
-                                    </BasicText>
-                                </View>
-                                <BasicText size="lg">{content}</BasicText>
-                            </View>
-                            <TouchableOpacity
-                                onPress={() => router.push("/notes/" + id)}
-                            >
-                                <MaterialIcons
-                                    size={32}
-                                    name="chevron-right"
-                                    color="#3b82f6"
-                                />
-                            </TouchableOpacity>
-                        </View>
-                    </Card>
-                ))
+                data.map((note) => <NoteCard note={note} key={note.id} />)
             ) : (
                 <Card>
                     <View className="flex w-full flex-row items-center justify-between gap-2 align-middle">
