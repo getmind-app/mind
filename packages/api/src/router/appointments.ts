@@ -9,7 +9,6 @@ import {
     set,
     setHours,
 } from "date-fns";
-
 import { z } from "zod";
 
 import { type Appointment, type WeekDay } from "@acme/db";
@@ -19,6 +18,7 @@ import { createFirstAppointmentsInRecurrence } from "../appointments/createFirst
 import { cancelAppointmentInCalendar } from "../helpers/cancelAppointmentInCalendar";
 import { createAppointmentInCalendar } from "../helpers/createAppointmentInCalendar";
 import { sendPushNotification } from "../helpers/sendPushNotification";
+import { updateAppointmentInCalendar } from "../helpers/updateAppointmentInCalendar";
 import { notifyAppointmentStatusChange } from "../notifications/notifyAppointmentStatusChange";
 import { payForAppointment } from "../payments/payForAppointment";
 import { getAvailableDatesAndHours } from "../therapist/getAvailableDatesAndHours";
@@ -460,7 +460,7 @@ export const appointmentsRouter = createTRPCRouter({
 
             const newScheduledTo = setHours(input.newDate, newHour.startAt);
 
-            await ctx.prisma.appointment.update({
+            const updatedAppointment = await ctx.prisma.appointment.update({
                 where: {
                     id: input.appointmentId,
                 },
@@ -468,6 +468,20 @@ export const appointmentsRouter = createTRPCRouter({
                     hourId: input.newHourId,
                     scheduledTo: newScheduledTo,
                     rescheduleRequested: false,
+                },
+            });
+
+            await updateAppointmentInCalendar(appointment.eventId ?? "", {
+                start: {
+                    timeZone: "America/Sao_Paulo",
+                    date: updatedAppointment.scheduledTo.toISOString(),
+                },
+                end: {
+                    timeZone: "America/Sao_Paulo",
+                    date: addHours(
+                        updatedAppointment.scheduledTo,
+                        1,
+                    ).toISOString(),
                 },
             });
 
