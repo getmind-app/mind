@@ -171,7 +171,7 @@ function AppointmentCardError() {
     );
 }
 
-function RecurrenceCard({ recurrence }: { recurrence: Recurrence }) {
+export function RecurrenceCard({ recurrence }: { recurrence: Recurrence }) {
     const [open, setOpen] = useState(false);
     const isProfessional = useUserIsProfessional();
 

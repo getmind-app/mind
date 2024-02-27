@@ -2,7 +2,7 @@ import { Text } from "react-native";
 
 import { colors, type Color } from "../utils/colors";
 
-export type BasicTextSizes = "sm" | "md" | "lg" | "xl" | "2xl" | "3xl";
+export type BasicTextSizes = "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl";
 
 type BasicTextProps = ConstructorParameters<typeof Text>[0] & {
     fontWeight?: "bold" | "normal";
@@ -19,6 +19,7 @@ const sizeMapper: {
     xl: 18,
     "2xl": 20,
     "3xl": 24,
+    "4xl": 28,
 };
 
 const lineHeightMapper: {
@@ -30,6 +31,7 @@ const lineHeightMapper: {
     xl: 28,
     "2xl": 32,
     "3xl": 36,
+    "4xl": 40,
 };
 
 export function BasicText({
