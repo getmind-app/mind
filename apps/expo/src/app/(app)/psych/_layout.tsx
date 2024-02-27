@@ -6,7 +6,6 @@ export default function PsychLayout() {
             <Stack.Screen name="[id]" />
             <Stack.Screen name="schedule" />
             <Stack.Screen name="payment" />
-            <Stack.Screen name="patients" />
             <Stack.Screen
                 name="finish"
                 options={{
