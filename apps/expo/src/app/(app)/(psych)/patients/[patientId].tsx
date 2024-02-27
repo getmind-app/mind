@@ -6,12 +6,13 @@ import {
     View,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { t } from "@lingui/macro";
+import { Trans, t } from "@lingui/macro";
 import { FlashList } from "@shopify/flash-list";
 import { format } from "date-fns";
 
 import {
     type Appointment,
+    type Note,
     type Patient,
     type Recurrence,
     type Therapist,
@@ -20,8 +21,10 @@ import { BasicText } from "../../../../components/BasicText";
 import { Data } from "../../../../components/Data";
 import { FullScreenLoading } from "../../../../components/FullScreenLoading";
 import { Header } from "../../../../components/Header";
+import { NoteCard } from "../../../../components/NoteCard";
 import { Refreshable } from "../../../../components/Refreshable";
 import { ScreenWrapper } from "../../../../components/ScreenWrapper";
+import { SmallButton } from "../../../../components/SmallButton";
 import { TherapistAppointmentCard } from "../../../../components/TherapistAppointmentCard";
 import { UserPhoto } from "../../../../components/UserPhotos";
 import { api } from "../../../../utils/api";
@@ -31,7 +34,6 @@ export default function PatientProfileScreen() {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 
     const [refreshing, setRefreshing] = useState(false);
-    const router = useRouter();
     const params = useLocalSearchParams();
     const patientProfile = api.therapists.patientProfile.useQuery({
         patientId: String(params.patientId),
@@ -114,7 +116,7 @@ export default function PatientProfileScreen() {
                                         flex: 1,
                                     }}
                                 >
-                                    First appointment:{" "}
+                                    <Trans>First appointment:</Trans>{" "}
                                     <BasicText color="black">
                                         {format(
                                             patientProfile.data
@@ -125,7 +127,7 @@ export default function PatientProfileScreen() {
                                 </BasicText>
 
                                 <BasicText>
-                                    Total value:{" "}
+                                    <Trans>Total value:</Trans>{" "}
                                     <BasicText
                                         color="primaryBlue"
                                         fontWeight="bold"
@@ -136,40 +138,26 @@ export default function PatientProfileScreen() {
                             </View>
                         </View>
                     </View>
-                    <View>
-                        <ProfileSection title="Appointments">
-                            <View
-                                style={{
-                                    display: "flex",
-                                    flexDirection: "row",
-                                    gap: 12,
-                                }}
-                            >
-                                <Data
-                                    value={
-                                        patientProfile.data.appointments.length
-                                    }
-                                    label="Total"
-                                />
+                    <View
+                        style={{
+                            marginTop: 16,
+                        }}
+                    >
+                        <AppointmentsList
+                            appointments={patientProfile.data.appointments}
+                            unpaidAppointments={
+                                patientProfile.data.unpaidAppointments
+                            }
+                        />
 
-                                <Data
-                                    color="red"
-                                    value={
-                                        patientProfile.data.unpaidAppointments
-                                    }
-                                    label="Unpaid"
-                                />
-                            </View>
-                            <AppointmentsList
-                                appointments={patientProfile.data.appointments}
-                            />
-                        </ProfileSection>
-                        <ProfileSection title="Recurrences">
-                            <RecurrenceList
-                                recurrences={patientProfile.data.Recurrence}
-                            />
-                        </ProfileSection>
-                        <ProfileSection title="Notes" />
+                        <RecurrenceList
+                            recurrences={patientProfile.data.Recurrence}
+                        />
+
+                        <NotesList
+                            patient={patientProfile.data}
+                            notes={patientProfile.data.Note}
+                        />
                     </View>
                 </ScrollView>
             </Refreshable>
@@ -177,32 +165,50 @@ export default function PatientProfileScreen() {
     );
 }
 
-function ProfileSection({
-    children,
-    title,
-}: {
-    children?: React.ReactNode;
-    title: string | React.ReactNode;
-}) {
-    return (
-        <>
-            <BasicText size="lg" fontWeight="bold">
-                {title}
-            </BasicText>
-            {children}
-        </>
+function SectionHeader({ title }: { title: string | React.ReactNode }) {
+    return typeof title === "string" ? (
+        <BasicText size="lg" fontWeight="bold">
+            {title}
+        </BasicText>
+    ) : (
+        title
     );
 }
 
 function AppointmentsList({
     appointments,
+    unpaidAppointments,
 }: {
     appointments: (Appointment & { therapist: Therapist } & {
         patient: Patient;
     })[];
+    unpaidAppointments: number;
 }) {
     return (
         <FlashList
+            ListHeaderComponent={() => (
+                <>
+                    <SectionHeader title={t({ message: "Appointments" })} />
+                    <View
+                        style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            gap: 12,
+                        }}
+                    >
+                        <Data
+                            value={appointments.length}
+                            label={t({ message: "Total" })}
+                        />
+
+                        <Data
+                            color="red"
+                            value={unpaidAppointments}
+                            label={t({ message: "Unpaid" })}
+                        />
+                    </View>
+                </>
+            )}
             data={appointments.slice(0, 3)}
             renderItem={({ item }) => (
                 <TherapistAppointmentCard key={item.id} appointment={item} />
@@ -223,9 +229,52 @@ function RecurrenceList({
 }) {
     return (
         <FlashList
+            ListHeaderComponent={() => (
+                <SectionHeader title={t({ message: "Recurrences" })} />
+            )}
             data={recurrences.slice(0, 3)}
             renderItem={({ item }) => <RecurrenceCard recurrence={item} />}
             estimatedItemSize={200}
+            keyExtractor={(item) => item.id}
+        />
+    );
+}
+
+function NotesList({ notes, patient }: { notes: Note[]; patient: Patient }) {
+    const router = useRouter();
+    return (
+        <FlashList
+            ListHeaderComponent={() => (
+                <View
+                    style={{
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        flex: 1,
+                    }}
+                >
+                    <BasicText size="lg" fontWeight="bold">
+                        <Trans>Notes</Trans>
+                    </BasicText>
+                    <SmallButton
+                        onPress={() =>
+                            router.push({
+                                pathname: "/notes/new",
+                                params: {
+                                    patientId: patient.id,
+                                    patientUserId: patient.userId,
+                                },
+                            })
+                        }
+                        textSize="lg"
+                    >
+                        <Trans>New</Trans>
+                    </SmallButton>
+                </View>
+            )}
+            estimatedItemSize={200}
+            data={notes}
+            renderItem={({ item }) => <NoteCard note={item} />}
             keyExtractor={(item) => item.id}
         />
     );
