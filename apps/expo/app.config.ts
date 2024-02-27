@@ -25,7 +25,7 @@ const defineConfig = (): ExpoConfig => ({
     name: "Mind",
     slug: "mind",
     scheme: "mind",
-    version: "2.1.4",
+    version: "2.2.4",
     orientation: "portrait",
     owner: "mind-therapy",
     icon: "./assets/icon.png",
@@ -40,7 +40,7 @@ const defineConfig = (): ExpoConfig => ({
     },
     assetBundlePatterns: ["**/*", "assets/*"],
     ios: {
-        buildNumber: "22",
+        buildNumber: "23",
         supportsTablet: true,
         bundleIdentifier: "app.getmind",
         infoPlist: {
@@ -68,7 +68,7 @@ const defineConfig = (): ExpoConfig => ({
         },
         package: "app.getmind",
         googleServicesFile: "./google-services.json",
-        versionCode: 8,
+        versionCode: 9,
         intentFilters: [
             {
                 action: "VIEW",
