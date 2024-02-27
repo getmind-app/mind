@@ -143,13 +143,6 @@ export default function UserProfileScreen() {
                     label={t({ message: "Recurrences" })}
                     onPress={() => router.push("/settings/recurrences")}
                 />
-                {isProfessional ? (
-                    <MenuItem
-                        icon="attach-money"
-                        label={t({ message: "Finances" })}
-                        onPress={() => router.push("/settings/finances")}
-                    />
-                ) : null}
                 <MenuItem
                     isLast
                     icon="logout"
@@ -234,11 +227,21 @@ function ProfessionalOptions() {
             />
 
             <MenuItem
-                isLast
-                icon="attach-money"
+                icon="settings"
                 label={t({ message: "Setup Payments" })}
                 onPress={() => router.push("/(psych)/payments-setup")}
                 alert={!data.pixKey}
+            />
+            <MenuItem
+                icon="attach-money"
+                label={t({ message: "Finances" })}
+                onPress={() => router.push("/settings/finances")}
+            />
+            <MenuItem
+                isLast
+                icon="person"
+                label={t({ message: "Patients" })}
+                onPress={() => router.push("/(psych)/patients")}
             />
         </>
     );
