@@ -231,7 +231,7 @@ function NextAppointment() {
                                                 )
                                             }
                                         >
-                                            <Text>
+                                            <BasicText style={{ marginTop: 3 }}>
                                                 {
                                                     nextAppointment.data
                                                         .therapist.address
@@ -243,64 +243,73 @@ function NextAppointment() {
                                                         .therapist.address
                                                         ?.number
                                                 }
-                                            </Text>
+                                            </BasicText>
                                         </TouchableOpacity>
                                     </Trans>
                                 </Text>
                             )}
                         </Text>
                         <View className="flex w-full flex-row items-center justify-between pt-4 align-middle">
-                            <View className="flex flex-row items-center align-middle">
-                                <View className="flex items-center justify-center overflow-hidden rounded-full align-middle">
-                                    {isProfessional ? (
-                                        <TouchableOpacity
-                                            onPress={() =>
-                                                router.push(
-                                                    `/(psych)/patients/${nextAppointment.data?.patient.id}`,
-                                                )
-                                            }
-                                        >
-                                            <UserPhoto
-                                                userId={
-                                                    nextAppointment.data.patient
-                                                        .userId
-                                                }
-                                                alt={"Patient"}
-                                                url={
-                                                    nextAppointment.data.patient
-                                                        .profilePictureUrl
-                                                }
-                                            />
-                                        </TouchableOpacity>
-                                    ) : (
-                                        <TouchableOpacity
-                                            onPress={() =>
-                                                router.push(
-                                                    `/psych/${nextAppointment.data?.therapist.id}`,
-                                                )
-                                            }
-                                        >
-                                            <UserPhoto
-                                                userId={
-                                                    nextAppointment.data
-                                                        .therapist.userId
-                                                }
-                                                alt={"Therapist"}
-                                                url={
-                                                    nextAppointment.data
-                                                        .therapist
-                                                        .profilePictureUrl
-                                                }
-                                            />
-                                        </TouchableOpacity>
-                                    )}
-                                </View>
-                                <Text className="pl-2 font-nunito-sans text-xl">
-                                    {isProfessional
-                                        ? nextAppointment.data.patient.name
-                                        : nextAppointment.data.therapist.name}
-                                </Text>
-                            </View>
+                            {isProfessional ? (
+                                <TouchableOpacity
+                                    onPress={() =>
+                                        router.push(
+                                            `/(psych)/patients/${nextAppointment.data?.patient.id}`,
+                                        )
+                                    }
+                                    style={{
+                                        flexDirection: "row",
+                                        alignItems: "center",
+                                    }}
+                                >
+                                    <UserPhoto
+                                        userId={
+                                            nextAppointment.data.patient.userId
+                                        }
+                                        alt={"Patient"}
+                                        url={
+                                            nextAppointment.data.patient
+                                                .profilePictureUrl
+                                        }
+                                    />
+                                    <Text className="pl-2 font-nunito-sans text-xl">
+                                        {isProfessional
+                                            ? nextAppointment.data.patient.name
+                                            : nextAppointment.data.therapist
+                                                  .name}
+                                    </Text>
+                                </TouchableOpacity>
+                            ) : (
+                                <TouchableOpacity
+                                    onPress={() =>
+                                        router.push(
+                                            `/psych/${nextAppointment.data?.therapist.id}`,
+                                        )
+                                    }
+                                    style={{
+                                        flexDirection: "row",
+                                        alignItems: "center",
+                                    }}
+                                >
+                                    <UserPhoto
+                                        userId={
+                                            nextAppointment.data.therapist
+                                                .userId
+                                        }
+                                        alt={"Therapist"}
+                                        url={
+                                            nextAppointment.data.therapist
+                                                .profilePictureUrl
+                                        }
+                                    />
+                                    <Text className="pl-2 font-nunito-sans text-xl">
+                                        {isProfessional
+                                            ? nextAppointment.data.patient.name
+                                            : nextAppointment.data.therapist
+                                                  .name}
+                                    </Text>
+                                </TouchableOpacity>
+                            )}
                         </View>
                     </View>
                     <TouchableOpacity
@@ -308,6 +317,13 @@ function NextAppointment() {
                             if (nextAppointment.data?.modality === "ONLINE") {
                                 Linking.openURL(
                                     nextAppointment?.data?.link as string,
+                                );
+                                return;
+                            }
+
+                            if (isProfessional) {
+                                router.push(
+                                    `/(psych)/patients/${nextAppointment.data?.patient.id}`,
                                 );
                                 return;
                             }
@@ -325,13 +341,19 @@ function NextAppointment() {
                                 name={`${
                                     nextAppointment.data.modality === "ONLINE"
                                         ? "video-camera"
+                                        : isProfessional
+                                        ? "user"
                                         : "car"
                                 }`}
                             />
                             <Text className="ml-4 font-nunito-sans-bold text-lg text-white">
                                 {nextAppointment.data.modality === "ONLINE"
                                     ? t({ message: "Join the meeting" })
-                                    : t({ message: "Get directions" })}
+                                    : t({
+                                          message: isProfessional
+                                              ? "See patient"
+                                              : "Get directions",
+                                      })}
                             </Text>
                         </View>
                     </TouchableOpacity>
@@ -425,6 +447,7 @@ function AppointmentsPreview() {
         <View
             style={{
                 marginTop: 12,
+                marginHorizontal: 6,
                 flexDirection: "row",
                 alignItems: "center",
                 gap: 12,

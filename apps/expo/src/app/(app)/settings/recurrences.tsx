@@ -94,7 +94,7 @@ function BaseLayout({
     children: React.ReactNode;
 }) {
     return (
-        <ScreenWrapper>
+        <ScreenWrapper paddingTop={0}>
             <Refreshable
                 refreshControl={
                     <RefreshControl
@@ -103,10 +103,7 @@ function BaseLayout({
                     />
                 }
             >
-                <Header />
-                <Text className="font-nunito-sans-bold text-3xl">
-                    <Trans>Recurrences</Trans>
-                </Text>
+                <Header title={t({ message: "Recurrences" })} />
                 {children}
             </Refreshable>
         </ScreenWrapper>

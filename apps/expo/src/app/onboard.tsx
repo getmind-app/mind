@@ -30,9 +30,9 @@ export default function Onboard() {
                 await user?.reload();
 
                 if (selectedRole === "patient") {
-                    router.push("/(patient)/profile");
+                    router.push("/onboard/patient-profile");
                 } else {
-                    router.push("/(psych)/profile");
+                    router.push("/onboard/therapist-profile");
                 }
             } catch (e) {
                 console.error("error setting metadata");
@@ -116,6 +116,7 @@ export default function Onboard() {
                                     </View>
                                     <Image
                                         alt="Patient with a plant"
+                                        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                                         source={require("../../assets/images/girl_flower.png")}
                                         style={{
                                             maxWidth: 180,
@@ -160,6 +161,7 @@ export default function Onboard() {
                                 >
                                     <Image
                                         alt="Patient with a plant"
+                                        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                                         source={require("../../assets/images/girl_book.png")}
                                         style={{
                                             // for some reason it looks better if this image if smaller

@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from "react";
 import {
     Image,
     Linking,
-    Platform,
     ScrollView,
     Switch,
     Text,
@@ -61,7 +60,7 @@ export default function AppointmentSchedulingScreen() {
             id: String(id),
         });
 
-    const { mutateAsync } = api.appointments.create.useMutation({
+    const createAppointment = api.appointments.create.useMutation({
         onSuccess: (appointment) => {
             router.push({
                 pathname: "/psych/finish",
@@ -105,7 +104,7 @@ export default function AppointmentSchedulingScreen() {
             throw new Error("Missing hour id");
         }
 
-        await mutateAsync({
+        await createAppointment.mutateAsync({
             scheduledTo: completeDate,
             modality: appointment.modality,
             therapistId: String(id),
@@ -124,7 +123,7 @@ export default function AppointmentSchedulingScreen() {
     return (
         <>
             <Header />
-            <ScreenWrapper paddingTop={Platform.OS === "android" ? 48 : 32}>
+            <ScreenWrapper paddingTop={48} paddindBottom={32}>
                 <View
                     style={{
                         flex: 1,
@@ -219,10 +218,11 @@ export default function AppointmentSchedulingScreen() {
                             }}
                         />
                     </View>
-                    <View style={{ marginBottom: 16 }}>
+                    <View>
                         <LargeButton
                             disabled={!allPicked}
                             onPress={handleConfirm}
+                            loading={createAppointment.isLoading}
                         >
                             <Trans>Confirm appointment</Trans>
                         </LargeButton>

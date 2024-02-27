@@ -5,15 +5,14 @@ import { Trans, t } from "@lingui/macro";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { CardSkeleton } from "../../../components/CardSkeleton";
-import { FormTextInput } from "../../../components/FormTextInput";
-import { Header } from "../../../components/Header";
-import { LargeButton } from "../../../components/LargeButton";
-import { Refreshable } from "../../../components/Refreshable";
-import { ScreenWrapper } from "../../../components/ScreenWrapper";
-import { Title } from "../../../components/Title";
-import { useTherapistByUserId } from "../../../hooks/therapist/useTherapistByUserId";
-import { api } from "../../../utils/api";
+import { CardSkeleton } from "../../../../components/CardSkeleton";
+import { FormTextInput } from "../../../../components/FormTextInput";
+import { Header } from "../../../../components/Header";
+import { LargeButton } from "../../../../components/LargeButton";
+import { Refreshable } from "../../../../components/Refreshable";
+import { ScreenWrapper } from "../../../../components/ScreenWrapper";
+import { useTherapistByUserId } from "../../../../hooks/therapist/useTherapistByUserId";
+import { api } from "../../../../utils/api";
 
 export default function PaymentsSetup() {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -68,7 +67,7 @@ export default function PaymentsSetup() {
     });
 
     return (
-        <ScreenWrapper>
+        <ScreenWrapper paddingTop={8}>
             <Refreshable
                 refreshControl={
                     <RefreshControl
@@ -77,8 +76,7 @@ export default function PaymentsSetup() {
                     />
                 }
             >
-                <Header />
-                <Title title={t({ message: "Payments Setup" })} />
+                <Header title={t({ message: "Payments Setup" })} />
                 <Text className="pb-4 font-nunito-sans text-base text-slate-500">
                     <Trans>
                         You can configure a pix key to help your clients on

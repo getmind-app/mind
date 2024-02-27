@@ -15,25 +15,6 @@ export default function PsychLayout() {
                 headerBackVisible: false,
             }}
         >
-            <Stack.Screen
-                name="profile"
-                options={{
-                    title: "Edit profile",
-                }}
-            />
-            <Stack.Screen
-                name="update-profile"
-                options={{
-                    title: "Edit profile",
-                }}
-            />
-            <Stack.Screen
-                name="address"
-                options={{
-                    title: "Address input",
-                }}
-            />
-            <Stack.Screen name="payments-setup" />
             <Stack.Screen name="patients/index" />
             <Stack.Screen name="patients/[patientId]" />
         </Stack>

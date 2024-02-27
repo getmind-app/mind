@@ -1,6 +1,8 @@
-import { Text, TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import { Stack, useRouter } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
+
+import { BasicText } from "./BasicText";
 
 type HeaderProps = {
     title?: string;
@@ -39,9 +41,9 @@ export const Header = ({ title, onShare, onBack }: HeaderProps) => {
                         </View>
                     ),
                 headerTitle: () => (
-                    <Text className="font-nunito-sans text-base capitalize">
+                    <BasicText size="xl" fontWeight="bold">
                         {title}
-                    </Text>
+                    </BasicText>
                 ),
                 headerStyle: {
                     backgroundColor: "#f8f8f8",

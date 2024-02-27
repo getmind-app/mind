@@ -22,7 +22,15 @@ export function UserPhoto({
         userId,
     });
 
-    if (isLoading) return <ActivityIndicator />;
+    if (isLoading)
+        return (
+            <View
+                className={`flex items-center justify-center rounded-full bg-slate-200`}
+                style={{ width, height }}
+            >
+                <ActivityIndicator />
+            </View>
+        );
 
     if (!data?.ok)
         return (

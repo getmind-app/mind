@@ -22,7 +22,6 @@ import { type Address, type Hour, type Modality } from ".prisma/client";
 
 export default function TherapistProfile() {
     const params = useGlobalSearchParams();
-    const router = useRouter();
     const { data, isLoading, isError } = api.therapists.findById.useQuery({
         id: params.id as string,
     });
@@ -274,7 +273,7 @@ function ScheduleBar({
                             backgroundColor: "#fff",
                         }}
                     >
-                        <View className="flex   flex-row items-center px-4 py-2 align-middle">
+                        <View className="flex flex-row items-center px-4 py-2 align-middle">
                             <Text className="font-nunito-sans-bold text-base">
                                 <Trans>Schedule</Trans>
                             </Text>

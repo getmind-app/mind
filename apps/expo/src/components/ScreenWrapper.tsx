@@ -4,10 +4,14 @@ type ScreenWrapperProps = ConstructorParameters<typeof View>[0];
 export const ScreenWrapper = ({
     children,
     paddingTop = Platform.OS === "android" ? 48 : 16,
+    paddingHorizontal = 16,
+    paddindBottom = Platform.OS === "android" ? 16 : 0,
     style,
     ...rest
 }: ScreenWrapperProps & {
     paddingTop?: number;
+    paddingHorizontal?: number;
+    paddindBottom?: number;
 }): JSX.Element => {
     return (
         <SafeAreaView
@@ -19,9 +23,9 @@ export const ScreenWrapper = ({
             <View
                 style={{
                     flex: 1,
-                    paddingHorizontal: 16,
+                    paddingHorizontal: paddingHorizontal,
                     paddingTop: paddingTop,
-                    paddingBottom: Platform.OS === "android" ? 16 : 0,
+                    paddingBottom: paddindBottom,
                     ...(typeof style === "object" ? style : {}),
                 }}
                 {...rest}
