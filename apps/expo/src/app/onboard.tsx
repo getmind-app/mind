@@ -194,6 +194,9 @@ export default function Onboard() {
                     loading={loading}
                     onPress={handleNext}
                     disabled={!selectedRole}
+                    style={{
+                        maxHeight: 48,
+                    }}
                 >
                     <Trans>Next</Trans>
                 </LargeButton>

@@ -18,6 +18,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { FormTextInput } from "../../../components/FormTextInput";
+import { FullScreenLoading } from "../../../components/FullScreenLoading";
 import { LargeButton } from "../../../components/LargeButton";
 import { Loading } from "../../../components/Loading";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
@@ -108,6 +109,11 @@ export default function EditPatientProfile() {
             </View>
         );
     }
+
+    if (createPatient.isLoading) {
+        return <FullScreenLoading />;
+    }
+
     return (
         <KeyboardAvoidingView
             style={{ flex: 1 }}
@@ -173,14 +179,17 @@ export default function EditPatientProfile() {
                             inputMode="numeric"
                         />
                     </View>
-                    <LargeButton
-                        disabled={!isValid}
-                        loading={createPatient.isLoading}
-                        onPress={onSubmit}
-                    >
-                        <Trans>Next</Trans>
-                    </LargeButton>
                 </View>
+                <LargeButton
+                    disabled={!isValid || createPatient.isLoading}
+                    loading={createPatient.isLoading}
+                    onPress={onSubmit}
+                    style={{
+                        maxHeight: 48,
+                    }}
+                >
+                    <Trans>Next</Trans>
+                </LargeButton>
             </ScreenWrapper>
         </KeyboardAvoidingView>
     );

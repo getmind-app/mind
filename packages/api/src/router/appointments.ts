@@ -1,6 +1,15 @@
 import type * as Notification from "expo-notifications";
 import clerk from "@clerk/clerk-sdk-node";
-import { addDays, addHours, format, getHours, isSameDay, set } from "date-fns";
+import {
+    addDays,
+    addHours,
+    format,
+    getHours,
+    isSameDay,
+    set,
+    setHours,
+} from "date-fns";
+
 import { z } from "zod";
 
 import { type Appointment, type WeekDay } from "@acme/db";
@@ -363,6 +372,31 @@ export const appointmentsRouter = createTRPCRouter({
             }),
         )
         .mutation(async ({ ctx, input }) => {
+            const appointment = await ctx.prisma.appointment.findUniqueOrThrow({
+                where: {
+                    id: input.id,
+                },
+                include: {
+                    patient: true,
+                    therapist: true,
+                },
+            });
+            const patientUser = await clerk.users.getUser(
+                appointment.patient.userId,
+            );
+
+            await sendPushNotification({
+                expoPushToken: patientUser.publicMetadata
+                    .expoPushToken as Notification.ExpoPushToken,
+                title: "Solicitação de reagendamento",
+                body: `${
+                    appointment.therapist.name
+                } quer reagendar a sessão de ${format(
+                    appointment.scheduledTo,
+                    "dd/MM 'às' HH:mm",
+                )}, clique aqui para escolher um novo horário`,
+            });
+
             return await ctx.prisma.appointment.update({
                 where: {
                     id: input.id,
@@ -370,6 +404,83 @@ export const appointmentsRouter = createTRPCRouter({
                 data: {
                     rescheduleRequested: true,
                 },
+            });
+        }),
+    closeRescheduleRequest: protectedProcedure
+        .input(
+            z.object({
+                appointmentId: z.string().min(1),
+                newHourId: z.string().min(1).optional(),
+                newDate: z.date().optional(),
+                keepCurrentHour: z.boolean().optional(),
+            }),
+        )
+        .mutation(async ({ ctx, input }) => {
+            const appointment = await ctx.prisma.appointment.findUniqueOrThrow({
+                where: {
+                    id: input.appointmentId,
+                },
+                include: {
+                    therapist: true,
+                    patient: true,
+                },
+            });
+            const therapistUser = await clerk.users.getUser(
+                appointment.therapist.userId,
+            );
+
+            if (input.keepCurrentHour) {
+                await ctx.prisma.appointment.update({
+                    where: {
+                        id: input.appointmentId,
+                    },
+                    data: {
+                        rescheduleRequested: false,
+                    },
+                });
+                await sendPushNotification({
+                    body: `${appointment.patient.name} escolheu manter o horário da sessão.`,
+                    title: "Horário mantido",
+                    expoPushToken: therapistUser.publicMetadata
+                        .expoPushToken as Notification.ExpoPushToken,
+                });
+
+                return;
+            }
+
+            if (!input.newHourId || !input.newDate) {
+                throw new Error("newHourId and newDate are required");
+            }
+
+            const newHour = await ctx.prisma.hour.findUniqueOrThrow({
+                where: {
+                    id: input.newHourId,
+                },
+            });
+
+            const newScheduledTo = setHours(input.newDate, newHour.startAt);
+
+            await ctx.prisma.appointment.update({
+                where: {
+                    id: input.appointmentId,
+                },
+                data: {
+                    hourId: input.newHourId,
+                    scheduledTo: newScheduledTo,
+                    rescheduleRequested: false,
+                },
+            });
+
+            await sendPushNotification({
+                body: `${
+                    appointment.patient.name
+                } escolheu um novo horário para sessão, agora é dia ${format(
+                    newScheduledTo,
+                    "dd/MM 'às' HH:mm",
+                )}`,
+                title: "Solicitação de reagendamento aceita",
+                expoPushToken: therapistUser.publicMetadata
+                    .expoPushToken as Notification.ExpoPushToken,
             });
         }),
     similarHoursBasedOnAppointment: protectedProcedure
@@ -384,6 +495,7 @@ export const appointmentsRouter = createTRPCRouter({
                     id: input.id,
                 },
             });
+
             if (!appointment) {
                 throw new Error("Appointment not found");
             }
