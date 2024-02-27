@@ -29,6 +29,8 @@ export function TherapistAppointmentCard({
 }) {
     const [open, setOpen] = useState(false);
     const lingui = useLingui();
+    const [rescheduleRequested, setRescheduleRequested] = useState(false);
+  
     const requestReschedule = api.appointments.requestReschedule.useMutation();
     const checkAsPaid = api.appointments.checkAppointmentAsPaid.useMutation();
     const checkAsNotPaid =
@@ -124,7 +126,7 @@ export function TherapistAppointmentCard({
                         style={{
                             flexDirection: "row",
                             alignItems: "center",
-                            gap: 1,
+                            gap: 8,
                         }}
                     >
                         <BasicText size="sm" color="gray">
@@ -157,28 +159,43 @@ export function TherapistAppointmentCard({
                                 marginTop: 8,
                             }}
                         >
-                            <SmallButton
-                                color="yellow"
-                                disabled={requestReschedule.isLoading}
-                                onPress={async function () {
-                                    try {
-                                        await requestReschedule.mutateAsync({
-                                            id: appointment.id,
-                                        });
-                                    } catch (e) {
-                                        console.error(e);
-                                        Alert.alert(
-                                            t({
-                                                message:
-                                                    "Failed to request reschedule",
-                                            }),
-                                        );
-                                    }
-                                }}
-                                textSize="sm"
-                            >
-                                <Trans>Request reschedule</Trans>
-                            </SmallButton>
+                            {appointment.rescheduleRequested ||
+                            rescheduleRequested ? (
+                                <SmallButton
+                                    color="gray"
+                                    disabled
+                                    textSize="sm"
+                                >
+                                    <Trans>Reschedule requested</Trans>
+                                </SmallButton>
+                            ) : (
+                                <SmallButton
+                                    color="yellow"
+                                    disabled={requestReschedule.isLoading}
+                                    onPress={async function () {
+                                        try {
+                                            await requestReschedule.mutateAsync(
+                                                {
+                                                    id: appointment.id,
+                                                },
+                                            );
+                                            setRescheduleRequested(true);
+                                        } catch (e) {
+                                            console.error(e);
+                                            Alert.alert(
+                                                t({
+                                                    message:
+                                                        "Failed to request reschedule",
+                                                }),
+                                            );
+                                            setRescheduleRequested(false);
+                                        }
+                                    }}
+                                    textSize="sm"
+                                >
+                                    <Trans>Request reschedule</Trans>
+                                </SmallButton>
+                            )}
 
                             {appointment.isPaid || canUndo ? (
                                 <SmallButton

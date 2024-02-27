@@ -17,6 +17,7 @@ export default function PatientLayout() {
         >
             <Stack.Screen name="patient-profile" />
             <Stack.Screen name="therapist-profile" />
+            <Stack.Screen name="therapist-address" />
         </Stack>
     );
 }

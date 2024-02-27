@@ -10,9 +10,12 @@ datasource db {
 
 model Note {
     id        String   @id @default(cuid())
+    patientId String
+    patient   Patient  @relation(fields: [patientId], references: [id], onDelete: NoAction)
+    files     Bytes[]
     content   String
-    createdAt DateTime @default(now())
     userId    String
+    createdAt DateTime @default(now())
 }
 
 model Therapist {
@@ -64,6 +67,8 @@ model Appointment {
     scheduledAt         DateTime          @default(now())
     modality            Modality
     status              AppointmentStatus @default(PENDENT)
+    hour                Hour              @relation(fields: [hourId], references: [id])
+    hourId              String
     link                String?
     isPaid              Boolean           @default(false)
     paidAt              DateTime?
@@ -80,11 +85,13 @@ model Appointment {
 }
 
 model Hour {
-    id          String     @id @default(cuid())
+    id          String        @id @default(cuid())
     startAt     Int
     weekDay     WeekDay
-    Therapist   Therapist? @relation(fields: [therapistId], references: [id], onDelete: Cascade)
+    Therapist   Therapist?    @relation(fields: [therapistId], references: [id], onDelete: Cascade)
     therapistId String?
+    Recurrence  Recurrence[]
+    Appointment Appointment[]
 }
 
 model Patient {
@@ -98,6 +105,7 @@ model Patient {
     paymentAccountId  String?
     appointments      Appointment[]
     Recurrence        Recurrence[]
+    Note              Note[]
 }
 
 model Email {
@@ -112,6 +120,7 @@ model Recurrence {
     startAt         DateTime         @db.Date
     startTime       DateTime         @db.Time
     endTime         DateTime         @db.Time
+    hour            Hour             @relation(fields: [hourId], references: [id], onDelete: Cascade)
     weekDay         WeekDay
     patientId       String
     patient         Patient          @relation(fields: [patientId], references: [id], onDelete: Cascade)
@@ -121,6 +130,7 @@ model Recurrence {
     status          RecurrenceStatus @default(PENDENT)
     frequency       Frequency        @default(WEEKLY)
     Appointment     Appointment[]
+    hourId          String
 }
 
 enum Frequency {

@@ -1,9 +1,10 @@
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import { Image, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useGlobalSearchParams, useRouter } from "expo-router";
 import { Trans } from "@lingui/macro";
 
 import { FullScreenLoading } from "../../../components/FullScreenLoading";
+import { LargeButton } from "../../../components/LargeButton";
 import { api } from "../../../utils/api";
 
 export default function FinishAppointmentSchedulingScreen() {
@@ -63,35 +64,23 @@ export default function FinishAppointmentSchedulingScreen() {
                         </Trans>
                     </Text>
                 </View>
-                {/* <TouchableOpacity
-                    onPress={() => {
-                        router.push("/calendar");
+
+                <View
+                    style={{
+                        marginTop: 24,
+                        width: "70%",
                     }}
-                    className="w-4/5 pt-8"
                 >
-                    <View className="flex flex-row items-center justify-center rounded-xl bg-[#2185EE] px-6 py-2">
-                        <MaterialIcons
-                            size={20}
-                            name="schedule"
-                            color="white"
-                        />
-                        <Text className="ml-2 font-nunito-sans-bold text-xl text-white">
-                            <Trans>Create event</Trans>
-                        </Text>
-                    </View>
-                </TouchableOpacity> */}
-                <TouchableOpacity
-                    onPress={() => {
-                        router.push("/calendar");
-                    }}
-                    className="w-4/5 pt-4"
-                >
-                    <View className="flex flex-row items-center justify-center rounded-xl bg-white px-12 py-2 shadow-sm">
-                        <Text className="font-nunito-sans text-xl">
-                            <Trans>Your appointments</Trans>
-                        </Text>
-                    </View>
-                </TouchableOpacity>
+                    <LargeButton
+                        onPress={() => {
+                            router.push("/calendar");
+                        }}
+                        color="white"
+                        textColor="black"
+                    >
+                        <Trans>Your appointments</Trans>
+                    </LargeButton>
+                </View>
             </View>
         </SafeAreaView>
     );

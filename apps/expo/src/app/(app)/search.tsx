@@ -640,7 +640,13 @@ function TherapistProfile({
                 height={40}
             />
             <View className="ml-3 flex flex-col">
-                <BasicText fontWeight="bold" size="lg" className="-mb-1">
+                <BasicText
+                    fontWeight="bold"
+                    size="lg"
+                    style={{
+                        marginBottom: -4,
+                    }}
+                >
                     {therapist.name}
                 </BasicText>
                 <BasicText size="sm" color="gray">

@@ -9,6 +9,7 @@ import { getShareLink } from "../helpers/getShareLink";
 import { useUserIsProfessional } from "../hooks/user/useUserIsProfessional";
 import { api } from "../utils/api";
 import { BasicText } from "./BasicText";
+import { CardSkeleton } from "./CardSkeleton";
 import { CheckBox } from "./CheckBox";
 
 export default function DefaultHomeCard() {
@@ -26,9 +27,7 @@ function DefaultTherapistHomeCard() {
     const therapist = api.therapists.findByUserId.useQuery();
 
     if (therapist.isLoading) {
-        <BasicText>
-            <Trans>Loading..</Trans>
-        </BasicText>;
+        return <CardSkeleton />;
     }
     if (therapist.isError) {
         return (
@@ -41,7 +40,7 @@ function DefaultTherapistHomeCard() {
     if (!therapist.data) {
         return (
             <BasicText color="yellow">
-                <Trans>Couldn`&apos;`t find therapist</Trans>
+                <Trans>Couldn&apos;t find therapist</Trans>
             </BasicText>
         );
     }
@@ -49,7 +48,7 @@ function DefaultTherapistHomeCard() {
     if (!user) {
         return (
             <BasicText color="yellow">
-                <Trans>Couldn`&apos;`t find user</Trans>
+                <Trans>Couldn&apos;t find user</Trans>
             </BasicText>
         );
     }
@@ -134,7 +133,7 @@ function SetupGuide({ therapist }: { therapist: Therapist }) {
     return (
         <View style={{ marginTop: 16, flex: 1, gap: 12 }}>
             <CheckBox
-                checked={therapist.pixKey ? true : false}
+                checked={!!therapist.pixKey}
                 label={t({
                     message: therapist.pixKey
                         ? "Pix key added!"

@@ -116,7 +116,7 @@ function EmptyState() {
     const therapist = api.therapists.findByUserId.useQuery();
 
     return (
-        <View className="rounded-xl bg-white shadow-sm">
+        <View className="mt-4 rounded-xl bg-white shadow-sm">
             <View className=" px-6 pt-6">
                 <Text className="font-nunito-sans text-lg">
                     <Trans>Your appointments will show up here</Trans>
@@ -168,7 +168,7 @@ function AppointmentCardError() {
     );
 }
 
-function RecurrenceCard({ recurrence }: { recurrence: Recurrence }) {
+export function RecurrenceCard({ recurrence }: { recurrence: Recurrence }) {
     const [open, setOpen] = useState(false);
     const isProfessional = useUserIsProfessional();
 

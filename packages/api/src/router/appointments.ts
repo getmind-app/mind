@@ -3,12 +3,13 @@ import clerk from "@clerk/clerk-sdk-node";
 import {
     addDays,
     addHours,
-    endOfDay,
     format,
     getHours,
+    isSameDay,
     set,
-    startOfDay,
+    setHours,
 } from "date-fns";
+
 import { z } from "zod";
 
 import { type Appointment, type WeekDay } from "@acme/db";
@@ -20,6 +21,7 @@ import { createAppointmentInCalendar } from "../helpers/createAppointmentInCalen
 import { sendPushNotification } from "../helpers/sendPushNotification";
 import { notifyAppointmentStatusChange } from "../notifications/notifyAppointmentStatusChange";
 import { payForAppointment } from "../payments/payForAppointment";
+import { getAvailableDatesAndHours } from "../therapist/getAvailableDatesAndHours";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
 export const appointmentsRouter = createTRPCRouter({
@@ -30,6 +32,7 @@ export const appointmentsRouter = createTRPCRouter({
                 modality: z.enum(["ONLINE", "ON_SITE"]),
                 therapistId: z.string().min(1),
                 patientId: z.string().min(1),
+                hourId: z.string().min(1),
                 repeat: z.boolean(),
             }),
         )
@@ -67,6 +70,7 @@ export const appointmentsRouter = createTRPCRouter({
                         defaultModality: input.modality,
                         therapistId: input.therapistId,
                         patientId: input.patientId,
+                        hourId: input.hourId,
                         startTime: input.scheduledTo,
                         startAt: input.scheduledTo,
                         endTime: addHours(input.scheduledTo, 1),
@@ -97,6 +101,7 @@ export const appointmentsRouter = createTRPCRouter({
                 data: {
                     rate: therapist.hourlyRate,
                     modality: input.modality,
+                    hourId: input.hourId,
                     scheduledTo: input.scheduledTo,
                     therapistId: input.therapistId,
                     patientId: input.patientId,
@@ -367,6 +372,31 @@ export const appointmentsRouter = createTRPCRouter({
             }),
         )
         .mutation(async ({ ctx, input }) => {
+            const appointment = await ctx.prisma.appointment.findUniqueOrThrow({
+                where: {
+                    id: input.id,
+                },
+                include: {
+                    patient: true,
+                    therapist: true,
+                },
+            });
+            const patientUser = await clerk.users.getUser(
+                appointment.patient.userId,
+            );
+
+            await sendPushNotification({
+                expoPushToken: patientUser.publicMetadata
+                    .expoPushToken as Notification.ExpoPushToken,
+                title: "Solicitação de reagendamento",
+                body: `${
+                    appointment.therapist.name
+                } quer reagendar a sessão de ${format(
+                    appointment.scheduledTo,
+                    "dd/MM 'às' HH:mm",
+                )}, clique aqui para escolher um novo horário`,
+            });
+
             return await ctx.prisma.appointment.update({
                 where: {
                     id: input.id,
@@ -374,6 +404,83 @@ export const appointmentsRouter = createTRPCRouter({
                 data: {
                     rescheduleRequested: true,
                 },
+            });
+        }),
+    closeRescheduleRequest: protectedProcedure
+        .input(
+            z.object({
+                appointmentId: z.string().min(1),
+                newHourId: z.string().min(1).optional(),
+                newDate: z.date().optional(),
+                keepCurrentHour: z.boolean().optional(),
+            }),
+        )
+        .mutation(async ({ ctx, input }) => {
+            const appointment = await ctx.prisma.appointment.findUniqueOrThrow({
+                where: {
+                    id: input.appointmentId,
+                },
+                include: {
+                    therapist: true,
+                    patient: true,
+                },
+            });
+            const therapistUser = await clerk.users.getUser(
+                appointment.therapist.userId,
+            );
+
+            if (input.keepCurrentHour) {
+                await ctx.prisma.appointment.update({
+                    where: {
+                        id: input.appointmentId,
+                    },
+                    data: {
+                        rescheduleRequested: false,
+                    },
+                });
+                await sendPushNotification({
+                    body: `${appointment.patient.name} escolheu manter o horário da sessão.`,
+                    title: "Horário mantido",
+                    expoPushToken: therapistUser.publicMetadata
+                        .expoPushToken as Notification.ExpoPushToken,
+                });
+
+                return;
+            }
+
+            if (!input.newHourId || !input.newDate) {
+                throw new Error("newHourId and newDate are required");
+            }
+
+            const newHour = await ctx.prisma.hour.findUniqueOrThrow({
+                where: {
+                    id: input.newHourId,
+                },
+            });
+
+            const newScheduledTo = setHours(input.newDate, newHour.startAt);
+
+            await ctx.prisma.appointment.update({
+                where: {
+                    id: input.appointmentId,
+                },
+                data: {
+                    hourId: input.newHourId,
+                    scheduledTo: newScheduledTo,
+                    rescheduleRequested: false,
+                },
+            });
+
+            await sendPushNotification({
+                body: `${
+                    appointment.patient.name
+                } escolheu um novo horário para sessão, agora é dia ${format(
+                    newScheduledTo,
+                    "dd/MM 'às' HH:mm",
+                )}`,
+                title: "Solicitação de reagendamento aceita",
+                expoPushToken: therapistUser.publicMetadata
+                    .expoPushToken as Notification.ExpoPushToken,
             });
         }),
     similarHoursBasedOnAppointment: protectedProcedure
@@ -393,104 +500,76 @@ export const appointmentsRouter = createTRPCRouter({
                 throw new Error("Appointment not found");
             }
 
-            const therapistHours = await ctx.prisma.hour.findMany({
-                take: 10,
+            const therapist = await ctx.prisma.therapist.findUniqueOrThrow({
                 where: {
-                    therapistId: appointment.therapistId,
-                    OR: [
-                        {
-                            weekDay: format(
-                                appointment.scheduledTo,
-                                "EEEE",
-                            ).toUpperCase() as WeekDay,
-                        },
-                        {
-                            startAt: {
-                                lte: getHours(appointment.scheduledTo) + 1,
-                                gte: getHours(appointment.scheduledTo) - 1,
+                    id: appointment.therapistId,
+                },
+                include: {
+                    appointments: {
+                        where: {
+                            status: {
+                                in: ["ACCEPTED", "PENDENT"],
                             },
-                            NOT: {
-                                weekDay: format(
-                                    appointment.scheduledTo,
-                                    "EEEE",
-                                ).toUpperCase() as WeekDay,
+                            scheduledTo: {
+                                gte: addDays(appointment.scheduledTo, -3),
+                                lte: addDays(appointment.scheduledTo, 3),
                             },
                         },
-                    ],
+                    },
+                    hours: {
+                        where: {
+                            OR: [
+                                // Same day, different hours
+                                {
+                                    weekDay: format(
+                                        appointment.scheduledTo,
+                                        "EEEE",
+                                    ).toUpperCase() as WeekDay,
+                                },
+                                // Different days, same hour
+                                {
+                                    startAt: {
+                                        lte:
+                                            getHours(appointment.scheduledTo) +
+                                            1,
+                                        gte:
+                                            getHours(appointment.scheduledTo) -
+                                            1,
+                                    },
+                                    NOT: {
+                                        weekDay: format(
+                                            appointment.scheduledTo,
+                                            "EEEE",
+                                        ).toUpperCase() as WeekDay,
+                                    },
+                                },
+                            ],
+                        },
+                    },
                 },
             });
 
-            const similarAppointmentsOnDifferentDays =
-                await ctx.prisma.appointment.findMany({
-                    where: {
-                        therapistId: appointment.therapistId,
-                        scheduledTo: {
-                            gte: addDays(appointment.scheduledTo, -2),
-                            lte: addDays(appointment.scheduledTo, 2),
-                        },
-                        NOT: {
-                            scheduledTo: {
-                                gte: startOfDay(appointment.scheduledTo),
-                                lte: endOfDay(appointment.scheduledTo),
-                            },
-                        },
-                    },
-                });
+            const availableDatesAndHours = getAvailableDatesAndHours({
+                therapist,
+                numberOfDays: 7,
+                startingDate: addDays(appointment.scheduledTo, -3),
+            });
+            const allAvailableDates = Object.values(
+                availableDatesAndHours,
+            ).flat();
 
-            const appointmentsOnTheSameDay =
-                await ctx.prisma.appointment.findMany({
-                    where: {
-                        therapistId: appointment.therapistId,
-                        scheduledTo: {
-                            gte: startOfDay(appointment.scheduledTo),
-                            lte: endOfDay(appointment.scheduledTo),
-                        },
-                    },
-                });
+            const availableHoursOnTheSameDay = allAvailableDates
+                .filter((date) => isSameDay(date.date, appointment.scheduledTo))
+                .map((date) => date.hours)
+                .flat();
 
-            console.log(appointmentsOnTheSameDay);
-
-            const availableHoursOnDifferentDays = therapistHours
-                .filter(
-                    (hour) =>
-                        !(
-                            hour.weekDay ===
-                            (format(
-                                appointment.scheduledTo,
-                                "EEEE",
-                            ).toUpperCase() as WeekDay)
-                        ),
-                )
-                .filter((hour) => {
-                    const isHourAvailable =
-                        !similarAppointmentsOnDifferentDays.some(
-                            (appointment) =>
-                                getHours(appointment.scheduledTo) ===
-                                hour.startAt,
-                        );
-                    return isHourAvailable;
-                });
-
-            const availableHoursOnTheSameDay = therapistHours
-                .filter(
-                    (hour) =>
-                        hour.weekDay ===
-                        (format(
-                            appointment.scheduledTo,
-                            "EEEE",
-                        ).toUpperCase() as WeekDay),
-                )
-                .filter((hour) => {
-                    const isHourAvailable = !appointmentsOnTheSameDay.some(
-                        (appointment) =>
-                            getHours(appointment.scheduledTo) === hour.startAt,
-                    );
-                    return isHourAvailable;
-                });
+            const availableHoursOnDifferentDays = allAvailableDates.filter(
+                (date) => !isSameDay(date.date, appointment.scheduledTo),
+            );
 
             return {
                 availableHoursOnTheSameDay,
-                availableHoursOnTheDifferentDays: availableHoursOnDifferentDays,
+                availableHoursOnDifferentDays,
             };
         }),
     prepareTomorrowAppointments: publicProcedure.mutation(async ({ ctx }) => {
@@ -569,6 +648,7 @@ export const appointmentsRouter = createTRPCRouter({
                     data: {
                         rate: recurrence.therapist.hourlyRate,
                         scheduledTo: date,
+                        hourId: recurrence.hourId,
                         modality: recurrence.defaultModality,
                         therapistId: recurrence.therapistId,
                         patientId: recurrence.patientId,

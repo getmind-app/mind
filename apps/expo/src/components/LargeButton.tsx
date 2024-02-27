@@ -1,7 +1,7 @@
 import { TouchableOpacity, View } from "react-native";
 
 import { colors, disabledColor, type Color } from "../utils/colors";
-import { BasicText } from "./BasicText";
+import { BasicText, type BasicTextSizes } from "./BasicText";
 import { Loading } from "./Loading";
 
 type TouchableOpacityProps = ConstructorParameters<typeof TouchableOpacity>[0];
@@ -9,18 +9,24 @@ type TouchableOpacityProps = ConstructorParameters<typeof TouchableOpacity>[0];
 export function LargeButton({
     children,
     color = "primaryBlue",
+    textColor = "white",
     disabled = false,
+    textSize = "lg",
+    style = {},
     ...props
 }: TouchableOpacityProps & {
     loading?: boolean;
     children: React.ReactNode;
     disabled?: boolean;
     color?: Color;
+    textSize?: BasicTextSizes;
+    textColor?: Color;
 }) {
     return (
         <TouchableOpacity
             style={{
-                width: "100%",
+                flex: 1,
+                minHeight: 48,
                 backgroundColor: disabled
                     ? disabledColor(colors[color])
                     : colors[color],
@@ -28,6 +34,7 @@ export function LargeButton({
                 paddingVertical: 12,
                 alignItems: "center",
                 justifyContent: "center",
+                ...(style as object),
             }}
             disabled={disabled}
             {...props}
@@ -53,7 +60,8 @@ export function LargeButton({
                         position: "relative",
                     }}
                     fontWeight="bold"
-                    color="white"
+                    size={textSize}
+                    color={textColor}
                     size="lg"
                 >
                     {children}

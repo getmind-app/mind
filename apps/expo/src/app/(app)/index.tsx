@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import {
     Alert,
     Linking,
-    Platform,
     RefreshControl,
     Text,
     TouchableOpacity,
@@ -26,6 +25,7 @@ import { BasicText } from "../../components/BasicText";
 import { Card } from "../../components/Card";
 import { CardSkeleton } from "../../components/CardSkeleton";
 import DefaultHomeCard from "../../components/DefaultHomeCard";
+import { NoteCard } from "../../components/NoteCard";
 import { Refreshable } from "../../components/Refreshable";
 import { RescheduleAppointments } from "../../components/RescheduleAppointments";
 import { ScreenWrapper } from "../../components/ScreenWrapper";
@@ -39,6 +39,7 @@ import { registerForPushNotificationsAsync } from "../../helpers/registerForPush
 import { useUserIsProfessional } from "../../hooks/user/useUserIsProfessional";
 import { useUserMutations } from "../../hooks/user/useUserMutations";
 import { api } from "../../utils/api";
+import { colors } from "../../utils/colors";
 
 export default function HomeScreen() {
     const router = useRouter();
@@ -56,11 +57,11 @@ export default function HomeScreen() {
     const [, setNotification] = useState<Notifications.Notification | boolean>(
         false,
     );
+    const nextAppointment = api.appointments.findNextUserAppointment.useQuery();
 
     const onRefresh = async () => {
         setRefreshing(true);
-        await utils.appointments.findNextUserAppointment.invalidate();
-        await utils.notes.findByUserId.invalidate();
+        await utils.invalidate();
         setRefreshing(false);
     };
 
@@ -140,11 +141,21 @@ export default function HomeScreen() {
                 {!isProfessional && <RescheduleAppointments />}
                 <Title title={t({ message: "Next session" })} />
                 <NextAppointment />
+                {isProfessional && <AppointmentsPreview />}
                 <View className="mb-2 flex flex-row items-center justify-between pt-8 align-middle">
                     <Title title={t({ message: "Last notes" })} />
 
                     <SmallButton
-                        onPress={() => router.push("/notes/new")}
+                        onPress={() =>
+                            router.push({
+                                pathname: "/notes/new",
+                                params: {
+                                    patientId: nextAppointment.data?.patientId,
+                                    patientUserId:
+                                        nextAppointment.data?.patient.userId,
+                                },
+                            })
+                        }
                         textSize="lg"
                     >
                         New
@@ -161,13 +172,13 @@ function NextAppointment() {
     const isProfessional = useUserIsProfessional();
     const lingui = useLingui();
 
-    const appointment = api.appointments.findNextUserAppointment.useQuery();
+    const nextAppointment = api.appointments.findNextUserAppointment.useQuery();
 
-    if (appointment.isLoading) return <CardSkeleton />;
+    if (nextAppointment.isLoading) return <CardSkeleton />;
 
     return (
         <>
-            {appointment.data && appointment.data.therapistId ? (
+            {nextAppointment.data && nextAppointment.data.therapistId ? (
                 <View
                     style={{
                         elevation: 2,
@@ -183,29 +194,26 @@ function NextAppointment() {
                                 }}
                             >
                                 {format(
-                                    new Date(appointment.data.scheduledTo),
+                                    new Date(nextAppointment.data.scheduledTo),
                                     "EEEE, dd/MM",
                                     {
                                         locale: getLocale(lingui),
                                     },
                                 )}
                             </BasicText>
-                            <Text className="font-nunito-sans-bold text-xl text-blue-500 ">
-                                {new Date(
-                                    appointment.data.scheduledTo,
-                                ).getHours()}
-                                :
-                                {new Date(
-                                    appointment.data.scheduledTo,
-                                ).getMinutes() == 0
-                                    ? "00"
-                                    : new Date(
-                                          appointment.data.scheduledTo,
-                                      ).getMinutes()}
-                            </Text>
+                            <BasicText
+                                color="primaryBlue"
+                                fontWeight="bold"
+                                size="2xl"
+                            >
+                                {format(
+                                    nextAppointment.data.scheduledTo,
+                                    "HH:mm",
+                                )}
+                            </BasicText>
                         </View>
                         <Text className="font-nunito-sans text-sm text-slate-500">
-                            {appointment.data.modality === "ONLINE" ? (
+                            {nextAppointment.data.modality === "ONLINE" ? (
                                 "via Google Meet"
                             ) : (
                                 <Text>
@@ -214,8 +222,8 @@ function NextAppointment() {
                                         <TouchableOpacity
                                             onPress={() =>
                                                 geocodeAddress(
-                                                    appointment.data?.therapist
-                                                        ?.address,
+                                                    nextAppointment.data
+                                                        ?.therapist?.address,
                                                 ).then((link) =>
                                                     Linking.openURL(
                                                         link ? link : "",
@@ -223,77 +231,105 @@ function NextAppointment() {
                                                 )
                                             }
                                         >
-                                            <Text>
+                                            <BasicText style={{ marginTop: 3 }}>
                                                 {
-                                                    appointment.data.therapist
-                                                        .address?.street
+                                                    nextAppointment.data
+                                                        .therapist.address
+                                                        ?.street
                                                 }
                                                 ,{" "}
                                                 {
-                                                    appointment.data.therapist
-                                                        .address?.number
+                                                    nextAppointment.data
+                                                        .therapist.address
+                                                        ?.number
                                                 }
-                                            </Text>
+                                            </BasicText>
                                         </TouchableOpacity>
                                     </Trans>
                                 </Text>
                             )}
                         </Text>
                         <View className="flex w-full flex-row items-center justify-between pt-4 align-middle">
-                            <View className="flex flex-row items-center align-middle">
-                                <View className="flex items-center justify-center overflow-hidden rounded-full align-middle">
-                                    {isProfessional ? (
-                                        <UserPhoto
-                                            userId={
-                                                appointment.data.patient.userId
-                                            }
-                                            alt={"Patient"}
-                                            url={
-                                                appointment.data.patient
-                                                    .profilePictureUrl
-                                            }
-                                        />
-                                    ) : (
-                                        <TouchableOpacity
-                                            onPress={() =>
-                                                router.push(
-                                                    `/psych/${appointment.data?.therapist.id}`,
-                                                )
-                                            }
-                                        >
-                                            <UserPhoto
-                                                userId={
-                                                    appointment.data.therapist
-                                                        .userId
-                                                }
-                                                alt={"Therapist"}
-                                                url={
-                                                    appointment.data.therapist
-                                                        .profilePictureUrl
-                                                }
-                                            />
-                                        </TouchableOpacity>
-                                    )}
-                                </View>
-                                <Text className="pl-2 font-nunito-sans text-xl">
-                                    {isProfessional
-                                        ? appointment.data.patient.name
-                                        : appointment.data.therapist.name}
-                                </Text>
-                            </View>
+                            {isProfessional ? (
+                                <TouchableOpacity
+                                    onPress={() =>
+                                        router.push(
+                                            `/(psych)/patients/${nextAppointment.data?.patient.id}`,
+                                        )
+                                    }
+                                    style={{
+                                        flexDirection: "row",
+                                        alignItems: "center",
+                                    }}
+                                >
+                                    <UserPhoto
+                                        userId={
+                                            nextAppointment.data.patient.userId
+                                        }
+                                        alt={"Patient"}
+                                        url={
+                                            nextAppointment.data.patient
+                                                .profilePictureUrl
+                                        }
+                                    />
+                                    <Text className="pl-2 font-nunito-sans text-xl">
+                                        {isProfessional
+                                            ? nextAppointment.data.patient.name
+                                            : nextAppointment.data.therapist
+                                                  .name}
+                                    </Text>
+                                </TouchableOpacity>
+                            ) : (
+                                <TouchableOpacity
+                                    onPress={() =>
+                                        router.push(
+                                            `/psych/${nextAppointment.data?.therapist.id}`,
+                                        )
+                                    }
+                                    style={{
+                                        flexDirection: "row",
+                                        alignItems: "center",
+                                    }}
+                                >
+                                    <UserPhoto
+                                        userId={
+                                            nextAppointment.data.therapist
+                                                .userId
+                                        }
+                                        alt={"Therapist"}
+                                        url={
+                                            nextAppointment.data.therapist
+                                                .profilePictureUrl
+                                        }
+                                    />
+                                    <Text className="pl-2 font-nunito-sans text-xl">
+                                        {isProfessional
+                                            ? nextAppointment.data.patient.name
+                                            : nextAppointment.data.therapist
+                                                  .name}
+                                    </Text>
+                                </TouchableOpacity>
+                            )}
                         </View>
                     </View>
                     <TouchableOpacity
                         onPress={async () => {
-                            if (appointment.data?.modality === "ONLINE") {
+                            if (nextAppointment.data?.modality === "ONLINE") {
                                 Linking.openURL(
-                                    appointment?.data?.link as string,
+                                    nextAppointment?.data?.link as string,
+                                );
+                                return;
+                            }
+
+                            if (isProfessional) {
+                                router.push(
+                                    `/(psych)/patients/${nextAppointment.data?.patient.id}`,
                                 );
                                 return;
                             }
 
                             const mapsLink = await geocodeAddress(
-                                appointment.data?.therapist.address,
+                                nextAppointment.data?.therapist.address,
                             );
                             Linking.openURL(mapsLink as string);
                         }}
@@ -303,15 +339,21 @@ function NextAppointment() {
                                 size={16}
                                 color="white"
                                 name={`${
-                                    appointment.data.modality === "ONLINE"
+                                    nextAppointment.data.modality === "ONLINE"
                                         ? "video-camera"
+                                        : isProfessional
+                                        ? "user"
                                         : "car"
                                 }`}
                             />
                             <Text className="ml-4 font-nunito-sans-bold text-lg text-white">
-                                {appointment.data.modality === "ONLINE"
+                                {nextAppointment.data.modality === "ONLINE"
                                     ? t({ message: "Join the meeting" })
-                                    : t({ message: "Get directions" })}
+                                    : t({
+                                          message: isProfessional
+                                              ? "See patient"
+                                              : "Get directions",
+                                      })}
                             </Text>
                         </View>
                     </TouchableOpacity>
@@ -325,7 +367,6 @@ function NextAppointment() {
 
 function LastNotes() {
     const router = useRouter();
-    const lingui = useLingui();
 
     const { data, isLoading } = api.notes.findByUserId.useQuery();
 
@@ -334,47 +375,7 @@ function LastNotes() {
     return (
         <>
             {data && data.length > 0 ? (
-                data.map(
-                    ({
-                        id,
-                        content,
-                        createdAt,
-                    }: {
-                        id: string;
-                        content: string;
-                        createdAt: Date;
-                    }) => (
-                        <Card key={id}>
-                            <View className="flex w-full flex-row items-center justify-between align-middle">
-                                <View className="flex w-64 flex-col">
-                                    <Text className="font-nunito-sans-bold text-xl capitalize text-slate-500">
-                                        <Text className="text-blue-500">
-                                            {createdAt.getDate()}
-                                        </Text>{" "}
-                                        {createdAt.toLocaleString(
-                                            lingui.i18n.locale,
-                                            {
-                                                month: "long",
-                                            },
-                                        )}
-                                    </Text>
-                                    <Text className="pt-2 font-nunito-sans text-base">
-                                        {content}
-                                    </Text>
-                                </View>
-                                <TouchableOpacity
-                                    onPress={() => router.push("/notes/" + id)}
-                                >
-                                    <MaterialIcons
-                                        size={32}
-                                        name="chevron-right"
-                                        color="#3b82f6"
-                                    />
-                                </TouchableOpacity>
-                            </View>
-                        </Card>
-                    ),
-                )
+                data.map((note) => <NoteCard note={note} key={note.id} />)
             ) : (
                 <Card>
                     <View className="flex w-full flex-row items-center justify-between gap-2 align-middle">
@@ -427,5 +428,70 @@ function SetUpWorkHoursWarning() {
                     </View>
                 )}
         </>
+    );
+}
+
+function AppointmentsPreview() {
+    const preview = api.therapists.appointmentsPreview.useQuery();
+
+    if (preview.isLoading) return null;
+
+    if (preview.isError)
+        return (
+            <BasicText color="red">
+                <Trans>Failed to get appointments data</Trans>
+            </BasicText>
+        );
+
+    return (
+        <View
+            style={{
+                marginTop: 12,
+                marginHorizontal: 6,
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 12,
+                // justifyContent: "space-between",
+            }}
+        >
+            <View
+                style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: 4,
+                }}
+            >
+                <View
+                    style={{
+                        borderRadius: 8,
+                        width: 8,
+                        height: 8,
+                        backgroundColor: colors.green,
+                    }}
+                />
+                <BasicText fontWeight="bold" color="green">
+                    {preview.data?.appointmentsToday} today
+                </BasicText>
+            </View>
+            <View
+                style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: 4,
+                }}
+            >
+                <View
+                    style={{
+                        borderRadius: 8,
+                        width: 8,
+                        height: 8,
+                        backgroundColor: colors.yellow,
+                    }}
+                />
+                <BasicText fontWeight="bold" color="yellow">
+                    {preview.data?.pendentAppointments} pendent
+                </BasicText>
+            </View>
+        </View>
     );
 }

@@ -175,36 +175,34 @@ export default function CalendarScreen() {
                     ]}
                 />
             </View>
-            <View className="pb-20">
-                {filteredAppointment.length === 0 ? (
-                    <View className="flex flex-col items-center justify-center gap-2 pt-32">
-                        <Image
-                            className="h-40 w-40"
-                            alt={`No therapists picture`}
-                            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                            source={require("../../../assets/images/girl_dog.png")}
+            {filteredAppointment.length === 0 ? (
+                <View className="flex flex-col items-center justify-center gap-2 pt-32">
+                    <Image
+                        className="h-40 w-40"
+                        alt={`No therapists picture`}
+                        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                        source={require("../../../assets/images/girl_dog.png")}
+                    />
+                    <Text className="font-nunito-sans-bold text-xl text-slate-500">
+                        <Trans>No appointments found!</Trans>
+                    </Text>
+                </View>
+            ) : (
+                user &&
+                filteredAppointment.map((appoinment) =>
+                    isProfessional ? (
+                        <TherapistAppointmentCard
+                            key={appoinment.id}
+                            appointment={appoinment}
                         />
-                        <Text className="font-nunito-sans-bold text-xl text-slate-500">
-                            <Trans>No appointments found!</Trans>
-                        </Text>
-                    </View>
-                ) : (
-                    user &&
-                    filteredAppointment.map((appoinment) =>
-                        isProfessional ? (
-                            <TherapistAppointmentCard
-                                key={appoinment.id}
-                                appointment={appoinment}
-                            />
-                        ) : (
-                            <PatientAppointmentCard
-                                key={appoinment.id}
-                                appointment={appoinment}
-                            />
-                        ),
-                    )
-                )}
-            </View>
+                    ) : (
+                        <PatientAppointmentCard
+                            key={appoinment.id}
+                            appointment={appoinment}
+                        />
+                    ),
+                )
+            )}
         </BaseLayout>
     );
 }

@@ -228,7 +228,7 @@ function BaseLayout({
 }) {
     return (
         <ScreenWrapper>
-            <Header title="Finances" />
+            <Header title={t({ message: "Finances" })} />
             <Refreshable
                 refreshControl={
                     <RefreshControl
