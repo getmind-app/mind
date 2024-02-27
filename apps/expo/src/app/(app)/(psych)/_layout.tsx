@@ -34,6 +34,8 @@ export default function PsychLayout() {
                 }}
             />
             <Stack.Screen name="payments-setup" />
+            <Stack.Screen name="patients/index" />
+            <Stack.Screen name="patients/[patientId]" />
         </Stack>
     );
 }

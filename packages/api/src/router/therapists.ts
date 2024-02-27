@@ -1,4 +1,4 @@
-import { addDays } from "date-fns";
+import { addDays, endOfDay, startOfDay } from "date-fns";
 import { z } from "zod";
 
 import { type Prisma, type WeekDay } from "@acme/db";
@@ -391,5 +391,126 @@ export const therapistsRouter = createTRPCRouter({
         });
 
         return recurrences;
+    }),
+    allPatients: protectedProcedure.query(async ({ ctx }) => {
+        const therapist = await ctx.prisma.therapist.findUniqueOrThrow({
+            where: {
+                userId: ctx.auth.userId,
+            },
+        });
+
+        const patients = await ctx.prisma.patient.findMany({
+            where: {
+                appointments: {
+                    some: {
+                        therapistId: therapist.id,
+                    },
+                },
+            },
+            orderBy: {
+                name: "desc",
+            },
+        });
+
+        return patients;
+    }),
+    patientProfile: protectedProcedure
+        .input(
+            z.object({
+                patientId: z.string().min(1),
+            }),
+        )
+        .query(async ({ ctx, input }) => {
+            const therapist = await ctx.prisma.therapist.findUniqueOrThrow({
+                where: {
+                    userId: ctx.auth.userId,
+                },
+            });
+
+            const patient = await ctx.prisma.patient.findUniqueOrThrow({
+                where: {
+                    id: input.patientId,
+                },
+                include: {
+                    appointments: {
+                        where: {
+                            therapistId: therapist.id,
+                        },
+                        include: {
+                            therapist: true,
+                            patient: true,
+                        },
+                    },
+                    Note: {
+                        where: {
+                            userId: therapist.userId,
+                        },
+                    },
+                    Recurrence: {
+                        where: {
+                            therapistId: therapist.id,
+                        },
+                        include: {
+                            therapist: true,
+                            patient: true,
+                        },
+                    },
+                },
+            });
+            const totalValue = patient.appointments.reduce(
+                (acc, appointment) => acc + appointment.rate,
+                0,
+            );
+            const firstAppointment = patient.appointments.reduce(
+                (acc, appointment) =>
+                    acc < appointment.scheduledTo
+                        ? acc
+                        : appointment.scheduledTo,
+                new Date(),
+            );
+
+            const unpaidAppointments = patient.appointments.reduce(
+                (acc, appointment) =>
+                    appointment.isPaid === false ? acc + 1 : acc,
+                0,
+            );
+
+            return {
+                ...patient,
+                totalValue,
+                firstAppointment,
+                unpaidAppointments,
+            };
+        }),
+    appointmentsPreview: protectedProcedure.query(async ({ ctx }) => {
+        const therapist = await ctx.prisma.therapist.findUniqueOrThrow({
+            where: {
+                userId: ctx.auth.userId,
+            },
+        });
+
+        const [pendentAppointments, appointmentsToday] = await Promise.all([
+            ctx.prisma.appointment.count({
+                where: {
+                    therapistId: therapist.id,
+                    status: "PENDENT",
+                },
+            }),
+            ctx.prisma.appointment.count({
+                where: {
+                    therapistId: therapist.id,
+                    status: "ACCEPTED",
+                    scheduledTo: {
+                        gte: startOfDay(new Date()),
+                        lte: endOfDay(new Date()),
+                    },
+                },
+            }),
+        ]);
+
+        return {
+            pendentAppointments,
+            appointmentsToday,
+        };
     }),
 });

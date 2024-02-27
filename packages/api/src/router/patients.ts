@@ -9,6 +9,7 @@ export const patientsRouter = createTRPCRouter({
             z.object({
                 name: z.string(),
                 email: z.string().email(),
+                document: z.string(),
                 profilePictureUrl: z.string().url(),
                 userId: z.string(),
             }),

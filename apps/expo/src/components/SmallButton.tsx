@@ -12,6 +12,7 @@ export function SmallButton({
     disabled = false,
     textSize = "md",
     textColor = "white",
+    style = {},
     ...props
 }: TouchableOpacityProps & {
     loading?: boolean;
@@ -33,6 +34,7 @@ export function SmallButton({
                 justifyContent: "center",
                 paddingHorizontal: 12,
                 paddingVertical: 4,
+                ...(style as object),
             }}
             disabled={disabled}
             {...props}

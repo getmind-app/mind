@@ -187,7 +187,6 @@ function RescheduleAppointmentRequest({
             );
         }
     }
-
     return (
         <View
             style={{

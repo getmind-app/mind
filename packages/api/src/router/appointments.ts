@@ -9,6 +9,7 @@ import {
     set,
     setHours,
 } from "date-fns";
+
 import { z } from "zod";
 
 import { type Appointment, type WeekDay } from "@acme/db";
@@ -98,6 +99,7 @@ export const appointmentsRouter = createTRPCRouter({
 
             return await ctx.prisma.appointment.create({
                 data: {
+                    rate: therapist.hourlyRate,
                     modality: input.modality,
                     hourId: input.hourId,
                     scheduledTo: input.scheduledTo,
@@ -627,6 +629,9 @@ export const appointmentsRouter = createTRPCRouter({
                     status: "ACCEPTED",
                     weekDay,
                 },
+                include: {
+                    therapist: true,
+                },
             });
 
         const createdAppointments: Appointment[] = [];
@@ -641,6 +646,7 @@ export const appointmentsRouter = createTRPCRouter({
             try {
                 const appointment = await ctx.prisma.appointment.create({
                     data: {
+                        rate: recurrence.therapist.hourlyRate,
                         scheduledTo: date,
                         hourId: recurrence.hourId,
                         modality: recurrence.defaultModality,

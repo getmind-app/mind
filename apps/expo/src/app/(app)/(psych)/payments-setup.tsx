@@ -7,6 +7,7 @@ import { z } from "zod";
 
 import { CardSkeleton } from "../../../components/CardSkeleton";
 import { FormTextInput } from "../../../components/FormTextInput";
+import { Header } from "../../../components/Header";
 import { LargeButton } from "../../../components/LargeButton";
 import { Refreshable } from "../../../components/Refreshable";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
@@ -76,6 +77,7 @@ export default function PaymentsSetup() {
                     />
                 }
             >
+                <Header />
                 <Title title={t({ message: "Payments Setup" })} />
                 <Text className="pb-4 font-nunito-sans text-base text-slate-500">
                     <Trans>

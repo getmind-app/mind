@@ -9,6 +9,7 @@ type TouchableOpacityProps = ConstructorParameters<typeof TouchableOpacity>[0];
 export function LargeButton({
     children,
     color = "primaryBlue",
+    textColor = "white",
     disabled = false,
     textSize = "lg",
     style = {},
@@ -19,6 +20,7 @@ export function LargeButton({
     disabled?: boolean;
     color?: Color;
     textSize?: BasicTextSizes;
+    textColor?: Color;
 }) {
     return (
         <TouchableOpacity
@@ -57,8 +59,9 @@ export function LargeButton({
                         position: "relative",
                     }}
                     fontWeight="bold"
-                    color="white"
                     size={textSize}
+                    color={textColor}
+                    size="lg"
                 >
                     {children}
                 </BasicText>

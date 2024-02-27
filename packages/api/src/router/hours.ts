@@ -2,17 +2,16 @@ import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const hoursRouter = createTRPCRouter({
     hasSetUpWorkHours: protectedProcedure.query(async ({ ctx }) => {
-        const therapist = await ctx.prisma.therapist.findUnique({
+        const hoursCount = await ctx.prisma.hour.count({
             where: {
-                userId: ctx.auth.userId,
-            },
-            select: {
-                hours: true,
+                Therapist: {
+                    userId: ctx.auth.userId,
+                },
             },
         });
 
         return {
-            hasSetUpWorkHours: !!therapist?.hours,
+            hasSetUpWorkHours: hoursCount > 0,
         };
     }),
 });
