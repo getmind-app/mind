@@ -252,17 +252,25 @@ function NextAppointment() {
                             <View className="flex flex-row items-center align-middle">
                                 <View className="flex items-center justify-center overflow-hidden rounded-full align-middle">
                                     {isProfessional ? (
-                                        <UserPhoto
-                                            userId={
-                                                nextAppointment.data.patient
-                                                    .userId
+                                        <TouchableOpacity
+                                            onPress={() =>
+                                                router.push(
+                                                    `/(psych)/patients/${nextAppointment.data?.patient.id}`,
+                                                )
                                             }
-                                            alt={"Patient"}
-                                            url={
-                                                nextAppointment.data.patient
-                                                    .profilePictureUrl
-                                            }
-                                        />
+                                        >
+                                            <UserPhoto
+                                                userId={
+                                                    nextAppointment.data.patient
+                                                        .userId
+                                                }
+                                                alt={"Patient"}
+                                                url={
+                                                    nextAppointment.data.patient
+                                                        .profilePictureUrl
+                                                }
+                                            />
+                                        </TouchableOpacity>
                                     ) : (
                                         <TouchableOpacity
                                             onPress={() =>
