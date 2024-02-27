@@ -9,6 +9,7 @@ export const patientsRouter = createTRPCRouter({
             z.object({
                 name: z.string(),
                 email: z.string().email(),
+                document: z.string(),
                 profilePictureUrl: z.string().url(),
                 userId: z.string(),
             }),
@@ -34,6 +35,23 @@ export const patientsRouter = createTRPCRouter({
         return await ctx.prisma.patient.findFirst({
             where: {
                 userId: ctx.auth.userId,
+            },
+        });
+    }),
+    appointmentsToReschedule: protectedProcedure.query(async ({ ctx }) => {
+        const patient = await ctx.prisma.patient.findUniqueOrThrow({
+            where: {
+                userId: ctx.auth.userId,
+            },
+        });
+
+        return await ctx.prisma.appointment.findMany({
+            where: {
+                patientId: patient.id,
+                rescheduleRequested: true,
+            },
+            include: {
+                therapist: true,
             },
         });
     }),

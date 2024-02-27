@@ -1,17 +1,13 @@
 import { Text } from "react-native";
 
+import { colors, type Color } from "../utils/colors";
+
+export type BasicTextSizes = "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl";
+
 type BasicTextProps = ConstructorParameters<typeof Text>[0] & {
     fontWeight?: "bold" | "normal";
-    color?: "black" | "white" | "gray";
-    size?: "sm" | "md" | "lg" | "xl" | "2xl";
-};
-
-const colorMapper: {
-    [key in NonNullable<BasicTextProps["color"]>]: string;
-} = {
-    black: "#000",
-    white: "#fff",
-    gray: "#666",
+    color?: Color;
+    size?: BasicTextSizes;
 };
 
 const sizeMapper: {
@@ -22,6 +18,20 @@ const sizeMapper: {
     lg: 16,
     xl: 18,
     "2xl": 20,
+    "3xl": 24,
+    "4xl": 28,
+};
+
+const lineHeightMapper: {
+    [key in NonNullable<BasicTextProps["size"]>]: number;
+} = {
+    sm: 16,
+    md: 20,
+    lg: 24,
+    xl: 28,
+    "2xl": 32,
+    "3xl": 36,
+    "4xl": 40,
 };
 
 export function BasicText({
@@ -37,8 +47,9 @@ export function BasicText({
             fontWeight === "bold"
                 ? "NunitoSans_700Bold"
                 : "NunitoSans_400Regular",
-        color: colorMapper[color] ?? colorMapper.black,
+        color: colors[color],
         fontSize: sizeMapper[size] ?? "md",
+        lineHeight: lineHeightMapper[size] ?? "md",
     };
 
     return (

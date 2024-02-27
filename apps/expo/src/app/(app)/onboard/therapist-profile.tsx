@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
     Image,
     KeyboardAvoidingView,
@@ -29,7 +29,7 @@ import { Title } from "../../../components/Title";
 import { api } from "../../../utils/api";
 import { type Gender, type Modality } from ".prisma/client";
 
-export default function EditPsychProfile() {
+export default function NewPsychScreen() {
     const { user } = useUser();
     const router = useRouter();
     const createAccount = api.stripe.createAccount.useMutation();
@@ -38,6 +38,18 @@ export default function EditPsychProfile() {
         useState<ImagePicker.ImagePickerAsset | null>(null);
 
     const [showBirthdayPicker, setShowBirthdayPicker] = useState(false);
+
+    const { mutateAsync, isLoading } = api.therapists.create.useMutation({
+        onSuccess: async () => {
+            await user?.reload();
+            await createAccount.mutateAsync();
+            if (modalities.includes("ON_SITE")) {
+                router.push("/onboard/therapist-address");
+            } else {
+                router.push("/");
+            }
+        },
+    });
 
     const {
         control,
@@ -52,6 +64,7 @@ export default function EditPsychProfile() {
         hourlyRate: string;
         phone: string;
         modalities: Modality[];
+        pixKey?: string;
     }>({
         defaultValues: {
             name: user?.fullName ?? "",
@@ -68,6 +81,7 @@ export default function EditPsychProfile() {
             hourlyRate: "",
             phone: "",
             modalities: [],
+            pixKey: "",
         },
         resolver: zodResolver(schema),
         mode: "onTouched",
@@ -95,7 +109,6 @@ export default function EditPsychProfile() {
             });
         }
 
-
         try {
             await mutateAsync({
                 ...data,
@@ -115,18 +128,6 @@ export default function EditPsychProfile() {
         } catch (error) {
             console.error(error);
         }
-    });
-
-    const { mutateAsync, isLoading } = api.therapists.create.useMutation({
-        onSuccess: async () => {
-            await user?.reload();
-            await createAccount.mutateAsync();
-            if (modalities.includes("ON_SITE")) {
-                router.push("/(psych)/address");
-            } else {
-                router.push("/");
-            }
-        },
     });
 
     const pickImageAsync = async () => {
@@ -149,7 +150,7 @@ export default function EditPsychProfile() {
             style={{ flex: 1 }}
             behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
-            <ScreenWrapper>
+            <ScreenWrapper paddindBottom={16}>
                 <ScrollView showsVerticalScrollIndicator={false}>
                     <Title title={t({ message: "Onboard" })} />
                     <Text className="mt-4 font-nunito-sans text-lg text-slate-700">
@@ -183,6 +184,7 @@ export default function EditPsychProfile() {
                         </TouchableOpacity>
                     </View>
                     <FormTextInput
+                        required
                         control={control}
                         name="name"
                         title={t({ message: "Full Name" })}
@@ -192,6 +194,7 @@ export default function EditPsychProfile() {
                         })}
                     />
                     <FormDateInput
+                        required
                         title={t({ message: "Birthday" })}
                         name="birthday"
                         control={control}
@@ -206,6 +209,7 @@ export default function EditPsychProfile() {
                         minimumDate={DateTime.local(1900).toJSDate()}
                     />
                     <FormTextInput
+                        required
                         control={control}
                         name="document"
                         title={t({ message: "Document (CPF)" })}
@@ -214,6 +218,7 @@ export default function EditPsychProfile() {
                         inputMode="numeric"
                     />
                     <FormTextInput
+                        required
                         control={control}
                         name="phone"
                         title={t({ message: "Phone" })}
@@ -222,6 +227,7 @@ export default function EditPsychProfile() {
                         inputMode="numeric"
                     />
                     <FormTextInput
+                        required
                         control={control}
                         name="crp"
                         title={t({ message: "CRP" })}
@@ -230,10 +236,18 @@ export default function EditPsychProfile() {
                         inputMode="numeric"
                     />
                     <FormCurrencyInput
+                        required
                         name="hourlyRate"
                         control={control}
                         title={t({ message: "Hourly rate" })}
-                        platformFee={0.1}
+                    />
+                    <FormTextInput
+                        control={control}
+                        name="pixKey"
+                        title={t({ message: "Pix key" })}
+                        placeholder={t({
+                            message: "E-mail, CPF, phone number",
+                        })}
                     />
                     <Controller
                         control={control}
@@ -243,7 +257,8 @@ export default function EditPsychProfile() {
                                 <Text className="font-nunito-sans text-lg text-slate-700">
                                     <Trans>
                                         Modality (you can choose both)
-                                    </Trans>
+                                    </Trans>{" "}
+                                    *
                                 </Text>
                                 <View className="mt-4 flex flex-row justify-between">
                                     <TouchableOpacity
@@ -412,4 +427,5 @@ const schema = z.object({
             (value) => value.length > 0,
             "You must choose at least one modality",
         ),
+    pixKey: z.string().optional(),
 });

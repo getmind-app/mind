@@ -37,8 +37,10 @@ const appointmentAtom = atom<{
     hour: string | null;
     modality: Modality | null;
     repeat: boolean;
+    hourId: string | null;
 }>({
     date: null,
+    hourId: null,
     hour: null,
     modality: null,
     repeat: false,
@@ -47,7 +49,7 @@ const appointmentAtom = atom<{
 type therapistAvailableDates =
     RouterOutputs["therapists"]["getAvailableDatesAndHours"];
 
-export default function TherapistSchedule() {
+export default function AppointmentSchedulingScreen() {
     const [appointment, setAppointment] = useAtom(appointmentAtom);
     const router = useRouter();
     const { id } = useLocalSearchParams();
@@ -58,10 +60,10 @@ export default function TherapistSchedule() {
             id: String(id),
         });
 
-    const { mutateAsync } = api.appointments.create.useMutation({
+    const createAppointment = api.appointments.create.useMutation({
         onSuccess: (appointment) => {
             router.push({
-                pathname: "/psych/payment",
+                pathname: "/psych/finish",
                 params: { appointmentId: appointment.id },
             });
         },
@@ -98,14 +100,17 @@ export default function TherapistSchedule() {
             throw new Error("Missing form data");
         } else if (!data?.hourlyRate) {
             throw new Error("Missing hourly rate");
+        } else if (!appointment.hourId) {
+            throw new Error("Missing hour id");
         }
 
-        await mutateAsync({
+        await createAppointment.mutateAsync({
             scheduledTo: completeDate,
             modality: appointment.modality,
             therapistId: String(id),
             patientId: String(patient?.id),
             repeat: appointment.repeat,
+            hourId: appointment.hourId,
         });
     }
 
@@ -118,7 +123,7 @@ export default function TherapistSchedule() {
     return (
         <>
             <Header />
-            <ScreenWrapper>
+            <ScreenWrapper paddingTop={48} paddindBottom={32}>
                 <View
                     style={{
                         flex: 1,
@@ -182,10 +187,11 @@ export default function TherapistSchedule() {
                             date={appointment.date}
                             therapistAppointments={data.appointments}
                             therapistHours={data.hours}
-                            onSelect={(newHour) =>
+                            onSelect={({ newHour, hourId }) =>
                                 setAppointment({
                                     ...appointment,
                                     hour: newHour,
+                                    hourId,
                                 })
                             }
                         />
@@ -212,10 +218,11 @@ export default function TherapistSchedule() {
                             }}
                         />
                     </View>
-                    <View style={{ marginBottom: 16 }}>
+                    <View>
                         <LargeButton
                             disabled={!allPicked}
                             onPress={handleConfirm}
+                            loading={createAppointment.isLoading}
                         >
                             <Trans>Confirm appointment</Trans>
                         </LargeButton>
@@ -239,74 +246,76 @@ const Calendar = ({
     return (
         <View className="flex flex-col gap-4 rounded-lg pt-4">
             {availableDates &&
-                availableDates.length > 0 &&
-                availableDates.map((month) => (
-                    <View
-                        key={month.month}
-                        style={{
-                            paddingLeft: 4,
-                        }}
-                    >
-                        <BasicText
+                Object.values(availableDates).length > 0 &&
+                Object.entries(availableDates).map(
+                    ([monthIndex, availableDays]) => (
+                        <View
+                            key={monthIndex}
                             style={{
-                                textTransform: "capitalize",
-                                paddingBottom: 4,
+                                paddingLeft: 4,
                             }}
-                            size="lg"
                         >
-                            {getMonthInLocale({
-                                locale: lingui.i18n.locale,
-                                monthIndex: month.monthIndex,
-                            })}
-                        </BasicText>
-                        <ScrollView horizontal={true}>
-                            {month.dates.length === 0 ? (
-                                <BasicText
-                                    style={{
-                                        paddingLeft: 4,
-                                    }}
-                                    color="gray"
-                                    size="sm"
-                                >
-                                    <Trans>
-                                        No dates available for this month
-                                    </Trans>
-                                </BasicText>
-                            ) : (
-                                month.dates.map((day) => (
-                                    <TouchableOpacity
-                                        key={day.date.getDate()}
-                                        className={`mr-2 flex w-16 rounded-lg ${
-                                            day.date.getMonth() ===
-                                                selectedDate?.getMonth() &&
-                                            day.date.getDate() ===
-                                                selectedDate?.getDate()
-                                                ? "bg-[#2185EE]"
-                                                : "bg-off-white"
-                                        }`}
-                                        onPress={() => {
-                                            onSelect(day.date);
-                                            setSelectedDate(day.date);
+                            <BasicText
+                                style={{
+                                    textTransform: "capitalize",
+                                    paddingBottom: 4,
+                                }}
+                                size="lg"
+                            >
+                                {getMonthInLocale({
+                                    locale: lingui.i18n.locale,
+                                    monthIndex: parseInt(monthIndex),
+                                })}
+                            </BasicText>
+                            <ScrollView horizontal={true}>
+                                {availableDays.length === 0 ? (
+                                    <BasicText
+                                        style={{
+                                            paddingLeft: 4,
                                         }}
+                                        color="gray"
+                                        size="sm"
                                     >
-                                        <Text
-                                            className={`p-3 text-center font-nunito-sans text-sm ${
+                                        <Trans>
+                                            No dates available for this month
+                                        </Trans>
+                                    </BasicText>
+                                ) : (
+                                    availableDays.map((day) => (
+                                        <TouchableOpacity
+                                            key={day.date.getDate()}
+                                            className={`mr-2 flex w-16 rounded-lg ${
                                                 day.date.getMonth() ===
                                                     selectedDate?.getMonth() &&
                                                 day.date.getDate() ===
                                                     selectedDate?.getDate()
-                                                    ? "font-nunito-sans-bold text-white"
-                                                    : ""
+                                                    ? "bg-[#2185EE]"
+                                                    : "bg-off-white"
                                             }`}
+                                            onPress={() => {
+                                                onSelect(day.date);
+                                                setSelectedDate(day.date);
+                                            }}
                                         >
-                                            {day.date.getDate()}
-                                        </Text>
-                                    </TouchableOpacity>
-                                ))
-                            )}
-                        </ScrollView>
-                    </View>
-                ))}
+                                            <Text
+                                                className={`p-3 text-center font-nunito-sans text-sm ${
+                                                    day.date.getMonth() ===
+                                                        selectedDate?.getMonth() &&
+                                                    day.date.getDate() ===
+                                                        selectedDate?.getDate()
+                                                        ? "font-nunito-sans-bold text-white"
+                                                        : ""
+                                                }`}
+                                            >
+                                                {day.date.getDate()}
+                                            </Text>
+                                        </TouchableOpacity>
+                                    ))
+                                )}
+                            </ScrollView>
+                        </View>
+                    ),
+                )}
         </View>
     );
 };
@@ -316,7 +325,13 @@ type HourPickerProps = {
     hour: string | null;
     therapistHours: Hour[];
     therapistAppointments: Appointment[];
-    onSelect: (n: string) => void;
+    onSelect: ({
+        newHour,
+        hourId,
+    }: {
+        newHour: string;
+        hourId: string;
+    }) => void;
 };
 
 function HourPicker({
@@ -364,8 +379,7 @@ function HourPicker({
             );
 
             return !isAppointmentMatch;
-        })
-        .map((h) => h.startAt);
+        });
 
     return (
         <AnimatedCard
@@ -408,15 +422,20 @@ function HourPicker({
                         </BasicText>
                     )}
                     {date &&
-                        availableHours.map((n, i) => (
+                        availableHours.map((selectedHour, i) => (
                             <HourComponent
                                 key={i}
-                                number={`${n}:00`}
-                                onPress={(v) => {
-                                    onSelect(v);
+                                number={`${selectedHour.startAt}:00`}
+                                onPress={(value) => {
+                                    onSelect({
+                                        newHour: value,
+                                        hourId: selectedHour.id,
+                                    });
                                     setExpanded(false);
                                 }}
-                                isSelected={hour === `${n}:00`}
+                                isSelected={
+                                    hour === `${selectedHour.startAt}:00`
+                                }
                             />
                         ))}
                 </View>

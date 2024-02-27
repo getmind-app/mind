@@ -7,6 +7,7 @@ export const notesRouter = createTRPCRouter({
         .input(
             z.object({
                 content: z.string().min(1),
+                patientId: z.string().min(1),
             }),
         )
         .mutation(async ({ ctx, input }) => {
@@ -16,6 +17,39 @@ export const notesRouter = createTRPCRouter({
                     userId: ctx.auth.userId,
                 },
             });
+        }),
+    nextSessionNotes: protectedProcedure
+        .input(
+            z
+                .object({
+                    therapistId: z.string().min(1),
+                    patientId: z.string().min(1),
+                })
+                .optional(),
+        )
+        .query(async ({ ctx, input }) => {
+            if (!input) {
+                const notes = await ctx.prisma.note.findMany({
+                    where: { userId: ctx.auth.userId },
+                    orderBy: {
+                        createdAt: "desc",
+                    },
+                });
+
+                return notes;
+            }
+
+            const therapistNotesOnPatient = await ctx.prisma.note.findMany({
+                where: {
+                    userId: input.therapistId,
+                    patientId: input.patientId,
+                },
+                orderBy: {
+                    createdAt: "desc",
+                },
+            });
+
+            return therapistNotesOnPatient;
         }),
     findByUserId: protectedProcedure.query(async ({ ctx }) => {
         const notes = await ctx.prisma.note.findMany({
@@ -43,8 +77,11 @@ export const notesRouter = createTRPCRouter({
             }),
         )
         .query(async ({ ctx, input }) => {
-            return await ctx.prisma.note.findUnique({
+            return await ctx.prisma.note.findUniqueOrThrow({
                 where: { id: input.id },
+                include: {
+                    patient: true,
+                },
             });
         }),
 });

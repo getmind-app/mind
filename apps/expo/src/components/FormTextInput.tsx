@@ -17,10 +17,14 @@ export function FormTextInput<
     name,
     rules,
     error,
+    required,
+    title,
     ...otherProps
 }: TextInputProps & {
     control: Control<TFieldValues>;
     name: TName;
+    required?: boolean;
+    title?: string;
     rules?: Omit<
         RegisterOptions<TFieldValues, TName>,
         "valueAsNumber" | "valueAsDate" | "setValueAs" | "disabled"
@@ -38,6 +42,7 @@ export function FormTextInput<
                     value={value}
                     onBlur={onBlur}
                     onChangeText={onChange}
+                    title={required ? `${title} *` : title}
                     {...otherProps}
                 />
             )}

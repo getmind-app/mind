@@ -8,17 +8,25 @@ import {
 } from "react-native";
 import { useGlobalSearchParams, useRouter } from "expo-router";
 import { Trans } from "@lingui/macro";
+import { useLingui } from "@lingui/react";
+import { format } from "date-fns";
 
+import { BasicText } from "../../../components/BasicText";
 import { FullScreenLoading } from "../../../components/FullScreenLoading";
 import { Header } from "../../../components/Header";
 import { Loading } from "../../../components/Loading";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
+import { UserPhoto } from "../../../components/UserPhotos";
+import { getLocale } from "../../../helpers/getLocale";
+import { useUserIsProfessional } from "../../../hooks/user/useUserIsProfessional";
 import { api } from "../../../utils/api";
 
 export default function Note() {
     const router = useRouter();
     const utils = api.useContext();
     const params = useGlobalSearchParams();
+    const isProfessional = useUserIsProfessional();
+    const lingui = useLingui();
 
     const { data, isLoading, isError, error } = api.notes.findById.useQuery({
         id: String(params.id),
@@ -34,7 +42,7 @@ export default function Note() {
     });
 
     async function handleDelete() {
-        deleteNote.mutateAsync({ id: String(params.id) });
+        await deleteNote.mutateAsync({ id: String(params.id) });
     }
 
     if (isLoading) return <FullScreenLoading />;
@@ -61,14 +69,32 @@ export default function Note() {
                     <View
                         className={`flex flex-row items-center justify-between`}
                     >
-                        <Text className="font-nunito-sans-bold text-3xl ">
-                            <Text className="text-blue-500">
+                        <View
+                            style={{
+                                flexDirection: "row",
+                                alignItems: "center",
+                                gap: 12,
+                            }}
+                        >
+                            <BasicText
+                                fontWeight="bold"
+                                size="3xl"
+                                color="primaryBlue"
+                            >
                                 {data.createdAt.getDate()}
-                            </Text>{" "}
-                            {data.createdAt.toLocaleString("en", {
-                                month: "long",
-                            })}
-                        </Text>
+                            </BasicText>
+                            <BasicText fontWeight="bold" size="3xl">
+                                {format(data.createdAt, "LLLL", {
+                                    locale: getLocale(lingui),
+                                })}
+                            </BasicText>
+                            {isProfessional && (
+                                <UserPhoto
+                                    userId={data.patient.userId}
+                                    alt={"Patient's photo"}
+                                />
+                            )}
+                        </View>
                         <TouchableOpacity onPress={handleDelete}>
                             <View
                                 className={`rounded-xl bg-red-500 ${

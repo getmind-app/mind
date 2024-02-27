@@ -14,6 +14,9 @@ export async function createFirstAppointmentsInRecurrence({
         where: {
             id: recurrenceId,
         },
+        include: {
+            therapist: true,
+        },
     });
 
     const firstAppointmentScheduledTo = setHours(
@@ -34,6 +37,7 @@ export async function createFirstAppointmentsInRecurrence({
         // Create the appointment without waiting for it to finish
         const appointmentPromise = prisma.appointment.create({
             data: {
+                rate: recurrence.therapist.hourlyRate,
                 recurrenceId,
                 modality: recurrence.defaultModality,
                 scheduledTo: date,
@@ -41,6 +45,7 @@ export async function createFirstAppointmentsInRecurrence({
                 therapistId: recurrence.therapistId,
                 status: "ACCEPTED",
                 type: "RECURRENT",
+                hourId: recurrence.hourId,
             },
         });
 

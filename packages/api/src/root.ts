@@ -1,5 +1,7 @@
 import { appointmentsRouter } from "./router/appointments";
 import { authRouter } from "./router/auth";
+import { financesRouter } from "./router/finances";
+import { hoursRouter } from "./router/hours";
 import { notesRouter } from "./router/notes";
 import { patientsRouter } from "./router/patients";
 import { recurrenceRouter } from "./router/recurrences";
@@ -16,7 +18,9 @@ export const appRouter = createTRPCRouter({
     therapists: therapistsRouter,
     appointments: appointmentsRouter,
     patients: patientsRouter,
+    hours: hoursRouter,
     stripe: stripeRouter,
+    finances: financesRouter,
     waitlist: waitlistRouter,
     recurrences: recurrenceRouter,
 });

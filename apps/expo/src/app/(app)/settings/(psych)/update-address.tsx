@@ -4,7 +4,6 @@ import {
     Platform,
     ScrollView,
     Text,
-    TouchableOpacity,
     View,
 } from "react-native";
 import MapView, { Marker } from "react-native-maps";
@@ -15,12 +14,14 @@ import { Trans, t } from "@lingui/macro";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { FormTextInput } from "../../../components/FormTextInput";
-import { Header } from "../../../components/Header";
-import { ProfileSkeleton } from "../../../components/ProfileSkeleton";
-import { geocode } from "../../../helpers/geocode";
-import { api } from "../../../utils/api";
-import { type Address } from ".prisma/client";
+import { type Address } from "../../../../../../../packages/db";
+import { FormTextInput } from "../../../../components/FormTextInput";
+import { Header } from "../../../../components/Header";
+import { LargeButton } from "../../../../components/LargeButton";
+import { ProfileSkeleton } from "../../../../components/ProfileSkeleton";
+import { ScreenWrapper } from "../../../../components/ScreenWrapper";
+import { geocode } from "../../../../helpers/geocode";
+import { api } from "../../../../utils/api";
 
 export default function Address() {
     const { user } = useUser();
@@ -31,10 +32,10 @@ export default function Address() {
     const { data: therapist, isLoading } =
         api.therapists.findByUserId.useQuery();
 
-    const { mutate: updateAddress } = api.therapists.updateAddress.useMutation({
+    const updateAddress = api.therapists.updateAddress.useMutation({
         onSuccess: async () => {
             await user?.reload();
-            router.push("/profile");
+            router.push("/settings");
         },
     });
 
@@ -71,7 +72,7 @@ export default function Address() {
     const onSubmit = handleSubmit(async (data) => {
         await user?.reload();
 
-        updateAddress({
+        updateAddress.mutate({
             street: data.street,
             number: data.number,
             complement: data.complement,
@@ -150,122 +151,110 @@ export default function Address() {
     }
 
     return (
-        <>
-            <Header />
+        <ScreenWrapper paddingTop={0} paddindBottom={16}>
+            <Header title={t({ message: "Address" })} />
             <KeyboardAvoidingView
                 style={{ flex: 1 }}
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
             >
-                <View className="h-full bg-off-white px-4 pb-4 pt-4">
-                    <ScrollView
-                        className="min-h-max"
-                        showsVerticalScrollIndicator={false}
-                    >
-                        <Text className="font-nunito-sans-bold text-3xl">
-                            <Trans>Address</Trans>
+                <ScrollView
+                    className="min-h-max"
+                    showsVerticalScrollIndicator={false}
+                >
+                    <FormTextInput
+                        control={control}
+                        name="zipCode"
+                        title={t({ message: "Zip" })}
+                        placeholder="12345-123"
+                        mask="99999-999"
+                        inputMode="numeric"
+                    />
+                    <FormTextInput
+                        control={control}
+                        name="street"
+                        title={t({ message: "Street" })}
+                        placeholder="Pioneer way"
+                        inputMode="text"
+                    />
+                    <FormTextInput
+                        control={control}
+                        name="number"
+                        title={t({ message: "Number" })}
+                        placeholder="123"
+                        inputMode="numeric"
+                    />
+                    <FormTextInput
+                        control={control}
+                        name="complement"
+                        title={t({ message: "Complement" })}
+                        placeholder="Apartment 123"
+                        inputMode="text"
+                    />
+                    <FormTextInput
+                        control={control}
+                        name="neighborhood"
+                        title={t({ message: "Neighborhood" })}
+                        placeholder="Juvevê"
+                        inputMode="text"
+                    />
+                    <FormTextInput
+                        control={control}
+                        name="city"
+                        title={t({ message: "City" })}
+                        placeholder="Curitiba"
+                        inputMode="text"
+                    />
+                    <FormTextInput
+                        control={control}
+                        name="state"
+                        title={t({ message: "State" })}
+                        placeholder="PR"
+                        inputMode="text"
+                    />
+                    <View className="gap-3 py-3 pb-6">
+                        <Text className="font-nunito-sans text-lg text-slate-700">
+                            <Trans>Is that right?</Trans>
                         </Text>
-                        <FormTextInput
-                            control={control}
-                            name="zipCode"
-                            title={t({ message: "Zip" })}
-                            placeholder="12345-123"
-                            mask="99999-999"
-                            inputMode="numeric"
-                        />
-                        <FormTextInput
-                            control={control}
-                            name="street"
-                            title={t({ message: "Street" })}
-                            placeholder="Pioneer way"
-                            inputMode="text"
-                        />
-                        <FormTextInput
-                            control={control}
-                            name="number"
-                            title={t({ message: "Number" })}
-                            placeholder="123"
-                            inputMode="numeric"
-                        />
-                        <FormTextInput
-                            control={control}
-                            name="complement"
-                            title={t({ message: "Complement" })}
-                            placeholder="Apartment 123"
-                            inputMode="text"
-                        />
-                        <FormTextInput
-                            control={control}
-                            name="neighborhood"
-                            title={t({ message: "Neighborhood" })}
-                            placeholder="Juvevê"
-                            inputMode="text"
-                        />
-                        <FormTextInput
-                            control={control}
-                            name="city"
-                            title={t({ message: "City" })}
-                            placeholder="Curitiba"
-                            inputMode="text"
-                        />
-                        <FormTextInput
-                            control={control}
-                            name="state"
-                            title={t({ message: "State" })}
-                            placeholder="PR"
-                            inputMode="text"
-                        />
-                        <View className="gap-3 py-3 pb-6">
-                            <Text className="font-nunito-sans text-lg text-slate-700">
-                                <Trans>Is that right?</Trans>
-                            </Text>
-                            <View>
-                                <MapView
-                                    style={{
-                                        alignContent: "center",
-                                        alignSelf: "center",
-                                        borderRadius: 10,
-                                        height: 120,
-                                        width: 350,
-                                    }}
-                                    camera={{
-                                        center: {
-                                            latitude: latitude,
-                                            longitude: longitude,
-                                        },
-                                        pitch: 0,
-                                        heading: 0,
-                                        altitude: 1000,
-                                        zoom: 15,
-                                    }}
-                                >
-                                    <Marker
-                                        coordinate={{
-                                            latitude: latitude,
-                                            longitude: longitude,
-                                        }}
-                                    />
-                                </MapView>
-                            </View>
-                        </View>
-                    </ScrollView>
-                    <TouchableOpacity className="w-full" onPress={onSubmit}>
-                        <View
-                            className={`mt-4 flex w-full items-center justify-center rounded-xl ${
-                                isValid && isDirty
-                                    ? "bg-blue-500"
-                                    : "bg-blue-200"
-                            } py-2`}
-                        >
-                            <Text
-                                className={`font-nunito-sans-bold text-lg text-white`}
+                        <View>
+                            <MapView
+                                style={{
+                                    alignContent: "center",
+                                    alignSelf: "center",
+                                    borderRadius: 10,
+                                    height: 120,
+                                    width: 350,
+                                }}
+                                camera={{
+                                    center: {
+                                        latitude: latitude,
+                                        longitude: longitude,
+                                    },
+                                    pitch: 0,
+                                    heading: 0,
+                                    altitude: 1000,
+                                    zoom: 15,
+                                }}
+                                scrollEnabled={false}
                             >
-                                <Trans>Update</Trans>
-                            </Text>
+                                <Marker
+                                    coordinate={{
+                                        latitude: latitude,
+                                        longitude: longitude,
+                                    }}
+                                />
+                            </MapView>
                         </View>
-                    </TouchableOpacity>
-                </View>
+                    </View>
+                </ScrollView>
+                <LargeButton
+                    disabled={!isValid || !isDirty}
+                    onPress={onSubmit}
+                    loading={updateAddress.isLoading}
+                >
+                    <Trans>Update</Trans>
+                </LargeButton>
             </KeyboardAvoidingView>
-        </>
+        </ScreenWrapper>
     );
 }
 

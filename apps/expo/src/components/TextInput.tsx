@@ -28,7 +28,7 @@ export function TextInput<T extends string>({
                 {title}
             </Text>
             <View
-                className={`flex flex-row items-center rounded border border-off-white  px-2 ${
+                className={`flex flex-row items-center rounded border border-off-white ${
                     error ? "border-red-600" : ""
                 }`}
             >

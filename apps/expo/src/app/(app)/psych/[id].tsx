@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import { type Float } from "react-native/Libraries/Types/CodegenTypes";
-import { Image } from "expo-image";
 import * as Linking from "expo-linking";
 import { useGlobalSearchParams, useRouter, useSearchParams } from "expo-router";
 import { Trans, t } from "@lingui/macro";
@@ -12,6 +11,7 @@ import { BasicText } from "../../../components/BasicText";
 import { FullScreenLoading } from "../../../components/FullScreenLoading";
 import { Header } from "../../../components/Header";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
+import { UserPhoto } from "../../../components/UserPhotos";
 import formatModality from "../../../helpers/formatModality";
 import { geocode } from "../../../helpers/geocode";
 import geocodeAddress from "../../../helpers/geocodeAddress";
@@ -22,7 +22,6 @@ import { type Address, type Hour, type Modality } from ".prisma/client";
 
 export default function TherapistProfile() {
     const params = useGlobalSearchParams();
-    const router = useRouter();
     const { data, isLoading, isError } = api.therapists.findById.useQuery({
         id: params.id as string,
     });
@@ -33,6 +32,10 @@ export default function TherapistProfile() {
 
     if (isLoading) {
         return <FullScreenLoading />;
+    }
+
+    if (!data) {
+        return <Text>Profile not found</Text>;
     }
 
     // Group hours by week day but only the first and last hour
@@ -47,23 +50,22 @@ export default function TherapistProfile() {
     return (
         <>
             <Header
-                share
                 onShare={() =>
                     void getShareLink({ id: data?.id, name: data?.name })
                 }
-                onBack={() => router.push({ pathname: "/search" })}
             />
             <ScreenWrapper>
                 <ScrollView>
-                    <View className="flex flex-row items-center gap-x-6">
-                        <Image
-                            alt="Profile picture"
-                            className="h-28 w-28 rounded-full"
-                            source={data?.profilePictureUrl}
-                            contentFit="cover"
+                    <View className="flex flex-row items-center">
+                        <UserPhoto
+                            userId={data?.userId}
+                            url={data?.profilePictureUrl}
+                            alt={`${data?.name} profile picture`}
+                            width={data?.yearsOfExperience ? 96 : 72}
+                            height={data?.yearsOfExperience ? 96 : 72}
                         />
-                        <View className="gap-y-2">
-                            <Text className="font-nunito-sans-bold text-3xl font-bold">
+                        <View className="ml-4">
+                            <Text className="font-nunito-sans-bold text-2xl font-bold">
                                 {data?.name}
                             </Text>
                             <View className="flex flex-col">
@@ -90,7 +92,7 @@ export default function TherapistProfile() {
                             </View>
                         </View>
                     </View>
-                    <View className="pb-32 pt-4">
+                    <View className="pb-32">
                         <ContentCard
                             title={t({ message: "Work Hours" })}
                             emoji="🕒"
@@ -271,7 +273,7 @@ function ScheduleBar({
                             backgroundColor: "#fff",
                         }}
                     >
-                        <View className="flex   flex-row items-center px-4 py-2 align-middle">
+                        <View className="flex flex-row items-center px-4 py-2 align-middle">
                             <Text className="font-nunito-sans-bold text-base">
                                 <Trans>Schedule</Trans>
                             </Text>
@@ -335,6 +337,7 @@ function LocationContent({ address }: { address: Address }) {
                             altitude: 1000,
                             zoom: 15,
                         }}
+                        scrollEnabled={false}
                     >
                         <Marker
                             // TODO: remove this
