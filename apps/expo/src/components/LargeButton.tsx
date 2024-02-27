@@ -41,9 +41,10 @@ export function LargeButton({
             >
                 {props.loading && (
                     <Loading
+                        color={colors.white}
                         style={{
                             position: "absolute",
-                            left: -24,
+                            left: -32,
                         }}
                     />
                 )}

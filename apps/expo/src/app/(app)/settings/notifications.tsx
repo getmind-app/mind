@@ -3,7 +3,7 @@ import { Linking, ScrollView, Switch, Text, View } from "react-native";
 import { RefreshControl, TouchableOpacity } from "react-native-gesture-handler";
 import * as Notifications from "expo-notifications";
 import { useUser } from "@clerk/clerk-expo";
-import { Trans } from "@lingui/macro";
+import { Trans, t } from "@lingui/macro";
 
 import { Header } from "../../../components/Header";
 import { Refreshable } from "../../../components/Refreshable";
@@ -71,14 +71,11 @@ export default function NotificationsPage() {
                         />
                     }
                 >
-                    <Header />
+                    <Header title={t({ message: "Notifications" })} />
                     <ScrollView
                         className="min-h-max"
                         showsVerticalScrollIndicator={false}
                     >
-                        <Text className="font-nunito-sans-bold text-3xl">
-                            <Trans>Notifications</Trans>
-                        </Text>
                         {notificationSettings?.status === "denied" && (
                             <View
                                 style={{

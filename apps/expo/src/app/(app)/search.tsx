@@ -597,7 +597,6 @@ function List({
             {data.map((therapist) => (
                 <View key={therapist.id} className="w-full">
                     <TherapistProfile
-                        key={therapist.id}
                         therapist={therapist}
                         currentLocation={currentLocation}
                     />

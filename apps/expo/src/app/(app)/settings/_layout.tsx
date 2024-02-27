@@ -2,35 +2,17 @@ import { Stack } from "expo-router";
 
 export default function SettingsLayout() {
     return (
-        <Stack
-            screenOptions={{
-                headerBackVisible: false,
-            }}
-        >
+        <Stack>
             <Stack.Screen
-                name="address"
+                name="index"
                 options={{
-                    title: "Address",
+                    headerShown: false,
                 }}
             />
-            <Stack.Screen
-                name="available-hours"
-                options={{
-                    title: "Available Hours",
-                }}
-            />
-            <Stack.Screen
-                name="recurrences"
-                options={{
-                    title: "Recurrences",
-                }}
-            />
-            <Stack.Screen
-                name="finances"
-                options={{
-                    title: "Finances",
-                }}
-            />
+            <Stack.Screen name="notifications" />
+            <Stack.Screen name="finances" />
+            <Stack.Screen name="recurrences" />
+            <Stack.Screen name="(psych)" options={{ headerShown: false }} />
         </Stack>
     );
 }

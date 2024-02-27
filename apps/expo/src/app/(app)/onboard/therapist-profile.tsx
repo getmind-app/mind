@@ -44,7 +44,7 @@ export default function NewPsychScreen() {
             await user?.reload();
             await createAccount.mutateAsync();
             if (modalities.includes("ON_SITE")) {
-                router.push("/(psych)/address");
+                router.push("/onboard/therapist-address");
             } else {
                 router.push("/");
             }
@@ -150,7 +150,7 @@ export default function NewPsychScreen() {
             style={{ flex: 1 }}
             behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
-            <ScreenWrapper>
+            <ScreenWrapper paddindBottom={16}>
                 <ScrollView showsVerticalScrollIndicator={false}>
                     <Title title={t({ message: "Onboard" })} />
                     <Text className="mt-4 font-nunito-sans text-lg text-slate-700">

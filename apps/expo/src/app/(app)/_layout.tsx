@@ -1,15 +1,19 @@
 import { Image, View } from "react-native";
 import { Host } from "react-native-portalize";
-import { Redirect, Tabs, useRootNavigationState } from "expo-router";
+import {
+    Redirect,
+    Tabs,
+    usePathname,
+    useRootNavigationState,
+    useRouter,
+} from "expo-router";
 import { useClerk } from "@clerk/clerk-expo";
 import { AntDesign } from "@expo/vector-icons";
 
 import { Loading } from "../../components/Loading";
 import { useUserHasProfileImage } from "../../hooks/user/useUserHasProfileImage";
 import { useUserIsProfessional } from "../../hooks/user/useUserIsProfessional";
-
-const tabBarActiveTintColor = "#2563eb"; // blue 600
-const tabBarInactiveTintColor = "black";
+import { colors } from "../../utils/colors";
 
 function TabBarIconWrapper({
     children,
@@ -29,6 +33,7 @@ function TabBarIconWrapper({
 
 export default function AppRouter() {
     const { user } = useClerk();
+    const path = usePathname();
     const rootNavigationState = useRootNavigationState();
     const userHasImage = useUserHasProfileImage({ userId: null });
     const isProfessional = useUserIsProfessional();
@@ -61,8 +66,8 @@ export default function AppRouter() {
                     },
                     headerShown: false,
                     tabBarShowLabel: false,
-                    tabBarActiveTintColor,
-                    tabBarInactiveTintColor,
+                    tabBarActiveTintColor: colors.primaryBlue,
+                    tabBarInactiveTintColor: colors.black,
                 }}
             >
                 <Tabs.Screen
@@ -100,9 +105,9 @@ export default function AppRouter() {
                     }}
                 />
                 <Tabs.Screen
-                    name="profile"
+                    name="settings"
                     options={{
-                        title: "User Profile",
+                        title: "Settings",
                         tabBarIcon: (props) => (
                             <TabBarIconWrapper focused={props.focused}>
                                 {userHasImage.isLoading ? (
@@ -135,29 +140,9 @@ export default function AppRouter() {
                     }}
                 />
                 <Tabs.Screen
-                    name="(psych)"
+                    name="onboard"
                     options={{
-                        title: "Psych Settings",
-                        href: null,
-                        tabBarStyle: {
-                            maxHeight: 0,
-                        },
-                    }}
-                />
-                <Tabs.Screen
-                    name="(patient)"
-                    options={{
-                        title: "Patient Settings",
-                        href: null,
-                        tabBarStyle: {
-                            maxHeight: 0,
-                        },
-                    }}
-                />
-                <Tabs.Screen
-                    name="settings"
-                    options={{
-                        title: "Settings",
+                        title: "Onboard",
                         href: null,
                         tabBarStyle: {
                             maxHeight: 0,

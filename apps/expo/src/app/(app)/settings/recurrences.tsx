@@ -94,7 +94,7 @@ function BaseLayout({
     children: React.ReactNode;
 }) {
     return (
-        <ScreenWrapper>
+        <ScreenWrapper paddingTop={0}>
             <Refreshable
                 refreshControl={
                     <RefreshControl
@@ -103,10 +103,7 @@ function BaseLayout({
                     />
                 }
             >
-                <Header />
-                <Text className="font-nunito-sans-bold text-3xl">
-                    <Trans>Recurrences</Trans>
-                </Text>
+                <Header title={t({ message: "Recurrences" })} />
                 {children}
             </Refreshable>
         </ScreenWrapper>
@@ -119,7 +116,7 @@ function EmptyState() {
     const therapist = api.therapists.findByUserId.useQuery();
 
     return (
-        <View className="mt-4 rounded-xl bg-white shadow-sm">
+        <View className="rounded-xl bg-white shadow-sm">
             <View className=" px-6 pt-6">
                 <Text className="font-nunito-sans text-lg">
                     <Trans>Your appointments will show up here</Trans>

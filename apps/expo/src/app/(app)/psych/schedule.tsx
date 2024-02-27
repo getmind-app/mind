@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from "react";
 import {
     Image,
     Linking,
-    Platform,
     ScrollView,
     Switch,
     Text,
@@ -119,7 +118,7 @@ export default function AppointmentSchedulingScreen() {
     return (
         <>
             <Header />
-            <ScreenWrapper paddingTop={Platform.OS === "android" ? 48 : 32}>
+            <ScreenWrapper paddingTop={48} paddindBottom={16}>
                 <View
                     style={{
                         flex: 1,
@@ -213,14 +212,9 @@ export default function AppointmentSchedulingScreen() {
                             }}
                         />
                     </View>
-                    <View style={{ marginBottom: 16 }}>
-                        <LargeButton
-                            disabled={!allPicked}
-                            onPress={handleConfirm}
-                        >
-                            <Trans>Confirm appointment</Trans>
-                        </LargeButton>
-                    </View>
+                    <LargeButton disabled={!allPicked} onPress={handleConfirm}>
+                        <Trans>Confirm appointment</Trans>
+                    </LargeButton>
                 </View>
             </ScreenWrapper>
         </>

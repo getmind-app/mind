@@ -143,7 +143,7 @@ function SetupGuide({ therapist }: { therapist: Therapist }) {
                 action={
                     therapist.pixKey
                         ? undefined
-                        : () => router.push("/(psych)/payments-setup")
+                        : () => router.push("/settings/(psych)/payments-setup")
                 }
             />
             <CheckBox
@@ -156,7 +156,7 @@ function SetupGuide({ therapist }: { therapist: Therapist }) {
                 action={
                     therapist.about
                         ? undefined
-                        : () => router.push("/(psych)/update-profile")
+                        : () => router.push("/settings/(psych)/update-profile")
                 }
             />
         </View>

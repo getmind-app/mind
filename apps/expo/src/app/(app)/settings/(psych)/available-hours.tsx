@@ -2,13 +2,12 @@ import { useState } from "react";
 import { RefreshControl, Text, View } from "react-native";
 import { Trans, t } from "@lingui/macro";
 
-import { AvailableHoursPicker } from "../../../components/AvailableHoursPicker";
-import { CardSkeleton } from "../../../components/CardSkeleton";
-import { Header } from "../../../components/Header";
-import { Refreshable } from "../../../components/Refreshable";
-import { ScreenWrapper } from "../../../components/ScreenWrapper";
-import { Title } from "../../../components/Title";
-import { useTherapistByUserId } from "../../../hooks/therapist/useTherapistByUserId";
+import { AvailableHoursPicker } from "../../../../components/AvailableHoursPicker";
+import { CardSkeleton } from "../../../../components/CardSkeleton";
+import { Header } from "../../../../components/Header";
+import { Refreshable } from "../../../../components/Refreshable";
+import { ScreenWrapper } from "../../../../components/ScreenWrapper";
+import { useTherapistByUserId } from "../../../../hooks/therapist/useTherapistByUserId";
 
 export default function AvailableHours() {
     const [refreshing, setRefreshing] = useState(false);
@@ -30,7 +29,7 @@ export default function AvailableHours() {
     return (
         <>
             <ScreenWrapper>
-                <Header />
+                <Header title={t({ message: "Available hours" })} />
                 <Refreshable
                     refreshControl={
                         <RefreshControl
@@ -39,7 +38,6 @@ export default function AvailableHours() {
                         />
                     }
                 >
-                    <Title title={t({ message: "Available hours" })} />
                     <Text className="pb-4 font-nunito-sans text-base text-slate-500">
                         <Trans>
                             Set available hours for your appointments.

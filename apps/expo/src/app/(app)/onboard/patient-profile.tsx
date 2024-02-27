@@ -113,7 +113,7 @@ export default function EditPatientProfile() {
             style={{ flex: 1 }}
             behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
-            <ScreenWrapper>
+            <ScreenWrapper paddindBottom={16}>
                 <Title title={t({ message: "Onboard" })} />
                 <Text className="mt-4 font-nunito-sans text-lg text-slate-700">
                     <Trans>Profile picture</Trans>

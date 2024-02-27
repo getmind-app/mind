@@ -15,13 +15,13 @@ import { AntDesign, MaterialIcons } from "@expo/vector-icons";
 import { type Icon } from "@expo/vector-icons/build/createIconSet";
 import { t } from "@lingui/macro";
 
-import { BasicText } from "../../components/BasicText";
-import { ScreenWrapper } from "../../components/ScreenWrapper";
-import { getShareLink } from "../../helpers/getShareLink";
-import { useUpdateProfilePicture } from "../../hooks/user/useUpdateProfilePicture";
-import { useUserHasProfileImage } from "../../hooks/user/useUserHasProfileImage";
-import { useUserIsProfessional } from "../../hooks/user/useUserIsProfessional";
-import { api } from "../../utils/api";
+import { BasicText } from "../../../components/BasicText";
+import { ScreenWrapper } from "../../../components/ScreenWrapper";
+import { getShareLink } from "../../../helpers/getShareLink";
+import { useUpdateProfilePicture } from "../../../hooks/user/useUpdateProfilePicture";
+import { useUserHasProfileImage } from "../../../hooks/user/useUserHasProfileImage";
+import { useUserIsProfessional } from "../../../hooks/user/useUserIsProfessional";
+import { api } from "../../../utils/api";
 
 export default function UserProfileScreen() {
     const router = useRouter();
@@ -130,7 +130,7 @@ export default function UserProfileScreen() {
                 {isProfessional && <ShareLink />}
             </View>
 
-            <ScrollView showsVerticalScrollIndicator={false}>
+            <ScrollView showsVerticalScrollIndicator={false} className="mb-4">
                 {isProfessional ? <ProfessionalOptions /> : null}
                 <MenuItem
                     isFirst
@@ -147,7 +147,9 @@ export default function UserProfileScreen() {
                     <MenuItem
                         icon="attach-money"
                         label={t({ message: "Finances" })}
-                        onPress={() => router.push("/settings/finances")}
+                        onPress={() => {
+                            router.push("/settings/finances");
+                        }}
                     />
                 ) : null}
                 <MenuItem
@@ -190,9 +192,23 @@ function DevelopmentOptions() {
             />
             <MenuItem
                 icon="person"
+                label={"Therapist Onboard"}
+                onPress={() => {
+                    router.push("/onboard/therapist-profile");
+                }}
+            />
+            <MenuItem
+                icon="person"
+                label={"Therapist Address"}
+                onPress={() => {
+                    router.push("/onboard/therapist-address");
+                }}
+            />
+            <MenuItem
+                icon="person"
                 label={"Patient Profile"}
                 onPress={() => {
-                    router.push("/(patient)/update-profile");
+                    router.push("/settings/(patient)/update-profile");
                 }}
             />
             <MenuItem
@@ -200,7 +216,7 @@ function DevelopmentOptions() {
                 icon="person"
                 label={"Patient Onboard"}
                 onPress={() => {
-                    router.push("/(patient)/profile");
+                    router.push("/onboard/patient-profile");
                 }}
             />
         </>
@@ -218,13 +234,15 @@ function ProfessionalOptions() {
                 icon="person-outline"
                 isFirst={true}
                 label={t({ message: "Personal info" })}
-                onPress={() => router.push("/(psych)/update-profile")}
+                onPress={() => router.push("/settings/(psych)/update-profile")}
             />
             {data.modalities.includes("ON_SITE") && (
                 <MenuItem
                     icon="location-on"
                     label={t({ message: "Address" })} // merda de icon, ficou fora do padrão
-                    onPress={() => router.push("/settings/address")}
+                    onPress={() =>
+                        router.push("/settings/(psych)/update-address")
+                    }
                 />
             )}
             <MenuItem
@@ -237,7 +255,7 @@ function ProfessionalOptions() {
                 isLast
                 icon="attach-money"
                 label={t({ message: "Setup Payments" })}
-                onPress={() => router.push("/(psych)/payments-setup")}
+                onPress={() => router.push("/settings/(psych)/payments-setup")}
                 alert={!data.pixKey}
             />
         </>
