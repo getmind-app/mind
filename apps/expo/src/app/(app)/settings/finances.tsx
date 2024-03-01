@@ -169,13 +169,11 @@ export default function FinancesScreen() {
                     style={{ paddingRight: 16 }}
                     onPress={async () => {
                         await Share.share({
-                            message: t({
-                                message: getShareReportMessage(
-                                    filteredPatients as PatientReport[],
-                                    periodToInterval[tagFilter].start,
-                                    periodToInterval[tagFilter].end,
-                                ),
-                            }),
+                            message: getShareReportMessage(
+                                filteredPatients as PatientReport[],
+                                periodToInterval[tagFilter].start,
+                                periodToInterval[tagFilter].end,
+                            ),
                         }).catch((error) =>
                             Alert.alert(
                                 t({
