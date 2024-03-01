@@ -427,6 +427,7 @@ function SetUpWorkHoursWarning() {
 
 function AppointmentsPreview() {
     const preview = api.therapists.appointmentsPreview.useQuery();
+    const router = useRouter();
 
     if (preview.isLoading) return null;
 
@@ -445,7 +446,6 @@ function AppointmentsPreview() {
                 flexDirection: "row",
                 alignItems: "center",
                 gap: 12,
-                // justifyContent: "space-between",
             }}
         >
             <View
@@ -463,9 +463,20 @@ function AppointmentsPreview() {
                         backgroundColor: colors.green,
                     }}
                 />
-                <BasicText fontWeight="bold" color="green">
-                    {preview.data?.appointmentsToday} today
-                </BasicText>
+                <TouchableOpacity
+                    onPress={() =>
+                        router.push({
+                            pathname: "/calendar",
+                            params: {
+                                filter: "TODAY",
+                            },
+                        })
+                    }
+                >
+                    <BasicText fontWeight="bold" color="green">
+                        <Trans>{preview.data?.appointmentsToday} today</Trans>
+                    </BasicText>
+                </TouchableOpacity>
             </View>
             <View
                 style={{
@@ -482,9 +493,22 @@ function AppointmentsPreview() {
                         backgroundColor: colors.yellow,
                     }}
                 />
-                <BasicText fontWeight="bold" color="yellow">
-                    {preview.data?.pendentAppointments} pendent
-                </BasicText>
+                <TouchableOpacity
+                    onPress={() =>
+                        router.push({
+                            pathname: "/calendar",
+                            params: {
+                                filter: "PENDENT",
+                            },
+                        })
+                    }
+                >
+                    <BasicText fontWeight="bold" color="yellow">
+                        <Trans>
+                            {preview.data?.pendentAppointments} pendent
+                        </Trans>
+                    </BasicText>
+                </TouchableOpacity>
             </View>
         </View>
     );
