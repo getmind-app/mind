@@ -134,11 +134,15 @@ function SetupGuide({ therapist }: { therapist: Therapist }) {
         <View style={{ marginTop: 16, flex: 1, gap: 12 }}>
             <CheckBox
                 checked={!!therapist.pixKey}
-                label={t({
-                    message: therapist.pixKey
-                        ? "Pix key added!"
-                        : "Add a pix key to receive payments",
-                })}
+                label={
+                    therapist.pixKey
+                        ? t({
+                              message: "Pix key added!",
+                          })
+                        : t({
+                              message: "Add a pix key to receive payments",
+                          })
+                }
                 action={
                     therapist.pixKey
                         ? undefined
@@ -147,11 +151,15 @@ function SetupGuide({ therapist }: { therapist: Therapist }) {
             />
             <CheckBox
                 checked={therapist.about ? true : false}
-                label={t({
-                    message: therapist.about
-                        ? "About section added!"
-                        : "Write a bit about yourself",
-                })}
+                label={
+                    therapist.about
+                        ? t({
+                              message: "About section added!",
+                          })
+                        : t({
+                              message: "Write a bit about yourself",
+                          })
+                }
                 action={
                     therapist.about
                         ? undefined
