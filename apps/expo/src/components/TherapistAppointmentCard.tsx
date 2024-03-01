@@ -30,7 +30,7 @@ export function TherapistAppointmentCard({
     const [open, setOpen] = useState(false);
     const lingui = useLingui();
     const [rescheduleRequested, setRescheduleRequested] = useState(false);
-  
+
     const requestReschedule = api.appointments.requestReschedule.useMutation();
     const checkAsPaid = api.appointments.checkAppointmentAsPaid.useMutation();
     const checkAsNotPaid =
@@ -126,7 +126,6 @@ export function TherapistAppointmentCard({
                         style={{
                             flexDirection: "row",
                             alignItems: "center",
-                            gap: 8,
                         }}
                     >
                         <BasicText size="sm" color="gray">
