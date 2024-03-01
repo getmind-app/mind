@@ -8,16 +8,12 @@ export function ExclusiveTagFilter<
 >({
     tags,
     onChange,
-    defaultValue,
+    selected,
 }: {
     tags: T;
     onChange?: (value: string) => void;
-    defaultValue?: string;
+    selected?: string;
 }) {
-    const [selected, setSelected] = useState<string | null>(
-        defaultValue || null,
-    );
-
     return (
         <ScrollView horizontal>
             {tags.map(({ label, value }) => (
@@ -25,7 +21,6 @@ export function ExclusiveTagFilter<
                     key={value}
                     checked={selected === value}
                     onPress={() => {
-                        setSelected(value);
                         if (onChange) {
                             onChange(value);
                         }
