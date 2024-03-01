@@ -127,7 +127,7 @@ export default function FinancesScreen() {
             >
                 <ExclusiveTagFilter
                     onChange={(value) => setTagFilted(value as Tags)}
-                    defaultValue="THIS_MONTH"
+                    selected={tagFilter}
                     tags={[
                         {
                             label: t({ message: "This month" }),

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
     Image,
     RefreshControl,
@@ -6,7 +6,7 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import { Trans, t } from "@lingui/macro";
@@ -67,8 +67,17 @@ export default function CalendarScreen() {
     const [refreshing, setRefreshing] = useState(false);
     const utils = api.useContext();
     const { user } = useUser();
-    const [tagFilter, setTagFilted] = useState<Tags>("TODAY");
+    const params: Partial<{
+        filter: Tags;
+    }> = useLocalSearchParams();
+    const [tagFilter, setTagFilted] = useState<Tags>(params.filter ?? "TODAY");
     const isProfessional = useUserIsProfessional();
+
+    useEffect(() => {
+        if (params.filter && params.filter !== tagFilter) {
+            setTagFilted(params.filter);
+        }
+    }, [params]);
 
     const {
         data: appointments,
@@ -142,7 +151,7 @@ export default function CalendarScreen() {
             >
                 <ExclusiveTagFilter
                     onChange={(value) => setTagFilted(value as Tags)}
-                    defaultValue="TODAY"
+                    selected={tagFilter}
                     tags={[
                         ...(isProfessional
                             ? [
