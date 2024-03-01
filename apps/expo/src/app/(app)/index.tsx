@@ -343,10 +343,12 @@ function NextAppointment() {
                             <Text className="ml-4 font-nunito-sans-bold text-lg text-white">
                                 {nextAppointment.data.modality === "ONLINE"
                                     ? t({ message: "Join the meeting" })
+                                    : isProfessional
+                                    ? t({
+                                          message: "See patient",
+                                      })
                                     : t({
-                                          message: isProfessional
-                                              ? "See patient"
-                                              : "Get directions",
+                                          message: "Get directions",
                                       })}
                             </Text>
                         </View>
