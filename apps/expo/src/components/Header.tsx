@@ -26,11 +26,9 @@ export const Header = ({ title, onShare, onBack }: HeaderProps) => {
         <Stack.Screen
             options={{
                 headerLeft: () => (
-                    <MaterialIcons
-                        size={32}
-                        name="chevron-left"
-                        onPress={handleBack}
-                    />
+                    <TouchableOpacity onPress={handleBack}>
+                        <MaterialIcons size={32} name="chevron-left" />
+                    </TouchableOpacity>
                 ),
                 headerRight: () =>
                     onShare && (

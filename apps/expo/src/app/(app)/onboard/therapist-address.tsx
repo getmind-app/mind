@@ -4,7 +4,6 @@ import {
     Platform,
     ScrollView,
     Text,
-    TouchableOpacity,
     View,
 } from "react-native";
 import MapView, { Marker } from "react-native-maps";
@@ -15,7 +14,6 @@ import { Trans, t } from "@lingui/macro";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { BasicText } from "../../../components/BasicText";
 import { FormTextInput } from "../../../components/FormTextInput";
 import { LargeButton } from "../../../components/LargeButton";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
@@ -138,14 +136,6 @@ export default function OnboardAddressScreen() {
         },
     });
 
-    if (isLoading) {
-        return (
-            <View className="flex h-full flex-col items-center justify-center">
-                <Text className="text-2xl">Loading...</Text>
-            </View>
-        );
-    }
-
     const lookupAddress = () => {
         fetch(
             `https://viacep.com.br/ws/${getValues("zipCode").replaceAll(
@@ -176,11 +166,11 @@ export default function OnboardAddressScreen() {
     };
 
     return (
-        <ScreenWrapper paddindBottom={16}>
-            <KeyboardAvoidingView
-                style={{ flex: 1 }}
-                behavior={Platform.OS === "ios" ? "padding" : "height"}
-            >
+        <KeyboardAvoidingView
+            style={{ flex: 1 }}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+        >
+            <ScreenWrapper paddindBottom={16}>
                 <ScrollView
                     className="min-h-max"
                     showsVerticalScrollIndicator={false}
@@ -248,7 +238,7 @@ export default function OnboardAddressScreen() {
                                     alignSelf: "center",
                                     borderRadius: 10,
                                     height: 120,
-                                    width: 350,
+                                    width: 360,
                                 }}
                                 camera={{
                                     center: {
@@ -273,13 +263,13 @@ export default function OnboardAddressScreen() {
                     </View>
                 </ScrollView>
                 <LargeButton
-                    disabled={!isValid}
+                    disabled={!isValid || isLoading}
                     onPress={onSubmit}
                     loading={isLoading}
                 >
                     <Trans>Finish</Trans>
                 </LargeButton>
-            </KeyboardAvoidingView>
-        </ScreenWrapper>
+            </ScreenWrapper>
+        </KeyboardAvoidingView>
     );
 }

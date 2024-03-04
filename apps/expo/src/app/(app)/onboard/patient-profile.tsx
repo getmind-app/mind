@@ -18,7 +18,6 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { FormTextInput } from "../../../components/FormTextInput";
-import { FullScreenLoading } from "../../../components/FullScreenLoading";
 import { LargeButton } from "../../../components/LargeButton";
 import { Loading } from "../../../components/Loading";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
@@ -108,10 +107,6 @@ export default function EditPatientProfile() {
                 <Loading size={"large"} />
             </View>
         );
-    }
-
-    if (createPatient.isLoading) {
-        return <FullScreenLoading />;
     }
 
     return (

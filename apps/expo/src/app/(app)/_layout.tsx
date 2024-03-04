@@ -5,7 +5,6 @@ import {
     Tabs,
     usePathname,
     useRootNavigationState,
-    useRouter,
 } from "expo-router";
 import { useClerk } from "@clerk/clerk-expo";
 import { AntDesign } from "@expo/vector-icons";
@@ -110,9 +109,7 @@ export default function AppRouter() {
                         title: "Settings",
                         tabBarIcon: (props) => (
                             <TabBarIconWrapper focused={props.focused}>
-                                {userHasImage.isLoading ? (
-                                    <Loading size={"small"} />
-                                ) : userHasImage.data ? (
+                                {userHasImage.data ? (
                                     <Image
                                         className="rounded-full"
                                         alt={`${user?.firstName} profile picture`}

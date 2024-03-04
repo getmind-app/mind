@@ -4,6 +4,7 @@ import { useRouter } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Trans, t } from "@lingui/macro";
+import { useHeaderHeight } from "@react-navigation/elements";
 import { cpf } from "cpf-cnpj-validator";
 import { DateTime } from "luxon";
 import { useForm } from "react-hook-form";
@@ -21,12 +22,16 @@ import { ScreenWrapper } from "../../../../components/ScreenWrapper";
 import { api } from "../../../../utils/api";
 
 export default function PersonalInfo() {
+    const headerHeight = useHeaderHeight();
+
     return (
         <>
             <Header title={t({ message: "Personal Info" })} />
+
             <KeyboardAvoidingView
                 style={{ flex: 1 }}
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
+                keyboardVerticalOffset={headerHeight}
             >
                 <ScreenWrapper paddingTop={0} paddindBottom={16}>
                     <TherapistOptions />

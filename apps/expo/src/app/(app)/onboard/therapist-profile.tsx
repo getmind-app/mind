@@ -22,7 +22,6 @@ import { z } from "zod";
 import { FormCurrencyInput } from "../../../components/FormCurrencyInput";
 import { FormDateInput } from "../../../components/FormDateInput";
 import { FormTextInput } from "../../../components/FormTextInput";
-import { FullScreenLoading } from "../../../components/FullScreenLoading";
 import { LargeButton } from "../../../components/LargeButton";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
 import { Title } from "../../../components/Title";
@@ -140,10 +139,6 @@ export default function NewPsychScreen() {
 
         if (!result.canceled) setSelectedImage(result.assets[0] ?? null);
     };
-
-    if (isLoading) {
-        return <FullScreenLoading />;
-    }
 
     return (
         <KeyboardAvoidingView
@@ -374,7 +369,11 @@ export default function NewPsychScreen() {
                         )}
                     />
                 </ScrollView>
-                <LargeButton disabled={!isValid} onPress={onSubmit}>
+                <LargeButton
+                    disabled={!isValid || isLoading}
+                    onPress={onSubmit}
+                    loading={isLoading}
+                >
                     <Trans>Next</Trans>
                 </LargeButton>
             </ScreenWrapper>

@@ -11,6 +11,7 @@ import { useRouter } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Trans, t } from "@lingui/macro";
+import { useHeaderHeight } from "@react-navigation/elements";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -28,6 +29,7 @@ export default function Address() {
     const router = useRouter();
     const [latitude, setLatitude] = useState(0);
     const [longitude, setLongitude] = useState(0);
+    const headerHeight = useHeaderHeight();
 
     const { data: therapist, isLoading } =
         api.therapists.findByUserId.useQuery();
@@ -151,12 +153,14 @@ export default function Address() {
     }
 
     return (
-        <ScreenWrapper paddingTop={0} paddindBottom={16}>
-            <Header title={t({ message: "Address" })} />
-            <KeyboardAvoidingView
-                style={{ flex: 1 }}
-                behavior={Platform.OS === "ios" ? "padding" : "height"}
-            >
+        <KeyboardAvoidingView
+            style={{ flex: 1 }}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            keyboardVerticalOffset={headerHeight}
+        >
+            <ScreenWrapper paddingTop={0} paddindBottom={16}>
+                <Header title={t({ message: "Address" })} />
+
                 <ScrollView
                     className="min-h-max"
                     showsVerticalScrollIndicator={false}
@@ -253,8 +257,8 @@ export default function Address() {
                 >
                     <Trans>Update</Trans>
                 </LargeButton>
-            </KeyboardAvoidingView>
-        </ScreenWrapper>
+            </ScreenWrapper>
+        </KeyboardAvoidingView>
     );
 }
 

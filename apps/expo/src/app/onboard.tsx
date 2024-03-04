@@ -46,7 +46,7 @@ export default function Onboard() {
     }
 
     return (
-        <ScreenWrapper>
+        <ScreenWrapper paddindBottom={16}>
             <View
                 style={{
                     flex: 1,
@@ -59,9 +59,6 @@ export default function Onboard() {
                         rowGap: 16,
                     }}
                 >
-                    <Text className="font-nunito-sans text-3xl">
-                        <Trans>Who are you?</Trans>
-                    </Text>
                     <View
                         style={{
                             flex: 1,
@@ -69,6 +66,9 @@ export default function Onboard() {
                             rowGap: 16,
                         }}
                     >
+                        <Text className="font-nunito-sans text-3xl">
+                            <Trans>Who are you?</Trans>
+                        </Text>
                         <View
                             style={{
                                 flex: 1,
@@ -88,6 +88,10 @@ export default function Onboard() {
                                     borderRadius: 16,
                                     flexDirection: "row",
                                     overflow: "hidden",
+                                    backgroundColor:
+                                        selectedRole === "patient"
+                                            ? "#f0f9ff"
+                                            : "#fff",
                                 }}
                             >
                                 <View
@@ -96,7 +100,7 @@ export default function Onboard() {
                                         flex: 1,
                                         flexDirection: "row",
                                         alignItems: "center",
-                                        paddingHorizontal: 12,
+                                        paddingHorizontal: 24,
                                     }}
                                 >
                                     <View
@@ -148,6 +152,10 @@ export default function Onboard() {
                                     borderRadius: 16,
                                     flexDirection: "row",
                                     overflow: "hidden",
+                                    backgroundColor:
+                                        selectedRole === "professional"
+                                            ? "#f0f9ff"
+                                            : "#fff",
                                 }}
                             >
                                 <View
