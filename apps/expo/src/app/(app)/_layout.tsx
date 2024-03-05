@@ -151,13 +151,6 @@ export default function AppRouter() {
                     }}
                 />
                 <Tabs.Screen
-                    name="notes"
-                    options={{
-                        title: "Notes",
-                        href: null,
-                    }}
-                />
-                <Tabs.Screen
                     name="index"
                     options={{
                         title: "Index",

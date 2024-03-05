@@ -121,6 +121,8 @@ export default function HomeScreen() {
         };
     }, []);
 
+    console.log("nextAppointment", nextAppointment.data);
+
     return (
         <ScreenWrapper>
             <Refreshable
@@ -140,16 +142,21 @@ export default function HomeScreen() {
                     <Title title={t({ message: "Last notes" })} />
 
                     <SmallButton
-                        onPress={() =>
+                        onPress={() => {
+                            const params = nextAppointment.data
+                                ? {
+                                      patientId:
+                                          nextAppointment.data?.patient.id,
+                                      therapistId:
+                                          nextAppointment.data?.therapist.id,
+                                  }
+                                : {};
+
                             router.push({
                                 pathname: "/home/notes/new",
-                                params: {
-                                    patientId: nextAppointment.data?.patientId,
-                                    patientUserId:
-                                        nextAppointment.data?.patient.userId,
-                                },
-                            })
-                        }
+                                params,
+                            });
+                        }}
                         textSize="lg"
                     >
                         New
