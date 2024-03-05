@@ -2,6 +2,7 @@ function calculateBoundingBox(
     centerLat: number,
     centerLon: number,
     distance: number,
+    buffer = 0.0251,
 ): { minLat: number; maxLat: number; minLon: number; maxLon: number } {
     const R = 6371; // Radius of the Earth in kilometers
     const latRadian = centerLat * (Math.PI / 180);
@@ -11,10 +12,13 @@ function calculateBoundingBox(
         Math.sin(latDistance / R) / Math.cos(latRadian),
     );
 
-    const minLat = centerLat - latDistance;
-    const maxLat = centerLat + latDistance;
-    const minLon = centerLon - lonDistance;
-    const maxLon = centerLon + lonDistance;
+    const bufferedLatDistance = latDistance + buffer;
+    const bufferedLonDistance = lonDistance + buffer;
+
+    const minLat = centerLat - bufferedLatDistance;
+    const maxLat = centerLat + bufferedLatDistance;
+    const minLon = centerLon - bufferedLonDistance;
+    const maxLon = centerLon + bufferedLonDistance;
 
     return {
         minLat,

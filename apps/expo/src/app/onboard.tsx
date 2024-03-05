@@ -4,6 +4,7 @@ import { useRouter } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
 import { Trans } from "@lingui/macro";
 
+import { BasicText } from "../components/BasicText";
 import { LargeButton } from "../components/LargeButton";
 import { ScreenWrapper } from "../components/ScreenWrapper";
 import { useUserMutations } from "../hooks/user/useUserMutations";
@@ -66,9 +67,9 @@ export default function Onboard() {
                             rowGap: 16,
                         }}
                     >
-                        <Text className="font-nunito-sans text-3xl">
+                        <BasicText size="3xl" style={{ paddingLeft: 12 }}>
                             <Trans>Who are you?</Trans>
-                        </Text>
+                        </BasicText>
                         <View
                             style={{
                                 flex: 1,
