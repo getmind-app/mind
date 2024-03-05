@@ -16,17 +16,17 @@ import { Feather } from "@expo/vector-icons";
 import { Trans, t } from "@lingui/macro";
 import { FlashList } from "@shopify/flash-list";
 
-import { type Patient } from "../../../../../../packages/db";
-import { BasicText } from "../../../components/BasicText";
-import { Header } from "../../../components/Header";
-import { ScreenWrapper } from "../../../components/ScreenWrapper";
-import SkeletonCard from "../../../components/SkeletonCard";
-import { SmallButton } from "../../../components/SmallButton";
-import { Title } from "../../../components/Title";
-import { UserPhoto } from "../../../components/UserPhotos";
-import { useUserIsProfessional } from "../../../hooks/user/useUserIsProfessional";
-import { api } from "../../../utils/api";
-import { colors } from "../../../utils/colors";
+import { type Patient } from "../../../../../../../packages/db";
+import { BasicText } from "../../../../components/BasicText";
+import { Header } from "../../../../components/Header";
+import { ScreenWrapper } from "../../../../components/ScreenWrapper";
+import SkeletonCard from "../../../../components/SkeletonCard";
+import { SmallButton } from "../../../../components/SmallButton";
+import { Title } from "../../../../components/Title";
+import { UserPhoto } from "../../../../components/UserPhotos";
+import { useUserIsProfessional } from "../../../../hooks/user/useUserIsProfessional";
+import { api } from "../../../../utils/api";
+import { colors } from "../../../../utils/colors";
 
 export default function NewNote() {
     const router = useRouter();

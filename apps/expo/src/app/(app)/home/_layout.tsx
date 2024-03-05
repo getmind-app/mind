@@ -4,17 +4,12 @@ export default function OnboardLayout() {
     return (
         <Stack>
             <Stack.Screen
-                name="[id]"
+                name="index"
                 options={{
-                    title: "Note",
+                    headerShown: false,
                 }}
             />
-            <Stack.Screen
-                name="new"
-                options={{
-                    title: "New note",
-                }}
-            />
+            <Stack.Screen name="notes" options={{ headerShown: false }} />
         </Stack>
     );
 }

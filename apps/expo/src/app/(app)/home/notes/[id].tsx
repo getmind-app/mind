@@ -11,15 +11,15 @@ import { Trans } from "@lingui/macro";
 import { useLingui } from "@lingui/react";
 import { format } from "date-fns";
 
-import { BasicText } from "../../../components/BasicText";
-import { FullScreenLoading } from "../../../components/FullScreenLoading";
-import { Header } from "../../../components/Header";
-import { Loading } from "../../../components/Loading";
-import { ScreenWrapper } from "../../../components/ScreenWrapper";
-import { UserPhoto } from "../../../components/UserPhotos";
-import { getLocale } from "../../../helpers/getLocale";
-import { useUserIsProfessional } from "../../../hooks/user/useUserIsProfessional";
-import { api } from "../../../utils/api";
+import { BasicText } from "../../../../components/BasicText";
+import { FullScreenLoading } from "../../../../components/FullScreenLoading";
+import { Header } from "../../../../components/Header";
+import { Loading } from "../../../../components/Loading";
+import { ScreenWrapper } from "../../../../components/ScreenWrapper";
+import { UserPhoto } from "../../../../components/UserPhotos";
+import { getLocale } from "../../../../helpers/getLocale";
+import { useUserIsProfessional } from "../../../../hooks/user/useUserIsProfessional";
+import { api } from "../../../../utils/api";
 
 export default function Note() {
     const router = useRouter();

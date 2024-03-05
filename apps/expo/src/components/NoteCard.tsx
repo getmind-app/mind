@@ -3,7 +3,6 @@ import { router } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useLingui } from "@lingui/react";
 import { format } from "date-fns";
-import { id } from "date-fns/locale";
 
 import { type Note } from "../../../../packages/db";
 import { getLocale } from "../helpers/getLocale";
@@ -38,7 +37,9 @@ export function NoteCard({ note }: { note: Note }) {
                     </View>
                     <BasicText size="lg">{note.content}</BasicText>
                 </View>
-                <TouchableOpacity onPress={() => router.push("/notes/" + id)}>
+                <TouchableOpacity
+                    onPress={() => router.push("/home/notes/" + note.id)}
+                >
                     <MaterialIcons
                         size={32}
                         name="chevron-right"

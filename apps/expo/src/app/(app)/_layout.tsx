@@ -1,11 +1,6 @@
 import { Image, View } from "react-native";
 import { Host } from "react-native-portalize";
-import {
-    Redirect,
-    Tabs,
-    usePathname,
-    useRootNavigationState,
-} from "expo-router";
+import { Redirect, Tabs, useRootNavigationState } from "expo-router";
 import { useClerk } from "@clerk/clerk-expo";
 import { AntDesign } from "@expo/vector-icons";
 
@@ -32,7 +27,6 @@ function TabBarIconWrapper({
 
 export default function AppRouter() {
     const { user } = useClerk();
-    const path = usePathname();
     const rootNavigationState = useRootNavigationState();
     const userHasImage = useUserHasProfileImage({ userId: null });
     const isProfessional = useUserIsProfessional();
@@ -70,7 +64,7 @@ export default function AppRouter() {
                 }}
             >
                 <Tabs.Screen
-                    name="index"
+                    name="home"
                     options={{
                         title: "Home",
                         tabBarIcon: (props) => (
@@ -160,6 +154,13 @@ export default function AppRouter() {
                     name="notes"
                     options={{
                         title: "Notes",
+                        href: null,
+                    }}
+                />
+                <Tabs.Screen
+                    name="index"
+                    options={{
+                        title: "Index",
                         href: null,
                     }}
                 />
