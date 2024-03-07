@@ -1001,7 +1001,7 @@ msgstr "Configure suas horas de trabalho"
 
 #: src/app/(app)/settings/index.tsx:257
 msgid "Setup Payments"
-msgstr "Configuração de pagamentos"
+msgstr "Chave Pix"
 
 #: src/app/(app)/calendar.tsx:278
 #: src/app/(app)/settings/recurrences.tsx:143

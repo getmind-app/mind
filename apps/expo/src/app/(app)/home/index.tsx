@@ -121,8 +121,6 @@ export default function HomeScreen() {
         };
     }, []);
 
-    console.log("nextAppointment", nextAppointment.data);
-
     return (
         <ScreenWrapper>
             <Refreshable
@@ -264,9 +262,7 @@ function NextAppointment() {
                                     }}
                                 >
                                     <UserPhoto
-                                        userId={
-                                            nextAppointment.data.patient.userId
-                                        }
+                                        userId={null}
                                         alt={"Patient"}
                                         url={
                                             nextAppointment.data.patient
