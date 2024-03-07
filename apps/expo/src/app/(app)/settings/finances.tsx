@@ -23,7 +23,6 @@ import { Header } from "../../../components/Header";
 import { PatientCard } from "../../../components/PatientCard";
 import { Refreshable } from "../../../components/Refreshable";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
-import { Title } from "../../../components/Title";
 import { api } from "../../../utils/api";
 
 type TimeBasedFilter = "THIS_WEEK" | "THIS_MONTH";
@@ -243,7 +242,7 @@ function BaseLayout({
 
 function EmptyState() {
     return (
-        <View className="mt-4 rounded-xl bg-white p-6 shadow-sm">
+        <View className="rounded-xl bg-white p-6 shadow-sm">
             <BasicText size="xl" style={{ marginBottom: 2 }}>
                 <Trans>Paid appointments will appear here</Trans>
             </BasicText>

@@ -15,6 +15,7 @@ export default function PsychLayout() {
             <Stack.Screen name="update-profile" />
             <Stack.Screen name="payments-setup" />
             <Stack.Screen name="available-hours" />
+            <Stack.Screen name="recomendations" />
         </Stack>
     );
 }

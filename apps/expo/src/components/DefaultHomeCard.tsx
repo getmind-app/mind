@@ -61,12 +61,20 @@ function DefaultTherapistHomeCard() {
                 </BasicText>
                 <BasicText color="gray">
                     {t({
-                        message:
-                            "Here are a few things you can do to get started:",
+                        message: "Your appointments will be shown here.",
                     })}
                 </BasicText>
+
                 {!therapist.data.pixKey || !therapist.data.about ? (
-                    <SetupGuide therapist={therapist.data} />
+                    <>
+                        <BasicText color="gray">
+                            {t({
+                                message:
+                                    "Here are a few things you can do to get started:",
+                            })}
+                        </BasicText>
+                        <SetupGuide therapist={therapist.data} />
+                    </>
                 ) : null}
             </View>
 

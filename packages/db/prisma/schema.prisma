@@ -43,6 +43,17 @@ model Therapist {
     appointments         Appointment[]
     hours                Hour[]
     recurrences          Recurrence[]
+    recommendations      Recommendation[]
+}
+
+model Recommendation {
+    id                           String    @id @default(cuid())
+    createdAt                    DateTime  @default(now())
+    recommendedId                String
+    recommendedName              String
+    recommendedProfilePictureUrl String
+    therapistId                  String
+    therapist                    Therapist @relation(fields: [therapistId], references: [id], onDelete: Cascade)
 }
 
 model Address {

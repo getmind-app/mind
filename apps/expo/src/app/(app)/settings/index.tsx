@@ -144,13 +144,22 @@ export default function UserProfileScreen() {
                     onPress={() => router.push("/settings/recurrences")}
                 />
                 {isProfessional ? (
-                    <MenuItem
-                        icon="attach-money"
-                        label={t({ message: "Finances" })}
-                        onPress={() => {
-                            router.push("/settings/finances");
-                        }}
-                    />
+                    <>
+                        <MenuItem
+                            icon="attach-money"
+                            label={t({ message: "Finances" })}
+                            onPress={() => {
+                                router.push("/settings/finances");
+                            }}
+                        />
+                        <MenuItem
+                            icon="people-outline"
+                            label={t({ message: "Recomendations" })}
+                            onPress={() => {
+                                router.push("/settings/recomendations");
+                            }}
+                        />
+                    </>
                 ) : null}
                 <MenuItem
                     isLast
@@ -238,7 +247,7 @@ function ProfessionalOptions() {
             />
             {data.modalities.includes("ON_SITE") && (
                 <MenuItem
-                    icon="location-on"
+                    icon="location-pin"
                     label={t({ message: "Address" })} // merda de icon, ficou fora do padrão
                     onPress={() =>
                         router.push("/settings/(psych)/update-address")

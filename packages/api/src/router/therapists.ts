@@ -51,6 +51,7 @@ export const therapistsRouter = createTRPCRouter({
                     address: true,
                     appointments: true,
                     hours: true,
+                    recommendations: true,
                 },
             });
         }),
@@ -60,6 +61,7 @@ export const therapistsRouter = createTRPCRouter({
             include: {
                 hours: true,
                 address: true,
+                recommendations: true,
             },
         });
     }),
@@ -513,4 +515,65 @@ export const therapistsRouter = createTRPCRouter({
             appointmentsToday,
         };
     }),
+    addRecommendation: protectedProcedure
+        .input(
+            z.object({
+                therapistId: z.string().min(1),
+            }),
+        )
+        .mutation(async ({ ctx, input }) => {
+            const therapist = await ctx.prisma.therapist.findUniqueOrThrow({
+                where: {
+                    userId: ctx.auth.userId,
+                },
+            });
+
+            const recommendation = await ctx.prisma.therapist.findUniqueOrThrow(
+                {
+                    where: {
+                        id: input.therapistId,
+                    },
+                },
+            );
+
+            return await ctx.prisma.recommendation.create({
+                data: {
+                    recommendedId: recommendation.id,
+                    recommendedName: recommendation.name,
+                    recommendedProfilePictureUrl:
+                        recommendation.profilePictureUrl,
+                    therapistId: therapist.id,
+                },
+            });
+        }),
+    removeRecommendation: protectedProcedure
+        .input(
+            z.object({
+                therapistId: z.string().min(1),
+            }),
+        )
+        .mutation(async ({ ctx, input }) => {
+            const therapist = await ctx.prisma.therapist.findUniqueOrThrow({
+                where: {
+                    userId: ctx.auth.userId,
+                },
+            });
+
+            const recommendation = await ctx.prisma.recommendation.findFirst({
+                where: {
+                    therapistId: therapist.id,
+                    recommendedId: input.therapistId,
+                },
+            });
+
+            if (!recommendation) {
+                throw new Error("Recommendation not found");
+            }
+
+            return await ctx.prisma.recommendation.delete({
+                where: {
+                    id: recommendation.id,
+                },
+            });
+        }),
 });
