@@ -100,54 +100,7 @@ export default function TherapistProfile() {
                         >
                             <WorkHours {...groupedHours} />
                         </ContentCard>
-                        {data?.recommendations &&
-                            data?.recommendations.length > 0 && (
-                                <ContentCard
-                                    title={t({ message: "Recommendations" })}
-                                    emoji="🌟"
-                                >
-                                    <View className="mt-4 flex flex-row items-center justify-between px-2 align-middle">
-                                        {data?.recommendations.map(
-                                            (recommendation, index) => (
-                                                <TouchableOpacity
-                                                    key={index}
-                                                    className="flex flex-col items-center align-middle"
-                                                    onPress={() =>
-                                                        router.push({
-                                                            pathname:
-                                                                "/psych/[id]",
-                                                            params: {
-                                                                id: recommendation.recommendedId,
-                                                            },
-                                                        })
-                                                    }
-                                                >
-                                                    <UserPhoto
-                                                        userId={null}
-                                                        url={
-                                                            recommendation.recommendedProfilePictureUrl
-                                                        }
-                                                        alt={`${recommendation.recommendedName} profile picture`}
-                                                        width={48}
-                                                        height={48}
-                                                    />
-                                                    <BasicText
-                                                        size="lg"
-                                                        fontWeight="bold"
-                                                        style={{ marginTop: 8 }}
-                                                    >
-                                                        {
-                                                            recommendation.recommendedName.split(
-                                                                " ",
-                                                            )[0]
-                                                        }
-                                                    </BasicText>
-                                                </TouchableOpacity>
-                                            ),
-                                        )}
-                                    </View>
-                                </ContentCard>
-                            )}
+                        
                         {data?.about && (
                             <ContentCard
                                 title={t({ message: "About" })}
@@ -202,6 +155,54 @@ export default function TherapistProfile() {
                                             </View>
                                         ),
                                     )}
+                                </ContentCard>
+                            )}
+                        {data?.recommendations &&
+                            data?.recommendations.length > 0 && (
+                                <ContentCard
+                                    title={t({ message: "Recommendations" })}
+                                    emoji="🌟"
+                                >
+                                    <View className="mt-4 flex flex-row items-center justify-between px-2 align-middle">
+                                        {data?.recommendations.map(
+                                            (recommendation, index) => (
+                                                <TouchableOpacity
+                                                    key={index}
+                                                    className="flex flex-col items-center align-middle"
+                                                    onPress={() =>
+                                                        router.push({
+                                                            pathname:
+                                                                "/psych/[id]",
+                                                            params: {
+                                                                id: recommendation.recommendedId,
+                                                            },
+                                                        })
+                                                    }
+                                                >
+                                                    <UserPhoto
+                                                        userId={null}
+                                                        url={
+                                                            recommendation.recommendedProfilePictureUrl
+                                                        }
+                                                        alt={`${recommendation.recommendedName} profile picture`}
+                                                        width={48}
+                                                        height={48}
+                                                    />
+                                                    <BasicText
+                                                        size="lg"
+                                                        fontWeight="bold"
+                                                        style={{ marginTop: 8 }}
+                                                    >
+                                                        {
+                                                            recommendation.recommendedName.split(
+                                                                " ",
+                                                            )[0]
+                                                        }
+                                                    </BasicText>
+                                                </TouchableOpacity>
+                                            ),
+                                        )}
+                                    </View>
                                 </ContentCard>
                             )}
                     </View>
