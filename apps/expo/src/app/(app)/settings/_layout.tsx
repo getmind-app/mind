@@ -10,8 +10,8 @@ export default function SettingsLayout() {
                 }}
             />
             <Stack.Screen name="notifications" />
-            <Stack.Screen name="finances" />
             <Stack.Screen name="recurrences" />
+            <Stack.Screen name="contact" />
             <Stack.Screen name="(psych)" options={{ headerShown: false }} />
         </Stack>
     );

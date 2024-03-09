@@ -11,6 +11,7 @@ export default function PsychLayout() {
 
     return (
         <Stack>
+            <Stack.Screen name="finances" />
             <Stack.Screen name="update-address" />
             <Stack.Screen name="update-profile" />
             <Stack.Screen name="payments-setup" />

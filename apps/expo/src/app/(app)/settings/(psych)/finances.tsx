@@ -16,14 +16,14 @@ import {
 
 import { type PatientReport } from "@acme/api/src/router/finances";
 
-import { BasicText } from "../../../components/BasicText";
-import { CardSkeleton } from "../../../components/CardSkeleton";
-import { ExclusiveTagFilter } from "../../../components/ExclusiveTagFilter";
-import { Header } from "../../../components/Header";
-import { PatientCard } from "../../../components/PatientCard";
-import { Refreshable } from "../../../components/Refreshable";
-import { ScreenWrapper } from "../../../components/ScreenWrapper";
-import { api } from "../../../utils/api";
+import { BasicText } from "../../../../components/BasicText";
+import { CardSkeleton } from "../../../../components/CardSkeleton";
+import { ExclusiveTagFilter } from "../../../../components/ExclusiveTagFilter";
+import { Header } from "../../../../components/Header";
+import { PatientCard } from "../../../../components/PatientCard";
+import { Refreshable } from "../../../../components/Refreshable";
+import { ScreenWrapper } from "../../../../components/ScreenWrapper";
+import { api } from "../../../../utils/api";
 
 type TimeBasedFilter = "THIS_WEEK" | "THIS_MONTH";
 
@@ -194,7 +194,7 @@ export default function FinancesScreen() {
                             className="h-40 w-40"
                             alt={`No therapists picture`}
                             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                            source={require("../../../../assets/images/girl_dog.png")}
+                            source={require("../../../../../assets/images/girl_dog.png")}
                         />
                         <Text className="font-nunito-sans-bold text-xl text-slate-500">
                             <Trans>No appointments found!</Trans>
@@ -224,7 +224,7 @@ function BaseLayout({
     children: React.ReactNode;
 }) {
     return (
-        <ScreenWrapper>
+        <ScreenWrapper paddingTop={0}>
             <Header title={t({ message: "Finances" })} />
             <Refreshable
                 refreshControl={

@@ -160,7 +160,7 @@ export default function UserProfileScreen() {
                 {isProfessional && <ShareLink />}
             </View>
 
-            <ScrollView showsVerticalScrollIndicator={false} className="mb-4">
+            <ScrollView showsVerticalScrollIndicator={false}>
                 {isProfessional ? <ProfessionalOptions /> : null}
                 <MenuItem
                     isFirst
@@ -192,15 +192,21 @@ export default function UserProfileScreen() {
                     </>
                 ) : null}
                 <MenuItem
+                    icon="mail-outline"
+                    label={t({ message: "Contact us" })}
+                    onPress={() => router.push("/settings/contact")}
+                />
+                <MenuItem
                     isLast
                     icon="logout"
                     label={t({ message: "Sign out" })}
                     onPress={signOut}
                 />
-
                 {process.env.NODE_ENV === "development" && (
                     <DevelopmentOptions />
                 )}
+                {/* GAMBIARRAAAAA */}
+                <View style={{ height: 40 }} />
             </ScrollView>
         </ScreenWrapper>
     );
