@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Alert, Text, TouchableOpacity, View } from "react-native";
+import { Alert, TouchableOpacity, View } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { Trans, t } from "@lingui/macro";
 import { useLingui } from "@lingui/react";
@@ -28,14 +28,166 @@ export function TherapistAppointmentCard({
     appointment: Appointment & { therapist: Therapist } & { patient: Patient };
 }) {
     const [open, setOpen] = useState(false);
+    const [canUndo, setCanUndo] = useState(false);
     const lingui = useLingui();
+
+    return (
+        <Card key={appointment.id}>
+            <View
+                style={{
+                    flexDirection: "row",
+                    flex: 1,
+                }}
+            >
+                <View
+                    style={{
+                        flex: 3,
+                    }}
+                >
+                    <View
+                        style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                        }}
+                    >
+                        <BasicText
+                            size="xl"
+                            style={{
+                                textTransform: "capitalize",
+                            }}
+                        >
+                            {format(
+                                new Date(appointment.scheduledTo),
+                                "EEEE, dd/MM",
+                                {
+                                    locale: getLocale(lingui),
+                                },
+                            )}
+                        </BasicText>
+                        <BasicText
+                            fontWeight="bold"
+                            color="primaryBlue"
+                            size="xl"
+                        >
+                            {format(appointment.scheduledTo, "HH:mm")}
+                        </BasicText>
+                    </View>
+                    <View
+                        style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            marginVertical: 6,
+                        }}
+                    >
+                        <AppointmentStatus status={appointment.status} />
+
+                        {appointment.isPaid || canUndo ? (
+                            <BasicText color="green">
+                                {t({ message: "Paid" })}
+                            </BasicText>
+                        ) : (
+                            <BasicText color="red">
+                                {t({ message: "Not paid" })}
+                            </BasicText>
+                        )}
+                    </View>
+                    <TypeOfAppointment appointmentType={appointment.type} />
+
+                    <View
+                        style={{
+                            flexDirection: "row",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            marginTop: 6,
+                        }}
+                    >
+                        <View
+                            style={{
+                                flexDirection: "row",
+                                alignItems: "center",
+                            }}
+                        >
+                            <BasicText size="sm" color="gray">
+                                <Trans>with</Trans>
+                                {"  "}
+                            </BasicText>
+                            <UserPhoto
+                                userId={appointment.patient.userId}
+                                alt={appointment.patient.name}
+                                url={appointment.patient.profilePictureUrl}
+                                width={20}
+                                height={20}
+                                iconSize={12}
+                            />
+                            <BasicText size="sm" color="gray">
+                                {"  "}
+                                {appointment.patient.name}{" "}
+                                {appointment.modality === "ONLINE"
+                                    ? t({ message: "via Google Meet" })
+                                    : t({ message: "in person" })}
+                            </BasicText>
+                        </View>
+                        <View
+                            style={{
+                                alignSelf: "flex-end",
+                            }}
+                        >
+                            {appointment.status == "PENDENT" ||
+                            appointment.status == "ACCEPTED" ? (
+                                <TouchableOpacity
+                                    onPress={() => setOpen(!open)}
+                                >
+                                    {open ? (
+                                        <Feather
+                                            size={24}
+                                            color="#64748b"
+                                            name="chevron-up"
+                                        />
+                                    ) : (
+                                        <Feather
+                                            size={24}
+                                            color="#64748b"
+                                            name="chevron-down"
+                                        />
+                                    )}
+                                </TouchableOpacity>
+                            ) : null}
+                        </View>
+                    </View>
+                </View>
+            </View>
+
+            {open ? (
+                <View className="mt-4 border-t-[1px] border-slate-500/10">
+                    <TherapistOptions
+                        appointment={appointment}
+                        canUndo={canUndo}
+                        setCanUndo={setCanUndo}
+                    />
+                </View>
+            ) : null}
+        </Card>
+    );
+}
+
+function TherapistOptions({
+    appointment,
+    canUndo,
+    setCanUndo,
+}: {
+    appointment: Appointment & { therapist: Therapist };
+    canUndo: boolean;
+    setCanUndo: (arg0: boolean) => void;
+}) {
     const [rescheduleRequested, setRescheduleRequested] = useState(false);
 
     const requestReschedule = api.appointments.requestReschedule.useMutation();
+
     const checkAsPaid = api.appointments.checkAppointmentAsPaid.useMutation();
     const checkAsNotPaid =
         api.appointments.checkAppointmentAsNotPaid.useMutation();
-    const [canUndo, setCanUndo] = useState(false);
 
     async function handlePaid() {
         try {
@@ -62,208 +214,79 @@ export function TherapistAppointmentCard({
     }
 
     return (
-        <Card key={appointment.id}>
-            <View
-                style={{
-                    flexDirection: "row",
-                    flex: 1,
-                }}
-            >
-                <View
-                    style={{
-                        flex: 3,
-                    }}
-                >
-                    <View
-                        style={{
-                            flexDirection: "row",
-                            alignItems: "center",
-                            justifyContent: "space-between",
-                        }}
-                    >
-                        <AppointmentStatus status={appointment.status} />
-                        <BasicText
-                            fontWeight="bold"
-                            color="primaryBlue"
-                            size="2xl"
-                        >
-                            {format(appointment.scheduledTo, "HH:mm")}
-                        </BasicText>
-                    </View>
-                    <View
-                        style={{
-                            flexDirection: "row",
-                            alignItems: "center",
-                            justifyContent: "space-between",
-                        }}
-                    >
-                        <TypeOfAppointment appointmentType={appointment.type} />
-                        {appointment.isPaid || canUndo ? (
-                            <BasicText color="green">
-                                {t({ message: "Paid" })}
-                            </BasicText>
-                        ) : (
-                            <BasicText color="red">
-                                {t({ message: "Not paid" })}
-                            </BasicText>
-                        )}
-                    </View>
-                    <BasicText
-                        size="xl"
-                        style={{
-                            textTransform: "capitalize",
-                        }}
-                    >
-                        {format(
-                            new Date(appointment.scheduledTo),
-                            "EEEE, dd/MM",
-                            {
-                                locale: getLocale(lingui),
-                            },
-                        )}
-                    </BasicText>
-                    <View
-                        style={{
-                            flexDirection: "row",
-                            alignItems: "center",
-                        }}
-                    >
-                        <BasicText size="sm" color="gray">
-                            <Trans>with</Trans>
-                            {"  "}
-                        </BasicText>
-                        <UserPhoto
-                            userId={appointment.patient.userId}
-                            alt={appointment.patient.name}
-                            url={appointment.patient.profilePictureUrl}
-                            width={20}
-                            height={20}
-                            iconSize={12}
-                        />
-                        <BasicText size="sm" color="gray">
-                            {"  "}
-                            {appointment.patient.name}{" "}
-                            {appointment.modality === "ONLINE"
-                                ? t({ message: "via Google Meet" })
-                                : t({ message: "in person" })}
-                        </BasicText>
-                    </View>
-                    {appointment.status == "ACCEPTED" && (
-                        <View
-                            style={{
-                                flexDirection: "row",
-                                alignItems: "center",
-                                justifyContent: "space-between",
-                                flex: 1,
-                                marginTop: 12,
-                            }}
-                        >
-                            {appointment.rescheduleRequested ||
-                            rescheduleRequested ? (
-                                <SmallButton
-                                    color="gray"
-                                    disabled
-                                    textSize="sm"
-                                    style={{ paddingVertical: 8 }}
-                                >
-                                    <Trans>Reschedule requested</Trans>
-                                </SmallButton>
-                            ) : (
-                                <SmallButton
-                                    color="yellow"
-                                    disabled={requestReschedule.isLoading}
-                                    onPress={async function () {
-                                        try {
-                                            await requestReschedule.mutateAsync(
-                                                {
-                                                    id: appointment.id,
-                                                },
-                                            );
-                                            setRescheduleRequested(true);
-                                        } catch (e) {
-                                            console.error(e);
-                                            Alert.alert(
-                                                t({
-                                                    message:
-                                                        "Failed to request reschedule",
-                                                }),
-                                            );
-                                            setRescheduleRequested(false);
-                                        }
-                                    }}
-                                    textSize="sm"
-                                    style={{ paddingVertical: 8 }}
-                                >
-                                    <Trans>Request reschedule</Trans>
-                                </SmallButton>
-                            )}
-
-                            {appointment.isPaid || canUndo ? (
-                                <SmallButton
-                                    color="lightGray"
-                                    disabled={checkAsNotPaid.isLoading}
-                                    onPress={handleUndoPaid}
-                                    textSize="sm"
-                                    style={{ paddingVertical: 8 }}
-                                >
-                                    <Trans>Uncheck</Trans>
-                                </SmallButton>
-                            ) : (
-                                <SmallButton
-                                    disabled={checkAsPaid.isLoading}
-                                    onPress={handlePaid}
-                                    textSize="sm"
-                                    style={{ paddingVertical: 8 }}
-                                >
-                                    <Trans>Check as paid</Trans>
-                                </SmallButton>
-                            )}
-                        </View>
-                    )}
-                </View>
-            </View>
-            <View
-                style={{
-                    alignSelf: "flex-end",
-                }}
-            >
-                {appointment.status == "PENDENT" ? (
-                    <TouchableOpacity onPress={() => setOpen(!open)}>
-                        {open ? (
-                            <Feather
-                                size={24}
-                                color="#64748b"
-                                name="chevron-up"
-                            />
-                        ) : (
-                            <Feather
-                                size={24}
-                                color="#64748b"
-                                name="chevron-down"
-                            />
-                        )}
-                    </TouchableOpacity>
-                ) : null}
-            </View>
-            {open ? (
-                <View className="mt-4 border-t-[1px] border-slate-500/10">
-                    <TherapistOptions appointment={appointment} />
-                </View>
-            ) : null}
-        </Card>
-    );
-}
-
-function TherapistOptions({
-    appointment,
-}: {
-    appointment: Appointment & { therapist: Therapist };
-}) {
-    return (
-        <View className="flex flex-col gap-2 pl-2 pt-4">
+        <View className="flex flex-col gap-2 pt-4">
             {appointment.status === "PENDENT" ? (
                 <SessionConfirmation appointment={appointment} />
             ) : null}
+            {appointment.status == "ACCEPTED" && (
+                <View
+                    style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        flex: 1,
+                        marginTop: 12,
+                    }}
+                >
+                    {appointment.rescheduleRequested || rescheduleRequested ? (
+                        <SmallButton
+                            color="gray"
+                            disabled
+                            textSize="sm"
+                            style={{ paddingVertical: 8 }}
+                        >
+                            <Trans>Reschedule requested</Trans>
+                        </SmallButton>
+                    ) : (
+                        <SmallButton
+                            color="yellow"
+                            disabled={requestReschedule.isLoading}
+                            onPress={async function () {
+                                try {
+                                    await requestReschedule.mutateAsync({
+                                        id: appointment.id,
+                                    });
+                                    setRescheduleRequested(true);
+                                } catch (e) {
+                                    console.error(e);
+                                    Alert.alert(
+                                        t({
+                                            message:
+                                                "Failed to request reschedule",
+                                        }),
+                                    );
+                                    setRescheduleRequested(false);
+                                }
+                            }}
+                            textSize="sm"
+                            style={{ paddingVertical: 8 }}
+                        >
+                            <Trans>Request reschedule</Trans>
+                        </SmallButton>
+                    )}
+
+                    {appointment.isPaid || canUndo ? (
+                        <SmallButton
+                            color="lightGray"
+                            disabled={checkAsNotPaid.isLoading}
+                            onPress={handleUndoPaid}
+                            textSize="sm"
+                            style={{ paddingVertical: 8 }}
+                        >
+                            <Trans>Uncheck</Trans>
+                        </SmallButton>
+                    ) : (
+                        <SmallButton
+                            disabled={checkAsPaid.isLoading}
+                            onPress={handlePaid}
+                            textSize="sm"
+                            style={{ paddingVertical: 8 }}
+                        >
+                            <Trans>Check as paid</Trans>
+                        </SmallButton>
+                    )}
+                </View>
+            )}
         </View>
     );
 }
@@ -304,16 +327,10 @@ function SessionConfirmation({
                 flex: 1,
                 alignItems: "flex-start",
                 gap: 12,
+                paddingLeft: 8,
+                paddingTop: 8,
             }}
         >
-            <Text
-                style={{
-                    flex: 1,
-                }}
-                className="text-base"
-            >
-                <Trans>Options</Trans>
-            </Text>
             <View
                 style={{
                     flex: 1,
@@ -398,11 +415,9 @@ function SessionConfirmation({
                         );
                     }}
                 >
-                    <Trans>
-                        {appointment.type === "FIRST_IN_RECURRENCE"
-                            ? "Accept single session"
-                            : "Accept session"}
-                    </Trans>
+                    {appointment.type === "FIRST_IN_RECURRENCE"
+                        ? t({ message: "Accept single session" })
+                        : t({ message: "Accept session" })}
                 </LargeButton>
                 <LargeButton
                     color="red"
