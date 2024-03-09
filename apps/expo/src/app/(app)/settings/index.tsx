@@ -69,8 +69,22 @@ export default function UserProfileScreen() {
                 }}
             >
                 <View className="flex flex-row items-center gap-x-4 pt-4 align-middle">
-                    <TouchableOpacity onPress={() => pickImageAsync()}>
-                        {userHasProfileImage.data || imageUpdated ? (
+                    {userHasProfileImage.data || imageUpdated ? (
+                        <View style={{ position: "relative" }}>
+                            <TouchableOpacity
+                                onPress={pickImageAsync}
+                                disabled={updateProfileImage.isLoading}
+                                style={{
+                                    position: "absolute",
+                                    right: 0,
+                                    top: 0,
+                                    zIndex: 1,
+                                }}
+                            >
+                                <View className="rounded-full bg-gray-300 p-1">
+                                    <MaterialIcons size={16} name="edit" />
+                                </View>
+                            </TouchableOpacity>
                             <Image
                                 className="rounded-full"
                                 alt={`${user?.firstName}'s profile picture`}
@@ -80,17 +94,33 @@ export default function UserProfileScreen() {
                                     height: 72,
                                 }}
                             />
-                        ) : userHasProfileImage.isLoading ? (
-                            <View
+                        </View>
+                    ) : userHasProfileImage.isLoading ? (
+                        <View
+                            style={{
+                                backgroundColor: "#e5e7eb",
+                                padding: 24,
+                                borderRadius: 100,
+                            }}
+                        >
+                            <ActivityIndicator size={24} />
+                        </View>
+                    ) : (
+                        <View style={{ position: "relative" }}>
+                            <TouchableOpacity
+                                onPress={pickImageAsync}
+                                disabled={updateProfileImage.isLoading}
                                 style={{
-                                    backgroundColor: "#e5e7eb",
-                                    padding: 24,
-                                    borderRadius: 100,
+                                    position: "absolute",
+                                    right: 0,
+                                    top: 0,
+                                    zIndex: 1,
                                 }}
                             >
-                                <ActivityIndicator size={24} />
-                            </View>
-                        ) : (
+                                <View className="rounded-full bg-gray-300 p-1">
+                                    <MaterialIcons size={16} name="edit" />
+                                </View>
+                            </TouchableOpacity>
                             <View
                                 style={{
                                     backgroundColor: "#e5e7eb",
@@ -104,8 +134,8 @@ export default function UserProfileScreen() {
                                     color="black"
                                 />
                             </View>
-                        )}
-                    </TouchableOpacity>
+                        </View>
+                    )}
                     <View className="flex flex-col">
                         <View>
                             {user?.firstName && (

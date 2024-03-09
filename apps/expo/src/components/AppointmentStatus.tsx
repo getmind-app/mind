@@ -26,7 +26,7 @@ export function AppointmentStatus({
             label: t({ message: "PENDENT" }),
         },
         REJECTED: {
-            color: "red",
+            color: "gray",
             label: t({ message: "REJECTED" }),
         },
         CANCELED: {

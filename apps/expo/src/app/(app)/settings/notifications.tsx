@@ -120,7 +120,6 @@ export default function NotificationsPage() {
                                 flexDirection: "row",
                                 alignItems: "center",
                                 justifyContent: "space-between",
-                                paddingTop: 16,
                                 opacity:
                                     notificationSettings?.status === "granted"
                                         ? 1

@@ -1,12 +1,6 @@
 import React, { useState } from "react";
-import {
-    Modal,
-    Pressable,
-    Text,
-    TouchableOpacity,
-    TouchableWithoutFeedback,
-    View,
-} from "react-native";
+import { Alert, Text, TouchableOpacity, View } from "react-native";
+import { useRouter } from "expo-router";
 import { Feather } from "@expo/vector-icons";
 import { Trans, t } from "@lingui/macro";
 import { useLingui } from "@lingui/react";
@@ -21,9 +15,12 @@ import { getLocale } from "../helpers/getLocale";
 import { isMoreThan24HoursLater } from "../helpers/isMoreThan24HoursLater";
 import { useUserIsProfessional } from "../hooks/user/useUserIsProfessional";
 import { api } from "../utils/api";
+import { colors } from "../utils/colors";
 import { AppointmentStatus } from "./AppointmentStatus";
+import { BasicText } from "./BasicText";
 import { Card } from "./Card";
 import { CopyButton } from "./CopyButton";
+import { SmallButton } from "./SmallButton";
 import { TypeOfAppointment } from "./TypeOfAppointment";
 import { UserPhoto } from "./UserPhotos";
 
@@ -35,6 +32,7 @@ export function PatientAppointmentCard({
     const [open, setOpen] = useState(false);
     const isProfessional = useUserIsProfessional();
     const lingui = useLingui();
+    const router = useRouter();
     const patientCanCancel =
         appointment.status == "ACCEPTED" &&
         isMoreThan24HoursLater(appointment.scheduledTo) &&
@@ -53,9 +51,7 @@ export function PatientAppointmentCard({
                         flex: 3,
                     }}
                 >
-                    <AppointmentStatus status={appointment.status} />
-                    <TypeOfAppointment appointmentType={appointment.type} />
-                    <Text className="pt-2 font-nunito-sans text-xl capitalize">
+                    <Text className="pb-2 font-nunito-sans text-xl capitalize">
                         {format(
                             new Date(appointment.scheduledTo),
                             "EEEE, dd/MM",
@@ -64,19 +60,29 @@ export function PatientAppointmentCard({
                             },
                         )}
                     </Text>
+                    <AppointmentStatus status={appointment.status} />
+                    <TypeOfAppointment appointmentType={appointment.type} />
                     <View className="flex flex-row pt-2">
                         <Text className="font-nunito-sans text-sm text-slate-500">
                             <Trans>with</Trans>
                             {"  "}
                         </Text>
-                        <UserPhoto
-                            userId={appointment.therapist.userId}
-                            alt={appointment.therapist.name}
-                            url={appointment.therapist.profilePictureUrl}
-                            width={20}
-                            height={20}
-                            iconSize={12}
-                        />
+                        <TouchableOpacity
+                            onPress={() => {
+                                router.push(
+                                    `/psych/${appointment.therapist.id}`,
+                                );
+                            }}
+                        >
+                            <UserPhoto
+                                userId={appointment.therapist.userId}
+                                alt={appointment.therapist.name}
+                                url={appointment.therapist.profilePictureUrl}
+                                width={20}
+                                height={20}
+                                iconSize={12}
+                            />
+                        </TouchableOpacity>
                         <Text className="font-nunito-sans text-sm text-slate-500">
                             {"  "}
                             {appointment.therapist.name}{" "}
@@ -85,38 +91,23 @@ export function PatientAppointmentCard({
                                 : t({ message: "in person" })}
                         </Text>
                     </View>
-                    {isProfessional && appointment.status == "ACCEPTED" && (
-                        <View>
-                            <Text
-                                className={`fontnunito-sans pt-2 ${
-                                    appointment.isPaid
-                                        ? "text-green-500"
-                                        : "text-red-500"
-                                }`}
-                            >
-                                {appointment.isPaid
-                                    ? t({ message: "Paid" })
-                                    : t({ message: "Not paid" })}
-                            </Text>
-                        </View>
-                    )}
                 </View>
-                <View className=" flex flex-col items-center justify-between">
-                    <Text className="font-nunito-sans-bold text-xl text-blue-500 ">
+                <View className="flex flex-col items-end justify-between">
+                    <BasicText fontWeight="bold" size="xl" color="primaryBlue">
                         {format(appointment.scheduledTo, "HH:mm")}
-                    </Text>
+                    </BasicText>
                     {patientCanCancel ? (
                         <TouchableOpacity onPress={() => setOpen(!open)}>
                             {open ? (
                                 <Feather
                                     size={24}
-                                    color="#64748b"
+                                    color={colors.gray}
                                     name="chevron-up"
                                 />
                             ) : (
                                 <Feather
                                     size={24}
-                                    color="#64748b"
+                                    color={colors.gray}
                                     name="chevron-down"
                                 />
                             )}
@@ -124,9 +115,9 @@ export function PatientAppointmentCard({
                     ) : null}
                 </View>
             </View>
-            <CopyPixKeyButton appointment={appointment} />
             {open ? (
-                <View className="mt-4 border-t-[1px] border-slate-500/10">
+                <View className="mt-4 flex flex-row items-center justify-between border-t-[1px] border-slate-500/10 pt-4 align-middle">
+                    <CopyPixKeyButton appointment={appointment} />
                     <PatientOptions appointment={appointment} />
                 </View>
             ) : null}
@@ -168,7 +159,6 @@ function SessionCancel({
     appointment: Appointment & { therapist: Therapist };
 }) {
     const utils = api.useContext();
-    const [modalVisible, setModalVisible] = useState(false);
 
     const { mutate } = api.appointments.update.useMutation({
         onSuccess: async () => {
@@ -188,51 +178,35 @@ function SessionCancel({
         });
     };
 
-    // TODO: make modal a component, prettify it and add some transparency to the background (bg-opacity-x does not work idk why)
     return (
-        <>
-            <Modal animationType="fade" transparent visible={modalVisible}>
-                <TouchableWithoutFeedback
-                    onPress={() => setModalVisible(false)}
-                >
-                    <View className="flex h-full flex-col items-center justify-center bg-off-white align-middle">
-                        <View className="w-72 items-center gap-4 rounded-lg bg-white px-6 py-4 align-middle shadow-sm">
-                            <Text className="font-nunito-sans-bold text-2xl">
-                                <Trans>Are you sure?</Trans>
-                            </Text>
-                            <Pressable
-                                className="rounded-lg bg-red-400 "
-                                onPress={() => {
+        <View>
+            <SmallButton
+                color="red"
+                onPress={() =>
+                    Alert.alert(
+                        t({ message: "Are you sure?" }),
+                        t({
+                            message: `Are you sure you want to cancel the session with ${appointment.therapist.name}?`,
+                        }),
+                        [
+                            {
+                                text: t({ message: "No" }),
+                                style: "cancel",
+                            },
+                            {
+                                text: t({ message: "Yes" }),
+                                onPress: () => {
                                     handleSessionCancel();
-                                    setModalVisible(false);
-                                }}
-                            >
-                                <Text className="px-6 py-3 text-center font-nunito-sans-bold text-lg text-white">
-                                    <Trans>Cancel</Trans>
-                                </Text>
-                            </Pressable>
-                        </View>
-                    </View>
-                </TouchableWithoutFeedback>
-            </Modal>
-            <View className="flex flex-row items-center pt-4 align-middle">
-                <Text className="text-base">
-                    <Trans>Cancel the session?</Trans>
-                </Text>
-                <View className="pl-3">
-                    <TouchableOpacity
-                        onPress={() => {
-                            setModalVisible(true);
-                        }}
-                    >
-                        <View className="rounded-lg bg-red-400 shadow-sm">
-                            <Text className="px-3 py-2 text-white">
-                                <Trans>Yes</Trans>
-                            </Text>
-                        </View>
-                    </TouchableOpacity>
-                </View>
-            </View>
-        </>
+                                },
+                            },
+                        ],
+                    )
+                }
+            >
+                <BasicText color="white">
+                    <Trans>Cancel session</Trans>
+                </BasicText>
+            </SmallButton>
+        </View>
     );
 }

@@ -43,7 +43,6 @@ export function CopyButton({
     return (
         <TouchableOpacity
             style={{
-                marginTop: 10,
                 width: "auto",
                 padding: 4,
                 alignSelf: "flex-start",
