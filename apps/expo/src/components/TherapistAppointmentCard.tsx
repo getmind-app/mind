@@ -155,7 +155,7 @@ export function TherapistAppointmentCard({
                                 alignItems: "center",
                                 justifyContent: "space-between",
                                 flex: 1,
-                                marginTop: 8,
+                                marginTop: 12,
                             }}
                         >
                             {appointment.rescheduleRequested ||
@@ -164,6 +164,7 @@ export function TherapistAppointmentCard({
                                     color="gray"
                                     disabled
                                     textSize="sm"
+                                    style={{ paddingVertical: 8 }}
                                 >
                                     <Trans>Reschedule requested</Trans>
                                 </SmallButton>
@@ -191,6 +192,7 @@ export function TherapistAppointmentCard({
                                         }
                                     }}
                                     textSize="sm"
+                                    style={{ paddingVertical: 8 }}
                                 >
                                     <Trans>Request reschedule</Trans>
                                 </SmallButton>
@@ -202,6 +204,7 @@ export function TherapistAppointmentCard({
                                     disabled={checkAsNotPaid.isLoading}
                                     onPress={handleUndoPaid}
                                     textSize="sm"
+                                    style={{ paddingVertical: 8 }}
                                 >
                                     <Trans>Uncheck</Trans>
                                 </SmallButton>
@@ -210,6 +213,7 @@ export function TherapistAppointmentCard({
                                     disabled={checkAsPaid.isLoading}
                                     onPress={handlePaid}
                                     textSize="sm"
+                                    style={{ paddingVertical: 8 }}
                                 >
                                     <Trans>Check as paid</Trans>
                                 </SmallButton>
