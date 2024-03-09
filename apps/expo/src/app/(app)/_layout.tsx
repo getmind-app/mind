@@ -131,16 +131,6 @@ export default function AppRouter() {
                     }}
                 />
                 <Tabs.Screen
-                    name="onboard"
-                    options={{
-                        title: "Onboard",
-                        href: null,
-                        tabBarStyle: {
-                            maxHeight: 0,
-                        },
-                    }}
-                />
-                <Tabs.Screen
                     name="(psych)"
                     options={{
                         title: "Psych",

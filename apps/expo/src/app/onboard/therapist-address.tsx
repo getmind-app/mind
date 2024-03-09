@@ -14,12 +14,12 @@ import { Trans, t } from "@lingui/macro";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { FormTextInput } from "../../../components/FormTextInput";
-import { LargeButton } from "../../../components/LargeButton";
-import { ScreenWrapper } from "../../../components/ScreenWrapper";
-import { Title } from "../../../components/Title";
-import { geocode } from "../../../helpers/geocode";
-import { api } from "../../../utils/api";
+import { FormTextInput } from "../../components/FormTextInput";
+import { LargeButton } from "../../components/LargeButton";
+import { ScreenWrapper } from "../../components/ScreenWrapper";
+import { Title } from "../../components/Title";
+import { geocode } from "../../helpers/geocode";
+import { api } from "../../utils/api";
 
 const schema = z.object({
     zipCode: z
@@ -175,7 +175,7 @@ export default function OnboardAddressScreen() {
                     className="min-h-max"
                     showsVerticalScrollIndicator={false}
                 >
-                    <Title title={t({ message: "Onboard" })} />
+                    <Title title={t({ message: "Address" })} />
 
                     <FormTextInput
                         control={control}

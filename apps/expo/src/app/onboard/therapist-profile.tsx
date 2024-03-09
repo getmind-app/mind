@@ -14,25 +14,30 @@ import { useUser } from "@clerk/clerk-expo";
 import { AntDesign } from "@expo/vector-icons";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Trans, t } from "@lingui/macro";
+import { useHeaderHeight } from "@react-navigation/elements";
 import { cpf } from "cpf-cnpj-validator";
 import { DateTime } from "luxon";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { FormCurrencyInput } from "../../../components/FormCurrencyInput";
-import { FormDateInput } from "../../../components/FormDateInput";
-import { FormTextInput } from "../../../components/FormTextInput";
-import { LargeButton } from "../../../components/LargeButton";
-import { ScreenWrapper } from "../../../components/ScreenWrapper";
-import { Title } from "../../../components/Title";
-import { api } from "../../../utils/api";
+import { FormCurrencyInput } from "../../components/FormCurrencyInput";
+import { FormDateInput } from "../../components/FormDateInput";
+import { FormTextInput } from "../../components/FormTextInput";
+import { Header } from "../../components/Header";
+import { LargeButton } from "../../components/LargeButton";
+import { ScreenWrapper } from "../../components/ScreenWrapper";
+import { Title } from "../../components/Title";
+import { useUserMutations } from "../../hooks/user/useUserMutations";
+import { api } from "../../utils/api";
 import { type Gender, type Modality } from ".prisma/client";
 
 export default function NewPsychScreen() {
     const { user } = useUser();
     const router = useRouter();
+    const headerHeight = useHeaderHeight();
     const createAccount = api.stripe.createAccount.useMutation();
     const [modalities, setModalities] = useState<Modality[]>([]);
+    const { setMetadata } = useUserMutations();
     const [selectedImage, setSelectedImage] =
         useState<ImagePicker.ImagePickerAsset | null>(null);
 
@@ -101,6 +106,12 @@ export default function NewPsychScreen() {
             }
         }
 
+        await setMetadata.mutateAsync({
+            metadata: {
+                role: "professional",
+            },
+        });
+
         if (data.name !== user?.fullName) {
             await user?.update({
                 firstName: data.name.split(" ")[0],
@@ -144,8 +155,10 @@ export default function NewPsychScreen() {
         <KeyboardAvoidingView
             style={{ flex: 1 }}
             behavior={Platform.OS === "ios" ? "padding" : "height"}
+            keyboardVerticalOffset={headerHeight}
         >
-            <ScreenWrapper paddindBottom={16}>
+            <ScreenWrapper paddindBottom={16} paddingTop={0}>
+                <Header />
                 <ScrollView showsVerticalScrollIndicator={false}>
                     <Title title={t({ message: "Onboard" })} />
                     <Text className="mt-4 font-nunito-sans text-lg text-slate-700">
@@ -370,9 +383,9 @@ export default function NewPsychScreen() {
                     />
                 </ScrollView>
                 <LargeButton
-                    disabled={!isValid || isLoading}
+                    disabled={!isValid || isLoading || setMetadata.isLoading}
                     onPress={onSubmit}
-                    loading={isLoading}
+                    loading={isLoading || setMetadata.isLoading}
                 >
                     <Trans>Next</Trans>
                 </LargeButton>

@@ -1,48 +1,23 @@
 import { useState } from "react";
 import { Image, Pressable, Text, View } from "react-native";
 import { useRouter } from "expo-router";
-import { useUser } from "@clerk/clerk-expo";
 import { Trans } from "@lingui/macro";
 
-import { BasicText } from "../components/BasicText";
-import { LargeButton } from "../components/LargeButton";
-import { ScreenWrapper } from "../components/ScreenWrapper";
-import { useUserMutations } from "../hooks/user/useUserMutations";
+import { BasicText } from "../../components/BasicText";
+import { LargeButton } from "../../components/LargeButton";
+import { ScreenWrapper } from "../../components/ScreenWrapper";
 
 export default function Onboard() {
-    const { user } = useUser();
     const router = useRouter();
     const [selectedRole, setSelectedRole] = useState<
         "patient" | "professional"
     >();
 
-    const [loading, setLoading] = useState(false);
-    const { setMetadata } = useUserMutations();
-
-    async function handleNext() {
-        setLoading(true);
-        if (selectedRole) {
-            try {
-                await setMetadata.mutateAsync({
-                    metadata: {
-                        role: selectedRole,
-                    },
-                });
-                await user?.reload();
-
-                if (selectedRole === "patient") {
-                    router.push("/onboard/patient-profile");
-                } else {
-                    router.push("/onboard/therapist-profile");
-                }
-            } catch (e) {
-                console.error("error setting metadata");
-                console.error(e);
-            } finally {
-                setLoading(false);
-            }
+    function handleNext() {
+        if (selectedRole === "patient") {
+            router.push("/onboard/patient-profile");
         } else {
-            throw new Error("No role selected");
+            router.push("/onboard/therapist-profile");
         }
     }
 
@@ -80,7 +55,6 @@ export default function Onboard() {
                                 onPress={() => setSelectedRole("patient")}
                                 style={{
                                     flex: 1,
-                                    opacity: setMetadata.isLoading ? 0.3 : 1,
                                     borderWidth: 2,
                                     borderColor:
                                         selectedRole === "patient"
@@ -122,7 +96,7 @@ export default function Onboard() {
                                     <Image
                                         alt="Patient with a plant"
                                         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                                        source={require("../../assets/images/girl_flower.png")}
+                                        source={require("../../../assets/images/girl_flower.png")}
                                         style={{
                                             maxWidth: 180,
                                             maxHeight: 180,
@@ -144,7 +118,6 @@ export default function Onboard() {
                                 onPress={() => setSelectedRole("professional")}
                                 style={{
                                     flex: 1,
-                                    opacity: setMetadata.isLoading ? 0.3 : 1,
                                     borderWidth: 2,
                                     borderColor:
                                         selectedRole === "professional"
@@ -171,7 +144,7 @@ export default function Onboard() {
                                     <Image
                                         alt="Patient with a plant"
                                         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                                        source={require("../../assets/images/girl_book.png")}
+                                        source={require("../../../assets/images/girl_book.png")}
                                         style={{
                                             // for some reason it looks better if this image if smaller
                                             maxWidth: 160,
@@ -202,7 +175,6 @@ export default function Onboard() {
                 </View>
 
                 <LargeButton
-                    loading={loading}
                     onPress={handleNext}
                     disabled={!selectedRole}
                     style={{

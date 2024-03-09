@@ -13,21 +13,26 @@ import { useUser } from "@clerk/clerk-expo";
 import { AntDesign } from "@expo/vector-icons";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Trans, t } from "@lingui/macro";
+import { useHeaderHeight } from "@react-navigation/elements";
 import { cpf } from "cpf-cnpj-validator";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { FormTextInput } from "../../../components/FormTextInput";
-import { LargeButton } from "../../../components/LargeButton";
-import { Loading } from "../../../components/Loading";
-import { ScreenWrapper } from "../../../components/ScreenWrapper";
-import { Title } from "../../../components/Title";
-import { usePatientMutations } from "../../../hooks/patient/usePatientMutations";
-import { useUserHasProfileImage } from "../../../hooks/user/useUserHasProfileImage";
+import { FormTextInput } from "../../components/FormTextInput";
+import { Header } from "../../components/Header";
+import { LargeButton } from "../../components/LargeButton";
+import { Loading } from "../../components/Loading";
+import { ScreenWrapper } from "../../components/ScreenWrapper";
+import { Title } from "../../components/Title";
+import { usePatientMutations } from "../../hooks/patient/usePatientMutations";
+import { useUserHasProfileImage } from "../../hooks/user/useUserHasProfileImage";
+import { useUserMutations } from "../../hooks/user/useUserMutations";
 
 export default function EditPatientProfile() {
     const { user } = useUser();
     const router = useRouter();
+    const headerHeight = useHeaderHeight();
+    const { setMetadata } = useUserMutations();
     const userHasProfileImage = useUserHasProfileImage({ userId: null });
     const [selectedImage, setSelectedImage] =
         useState<ImagePicker.ImagePickerAsset | null>(null);
@@ -65,6 +70,13 @@ export default function EditPatientProfile() {
                 console.error(error);
             }
         }
+
+        await setMetadata.mutateAsync({
+            metadata: {
+                role: "patient",
+            },
+        });
+        await user?.reload();
 
         if (data.name !== user?.fullName) {
             const [firstName, lastName] = data.name.split(" ");
@@ -113,8 +125,10 @@ export default function EditPatientProfile() {
         <KeyboardAvoidingView
             style={{ flex: 1 }}
             behavior={Platform.OS === "ios" ? "padding" : "height"}
+            keyboardVerticalOffset={headerHeight}
         >
-            <ScreenWrapper paddindBottom={16}>
+            <ScreenWrapper paddindBottom={16} paddingTop={0}>
+                <Header />
                 <Title title={t({ message: "Onboard" })} />
                 <Text className="mt-4 font-nunito-sans text-lg text-slate-700">
                     <Trans>Profile picture</Trans>
@@ -176,8 +190,12 @@ export default function EditPatientProfile() {
                     </View>
                 </View>
                 <LargeButton
-                    disabled={!isValid || createPatient.isLoading}
-                    loading={createPatient.isLoading}
+                    disabled={
+                        !isValid ||
+                        createPatient.isLoading ||
+                        setMetadata.isLoading
+                    }
+                    loading={createPatient.isLoading || setMetadata.isLoading}
                     onPress={onSubmit}
                     style={{
                         maxHeight: 48,
