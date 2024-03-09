@@ -9,7 +9,7 @@ import {
     View,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { Trans } from "@lingui/macro";
+import { Trans, t } from "@lingui/macro";
 import { useLingui } from "@lingui/react";
 import { setHours, setMilliseconds, setMinutes, setSeconds } from "date-fns";
 import { atom, useAtom } from "jotai";
@@ -523,7 +523,13 @@ function ModalityPicker({
                         <Trans>Meet</Trans>
                     </Text>
                     <Text className={"font-nunito-sans text-xl capitalize"}>
-                        {mode == "ON_SITE" ? "Onsite" : "Online"}
+                        {mode == "ON_SITE"
+                            ? t({
+                                  message: "Onsite",
+                              })
+                            : t({
+                                  message: "Online",
+                              })}
                     </Text>
                 </View>
             }
@@ -671,7 +677,8 @@ function RecurrenceOptions({
                         >
                             <Trans>
                                 This appointment will be automatically added to
-                                your calendar and charged every week.
+                                your calendar every week.
+                                {"\n"}
                                 {"\n"}You can cancel it anytime.
                             </Trans>
                         </BasicText>

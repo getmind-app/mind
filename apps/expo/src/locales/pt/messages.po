@@ -67,8 +67,8 @@ msgid "<0>Female</0>"
 msgstr "<0>Mulher</0>"
 
 #: src/app/(app)/psych/finish.tsx:38
-msgid "<0>If </0><1>{0} </1><2>accepts, you will be meeting on </2><3>{1}, {2} </3><4>at </4><5>{3}:{4}</5>"
-msgstr "<0>Se </0><1>{0} </1><2>aceitar, vocês se encontrarão em </2><3>{2}, {1}</3><4>às </4><5>{3}:{4}</5>"
+msgid "<0>If </0><1>{0} </1><2>accepts, you will be meeting on </2><3>{1}, {2} </3><4> at </4><5>{3}:{4}</5>"
+msgstr "<0>Se </0><1>{0} </1><2>aceitar, vocês se encontrarão em </2><3>{2} de {1}</3><4> às </4><5>{3}:{4}</5>"
 
 #: src/app/(app)/search.tsx:324
 msgid "<0>Male</0>"

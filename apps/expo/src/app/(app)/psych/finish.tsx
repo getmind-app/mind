@@ -2,9 +2,12 @@ import { Image, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useGlobalSearchParams, useRouter } from "expo-router";
 import { Trans } from "@lingui/macro";
+import { useLingui } from "@lingui/react";
 
 import { FullScreenLoading } from "../../../components/FullScreenLoading";
 import { LargeButton } from "../../../components/LargeButton";
+import { capitalizeFirstLetter } from "../../../helpers/capitalizeFirstLetter";
+import { getLocale } from "../../../helpers/getLocale";
 import { api } from "../../../utils/api";
 
 export default function FinishAppointmentSchedulingScreen() {
@@ -14,6 +17,10 @@ export default function FinishAppointmentSchedulingScreen() {
     const { data, isLoading } = api.appointments.findById.useQuery({
         id: String(appointmentId),
     });
+
+    const lingui = useLingui();
+
+    const locale = getLocale(lingui);
 
     if (isLoading) {
         return <FullScreenLoading />;
@@ -25,6 +32,7 @@ export default function FinishAppointmentSchedulingScreen() {
                 <View className="flex items-center justify-center">
                     <Image
                         alt=""
+                        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                         source={require("../../../../assets/images/girl_guitar.png")}
                         style={{ width: 200, height: 200 }}
                         resizeMode="contain"
@@ -46,9 +54,11 @@ export default function FinishAppointmentSchedulingScreen() {
                                 accepts, you will be meeting on{" "}
                             </Text>
                             <Text className="font-nunito-sans-bold text-lg ">
-                                {new Intl.DateTimeFormat("en", {
-                                    month: "long",
-                                }).format(data?.scheduledTo)}
+                                {capitalizeFirstLetter(
+                                    new Intl.DateTimeFormat(locale.code, {
+                                        month: "long",
+                                    }).format(data?.scheduledTo),
+                                )}
                                 , {data?.scheduledTo.getDate()}{" "}
                             </Text>
                             <Text className="font-nunito-sans text-lg text-slate-500">
