@@ -131,16 +131,6 @@ export default function AppRouter() {
                     }}
                 />
                 <Tabs.Screen
-                    name="(psych)"
-                    options={{
-                        title: "Psych",
-                        href: null,
-                        tabBarStyle: {
-                            maxHeight: 0,
-                        },
-                    }}
-                />
-                <Tabs.Screen
                     name="index"
                     options={{
                         title: "Index",

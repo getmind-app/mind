@@ -253,7 +253,7 @@ function NextAppointment() {
                                 <TouchableOpacity
                                     onPress={() =>
                                         router.push(
-                                            `/(psych)/patients/${nextAppointment.data?.patient.id}`,
+                                            `/home/patients/${nextAppointment.data?.patient.id}`,
                                         )
                                     }
                                     style={{
@@ -320,7 +320,7 @@ function NextAppointment() {
 
                             if (isProfessional) {
                                 router.push(
-                                    `/(psych)/patients/${nextAppointment.data?.patient.id}`,
+                                    `/home/patients/${nextAppointment.data?.patient.id}`,
                                 );
                                 return;
                             }

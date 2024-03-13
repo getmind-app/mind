@@ -180,7 +180,7 @@ export const appointmentsRouter = createTRPCRouter({
             }),
         )
         .query(async ({ ctx, input }) => {
-            return await ctx.prisma.appointment.findUniqueOrThrow({
+            return await ctx.prisma.appointment.findUnique({
                 where: {
                     id: input.id,
                 },

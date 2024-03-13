@@ -105,7 +105,7 @@ export default function PatientsScreen() {
                                 <TouchableOpacity
                                     onPress={() => {
                                         router.push(
-                                            `/(psych)/patients/${item.id}`,
+                                            `/home/patients/${item.id}`,
                                         );
                                     }}
                                     style={{
