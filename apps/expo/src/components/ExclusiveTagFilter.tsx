@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { ScrollView } from "react-native";
 
 import { TouchableTag } from "./TouchableTag";
@@ -15,7 +14,7 @@ export function ExclusiveTagFilter<
     selected?: string;
 }) {
     return (
-        <ScrollView horizontal>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             {tags.map(({ label, value }) => (
                 <TouchableTag
                     key={value}

@@ -224,7 +224,7 @@ export default function AppointmentSchedulingScreen() {
 
                     <View>
                         <LargeButton
-                            disabled={!allPicked}
+                            disabled={!allPicked || createAppointment.isLoading}
                             onPress={handleConfirm}
                             loading={createAppointment.isLoading}
                         >

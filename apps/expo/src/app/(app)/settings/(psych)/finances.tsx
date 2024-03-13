@@ -121,7 +121,7 @@ export default function FinancesScreen() {
                     flex: 1,
                     flexDirection: "row",
                     gap: 8,
-                    marginBottom: 8,
+                    marginVertical: 8,
                 }}
             >
                 <ExclusiveTagFilter
