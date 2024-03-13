@@ -81,7 +81,7 @@ export default function UserProfileScreen() {
                                     zIndex: 1,
                                 }}
                             >
-                                <View className="rounded-full bg-gray-300 p-1">
+                                <View className="rounded-full bg-slate-300 p-1">
                                     <MaterialIcons size={16} name="edit" />
                                 </View>
                             </TouchableOpacity>

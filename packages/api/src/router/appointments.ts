@@ -147,7 +147,7 @@ export const appointmentsRouter = createTRPCRouter({
                 where: { userId: ctx.auth.userId },
             });
 
-            foundAppointment = await ctx.prisma.appointment.findFirstOrThrow({
+            foundAppointment = await ctx.prisma.appointment.findFirst({
                 where: {
                     patientId: patient?.id,
                     scheduledTo: {
@@ -171,7 +171,7 @@ export const appointmentsRouter = createTRPCRouter({
             });
         }
 
-        return foundAppointment;
+        return foundAppointment ? foundAppointment : null;
     }),
     findById: protectedProcedure
         .input(

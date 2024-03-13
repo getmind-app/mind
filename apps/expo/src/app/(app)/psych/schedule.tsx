@@ -20,6 +20,7 @@ import { FullScreenLoading } from "../../../components/FullScreenLoading";
 import { Header } from "../../../components/Header";
 import { LargeButton } from "../../../components/LargeButton";
 import { ScreenWrapper } from "../../../components/ScreenWrapper";
+import { UserPhoto } from "../../../components/UserPhotos";
 import geocodeAddress from "../../../helpers/geocodeAddress";
 import { getMonthInLocale } from "../../../helpers/getMonthInLocale";
 import { useRecurrenceCanHappen } from "../../../hooks/recurrence/useRecurrenceCanHappen";
@@ -123,31 +124,30 @@ export default function AppointmentSchedulingScreen() {
     return (
         <>
             <Header />
-            <ScreenWrapper paddingTop={48} paddindBottom={32}>
+            <ScreenWrapper paddingTop={8} paddindBottom={32}>
                 <View
                     style={{
                         flex: 1,
                         justifyContent: "space-between",
                     }}
                 >
-                    <View>
+                    <ScrollView>
                         <View
                             style={{
-                                position: "relative",
-                                borderRadius: 10,
+                                borderRadius: 16,
                                 backgroundColor: "#fff",
                                 padding: 16,
-                                paddingTop: 40,
+                                marginTop: 16,
+                                position: "relative",
                             }}
                         >
-                            <View className="p-1/2 absolute -top-8 left-4 flex h-16 w-16 items-center justify-center overflow-hidden rounded-full">
-                                <Image
+                            <View className="p-1/2 absolute left-4 top-[-16] flex h-16 w-16 overflow-hidden rounded-full">
+                                <UserPhoto
                                     alt={`${data.name} picture`}
-                                    source={{
-                                        uri: data.profilePictureUrl,
-                                        width: 64,
-                                        height: 64,
-                                    }}
+                                    url={data.profilePictureUrl}
+                                    width={64}
+                                    height={64}
+                                    userId={null}
                                 />
                             </View>
                             <BasicText
@@ -155,6 +155,7 @@ export default function AppointmentSchedulingScreen() {
                                 fontWeight="bold"
                                 style={{
                                     marginBottom: 2,
+                                    paddingTop: 40,
                                 }}
                             >
                                 <Trans>
@@ -217,7 +218,10 @@ export default function AppointmentSchedulingScreen() {
                                 });
                             }}
                         />
-                    </View>
+                        {/* BOTTOM SPACING */}
+                        <View style={{ height: 48 }} />
+                    </ScrollView>
+
                     <View>
                         <LargeButton
                             disabled={!allPicked}
@@ -388,7 +392,9 @@ function HourPicker({
                     <Text className={"font-nunito-sans text-xl"}>
                         <Trans>Hour </Trans>
                     </Text>
-                    <Text className={"font-nunito-sans text-xl"}>{hour} </Text>
+                    <BasicText size="xl" color="gray">
+                        {hour}{" "}
+                    </BasicText>
                 </View>
             }
             expanded={expanded}
@@ -516,21 +522,23 @@ function ModalityPicker({
         <AnimatedCard
             expanded={expanded}
             setExpanded={setExpanded}
-            maxHeight={therapist.modalities.length > 1 ? 110 : 60}
+            maxHeight={therapist.modalities.length > 1 ? 90 : 60}
             title={
                 <View className="flex flex-row justify-between">
                     <Text className={"font-nunito-sans text-xl"}>
                         <Trans>Meet</Trans>
                     </Text>
-                    <Text className={"font-nunito-sans text-xl capitalize"}>
-                        {mode == "ON_SITE"
-                            ? t({
-                                  message: "Onsite",
-                              })
-                            : t({
-                                  message: "Online",
-                              })}
-                    </Text>
+                    {mode && (
+                        <BasicText size="xl" color="gray">
+                            {mode == "ON_SITE"
+                                ? t({
+                                      message: "Onsite",
+                                  })
+                                : t({
+                                      message: "Online",
+                                  })}
+                        </BasicText>
+                    )}
                 </View>
             }
         >

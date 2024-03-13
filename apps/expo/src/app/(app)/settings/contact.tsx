@@ -21,9 +21,7 @@ export default function ContactPage() {
                         style={{ paddingHorizontal: 4 }}
                     >
                         {t({
-                            message: `If you have any questions or suggestions, 
-                                we would love to hear from you.
-                                `,
+                            message: `If you have any questions or suggestions, we would love to hear from you.`,
                         })}
                     </BasicText>
                     <BasicText

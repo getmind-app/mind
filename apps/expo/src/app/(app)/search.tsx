@@ -636,15 +636,15 @@ function TherapistProfile({
                 userId={therapist.userId}
                 alt={therapist.name}
                 url={therapist.profilePictureUrl}
-                width={40}
-                height={40}
+                width={48}
+                height={48}
             />
-            <View className="ml-3 flex flex-col">
+            <View className="ml-3 flex flex-col ">
                 <BasicText
                     fontWeight="bold"
-                    size="lg"
+                    size="xl"
                     style={{
-                        marginBottom: -4,
+                        marginBottom: -2,
                     }}
                 >
                     {therapist.name}

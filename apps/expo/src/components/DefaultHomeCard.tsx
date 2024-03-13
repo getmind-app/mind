@@ -67,7 +67,7 @@ function DefaultTherapistHomeCard() {
 
                 {!therapist.data.pixKey || !therapist.data.about ? (
                     <>
-                        <BasicText color="gray">
+                        <BasicText color="gray" style={{ marginTop: 8 }}>
                             {t({
                                 message:
                                     "Here are a few things you can do to get started:",
@@ -81,7 +81,7 @@ function DefaultTherapistHomeCard() {
             <TouchableOpacity
                 onPress={() =>
                     void getShareLink({
-                        id: therapist.data.id,
+                        id: therapist.data?.id,
                         name: user.firstName ?? "",
                     })
                 }
