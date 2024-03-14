@@ -1,11 +1,13 @@
-import { addDays, format, isSameDay, isWeekend } from "date-fns";
+import { addDays, addHours, format, isSameDay, isWeekend } from "date-fns";
 
 import { type Appointment, type Hour, type Therapist } from "@acme/db";
 
 export function getAvailableDatesAndHours({
     therapist,
     numberOfDays = 30,
-    startingDate = new Date(),
+    // account for the time zone difference
+    // couldn't get date-fns-tz to work
+    startingDate = addHours(new Date(), -3),
 }: {
     therapist: Therapist & {
         hours: Hour[];
@@ -83,6 +85,5 @@ export function getAvailableDatesAndHours({
         },
         {} as Record<number, { date: Date; hours: Hour[] }[]>,
     );
-
     return allHoursInNext30DaysOrganized;
 }
