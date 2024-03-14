@@ -28,28 +28,40 @@ export const createAppointmentInCalendar = async ({
         prisma,
         appointment,
     });
-    const therapistUser = await getUser(therapist.userId);
 
-    const modality =
-        appointment.modality === "ONLINE" ? "online" : "presencial";
-    const therapistPronoun = therapist.gender === "MALE" ? "o" : "a";
+    try {
+        console.log("therapist.userId", therapist.userId);
+        const therapistUser = await getUser(therapist.userId);
 
-    const requestBody = makeRequestBody(
-        patient,
-        therapist,
-        modality,
-        therapistPronoun,
-        appointment,
-        String(therapistUser.emailAddresses[0]?.emailAddress),
-    );
+        const modality =
+            appointment.modality === "ONLINE" ? "online" : "presencial";
+        const therapistPronoun = therapist.gender === "MALE" ? "o" : "a";
 
-    const newAppointment = await calendar.events.insert({
-        calendarId: "primary",
-        conferenceDataVersion: 1,
-        requestBody,
-    });
+        const requestBody = makeRequestBody(
+            patient,
+            therapist,
+            modality,
+            therapistPronoun,
+            appointment,
+            String(therapistUser.emailAddresses[0]?.emailAddress),
+        );
 
-    return newAppointment;
+        try {
+            const newAppointment = await calendar.events.insert({
+                calendarId: "primary",
+                conferenceDataVersion: 1,
+                requestBody,
+            });
+
+            return newAppointment;
+        } catch (error) {
+            console.error("Error creating appointment in calendar", error);
+            throw new Error("Error creating appointment in calendar");
+        }
+    } catch (error) {
+        console.error("Error fetching therapist user", error);
+        throw new Error("Error fetching therapist user");
+    }
 };
 
 const appointmentTypeToEmoji: {
