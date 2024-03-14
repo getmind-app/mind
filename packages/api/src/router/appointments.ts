@@ -341,7 +341,7 @@ export const appointmentsRouter = createTRPCRouter({
                 });
             } catch (e) {
                 console.error("Error updating appointment");
-                console.error(JSON.stringify(e, null, 2));
+                console.error(e);
                 console.error(JSON.stringify(input, null, 2));
                 throw e;
             }
