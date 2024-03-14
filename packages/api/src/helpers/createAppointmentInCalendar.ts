@@ -30,6 +30,7 @@ export const createAppointmentInCalendar = async ({
     });
 
     try {
+        console.log("therapist.userId", therapist.userId);
         const therapistUser = await getUser(therapist.userId);
 
         const modality =
@@ -45,13 +46,18 @@ export const createAppointmentInCalendar = async ({
             String(therapistUser.emailAddresses[0]?.emailAddress),
         );
 
-        const newAppointment = await calendar.events.insert({
-            calendarId: "primary",
-            conferenceDataVersion: 1,
-            requestBody,
-        });
+        try {
+            const newAppointment = await calendar.events.insert({
+                calendarId: "primary",
+                conferenceDataVersion: 1,
+                requestBody,
+            });
 
-        return newAppointment;
+            return newAppointment;
+        } catch (error) {
+            console.error("Error creating appointment in calendar", error);
+            throw new Error("Error creating appointment in calendar");
+        }
     } catch (error) {
         console.error("Error fetching therapist user", error);
         throw new Error("Error fetching therapist user");
