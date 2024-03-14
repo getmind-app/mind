@@ -7,9 +7,13 @@ export const getOAuth2GoogleClient = async () => {
         process.env.GOOGLE_CLIENT_SECRET,
     );
 
+    if (!process.env.SCHEDULE_USER_ID) {
+        throw new Error("process.env.SCHEDULE_USER_ID not set");
+    }
+
     const [ScheduleUserOAuthAccessToken] =
         await clerk.users.getUserOauthAccessToken(
-            process.env.SCHEDULE_USER_ID || "",
+            process.env.SCHEDULE_USER_ID,
             "oauth_google",
         );
 
