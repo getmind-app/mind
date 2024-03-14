@@ -285,51 +285,66 @@ export const appointmentsRouter = createTRPCRouter({
             }),
         )
         .mutation(async ({ ctx, input }) => {
-            if (input.status === "PENDENT") {
-                throw new Error("Cannot update appointment status to PENDENT");
-            }
+            try {
+                if (input.status === "PENDENT") {
+                    throw new Error(
+                        "Cannot update appointment status to PENDENT",
+                    );
+                }
 
-            const appointment = await ctx.prisma.appointment.findUniqueOrThrow({
-                where: {
-                    id: input.id,
-                },
-            });
+                console.log("Find appointment");
+                const appointment =
+                    await ctx.prisma.appointment.findUniqueOrThrow({
+                        where: {
+                            id: input.id,
+                        },
+                    });
 
-            let calendarEvent: null | Awaited<
-                ReturnType<typeof createAppointmentInCalendar>
-            > = null;
+                let calendarEvent: null | Awaited<
+                    ReturnType<typeof createAppointmentInCalendar>
+                > = null;
 
-            if (input.status === "ACCEPTED") {
-                calendarEvent = await createAppointmentInCalendar({
+                if (input.status === "ACCEPTED") {
+                    console.log("Create appointment in calendar");
+                    calendarEvent = await createAppointmentInCalendar({
+                        appointment,
+                        prisma: ctx.prisma,
+                    });
+                }
+
+                if (input.status === "CANCELED") {
+                    await cancelAppointmentInCalendar(
+                        appointment.eventId ?? "",
+                    );
+                }
+
+                console.log("Notify parties");
+                await notifyAppointmentStatusChange({
+                    newStatus: input.status,
                     appointment,
                     prisma: ctx.prisma,
                 });
+
+                return await ctx.prisma.appointment.update({
+                    where: {
+                        id: input.id,
+                    },
+                    data: {
+                        ...input,
+                        ...(calendarEvent
+                            ? {
+                                  link: calendarEvent.data.hangoutLink,
+                                  eventId: calendarEvent.data.id,
+                              }
+                            : {}),
+                    },
+                });
+            } catch (e) {
+                console.error("Error updating appointment");
+                console.error(JSON.stringify(e, null, 2));
+                console.error(JSON.stringify(input, null, 2));
+                throw e;
             }
-
-            if (input.status === "CANCELED") {
-                await cancelAppointmentInCalendar(appointment.eventId ?? "");
-            }
-
-            await notifyAppointmentStatusChange({
-                newStatus: input.status,
-                appointment,
-                prisma: ctx.prisma,
-            });
-
-            return await ctx.prisma.appointment.update({
-                where: {
-                    id: input.id,
-                },
-                data: {
-                    ...input,
-                    ...(calendarEvent
-                        ? {
-                              link: calendarEvent.data.hangoutLink,
-                              eventId: calendarEvent.data.id,
-                          }
-                        : {}),
-                },
-            });
         }),
     checkAppointmentAsPaid: protectedProcedure
         .input(
