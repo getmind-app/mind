@@ -18,6 +18,7 @@ import {
     type Therapist,
 } from "../../../../../../../packages/db";
 import { BasicText } from "../../../../components/BasicText";
+import { Card } from "../../../../components/Card";
 import { Data } from "../../../../components/Data";
 import { FullScreenLoading } from "../../../../components/FullScreenLoading";
 import { Header } from "../../../../components/Header";
@@ -67,7 +68,7 @@ export default function PatientProfileScreen() {
     };
 
     return (
-        <ScreenWrapper>
+        <ScreenWrapper paddindBottom={32}>
             <Refreshable
                 refreshControl={
                     <RefreshControl
@@ -167,7 +168,7 @@ export default function PatientProfileScreen() {
 
 function SectionHeader({ title }: { title: string | React.ReactNode }) {
     return typeof title === "string" ? (
-        <BasicText size="lg" fontWeight="bold">
+        <BasicText size="2xl" fontWeight="bold" style={{ marginTop: 12 }}>
             {title}
         </BasicText>
     ) : (
@@ -235,6 +236,7 @@ function RecurrenceList({
             data={recurrences.slice(0, 3)}
             renderItem={({ item }) => <RecurrenceCard recurrence={item} />}
             estimatedItemSize={200}
+            ListEmptyComponent={() => <EmptyRecurrence />}
             keyExtractor={(item) => item.id}
         />
     );
@@ -249,17 +251,18 @@ function NotesList({ notes, patient }: { notes: Note[]; patient: Patient }) {
                     style={{
                         flexDirection: "row",
                         justifyContent: "space-between",
-                        alignItems: "center",
                         flex: 1,
+                        marginTop: 12,
+                        alignItems: "center",
                     }}
                 >
-                    <BasicText size="lg" fontWeight="bold">
+                    <BasicText size="2xl" fontWeight="bold">
                         <Trans>Notes</Trans>
                     </BasicText>
                     <SmallButton
                         onPress={() =>
                             router.push({
-                                pathname: "/notes/new",
+                                pathname: "/home/notes/new",
                                 params: {
                                     patientId: patient.id,
                                     patientUserId: patient.userId,
@@ -275,7 +278,39 @@ function NotesList({ notes, patient }: { notes: Note[]; patient: Patient }) {
             estimatedItemSize={200}
             data={notes}
             renderItem={({ item }) => <NoteCard note={item} />}
+            ListEmptyComponent={() => <EmptyNotes />}
             keyExtractor={(item) => item.id}
         />
+    );
+}
+
+function EmptyRecurrence() {
+    return (
+        <Card>
+            <BasicText size="lg">
+                <Trans>No recurrences found!</Trans>
+            </BasicText>
+            <BasicText color="gray">
+                <Trans>
+                    If a patient has a recurrence, it will appear here.
+                </Trans>
+            </BasicText>
+        </Card>
+    );
+}
+
+function EmptyNotes() {
+    return (
+        <Card>
+            <BasicText size="lg">
+                <Trans>No notes found</Trans>
+            </BasicText>
+            <BasicText color="gray">
+                <Trans>
+                    Create a new note to keep track of your patient&apos;s
+                    progress.
+                </Trans>
+            </BasicText>
+        </Card>
     );
 }
