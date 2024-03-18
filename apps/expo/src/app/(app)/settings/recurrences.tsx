@@ -173,7 +173,7 @@ export function RecurrenceCard({ recurrence }: { recurrence: Recurrence }) {
     const isProfessional = useUserIsProfessional();
 
     return (
-        <Card key={recurrence.id}>
+        <Card key={recurrence.id} paddingHorizontal={6} paddingVertical={6}>
             <View
                 style={{
                     flexDirection: "row",

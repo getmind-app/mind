@@ -100,7 +100,7 @@ export default function ContactPage() {
                     >
                         {t({
                             message: `
-                            +55 42 98809-8933
+                            +55 42 98809-8933 (Gustavo)
                             `,
                         })}
                     </BasicText>
@@ -120,7 +120,7 @@ export default function ContactPage() {
                     >
                         {t({
                             message: `
-                            +55 41 99279-0302
+                            +55 41 99279-0302 (Abdul)
                             `,
                         })}
                     </BasicText>
