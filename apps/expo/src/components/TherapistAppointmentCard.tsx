@@ -32,7 +32,7 @@ export function TherapistAppointmentCard({
     const lingui = useLingui();
 
     return (
-        <Card key={appointment.id} paddingHorizontal={6} paddingVertical={6}>
+        <Card key={appointment.id}>
             <View
                 style={{
                     flexDirection: "row",

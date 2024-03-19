@@ -18,7 +18,7 @@ export function PatientCard({ patient }: { patient: PatientReport }) {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
-        <Card key={patient.patientId} paddingHorizontal={6} paddingVertical={6}>
+        <Card key={patient.patientId}>
             <View
                 style={{
                     flex: 3,

@@ -376,7 +376,7 @@ function LastNotes() {
             {data && data.length > 0 ? (
                 data.map((note) => <NoteCard note={note} key={note.id} />)
             ) : (
-                <Card paddingHorizontal={6} paddingVertical={6}>
+                <Card>
                     <View className="flex w-full flex-row items-center justify-between align-middle">
                         <View className="flex w-72 flex-col">
                             <Text className="font-nunito-sans-bold text-xl text-slate-500">

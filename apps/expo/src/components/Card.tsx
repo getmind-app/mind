@@ -4,8 +4,6 @@ import { CardSkeleton } from "./CardSkeleton";
 
 export function Card({
     isLoading = false,
-    paddingHorizontal = 6,
-    paddingVertical = 6,
     children,
 }: {
     isLoading?: boolean;
@@ -17,8 +15,8 @@ export function Card({
 
     return (
         <View
-            className={`my-2 rounded-xl bg-white shadow-sm py-${paddingVertical} px-${paddingHorizontal}`}
-            style={{ elevation: 2 }}
+            className={`my-2 rounded-xl bg-white shadow-sm`}
+            style={{ elevation: 2, paddingHorizontal: 24, paddingVertical: 24 }}
         >
             {children}
         </View>
