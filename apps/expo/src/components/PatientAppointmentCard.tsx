@@ -39,7 +39,7 @@ export function PatientAppointmentCard({
         !isProfessional;
 
     return (
-        <Card key={appointment.id}>
+        <Card key={appointment.id} paddingHorizontal={6} paddingVertical={6}>
             <View
                 style={{
                     flexDirection: "row",

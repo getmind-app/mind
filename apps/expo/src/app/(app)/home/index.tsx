@@ -376,9 +376,9 @@ function LastNotes() {
             {data && data.length > 0 ? (
                 data.map((note) => <NoteCard note={note} key={note.id} />)
             ) : (
-                <Card>
-                    <View className="flex w-full flex-row items-center justify-between gap-2 align-middle">
-                        <View className="flex w-64 flex-col">
+                <Card paddingHorizontal={6} paddingVertical={6}>
+                    <View className="flex w-full flex-row items-center justify-between align-middle">
+                        <View className="flex w-72 flex-col">
                             <Text className="font-nunito-sans-bold text-xl text-slate-500">
                                 <Trans>You have no notes</Trans>
                             </Text>

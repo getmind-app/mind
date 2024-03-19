@@ -13,7 +13,7 @@ export function NoteCard({ note }: { note: Note }) {
     const lingui = useLingui();
 
     return (
-        <Card>
+        <Card paddingHorizontal={6} paddingVertical={6}>
             <View className="flex w-full flex-row items-center justify-between align-middle">
                 <View className="flex w-64 flex-col">
                     <View
