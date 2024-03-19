@@ -25,7 +25,7 @@ const defineConfig = (): ExpoConfig => ({
     name: "Mind",
     slug: "mind",
     scheme: "mind",
-    version: "2.2.43",
+    version: "2.2.44",
     orientation: "portrait",
     owner: "mind-therapy",
     icon: "./assets/icon.png",
