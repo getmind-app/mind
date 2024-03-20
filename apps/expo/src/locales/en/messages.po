@@ -71,12 +71,20 @@ msgstr "{title}"
 #~ msgstr "`You'll receive R$ ${0} for each session`"
 
 #: src/app/(app)/settings/contact.tsx:121
-msgid "+55 41 99279-0302"
-msgstr "+55 41 99279-0302"
+#~ msgid "+55 41 99279-0302"
+#~ msgstr "+55 41 99279-0302"
+
+#: src/app/(app)/settings/contact.tsx:121
+msgid "+55 41 99279-0302 (Abdul)"
+msgstr "+55 41 99279-0302 (Abdul)"
 
 #: src/app/(app)/settings/contact.tsx:101
-msgid "+55 42 98809-8933"
-msgstr "+55 42 98809-8933"
+#~ msgid "+55 42 98809-8933"
+#~ msgstr "+55 42 98809-8933"
+
+#: src/app/(app)/settings/contact.tsx:101
+msgid "+55 42 98809-8933 (Gustavo)"
+msgstr "+55 42 98809-8933 (Gustavo)"
 
 #: src/app/psych/finish.tsx:33
 #~ msgid "<0>{0} </0><1/><2>{1}, {2} </2><3>at </3><4>{3}:{4}</4>"
@@ -1492,13 +1500,16 @@ msgid "Your appointments will be shown here."
 msgstr "Your appointments will be shown here."
 
 #: src/app/(app)/calendar.tsx:254
-#: src/app/(app)/settings/recurrences.tsx:122
 msgid "Your appointments will show up here"
 msgstr "Your appointments will show up here"
 
 #: src/app/(app)/home/patients/index.tsx:81
 msgid "Your patients"
 msgstr "Your patients"
+
+#: src/app/(app)/settings/recurrences.tsx:122
+msgid "Your recurrences will show up here"
+msgstr "Your recurrences will show up here"
 
 #: src/app/(app)/settings/(psych)/update-address.tsx:171
 #: src/app/onboard/therapist-address.tsx:183
