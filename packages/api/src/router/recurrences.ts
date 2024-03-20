@@ -21,20 +21,50 @@ export const recurrenceRouter = createTRPCRouter({
     allUserRecurrences: protectedProcedure
         .input(z.object({ userRole: z.enum(["professional", "patient"]) }))
         .query(async ({ ctx, input }) => {
-            try {
-                return await ctx.prisma.recurrence.findMany({
-                    where: {
-                        ...(input.userRole === "professional"
-                            ? { therapistId: ctx.auth.user?.id }
-                            : { patientId: ctx.auth.user?.id }),
-                    },
-                    include: {
-                        therapist: true,
-                        patient: true,
-                    },
+            if (input.userRole === "professional") {
+                const therapist = await ctx.prisma.therapist.findUnique({
+                    where: { userId: ctx.auth.userId },
                 });
-            } catch (error) {
-                console.log(error);
+
+                if (!therapist) {
+                    throw new Error("Therapist not found");
+                }
+
+                try {
+                    return await ctx.prisma.recurrence.findMany({
+                        where: {
+                            therapistId: therapist.id,
+                        },
+                        include: {
+                            therapist: true,
+                            patient: true,
+                        },
+                    });
+                } catch (error) {
+                    console.log(error);
+                }
+            } else {
+                const patient = await ctx.prisma.patient.findUnique({
+                    where: { userId: ctx.auth.userId },
+                });
+
+                if (!patient) {
+                    throw new Error("Patient not found");
+                }
+
+                try {
+                    return await ctx.prisma.recurrence.findMany({
+                        where: {
+                            patientId: patient.id,
+                        },
+                        include: {
+                            therapist: true,
+                            patient: true,
+                        },
+                    });
+                } catch (error) {
+                    console.log(error);
+                }
             }
         }),
 });

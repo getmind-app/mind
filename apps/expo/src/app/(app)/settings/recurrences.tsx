@@ -119,7 +119,7 @@ function EmptyState() {
         <View className="mt-4 rounded-xl bg-white shadow-sm">
             <View className=" px-6 pt-6">
                 <Text className="font-nunito-sans text-lg">
-                    <Trans>Your appointments will show up here</Trans>
+                    <Trans>Your recurrences will show up here</Trans>
                 </Text>
                 <Text className="font-nunito-sans text-sm text-slate-500">
                     <Trans>
