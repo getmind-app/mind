@@ -40,7 +40,7 @@ const defineConfig = (): ExpoConfig => ({
     },
     assetBundlePatterns: ["**/*", "assets/*"],
     ios: {
-        buildNumber: "29",
+        buildNumber: "30",
         supportsTablet: true,
         bundleIdentifier: "app.getmind",
         infoPlist: {
