@@ -13,7 +13,7 @@ import * as Notifications from "expo-notifications";
 import { useRouter } from "expo-router";
 import { requestTrackingPermissionsAsync } from "expo-tracking-transparency";
 import { useUser } from "@clerk/clerk-expo";
-import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
+import { FontAwesome } from "@expo/vector-icons";
 import { Trans, t } from "@lingui/macro";
 import { useLingui } from "@lingui/react";
 import { format } from "date-fns";
@@ -365,8 +365,6 @@ function NextAppointment() {
 }
 
 function LastNotes() {
-    const router = useRouter();
-
     const { data, isLoading } = api.notes.findByUserId.useQuery();
 
     if (isLoading) return <CardSkeleton />;
@@ -389,15 +387,6 @@ function LastNotes() {
                                 </Trans>
                             </Text>
                         </View>
-                        <TouchableOpacity
-                            onPress={() => router.push("/home/notes/new")}
-                        >
-                            <MaterialIcons
-                                size={32}
-                                name="chevron-right"
-                                color="#3b82f6"
-                            />
-                        </TouchableOpacity>
                     </View>
                 </Card>
             )}
