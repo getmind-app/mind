@@ -13,6 +13,7 @@ import { useUser } from "@clerk/clerk-expo";
 import { AntDesign } from "@expo/vector-icons";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Trans, t } from "@lingui/macro";
+import CheckBox from "@react-native-community/checkbox";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { cpf } from "cpf-cnpj-validator";
 import { useForm } from "react-hook-form";
