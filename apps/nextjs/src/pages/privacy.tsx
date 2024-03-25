@@ -71,6 +71,7 @@ const Home: NextPage = () => {
                                     <li>Data de Nascimento </li>
                                     <li>CPF </li>
                                     <li>Telefone </li>
+                                    <li>Foto</li>
                                     <li>
                                         Número do CRP (Conselho Regional de
                                         Psicologia)
@@ -92,9 +93,10 @@ const Home: NextPage = () => {
                                 Para pacientes que utilizam os provedores de
                                 autenticação da Apple e Google, coletamos as
                                 informações fornecidas por esses provedores,
-                                como nome e e-mail. Além disso, coletamos as
-                                informações de cartão de crédito, que serão
-                                enviadas para o processador de pagamentos.
+                                como nome e e-mail. Além disso, usamos da foto
+                                fornecida pelo provedor de autenticação ou que
+                                foi inserida pelo paciente para sua facilitar
+                                sua identificação pelos seus terapeutas.
                             </p>
                             <h2 className="text-xl text-slate-800">
                                 3. USO DE INFORMAÇÕES
