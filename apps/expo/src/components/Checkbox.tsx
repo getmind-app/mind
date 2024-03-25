@@ -1,5 +1,5 @@
 import { Text, View } from "react-native";
-import CheckboxComponent from "@react-native-community/checkbox";
+import CheckboxComponent, { type CheckboxProps } from "expo-checkbox";
 
 export type TextInputProps = Parameters<typeof Checkbox>[0];
 
@@ -14,10 +14,7 @@ export function Checkbox({
     onChange?: ConstructorParameters<
         typeof CheckboxComponent
     >["0"]["onValueChange"];
-} & Omit<
-    ConstructorParameters<typeof CheckboxComponent>["0"],
-    "onValueChange"
->) {
+} & CheckboxProps) {
     return (
         <View className="gap-2 py-3">
             <Text className="font-nunito-sans text-lg text-slate-700">

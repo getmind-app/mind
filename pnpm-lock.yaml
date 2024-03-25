@@ -146,9 +146,6 @@ importers:
       '@react-native-async-storage/async-storage':
         specifier: 1.18.2
         version: 1.18.2(react-native@0.72.6)
-      '@react-native-community/checkbox':
-        specifier: ^0.5.17
-        version: 0.5.17(react-native@0.72.6)(react@18.2.0)
       '@react-native-community/datetimepicker':
         specifier: 7.2.0
         version: 7.2.0
@@ -200,6 +197,9 @@ importers:
       expo-auth-session:
         specifier: ~5.0.2
         version: 5.0.2(expo@49.0.9)
+      expo-checkbox:
+        specifier: ^2.7.0
+        version: 2.7.0
       expo-clipboard:
         specifier: ~4.3.1
         version: 4.3.1(expo@49.0.9)
@@ -5045,20 +5045,6 @@ packages:
       react-native: 0.72.6(@babel/core@7.22.10)(@babel/preset-env@7.21.4)(react@18.2.0)
     dev: false
 
-  /@react-native-community/checkbox@0.5.17(react-native@0.72.6)(react@18.2.0):
-    resolution: {integrity: sha512-ZZx/eOH3SIxBg+hvA2zRd7lX5zPQEWcZU8C8Dn7WLdpJkiTkPmIUDFHWrmzxCnwZcyoD+BIt6gUZPKGGb9WmeQ==}
-    peerDependencies:
-      react: '*'
-      react-native: '>= 0.62'
-      react-native-windows: '>=0.62'
-    peerDependenciesMeta:
-      react-native-windows:
-        optional: true
-    dependencies:
-      react: 18.2.0
-      react-native: 0.72.6(@babel/core@7.22.10)(@babel/preset-env@7.21.4)(react@18.2.0)
-    dev: false
-
   /@react-native-community/cli-clean@11.3.7:
     resolution: {integrity: sha512-twtsv54ohcRyWVzPXL3F9VHGb4Qhn3slqqRs3wEuRzjR7cTmV2TIO2b1VhaqF4HlCgNd+cGuirvLtK2JJyaxMg==}
     dependencies:
@@ -9068,6 +9054,10 @@ packages:
     transitivePeerDependencies:
       - expo
       - supports-color
+    dev: false
+
+  /expo-checkbox@2.7.0:
+    resolution: {integrity: sha512-1wYgoOZ9pBg64PPPULbdD7jEVFX354dpJdUZRmkrO/7ybI668qO4r4+9777CUQ+2JoZEEJBBQzN6UiAl0Uodkg==}
     dev: false
 
   /expo-clipboard@4.1.2(expo@49.0.9):
