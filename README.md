@@ -6,7 +6,8 @@
 ![image](https://github.com/user-attachments/assets/98c09d79-268b-4822-890f-575b3d8f7a23)
 
 ## Links
-[Notion](https://www.notion.so/getmind/Pitch-3739b63b8eca43a8be88f90bb729baa8)
+- [Notion](https://www.notion.so/getmind/Pitch-3739b63b8eca43a8be88f90bb729baa8)
+- [Demo](https://www.youtube.com/watch?v=EuF4Mvld-Kc)
 
 ## About
 
